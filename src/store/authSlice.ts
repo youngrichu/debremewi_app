@@ -41,12 +41,28 @@ export const register = createAsyncThunk('auth/register', async ({ username, pas
       url,
       data: { email: username, password, AUTH_KEY: 'debremewi' },
     });
-    const response = await apiClient.post<{ token: string; user: User }>(url, {
-      AUTH_KEY: 'debremewi',
-      email: username,
-      password,
-    });
-    console.log('Registration response data:', response.data);
+    try {
+      const response = await apiClient.post<{ token: string; user: User }>(url, {
+        AUTH_KEY: 'debremewi',
+        email: username,
+        password,
+      });
+      console.log('Registration successful:', response.data);
+      return {
+        token: response.data.data.jwt,
+        user: {
+          email: username,
+          // Add other user properties if needed
+        },
+      };
+    } catch (error) {
+      if (error.response) {
+        console.error('Registration error response:', error.response.data);
+      } else {
+        console.error('Registration error:', error.message);
+      }
+      return rejectWithValue(error.response?.data || 'Registration failed');
+    }
     return {
       token: response.data.data.jwt,
       user: {
