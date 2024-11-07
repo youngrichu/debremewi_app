@@ -26,8 +26,13 @@ export const login = createAsyncThunk('auth/login', async ({ username, password 
       },
     };
   } catch (error) {
-    console.error('Login error:', error);
-    return rejectWithValue(error.response?.data || 'Login failed');
+    if (error.response) {
+      console.error('Login error response:', error.response.data);
+      return rejectWithValue(error.response.data.message || 'Login failed');
+    } else {
+      console.error('Login error:', error.message);
+      return rejectWithValue('Network error. Please try again.');
+    }
   }
 });
 
@@ -70,7 +75,13 @@ export const register = createAsyncThunk('auth/register', async ({ username, pas
       } else {
         console.error('Registration error:', error.message);
       }
-      return rejectWithValue(error.response?.data.message || 'Registration failed');
+      if (error.response) {
+        console.error('Registration error response:', error.response.data);
+        return rejectWithValue(error.response.data.message || 'Registration failed');
+      } else {
+        console.error('Registration error:', error.message);
+        return rejectWithValue('Network error. Please try again.');
+      }
     }
     return {
       token: response.data.data.jwt,
