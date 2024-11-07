@@ -4,14 +4,12 @@ import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
 import HomeScreen from '../screens/HomeScreen';
-import AuthScreen from '../screens/AuthScreen';
 
 const Stack = createStackNavigator();
 
 export default function AppNavigator() {
   return (
-    <Stack.Navigator initialRouteName="Auth">
-      <Stack.Screen name="Auth" component={AuthScreen} options={{ headerShown: false }} />
+    <Stack.Navigator initialRouteName="Login">
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
