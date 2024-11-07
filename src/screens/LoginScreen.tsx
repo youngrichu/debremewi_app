@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { useWordPressAPI } from '../hooks/useWordPressAPI';
 
 export default function LoginScreen({ navigation }) {
@@ -8,11 +8,20 @@ export default function LoginScreen({ navigation }) {
   const { login } = useWordPressAPI();
 
   const handleLogin = async () => {
-    const success = await login(email, password);
+    if (!email.trim()) {
+      Alert.alert('Validation Error', 'Username is required');
+      return;
+    }
+    if (!password.trim()) {
+      Alert.alert('Validation Error', 'Password is required');
+      return;
+    }
+
+    const { success, message } = await login(email, password);
     if (success) {
       navigation.navigate('Home');
     } else {
-      alert('Login failed. Please check your credentials.');
+      Alert.alert('Login Failed', message);
     }
   };
 
