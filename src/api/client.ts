@@ -33,4 +33,4 @@ apiClient.interceptors.response.use(async (response) => {
   return response;
 });
 
-export default apiClient;
+export { apiClient as default, API_ROUTES };
