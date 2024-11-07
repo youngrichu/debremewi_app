@@ -48,8 +48,14 @@ export const register = createAsyncThunk('auth/register', async ({ username, pas
         password,
       });
       console.log('Registration successful:', response.data);
+      // Dispatch login action after successful registration
+      const loginResponse = await apiClient.post<{ token: string; user: User }>(`${apiClient.defaults.baseURL}${API_ROUTES.auth}`, {
+        username,
+        password,
+      });
+      console.log('Auto-login successful:', loginResponse.data);
       return {
-        token: response.data.data.jwt,
+        token: loginResponse.data.token,
         user: {
           email: username,
           // Add other user properties if needed
