@@ -7,7 +7,8 @@ const API_ROUTES = {
   autoLogin: '/simple-jwt-login/v1/autologin',
   refresh: '/simple-jwt-login/v1/auth/refresh',
   validate: '/simple-jwt-login/v1/auth/validate',
-  revoke: '/simple-jwt-login/v1/auth/revoke'
+  revoke: '/simple-jwt-login/v1/auth/revoke',
+  register: '/wp-json/wp/v2/users/register' // Assuming this endpoint exists
 };
 
 const apiClient = axios.create({

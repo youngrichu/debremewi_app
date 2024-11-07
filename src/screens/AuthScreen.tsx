@@ -1,20 +1,31 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { login } from '../store/authSlice';
+import { login, register } from '../store/authSlice';
+import { useNavigation } from '@react-navigation/native';
 
 const AuthScreen = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [isLogin, setIsLogin] = useState(true);
   const dispatch = useDispatch();
+  const navigation = useNavigation();
 
-  const handleLogin = () => {
-    dispatch(login({ username, password }));
+  const handleAuth = () => {
+    if (isLogin) {
+      dispatch(login({ username, password }));
+    } else {
+      dispatch(register({ username, password }));
+    }
+  };
+
+  const toggleAuthMode = () => {
+    setIsLogin(!isLogin);
   };
 
   return (
     <View style={styles.container}>
-      <Text>Login</Text>
+      <Text>{isLogin ? 'Login' : 'Register'}</Text>
       <TextInput
         style={styles.input}
         value={username}
@@ -28,7 +39,10 @@ const AuthScreen = () => {
         placeholder="Password"
         secureTextEntry
       />
-      <Button title="Login" onPress={handleLogin} />
+      <Button title={isLogin ? "Login" : "Register"} onPress={handleAuth} />
+      <TouchableOpacity onPress={toggleAuthMode}>
+        <Text style={styles.switchText}>{isLogin ? "Don't have an account? Register" : "Already have an account? Login"}</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -47,6 +61,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 10,
     paddingHorizontal: 10,
+  },
+  switchText: {
+    marginTop: 10,
+    color: 'blue',
   },
 });
 
