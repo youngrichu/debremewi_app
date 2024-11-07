@@ -33,8 +33,10 @@ const AuthScreen = () => {
   const handleAuth = () => {
     if (validateForm(isLogin)) {
       if (isLogin) {
+        console.log('Dispatching login action');
         dispatch(login({ username, password }));
       } else {
+        console.log('Dispatching register action');
         dispatch(register({ username, password }));
       }
     }
