@@ -53,6 +53,8 @@ const AuthScreen = () => {
       navigation.navigate('Landing');
     }
   }, [token, navigation]);
+
+  return (
     <View style={styles.container}>
       <Text>{isLogin ? 'Login' : 'Register'}</Text>
       <TextInput
@@ -77,6 +79,7 @@ const AuthScreen = () => {
         <Text style={styles.switchText}>{isLogin ? "Don't have an account? Register" : "Already have an account? Login"}</Text>
       </TouchableOpacity>
     </View>
+  );
   );
 };
 
