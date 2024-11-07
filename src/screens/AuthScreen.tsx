@@ -49,6 +49,7 @@ const AuthScreen = () => {
   };
 
   useEffect(() => {
+    console.log('Checking token in useEffect:', token);
     if (token) {
       console.log('Token is present:', token);
       if (navigation.isReady()) {
