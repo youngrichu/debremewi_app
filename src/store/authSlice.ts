@@ -9,6 +9,7 @@ export const login = createAsyncThunk('auth/login', async ({ username, password 
     console.log('Login successful:', response.data);
     return response.data;
   } catch (error) {
+    console.error('Login error:', error);
     return rejectWithValue(error.response?.data || 'Login failed');
   }
 });
