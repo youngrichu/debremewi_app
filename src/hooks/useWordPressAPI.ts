@@ -8,8 +8,8 @@ export function useWordPressAPI() {
   const login = async (email: string, password: string) => {
     try {
       const response = await axios.post('https://staging.dubaidebremewi.com/?rest_route=/simple-jwt-login/v1/auth', {
-        email,
-        password
+        username: email, // Changed from 'email' to 'username' if the server expects this
+        password: password
       });
       if (response.data.token) {
         await AsyncStorage.setItem('userToken', response.data.token);
@@ -18,7 +18,14 @@ export function useWordPressAPI() {
       }
       return false;
     } catch (error) {
-      console.error('Login error:', error);
+      if (axios.isAxiosError(error)) {
+        console.error('Login error:', error.response?.data || error.message);
+        if (error.response?.status === 400) {
+          alert('Login failed. Please check your credentials or contact support.');
+        }
+      } else {
+        console.error('Login error:', error);
+      }
       return false;
     }
   };
