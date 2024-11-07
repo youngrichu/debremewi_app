@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { getCachedData, setCachedData } from './cacheManager';
 
 const BASE_URL = 'https://staging.dubaidebremewi.com';
 const API_ROUTES = {
@@ -14,6 +15,21 @@ const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+});
+
+apiClient.interceptors.request.use(async (config) => {
+  const cachedData = await getCachedData(config.url || '');
+  if (cachedData) {
+    config.adapter = () => Promise.resolve({ data: cachedData });
+  }
+  return config;
+});
+
+apiClient.interceptors.response.use(async (response) => {
+  if (response.config.method === 'get') {
+    await setCachedData(response.config.url || '', response.data);
+  }
+  return response;
 });
 
 export default apiClient;
