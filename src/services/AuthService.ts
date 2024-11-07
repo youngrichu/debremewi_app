@@ -7,7 +7,7 @@ export const login = async (username: string, password: string): Promise<{ token
 };
 
 export const register = async (username: string, password: string): Promise<{ token: string; user: User }> => {
-  const response = await apiClient.post<{ token: string; user: User }>('/wp-json/wp/v2/users/register', { username, password });
+  const response = await apiClient.post<{ token: string; user: User }>('/simple-jwt-login/v1/auth/register', { username, password });
   return response.data;
 };
 
