@@ -39,9 +39,12 @@ export const login = createAsyncThunk('auth/login', async ({ username, password 
         }
       }
       return rejectWithValue(errorMessage);
-    } else {
+    } else if (error.message) {
       console.error('Login error:', error.message);
-      return rejectWithValue('Network error. Please try again.');
+      return rejectWithValue(error.message);
+    } else {
+      console.error('Login error:', error);
+      return rejectWithValue('An unknown error occurred. Please try again.');
     }
   }
 });
