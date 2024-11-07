@@ -4,7 +4,9 @@ import { User } from '../types';
 
 export const login = createAsyncThunk('auth/login', async ({ username, password }: { username: string; password: string }, { rejectWithValue }) => {
   try {
+    console.log('Attempting to login with:', { username, password });
     const response = await apiClient.post<{ token: string; user: User }>(API_ROUTES.auth, { username, password });
+    console.log('Login successful:', response.data);
     return response.data;
   } catch (error) {
     return rejectWithValue(error.response?.data || 'Login failed');
