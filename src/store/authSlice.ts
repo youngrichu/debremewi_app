@@ -42,9 +42,9 @@ export const register = createAsyncThunk('auth/register', async ({ username, pas
       data: { email: username, password, AUTH_KEY: 'debremewi' },
     });
     const response = await apiClient.post<{ token: string; user: User }>(url, {
+      AUTH_KEY: 'debremewi',
       email: username,
       password,
-      AUTH_KEY: 'debremewi',
     });
     console.log('Registration response data:', response.data);
     return {
