@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../store';
 import { login, register } from '../store/authSlice';
 import { useNavigation } from '@react-navigation/native';
 
@@ -9,7 +10,7 @@ const AuthScreen = () => {
   const [password, setPassword] = useState('');
   const [isLogin, setIsLogin] = useState(true);
   const dispatch = useDispatch();
-  const navigation = useNavigation();
+  const { error: authError } = useSelector((state: RootState) => state.auth);
 
   const [error, setError] = useState<string | null>(null);
 
@@ -62,7 +63,7 @@ const AuthScreen = () => {
         placeholder="Password"
         secureTextEntry
       />
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {(error || authError) && <Text style={styles.errorText}>{error || authError}</Text>}
       <Button title={isLogin ? "Login" : "Register"} onPress={() => {
         console.log('Button pressed');
         handleAuth();
