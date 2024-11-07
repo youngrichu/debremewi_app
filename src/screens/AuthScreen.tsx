@@ -52,14 +52,16 @@ const AuthScreen = () => {
     if (token) {
       console.log('Token is present:', token);
       if (navigation.isReady()) {
-      console.log('Token is present, navigating to Landing screen');
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Landing' }],
-      });
+        console.log('Navigation is ready, navigating to Landing screen');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Landing' }],
+        });
       } else {
-        console.log('Token is not present, staying on Auth screen');
+        console.log('Navigation is not ready, staying on Auth screen');
       }
+    } else {
+      console.log('Token is not present, staying on Auth screen');
     }
   }, [token, navigation]);
 
