@@ -8,8 +8,25 @@ export const login = async (username: string, password: string): Promise<{ token
     console.log('Login response:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Login error:', error.response?.data || 'Login failed');
-    throw new Error(error.response?.data || 'Login failed');
+    if (apiClient.isAxiosError(error)) {
+      console.error('Login error:', error.message);
+      if (error.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        console.error('Server Response:', error.response.data);
+        console.error('Status Code:', error.response.status);
+        console.error('Headers:', error.response.headers);
+      } else if (error.request) {
+        // The request was made but no response was received
+        console.error('No response received:', error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        console.error('Error:', error.message);
+      }
+    } else {
+      console.error('Login error:', error);
+    }
+    throw new Error(error.message || 'Login failed');
   }
 };
 
@@ -19,8 +36,21 @@ export const register = async (username: string, password: string): Promise<{ to
     console.log('Registration response:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Registration error:', error.response?.data || 'Registration failed');
-    throw new Error(error.response?.data || 'Registration failed');
+    if (apiClient.isAxiosError(error)) {
+      console.error('Registration error:', error.message);
+      if (error.response) {
+        console.error('Server Response:', error.response.data);
+        console.error('Status Code:', error.response.status);
+        console.error('Headers:', error.response.headers);
+      } else if (error.request) {
+        console.error('No response received:', error.request);
+      } else {
+        console.error('Error:', error.message);
+      }
+    } else {
+      console.error('Registration error:', error);
+    }
+    throw new Error(error.message || 'Registration failed');
   }
 };
 
@@ -29,6 +59,19 @@ export const logout = async () => {
     await apiClient.post('/simple-jwt-login/v1/auth/revoke');
     console.log('Logout successful');
   } catch (error) {
-    console.error('Logout error:', error.response?.data || 'Logout failed');
+    if (apiClient.isAxiosError(error)) {
+      console.error('Logout error:', error.message);
+      if (error.response) {
+        console.error('Server Response:', error.response.data);
+        console.error('Status Code:', error.response.status);
+        console.error('Headers:', error.response.headers);
+      } else if (error.request) {
+        console.error('No response received:', error.request);
+      } else {
+        console.error('Error:', error.message);
+      }
+    } else {
+      console.error('Logout error:', error);
+    }
   }
 };

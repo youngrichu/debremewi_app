@@ -21,7 +21,24 @@ export const useWordPressAPI = () => {
         return { success: false, message: 'Login failed' };
       }
     } catch (error) {
-      console.error('Login Error:', error);
+      if (axios.isAxiosError(error)) {
+        console.error('Login Error:', error.message);
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.error('Server Response:', error.response.data);
+          console.error('Status Code:', error.response.status);
+          console.error('Headers:', error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.error('No response received:', error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.error('Error:', error.message);
+        }
+      } else {
+        console.error('Login Error:', error);
+      }
       // Return an object with success set to false and the error message
       return { success: false, message: error.message || 'An error occurred during login' };
     }
