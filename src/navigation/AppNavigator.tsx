@@ -6,12 +6,15 @@ import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import EventDetailsScreen from '../screens/EventDetailsScreen';
+import { useWordPressAPI } from '../hooks/useWordPressAPI';
 
 const Stack = createNativeStackNavigator();
 
 export default function AppNavigator() {
+  const { isAuthenticated } = useWordPressAPI();
+
   return (
-    <Stack.Navigator initialRouteName="Home">
+    <Stack.Navigator initialRouteName={isAuthenticated ? "Home" : "Login"}>
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
