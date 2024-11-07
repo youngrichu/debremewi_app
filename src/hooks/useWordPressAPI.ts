@@ -27,6 +27,8 @@ export function useWordPressAPI() {
             alert('Login failed. Please check your credentials or contact support.');
           }
         }
+        // Log the entire error response for debugging
+        console.error('Full error response:', JSON.stringify(error.response?.data, null, 2));
       } else {
         console.error('Login error:', error);
       }
