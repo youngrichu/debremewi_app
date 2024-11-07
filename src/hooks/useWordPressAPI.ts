@@ -22,7 +22,8 @@ export const useWordPressAPI = () => {
       }
     } catch (error) {
       console.error('Login Error:', error);
-      return { success: false, message: 'An error occurred during login' };
+      // Return an object with success set to false and the error message
+      return { success: false, message: error.message || 'An error occurred during login' };
     }
   };
 

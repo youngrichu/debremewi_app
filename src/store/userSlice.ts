@@ -13,8 +13,14 @@ const userSlice = createSlice({
     clearUser: () => {
       return null;
     },
+    loginAttempt: (state, action) => {
+      if (action.payload.success) {
+        return action.payload.user;
+      }
+      return state; // Keep the current state if login failed
+    },
   },
 });
 
-export const { setUser, clearUser } = userSlice.actions;
+export const { setUser, clearUser, loginAttempt } = userSlice.actions;
 export default userSlice.reducer;
