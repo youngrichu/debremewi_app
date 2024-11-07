@@ -13,6 +13,13 @@ export const login = createAsyncThunk('auth/login', async ({ username, password 
       url,
       data: { username, password },
     });
+    console.log('Attempting to register with:', { username, password, AUTH_KEY: 'AUTH_KEY_VALUE' });
+    console.log('Full Register URL:', url);
+    console.log('Requesting registration with:', {
+      method: 'POST',
+      url,
+      params: { email: username, password, AUTH_KEY: 'AUTH_KEY_VALUE' },
+    });
     const response = await apiClient.post<{ token: string; user: User }>(url, null, {
       params: { email: username, password },
     });
