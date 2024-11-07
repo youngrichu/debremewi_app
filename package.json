@@ -19,7 +19,8 @@
     "@react-navigation/native": "^6.1.10",
     "@react-navigation/native-stack": "^6.9.13",
     "@reduxjs/toolkit": "^1.9.5",
-    "axios": "^1.6.2"
+    "axios": "^1.6.2",
+    "@react-navigation/stack": "^6.3.17"
   },
   "devDependencies": {
     "@babel/core": "^7.23.0",

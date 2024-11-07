@@ -8,7 +8,7 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "strict": true,
-    "types": ["react-native"]
+    "types": ["react-native", "axios", "@reduxjs/toolkit"]
   },
   "extends": "expo/tsconfig.base"
 }
