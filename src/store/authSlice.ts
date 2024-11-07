@@ -33,7 +33,8 @@ export const login = createAsyncThunk('auth/login', async ({ username, password 
         switch (error.response.data.data.errorCode) {
           case 1:
             return rejectWithValue('Invalid credentials. Please check your username and password.');
-          // Add more cases as needed for different error codes
+          case 48:
+            return rejectWithValue('Wrong user credentials. Please try again.');
           default:
             return rejectWithValue(errorMessage);
         }
