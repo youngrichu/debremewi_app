@@ -11,11 +11,32 @@ const AuthScreen = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
 
+  const [error, setError] = useState<string | null>(null);
+
+  const validateForm = () => {
+    if (!username.trim()) {
+      setError('Username is required');
+      return false;
+    }
+    if (!password.trim()) {
+      setError('Password is required');
+      return false;
+    }
+    if (password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      return false;
+    }
+    setError(null);
+    return true;
+  };
+
   const handleAuth = () => {
-    if (isLogin) {
-      dispatch(login({ username, password }));
-    } else {
-      dispatch(register({ username, password }));
+    if (validateForm()) {
+      if (isLogin) {
+        dispatch(login({ username, password }));
+      } else {
+        dispatch(register({ username, password }));
+      }
     }
   };
 
@@ -39,6 +60,7 @@ const AuthScreen = () => {
         placeholder="Password"
         secureTextEntry
       />
+      {error && <Text style={styles.errorText}>{error}</Text>}
       <Button title={isLogin ? "Login" : "Register"} onPress={handleAuth} />
       <TouchableOpacity onPress={toggleAuthMode}>
         <Text style={styles.switchText}>{isLogin ? "Don't have an account? Register" : "Already have an account? Login"}</Text>
@@ -65,6 +87,10 @@ const styles = StyleSheet.create({
   switchText: {
     marginTop: 10,
     color: 'blue',
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 10,
   },
 });
 
