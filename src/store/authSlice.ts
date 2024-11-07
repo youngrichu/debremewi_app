@@ -28,7 +28,7 @@ export const login = createAsyncThunk('auth/login', async ({ username, password 
   } catch (error) {
     if (error.response && error.response.data) {
       console.error('Login error response:', error.response.data);
-      const errorMessage = error.response.data.message || 'Login failed';
+      const errorMessage = error.response.data.data?.message || 'Login failed';
       return rejectWithValue(errorMessage);
     } else if (error.message) {
       console.error('Login error:', error.message);
