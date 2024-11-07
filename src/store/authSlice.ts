@@ -34,11 +34,19 @@ export const login = createAsyncThunk('auth/login', async ({ username, password 
 export const register = createAsyncThunk('auth/register', async ({ username, password }: { username: string; password: string }, { rejectWithValue }) => {
   try {
     const url = `${apiClient.defaults.baseURL}${API_ROUTES.register}`;
+    console.log('Attempting to register with:', { email: username, password, AUTH_KEY: 'debremewi' });
+    console.log('Full Register URL:', url);
+    console.log('Requesting registration with:', {
+      method: 'POST',
+      url,
+      data: { email: username, password, AUTH_KEY: 'debremewi' },
+    });
     const response = await apiClient.post<{ token: string; user: User }>(url, {
       email: username,
       password,
       AUTH_KEY: 'debremewi',
     });
+    console.log('Registration response data:', response.data);
     return {
       token: response.data.data.jwt,
       user: {
