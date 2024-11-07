@@ -1,88 +1,34 @@
-import { useState, useEffect } from 'react';
 import axios from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AsyncStorage } from '@react-native-async-storage/async-storage';
 
-export function useWordPressAPI() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+const API_URL = 'your-api-url';
 
-  const login = async (email: string, password: string) => {
+export const useWordPressAPI = () => {
+  const login = async (username: string, password: string) => {
     try {
-      const response = await axios.post('https://staging.dubaidebremewi.com/?rest_route=/simple-jwt-login/v1/auth', {
-        username: email, // Changed from 'email' to 'username' if the server expects this
-        password: password
+      const response = await axios.post(`${API_URL}/login`, {
+        username,
+        password
       });
-      if (response.data.token) {
+
+      // Log the response for debugging
+      console.log('Login Response:', response.data);
+
+      if (response.data.success) {
         await AsyncStorage.setItem('userToken', response.data.token);
-        setIsAuthenticated(true);
-        return true;
-      }
-      return false;
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error('Login error:', error.response?.data || error.message);
-        if (error.response?.status === 400) {
-          if (error.response.data && error.response.data.message) {
-            alert(`Login failed: ${error.response.data.message}`);
-          } else {
-            alert('Login failed. Please check your credentials or contact support.');
-          }
-        }
-        // Log the entire error response for debugging
-        console.error('Full error response:', JSON.stringify(error.response?.data, null, 2));
+        return { success: true, message: 'Login successful' };
       } else {
-        console.error('Login error:', error);
+        return { success: false, message: 'Login failed' };
       }
-      return false;
+    } catch (error) {
+      console.error('Login Error:', error);
+      return { success: false, message: 'An error occurred during login' };
     }
   };
 
   const logout = async () => {
-    try {
-      const token = await AsyncStorage.getItem('userToken');
-      if (token) {
-        await axios.post('https://staging.dubaidebremewi.com/?rest_route=/simple-jwt-login/v1/auth/revoke', {
-          JWT: token
-        });
-      }
-      await AsyncStorage.removeItem('userToken');
-      setIsAuthenticated(false);
-      return true;
-    } catch (error) {
-      console.error('Logout error:', error);
-      return false;
-    }
+    await AsyncStorage.removeItem('userToken');
   };
 
-  const validateToken = async () => {
-    try {
-      const token = await AsyncStorage.getItem('userToken');
-      if (token) {
-        const response = await axios.post('https://staging.dubaidebremewi.com/?rest_route=/simple-jwt-login/v1/auth/validate', {
-          JWT: token
-        });
-        if (response.data.valid) {
-          return true;
-        }
-      }
-      return false;
-    } catch (error) {
-      console.error('Token validation error:', error);
-      return false;
-    }
-  };
-
-  useEffect(() => {
-    const checkToken = async () => {
-      const token = await AsyncStorage.getItem('userToken');
-      if (token) {
-        const isValid = await validateToken();
-        setIsAuthenticated(isValid);
-      }
-    };
-    checkToken();
-  }, []);
-
-  // Add more API calls here for other functionalities
-
-  return { login, logout, isAuthenticated };
-}
+  return { login, logout };
+};
