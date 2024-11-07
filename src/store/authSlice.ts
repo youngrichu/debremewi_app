@@ -1,4 +1,10 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
+// Placeholder for API routes
+const API_ROUTES = {
+  auth: '/auth/login',
+  register: '/auth/register',
+};
 import apiClient from '../api/client';
 import { User } from '../types';
 
