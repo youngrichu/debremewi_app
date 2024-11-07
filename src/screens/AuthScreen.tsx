@@ -51,22 +51,27 @@ const AuthScreen = () => {
     setIsLogin(!isLogin);
   };
 
+  const [navigationAttempted, setNavigationAttempted] = useState(false);
+
   useEffect(() => {
     const checkNavigationAndToken = () => {
       console.log('Checking token in useEffect:', token);
-      if (token) {
+      if (token && !navigationAttempted) {
         console.log('Token is present:', token);
         if (navigation.isReady()) {
           console.log('Navigation is ready, navigating to Landing screen');
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'Landing' }],
-          });
+          setTimeout(() => {
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'Landing' }],
+            });
+            setNavigationAttempted(true);
+          }, 1000); // Delay to ensure navigation state is fully updated
         } else {
           console.log('Navigation is not ready, staying on Auth screen');
         }
       } else {
-        console.log('Token is not present, staying on Auth screen');
+        console.log('Token is not present or navigation already attempted, staying on Auth screen');
       }
     };
 
@@ -81,7 +86,7 @@ const AuthScreen = () => {
       });
       return unsubscribe;
     }
-  }, [token, navigation]);
+  }, [token, navigation, navigationAttempted]);
 
   return (
     <View style={styles.container}>
