@@ -58,10 +58,13 @@ export const register = createAsyncThunk('auth/register', async ({ username, pas
     } catch (error) {
       if (error.response) {
         console.error('Registration error response:', error.response.data);
+        if (error.response.data.data.errorCode === 38) {
+          return rejectWithValue('User already exists. Please try logging in.');
+        }
       } else {
         console.error('Registration error:', error.message);
       }
-      return rejectWithValue(error.response?.data || 'Registration failed');
+      return rejectWithValue(error.response?.data.message || 'Registration failed');
     }
     return {
       token: response.data.data.jwt,
