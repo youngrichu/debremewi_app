@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { AsyncStorage } from '@react-native-async-storage/async-storage';
 
-const API_URL = 'your-api-url';
+// Replace 'your-api-url' with the actual URL of your WordPress API
+const API_URL = 'https://your-wordpress-site.com/wp-json';
 
 export const useWordPressAPI = () => {
   const login = async (username: string, password: string) => {
