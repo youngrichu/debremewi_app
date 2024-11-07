@@ -52,21 +52,27 @@ const AuthScreen = () => {
   };
 
   useEffect(() => {
-    console.log('Checking token in useEffect:', token);
-    if (token) {
-      console.log('Token is present:', token);
-      if (navigation.isReady()) {
-        console.log('Navigation is ready, navigating to Landing screen');
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Landing' }],
-        });
+    const checkNavigationAndToken = () => {
+      console.log('Checking token in useEffect:', token);
+      if (token) {
+        console.log('Token is present:', token);
+        if (navigation.isReady()) {
+          console.log('Navigation is ready, navigating to Landing screen');
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Landing' }],
+          });
+        } else {
+          console.log('Navigation is not ready, staying on Auth screen');
+        }
       } else {
-        console.log('Navigation is not ready, staying on Auth screen');
+        console.log('Token is not present, staying on Auth screen');
       }
-    } else {
-      console.log('Token is not present, staying on Auth screen');
-    }
+    };
+
+    const unsubscribe = navigation.addListener('state', checkNavigationAndToken);
+
+    return unsubscribe;
   }, [token, navigation]);
 
   return (
