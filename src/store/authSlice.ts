@@ -88,22 +88,9 @@ export const register = createAsyncThunk('auth/register', async ({ username, pas
         return rejectWithValue(errorMessage);
       } else {
         console.error('Registration error:', error.message);
-      }
-      if (error.response) {
-        console.error('Registration error response:', error.response.data);
-        return rejectWithValue(error.response.data.message || 'Registration failed');
-      } else {
-        console.error('Registration error:', error.message);
         return rejectWithValue('Network error. Please try again.');
       }
     }
-    return {
-      token: response.data.data.jwt,
-      user: {
-        email: username,
-        // Add other user properties if needed
-      },
-    };
   } catch (error) {
     console.error('Registration error:', error);
     return rejectWithValue(error.response?.data || 'Registration failed');
