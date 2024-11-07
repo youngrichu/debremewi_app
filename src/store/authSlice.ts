@@ -5,6 +5,9 @@ import { User } from '../types';
 
 export const login = createAsyncThunk('auth/login', async ({ username, password }: { username: string; password: string }, { rejectWithValue }) => {
   try {
+    if (!username || !password) {
+      return rejectWithValue('Please fill in both username and password fields.');
+    }
     console.log('Attempting to login with:', { username, password });
     const url = `${apiClient.defaults.baseURL}${API_ROUTES.auth}`;
     console.log('Full Login URL:', url);
@@ -16,7 +19,7 @@ export const login = createAsyncThunk('auth/login', async ({ username, password 
     const response = await apiClient.post<{ token: string; user: User }>(url, {
       username,
       password,
-    });ad
+    });
     console.log('Login successful:', response.data);
     const token = response.data.data.jwt;
     console.log('Extracted token:', token);
@@ -44,6 +47,9 @@ export const login = createAsyncThunk('auth/login', async ({ username, password 
 
 export const register = createAsyncThunk('auth/register', async ({ username, password }: { username: string; password: string }, { rejectWithValue }) => {
   try {
+    if (!username || !password) {
+      return rejectWithValue('Please fill in both username and password fields.');
+    }
     const url = `${apiClient.defaults.baseURL}${API_ROUTES.register}`;
     console.log('Attempting to register with:', { email: username, password, AUTH_KEY: 'debremewi' });
     console.log('Full Register URL:', url);
