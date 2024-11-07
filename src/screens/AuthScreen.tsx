@@ -49,7 +49,9 @@ const AuthScreen = () => {
   };
 
   useEffect(() => {
-    if (token && navigation.isReady()) {
+    if (token) {
+      console.log('Token is present:', token);
+      if (navigation.isReady()) {
       console.log('Token is present, navigating to Landing screen');
       navigation.reset({
         index: 0,
