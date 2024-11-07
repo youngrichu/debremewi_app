@@ -8,7 +8,12 @@ export const login = createAsyncThunk('auth/login', async ({ username, password 
     console.log('Attempting to login with:', { username, password });
     const url = `${apiClient.defaults.baseURL}${API_ROUTES.auth}`;
     console.log('Full Login URL:', url);
-    const response = await apiClient.post<{ token: string; user: User }>(API_ROUTES.auth, { username, password });
+    console.log('Requesting login with:', {
+      method: 'POST',
+      url,
+      data: { username, password },
+    });
+    const response = await apiClient.post<{ token: string; user: User }>(url, { username, password });
     console.log('Login successful:', response.data);
     return response.data;
   } catch (error) {
