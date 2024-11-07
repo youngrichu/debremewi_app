@@ -57,8 +57,9 @@ const AuthScreen = () => {
         index: 0,
         routes: [{ name: 'Landing' }],
       });
-    } else {
-      console.log('Token is not present, staying on Auth screen');
+      } else {
+        console.log('Token is not present, staying on Auth screen');
+      }
     }
   }, [token, navigation]);
 
