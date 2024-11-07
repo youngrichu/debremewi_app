@@ -1,10 +1,6 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-const API_ROUTES = {
-  auth: '/api/auth/login', // Update this to the correct login endpoint
-  register: '/api/auth/register', // Update this to the correct register endpoint
-};
-import apiClient from '../api/client';
+import apiClient, { API_ROUTES } from '../api/client';
 import { User } from '../types';
 
 export const login = createAsyncThunk('auth/login', async ({ username, password }: { username: string; password: string }, { rejectWithValue }) => {
