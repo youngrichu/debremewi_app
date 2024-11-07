@@ -32,9 +32,9 @@ export const login = createAsyncThunk('auth/login', async ({ username, password 
 
 export const register = createAsyncThunk('auth/register', async ({ username, password }: { username: string; password: string }, { rejectWithValue }) => {
   try {
-    const url = `${apiClient.defaults.baseURL}${API_ROUTES.auth}`;
+    const url = `${apiClient.defaults.baseURL}${API_ROUTES.register}`;
     const response = await apiClient.post<{ token: string; user: User }>(url, null, {
-      params: { email: username, password },
+      params: { email: username, password, AUTH_KEY: 'AUTH_KEY_VALUE' },
     });
     return {
       token: response.data.data.jwt,
