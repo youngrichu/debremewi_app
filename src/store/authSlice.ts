@@ -134,7 +134,6 @@ const authSlice = createSlice({
       .addCase(login.pending, (state) => {
         state.loading = true;
         state.error = null;
-        console.log('Token set in state:', action.payload.token);
       })
       .addCase(login.fulfilled, (state, action) => {
         console.log('Login fulfilled, setting token:', action.payload.token);
