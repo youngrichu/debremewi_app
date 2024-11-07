@@ -3,12 +3,12 @@ import { getCachedData, setCachedData } from './cacheManager';
 
 const BASE_URL = 'https://staging.dubaidebremewi.com';
 const API_ROUTES = {
-  auth: '/simple-jwt-login/v1/auth',
-  autoLogin: '/simple-jwt-login/v1/autologin',
-  refresh: '/simple-jwt-login/v1/auth/refresh',
-  validate: '/simple-jwt-login/v1/auth/validate',
-  revoke: '/simple-jwt-login/v1/auth/revoke',
-  register: '/simple-jwt-login/v1/auth/register'
+  auth: '/?rest_route=/simple-jwt-login/v1/auth',
+  autoLogin: '/?rest_route=/simple-jwt-login/v1/autologin',
+  refresh: '/?rest_route=/simple-jwt-login/v1/auth/refresh',
+  validate: '/?rest_route=/simple-jwt-login/v1/auth/validate',
+  revoke: '/?rest_route=/simple-jwt-login/v1/auth/revoke',
+  register: '/?rest_route=/simple-jwt-login/v1/auth/register'
 };
 
 const apiClient = axios.create({
