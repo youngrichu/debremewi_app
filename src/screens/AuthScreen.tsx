@@ -70,9 +70,12 @@ const AuthScreen = () => {
       }
     };
 
-    const unsubscribe = navigation.addListener('state', checkNavigationAndToken);
-
-    return unsubscribe;
+    if (navigation.isReady()) {
+      checkNavigationAndToken();
+    } else {
+      const unsubscribe = navigation.addListener('state', checkNavigationAndToken);
+      return unsubscribe;
+    }
   }, [token, navigation]);
 
   return (
