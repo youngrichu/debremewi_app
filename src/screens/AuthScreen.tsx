@@ -10,7 +10,8 @@ const AuthScreen = () => {
   const [password, setPassword] = useState('');
   const [isLogin, setIsLogin] = useState(true);
   const dispatch = useDispatch();
-  const { error: authError } = useSelector((state: RootState) => state.auth);
+  const { error: authError, token } = useSelector((state: RootState) => state.auth);
+  const navigation = useNavigation();
 
   const [error, setError] = useState<string | null>(null);
 
@@ -47,7 +48,11 @@ const AuthScreen = () => {
     setIsLogin(!isLogin);
   };
 
-  return (
+  React.useEffect(() => {
+    if (token) {
+      navigation.navigate('Landing');
+    }
+  }, [token, navigation]);
     <View style={styles.container}>
       <Text>{isLogin ? 'Login' : 'Register'}</Text>
       <TextInput
