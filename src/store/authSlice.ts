@@ -30,9 +30,23 @@ export const login = createAsyncThunk('auth/login', async ({ username, password 
   }
 });
 
-export const register = createAsyncThunk('auth/register', async ({ username, password }: { username: string; password: string }) => {
-  const response = await apiClient.post<{ token: string; user: User }>(API_ROUTES.register, { username, password });
-  return response.data;
+export const register = createAsyncThunk('auth/register', async ({ username, password }: { username: string; password: string }, { rejectWithValue }) => {
+  try {
+    const url = `${apiClient.defaults.baseURL}${API_ROUTES.register}`;
+    const response = await apiClient.post<{ token: string; user: User }>(url, null, {
+      params: { email: username, password },
+    });
+    return {
+      token: response.data.data.jwt,
+      user: {
+        email: username,
+        // Add other user properties if needed
+      },
+    };
+  } catch (error) {
+    console.error('Registration error:', error);
+    return rejectWithValue(error.response?.data || 'Registration failed');
+  }
 });
 
 const authSlice = createSlice({
