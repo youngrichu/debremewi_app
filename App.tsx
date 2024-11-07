@@ -1,10 +1,8 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import AuthScreen from './src/screens/AuthScreen';
 
 export default function App() {
   return (
-    <View>
-      <Text>Welcome to ChurchApp!</Text>
-    </View>
+    <AuthScreen />
   );
 }
