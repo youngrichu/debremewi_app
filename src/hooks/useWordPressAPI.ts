@@ -21,7 +21,11 @@ export function useWordPressAPI() {
       if (axios.isAxiosError(error)) {
         console.error('Login error:', error.response?.data || error.message);
         if (error.response?.status === 400) {
-          alert('Login failed. Please check your credentials or contact support.');
+          if (error.response.data && error.response.data.message) {
+            alert(`Login failed: ${error.response.data.message}`);
+          } else {
+            alert('Login failed. Please check your credentials or contact support.');
+          }
         }
       } else {
         console.error('Login error:', error);
