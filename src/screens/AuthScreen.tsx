@@ -75,17 +75,21 @@ const AuthScreen = () => {
       }
     };
 
-    if (navigation.isReady()) {
-      checkNavigationAndToken();
-    } else {
-      const unsubscribe = navigation.addListener('state', () => {
-        if (navigation.isReady()) {
-          checkNavigationAndToken();
-          unsubscribe();
-        }
-      });
-      return unsubscribe;
-    }
+    const navigationReadyCheck = () => {
+      if (navigation.isReady()) {
+        checkNavigationAndToken();
+      } else {
+        const unsubscribe = navigation.addListener('state', () => {
+          if (navigation.isReady()) {
+            checkNavigationAndToken();
+            unsubscribe();
+          }
+        });
+        return unsubscribe;
+      }
+    };
+
+    navigationReadyCheck();
   }, [token, navigation, navigationAttempted]);
 
   return (
