@@ -44,7 +44,7 @@ export const register = createAsyncThunk('auth/register', async ({ username, pas
       params: {
         email: username,
         password,
-        AUTH_KEY: 'AUTH_KEY_VALUE',
+        AUTH_KEY: 'debremewi',
       },
     });
     return {
