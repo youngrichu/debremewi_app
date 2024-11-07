@@ -10,7 +10,7 @@ const AuthScreen = () => {
   const [password, setPassword] = useState('');
   const [isLogin, setIsLogin] = useState(true);
   const dispatch = useDispatch();
-  const { error: authError, token } = useSelector((state: RootState) => state.auth);
+  const { error: authError, token } = useSelector((state: RootState) => state.auth.token);
   const navigation = useNavigation();
 
   const [error, setError] = useState<string | null>(null);
