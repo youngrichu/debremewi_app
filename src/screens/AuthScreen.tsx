@@ -50,8 +50,13 @@ const AuthScreen = () => {
 
   React.useEffect(() => {
     if (token) {
-      console.log('Navigating to Landing screen');
-      navigation.navigate('Landing');
+      console.log('Token is present, navigating to Landing screen');
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Landing' }],
+      });
+    } else {
+      console.log('Token is not present, staying on Auth screen');
     }
   }, [token, navigation]);
 
