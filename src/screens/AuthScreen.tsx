@@ -13,7 +13,7 @@ const AuthScreen = () => {
 
   const [error, setError] = useState<string | null>(null);
 
-  const validateForm = () => {
+  const validateForm = (isLogin: boolean) => {
     if (!username.trim()) {
       setError('Username is required');
       return false;
@@ -22,7 +22,7 @@ const AuthScreen = () => {
       setError('Password is required');
       return false;
     }
-    if (password.length < 6) {
+    if (!isLogin && password.length < 6) {
       setError('Password must be at least 6 characters long');
       return false;
     }
@@ -31,7 +31,7 @@ const AuthScreen = () => {
   };
 
   const handleAuth = () => {
-    if (validateForm()) {
+    if (validateForm(isLogin)) {
       if (isLogin) {
         dispatch(login({ username, password }));
       } else {
