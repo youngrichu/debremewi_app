@@ -42,7 +42,7 @@ export const register = createAsyncThunk('auth/register', async ({ username, pas
   try {
     const url = `${apiClient.defaults.baseURL}${API_ROUTES.register}`;
     const response = await apiClient.post<{ token: string; user: User }>(url, {
-      username,
+      email: username,
       password,
       AUTH_KEY: 'debremewi',
     });
