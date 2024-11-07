@@ -61,7 +61,10 @@ const AuthScreen = () => {
         secureTextEntry
       />
       {error && <Text style={styles.errorText}>{error}</Text>}
-      <Button title={isLogin ? "Login" : "Register"} onPress={handleAuth} />
+      <Button title={isLogin ? "Login" : "Register"} onPress={() => {
+        console.log('Button pressed');
+        handleAuth();
+      }} />
       <TouchableOpacity onPress={toggleAuthMode}>
         <Text style={styles.switchText}>{isLogin ? "Don't have an account? Register" : "Already have an account? Login"}</Text>
       </TouchableOpacity>
