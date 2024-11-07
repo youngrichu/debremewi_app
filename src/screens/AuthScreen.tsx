@@ -80,7 +80,6 @@ const AuthScreen = () => {
       </TouchableOpacity>
     </View>
   );
-  );
 };
 
 const styles = StyleSheet.create({
