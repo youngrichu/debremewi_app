@@ -28,7 +28,17 @@ export const login = createAsyncThunk('auth/login', async ({ username, password 
   } catch (error) {
     if (error.response) {
       console.error('Login error response:', error.response.data);
-      return rejectWithValue(error.response.data.message || 'Login failed');
+      const errorMessage = error.response.data.message || 'Login failed';
+      if (error.response.data.data && error.response.data.data.errorCode) {
+        switch (error.response.data.data.errorCode) {
+          case 1:
+            return rejectWithValue('Invalid credentials. Please check your username and password.');
+          // Add more cases as needed for different error codes
+          default:
+            return rejectWithValue(errorMessage);
+        }
+      }
+      return rejectWithValue(errorMessage);
     } else {
       console.error('Login error:', error.message);
       return rejectWithValue('Network error. Please try again.');
@@ -69,9 +79,17 @@ export const register = createAsyncThunk('auth/register', async ({ username, pas
     } catch (error) {
       if (error.response) {
         console.error('Registration error response:', error.response.data);
-        if (error.response.data.data.errorCode === 38) {
-          return rejectWithValue('User already exists. Please try logging in.');
+        const errorMessage = error.response.data.message || 'Registration failed';
+        if (error.response.data.data && error.response.data.data.errorCode) {
+          switch (error.response.data.data.errorCode) {
+            case 38:
+              return rejectWithValue('User already exists. Please try logging in.');
+            // Add more cases as needed for different error codes
+            default:
+              return rejectWithValue(errorMessage);
+          }
         }
+        return rejectWithValue(errorMessage);
       } else {
         console.error('Registration error:', error.message);
       }
