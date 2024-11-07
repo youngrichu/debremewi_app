@@ -45,6 +45,10 @@ export const register = createAsyncThunk('auth/register', async ({ username, pas
       AUTH_KEY: 'debremewi',
       email: username,
       password,
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
     console.log('Registration response data:', response.data);
     return {
