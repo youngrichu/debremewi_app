@@ -8,7 +8,7 @@ const API_ROUTES = {
   refresh: '/simple-jwt-login/v1/auth/refresh',
   validate: '/simple-jwt-login/v1/auth/validate',
   revoke: '/simple-jwt-login/v1/auth/revoke',
-  register: '/simple-jwt-login/v1/auth/register' // Updated endpoint for registration
+  register: '/simple-jwt-login/v1/auth/register'
 };
 
 const apiClient = axios.create({
