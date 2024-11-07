@@ -50,6 +50,7 @@ const AuthScreen = () => {
 
   React.useEffect(() => {
     if (token) {
+      console.log('Navigating to Landing screen');
       navigation.navigate('Landing');
     }
   }, [token, navigation]);
