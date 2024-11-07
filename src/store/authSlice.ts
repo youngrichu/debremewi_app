@@ -18,8 +18,10 @@ export const login = createAsyncThunk('auth/login', async ({ username, password 
       password,
     });
     console.log('Login successful:', response.data);
+    const token = response.data.data.jwt;
+    console.log('Extracted token:', token);
     return {
-      token: response.data.data.jwt, // Correctly extract the token from the response
+      token,
       user: {
         email: username,
         // Add other user properties if needed
@@ -139,6 +141,7 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
+        console.log('Token set in state:', state.token);
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
