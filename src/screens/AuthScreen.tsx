@@ -73,7 +73,12 @@ const AuthScreen = () => {
     if (navigation.isReady()) {
       checkNavigationAndToken();
     } else {
-      const unsubscribe = navigation.addListener('state', checkNavigationAndToken);
+      const unsubscribe = navigation.addListener('state', () => {
+        if (navigation.isReady()) {
+          checkNavigationAndToken();
+          unsubscribe();
+        }
+      });
       return unsubscribe;
     }
   }, [token, navigation]);
