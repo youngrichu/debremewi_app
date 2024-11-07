@@ -19,7 +19,7 @@ export const login = createAsyncThunk('auth/login', async ({ username, password 
     });
     console.log('Login successful:', response.data);
     return {
-      token: response.data.jwt, // Adjust this line based on the actual response structure
+      token: response.data.data.jwt, // Correctly extract the token from the response
       user: {
         email: username,
         // Add other user properties if needed
