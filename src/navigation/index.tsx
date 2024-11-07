@@ -9,6 +9,7 @@ export type RootStackParamList = {
   Auth: undefined;
   Main: undefined;
   Events: undefined;
+  Register: undefined;
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -20,6 +21,7 @@ const AppNavigator = () => {
         <Stack.Screen name="Auth" component={AuthScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Main" component={HomeScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Events" component={EventsScreen} options={{ headerShown: true, title: 'Events' }} />
+        <Stack.Screen name="Register" component={AuthScreen} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

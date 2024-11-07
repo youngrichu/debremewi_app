@@ -2,9 +2,13 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import apiClient from '../api/client';
 import { User } from '../types';
 
-export const login = createAsyncThunk('auth/login', async ({ username, password }: { username: string; password: string }) => {
-  const response = await apiClient.post<{ token: string; user: User }>(API_ROUTES.auth, { username, password });
-  return response.data;
+export const login = createAsyncThunk('auth/login', async ({ username, password }: { username: string; password: string }, { rejectWithValue }) => {
+  try {
+    const response = await apiClient.post<{ token: string; user: User }>(API_ROUTES.auth, { username, password });
+    return response.data;
+  } catch (error) {
+    return rejectWithValue(error.response?.data || 'Login failed');
+  }
 });
 
 export const register = createAsyncThunk('auth/register', async ({ username, password }: { username: string; password: string }) => {
