@@ -13,7 +13,9 @@ export const login = createAsyncThunk('auth/login', async ({ username, password 
       url,
       data: { username, password },
     });
-    const response = await apiClient.post<{ token: string; user: User }>(url, { username, password });
+    const response = await apiClient.post<{ token: string; user: User }>(url, null, {
+      params: { email: username, password },
+    });
     console.log('Login successful:', response.data);
     return response.data;
   } catch (error) {
