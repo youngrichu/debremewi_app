@@ -8,6 +8,7 @@ import LandingScreen from '../screens/LandingScreen';
 
 export type RootStackParamList = {
   Auth: undefined;
+  Landing: undefined; // Ensure Landing is part of the stack
   Main: undefined;
   Events: undefined;
   Register: undefined;
