@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
@@ -48,8 +48,8 @@ const AuthScreen = () => {
     setIsLogin(!isLogin);
   };
 
-  React.useEffect(() => {
-    if (token) {
+  useEffect(() => {
+    if (token && navigation.isReady()) {
       console.log('Token is present, navigating to Landing screen');
       navigation.reset({
         index: 0,
