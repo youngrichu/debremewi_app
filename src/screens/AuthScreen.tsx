@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Button, TouchableOpacity } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../store';
 import { login, register } from '../store/authSlice';
@@ -10,15 +10,11 @@ const AuthScreen = () => {
   const [password, setPassword] = useState('');
   const [isLogin, setIsLogin] = useState(true);
   const dispatch = useDispatch();
-  const { error: authError, token } = useSelector((state: RootState) => {
-    console.log('Current auth state:', state.auth);
-    return state.auth;
-  });
+  const { error: authError, token, loading } = useSelector((state: RootState) => state.auth);
   const navigation = useNavigation();
-
   const [error, setError] = useState<string | null>(null);
 
-  const validateForm = (isLogin: boolean) => {
+  const validateForm = (isLogin: boolean): boolean => {
     if (!username.trim()) {
       setError('Username is required');
       return false;
@@ -38,59 +34,22 @@ const AuthScreen = () => {
   const handleAuth = () => {
     if (validateForm(isLogin)) {
       if (isLogin) {
-        console.log('Dispatching login action');
         dispatch(login({ username, password }));
       } else {
-        console.log('Dispatching register action');
         dispatch(register({ username, password }));
       }
     }
   };
 
+  useEffect(() => {
+    if (token) {
+      navigation.navigate('Landing');
+    }
+  }, [token, navigation]);
+
   const toggleAuthMode = () => {
     setIsLogin(!isLogin);
   };
-
-  const [navigationAttempted, setNavigationAttempted] = useState(false);
-
-  useEffect(() => {
-    const checkNavigationAndToken = () => {
-      console.log('Checking token in useEffect:', token);
-      if (token && !navigationAttempted) {
-        console.log('Token is present:', token);
-        if (navigation.isReady()) {
-          console.log('Navigation is ready, navigating to Landing screen');
-          setTimeout(() => {
-            navigation.reset({
-              index: 0,
-              routes: [{ name: 'Landing' }],
-            });
-            setNavigationAttempted(true);
-          }, 1000); // Delay to ensure navigation state is fully updated
-        } else {
-          console.log('Navigation is not ready, staying on Auth screen');
-        }
-      } else {
-        console.log('Token is not present or navigation already attempted, staying on Auth screen');
-      }
-    };
-
-    const navigationReadyCheck = () => {
-      if (navigation.isReady()) {
-        checkNavigationAndToken();
-      } else {
-        const unsubscribe = navigation.addListener('state', () => {
-          if (navigation.isReady()) {
-            checkNavigationAndToken();
-            unsubscribe();
-          }
-        });
-        return unsubscribe;
-      }
-    };
-
-    navigationReadyCheck();
-  }, [token, navigation, navigationAttempted]);
 
   return (
     <View style={styles.container}>
@@ -109,10 +68,7 @@ const AuthScreen = () => {
         secureTextEntry
       />
       {(error || authError) && <Text style={styles.errorText}>{error || authError}</Text>}
-      <Button title={isLogin ? "Login" : "Register"} onPress={() => {
-        console.log('Button pressed');
-        handleAuth();
-      }} />
+      <Button title={loading ? 'Loading...' : (isLogin ? 'Login' : 'Register')} onPress={handleAuth} disabled={loading} />
       <TouchableOpacity onPress={toggleAuthMode}>
         <Text style={styles.switchText}>{isLogin ? "Don't have an account? Register" : "Already have an account? Login"}</Text>
       </TouchableOpacity>
