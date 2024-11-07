@@ -17,7 +17,13 @@ export const login = createAsyncThunk('auth/login', async ({ username, password 
       params: { email: username, password },
     });
     console.log('Login successful:', response.data);
-    return response.data;
+    return {
+      token: response.data.data.jwt,
+      user: {
+        email: username,
+        // Add other user properties if needed
+      },
+    };
   } catch (error) {
     console.error('Login error:', error);
     return rejectWithValue(error.response?.data || 'Login failed');
