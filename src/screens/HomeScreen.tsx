@@ -1,10 +1,17 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import BlogPostList from '../components/BlogPostList';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../types';
 
-const HomeScreen = () => {
+type HomeScreenProps = {
+  navigation: StackNavigationProp<RootStackParamList, 'Home'>;
+};
+
+const HomeScreen = ({ navigation }: HomeScreenProps) => {
   return (
     <View style={styles.container}>
-      <Text>Welcome to the Home Screen!</Text>
+      <BlogPostList navigation={navigation} />
     </View>
   );
 };
@@ -12,8 +19,7 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    padding: 20,
   },
 });
 

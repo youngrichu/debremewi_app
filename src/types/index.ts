@@ -6,38 +6,32 @@ export interface User {
 
 export interface Post {
   id: number;
+  title: {
+    rendered: string;
+  };
+  content: {
+    rendered: string;
+  };
+  excerpt: {
+    rendered: string;
+  };
+}
+
+export interface Notification {
+  id: string;
+  user_id: string;
   title: string;
-  content: string;
-  date: string;
-  // Add other post properties
+  body: string;
+  type: string;
+  is_read: string;
+  created_at: string;
 }
 
-export interface Event {
-  id: number;
-  title: string;
-  start: Date;
-  end: Date;
-  location: string;
-  // Add other event properties
-}
-
-export interface Livestream {
-  id: number;
-  title: string;
-  url: string;
-  status: 'live' | 'scheduled' | 'ended';
-  // Add other livestream properties
-}
-
-export interface ApiResponse<T> {
-  data: T;
-  status: number;
-  message: string;
-}
-
-export interface WordPressService {
-  getPosts(): Promise<Post[]>;
-  getEvents(): Promise<Event[]>;
-  getLivestreams(): Promise<Livestream[]>;
-  // Add other API methods
-}
+export type RootStackParamList = {
+  Login: undefined;
+  Register: undefined;
+  ForgotPassword: undefined;
+  Home: undefined;
+  BlogPostDetail: { post: Post };
+  Notifications: undefined;
+};

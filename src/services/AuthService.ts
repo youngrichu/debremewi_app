@@ -1,5 +1,5 @@
 import apiClient from '../api/client';
-import { User } from '../types';
+import { User, Post } from '../types';
 import axios, { isAxiosError } from 'axios';
 
 export const login = async (username: string, password: string): Promise<{ token: string; user: User }> => {
@@ -178,5 +178,17 @@ export const resetPassword = async (email: string, newPassword: string, jwt: str
       }
     }
     throw new Error('Failed to reset password');
+  }
+};
+
+// Fetch blog posts
+export const fetchBlogPosts = async (): Promise<Post[]> => {
+  try {
+    const response = await apiClient.get('/?rest_route=/wp/v2/posts');
+    console.log('Blog posts response:', response.data);
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching blog posts:', error);
+    throw new Error('Failed to fetch blog posts');
   }
 };
