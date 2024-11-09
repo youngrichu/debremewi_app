@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, FlatList, Text, StyleSheet, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { NotificationService } from '../services/NotificationService';
 
 interface Notification {
@@ -11,13 +11,10 @@ interface Notification {
   type: string;
 }
 
-export default function NotificationsScreen() {
+export default function NotificationsScreen({ navigation }) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    fetchNotifications();
-  }, []);
+  const [refreshing, setRefreshing] = useState(false);
 
   const fetchNotifications = async () => {
     try {
@@ -27,70 +24,78 @@ export default function NotificationsScreen() {
       console.error('Error fetching notifications:', error);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
+
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
 
   const handleNotificationPress = async (notification: Notification) => {
     try {
-      if (notification.is_read === '0') {
-        await NotificationService.markNotificationAsRead(notification.id);
-        // Update the local state to reflect the change
-        setNotifications(prevNotifications =>
-          prevNotifications.map(n =>
-            n.id === notification.id ? { ...n, is_read: '1' } : n
-          )
-        );
-      }
+      // First update the UI optimistically
+      setNotifications(prevNotifications =>
+        prevNotifications.map(n =>
+          n.id === notification.id ? { ...n, is_read: '1' } : n
+        )
+      );
+
+      // Then handle the notification press
+      await NotificationService.handleNotificationPress(notification, navigation);
+      
+      // Refresh the notifications list
+      fetchNotifications();
     } catch (error) {
-      console.error('Error marking notification as read:', error);
+      console.error('Error handling notification press:', error);
+      // Revert the optimistic update if there was an error
+      setNotifications(prevNotifications =>
+        prevNotifications.map(n =>
+          n.id === notification.id ? { ...n, is_read: '0' } : n
+        )
+      );
     }
   };
 
-  const renderNotification = ({ item }: { item: Notification }) => {
-    const handlePress = async () => {
-      try {
-        await NotificationService.handleNotificationPress(item, navigation);
-      } catch (error) {
-        console.error('Error handling notification press:', error);
-      }
-    };
+  const renderNotification = ({ item }: { item: Notification }) => (
+    <TouchableOpacity
+      style={[
+        styles.notificationItem,
+        item.is_read === '0' && styles.unreadNotification
+      ]}
+      onPress={() => handleNotificationPress(item)}
+    >
+      <Text style={styles.title}>{item.title}</Text>
+      <Text style={styles.body}>{item.body}</Text>
+      <Text style={styles.date}>
+        {new Date(item.created_at).toLocaleDateString()}
+      </Text>
+    </TouchableOpacity>
+  );
 
-    return (
-      <TouchableOpacity
-        style={[
-          styles.notificationItem,
-          item.is_read === '0' && styles.unreadNotification,
-          item.type === 'blog_post' && styles.blogPostNotification
-        ]}
-        onPress={handlePress}
-      >
-        <Text style={styles.title}>{item.title}</Text>
-        <Text style={styles.body}>{item.body}</Text>
-        <Text style={styles.date}>
-          {new Date(item.created_at).toLocaleDateString()}
-        </Text>
-      </TouchableOpacity>
-    );
-  };
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    fetchNotifications();
+  }, []);
 
   if (loading) {
-    return (
-      <View style={styles.center}>
-        <Text>Loading notifications...</Text>
-      </View>
-    );
+    return <ActivityIndicator size="large" color="#0000ff" />;
   }
 
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={notifications}
-        renderItem={renderNotification}
-        keyExtractor={item => item.id}
-        refreshing={loading}
-        onRefresh={fetchNotifications}
-      />
-    </View>
+    <FlatList
+      data={notifications}
+      renderItem={renderNotification}
+      keyExtractor={item => item.id}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+      ListEmptyComponent={() => (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>No notifications</Text>
+        </View>
+      )}
+    />
   );
 }
 
@@ -129,5 +134,14 @@ const styles = StyleSheet.create({
   blogPostNotification: {
     borderLeftWidth: 4,
     borderLeftColor: '#4CAF50',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#999',
   },
 }); 

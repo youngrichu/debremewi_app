@@ -94,7 +94,28 @@ export class NotificationService {
 
   static async getNotifications(): Promise<Notification[]> {
     if (!this.token) {
-      console.log('No token set in NotificationService');
+      console.log('No token set in NotificationService - skipping notification fetch');
+      return [];
+    }
+
+    // Log the token being validated (safely)
+    console.log('Validating token:', this.token ? `${this.token.substring(0, 10)}...` : 'none');
+
+    // Validate token before making the request
+    if (!this.isValidToken(this.token)) {
+      console.log('Invalid or expired token - skipping notification fetch');
+      // Log the token structure for debugging
+      try {
+        const parts = this.token.split('.');
+        console.log('Token structure:', {
+          partsCount: parts.length,
+          part1Length: parts[0]?.length,
+          part2Length: parts[1]?.length,
+          part3Length: parts[2]?.length,
+        });
+      } catch (e) {
+        console.error('Error analyzing token structure:', e);
+      }
       return [];
     }
 
@@ -110,51 +131,53 @@ export class NotificationService {
         timeout: API_CONFIG.timeout,
       });
 
-      // Sort notifications by date, newest first
-      const sortedNotifications = response.data.sort((a, b) => 
-        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
+      if (response.status === 200 && Array.isArray(response.data)) {
+        const sortedNotifications = response.data.sort((a, b) => 
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
 
-      console.log('Notifications count:', sortedNotifications.length);
-      console.log('Unread count:', sortedNotifications.filter(n => n.is_read === '0').length);
-      
-      return sortedNotifications;
+        return sortedNotifications;
+      }
+
+      return [];
     } catch (error) {
       if (axios.isAxiosError(error)) {
-        console.error('Axios Error Details:', {
-          url: `${API_URL}${ENDPOINTS.notifications}`,
-          status: error.response?.status,
-          statusText: error.response?.statusText,
-          data: error.response?.data,
-          headers: error.response?.headers,
-          token: this.token ? 'Token exists' : 'No token', // Debug log token existence
-        });
+        // Only log error if we have a token (expected behavior)
+        if (this.token) {
+          console.error('Notification fetch error:', {
+            url: `${API_URL}${ENDPOINTS.notifications}`,
+            status: error.response?.status,
+            statusText: error.response?.statusText,
+            data: error.response?.data,
+          });
+        }
 
         if (error.response?.status === 401) {
-          throw new Error('Invalid token');
-        }
-        if (error.response?.status === 404) {
-          console.error('API endpoint not found');
-          return [];
+          return []; // Silently return empty array for unauthorized
         }
       }
-      throw error;
+      return []; // Return empty array instead of throwing
     }
   }
 
-  static async markNotificationAsRead(notificationId: string) {
+  static async markNotificationAsRead(notificationId: string): Promise<boolean> {
     if (!this.token) {
       throw new Error('No authentication token found');
     }
 
     try {
-      console.log('Marking notification as read:', notificationId); // Debug log
+      console.log('Marking notification as read:', notificationId);
       const url = `${API_URL}${ENDPOINTS.notificationRead(notificationId)}`;
-      console.log('Request URL:', url); // Debug log
+      console.log('Request URL:', url);
+
+      // Validate token before making request
+      if (!this.isValidToken(this.token)) {
+        throw new Error('Invalid token');
+      }
 
       const response = await axios.put(
         url,
-        {},
+        {}, // empty body
         {
           headers: {
             'Authorization': `Bearer ${this.token}`,
@@ -164,15 +187,28 @@ export class NotificationService {
         }
       );
 
-      console.log('Mark as read response:', response.data); // Debug log
-      return response.data;
+      console.log('Mark as read response:', response.data);
+
+      // Check if the response indicates success
+      if (response.status === 200 || response.status === 204) {
+        return true;
+      }
+
+      return false;
     } catch (error) {
-      console.error('Error marking notification as read:', error);
+      console.error('Error marking notification as read:', {
+        notificationId,
+        error: error instanceof Error ? error.message : 'Unknown error',
+        response: axios.isAxiosError(error) ? error.response?.data : null,
+      });
+
       if (axios.isAxiosError(error)) {
         if (error.response?.status === 401) {
           throw new Error('Invalid token');
         }
-        console.error('Response data:', error.response?.data);
+        if (error.response?.status === 404) {
+          throw new Error('Notification not found');
+        }
       }
       throw error;
     }
@@ -190,19 +226,74 @@ export class NotificationService {
 
   private static isValidToken(token: string): boolean {
     try {
-      const parts = token.split('.');
-      if (parts.length !== 3) return false;
+      // Debug log the token format
+      console.log('Validating token format:', {
+        length: token.length,
+        hasBearerPrefix: token.startsWith('Bearer '),
+      });
 
-      const payload = JSON.parse(atob(parts[1]));
-      // Check if token has required fields
-      if (!payload.data?.user?.id) return false;
+      // Remove 'Bearer ' prefix if it exists
+      const cleanToken = token.replace('Bearer ', '');
       
-      // If there's no expiration, consider it valid
-      if (!payload.exp) return true;
-      
-      // Check expiration if it exists
-      const expirationTime = payload.exp * 1000; // Convert to milliseconds
-      return Date.now() < expirationTime;
+      const parts = cleanToken.split('.');
+      console.log('Token parts count:', parts.length);
+
+      if (parts.length !== 3) {
+        console.log('Invalid token structure: expected 3 parts');
+        return false;
+      }
+
+      // Use a more robust base64 decode function
+      const base64Decode = (str: string) => {
+        try {
+          // Add padding if needed
+          const padding = '='.repeat((4 - str.length % 4) % 4);
+          const base64 = (str + padding)
+            .replace(/-/g, '+')
+            .replace(/_/g, '/');
+          
+          return JSON.parse(decodeURIComponent(escape(atob(base64))));
+        } catch (e) {
+          console.error('Base64 decode error:', e);
+          return null;
+        }
+      };
+
+      const payload = base64Decode(parts[1]);
+      console.log('Decoded payload:', payload);
+
+      if (!payload) {
+        console.log('Failed to decode token payload');
+        return false;
+      }
+
+      // Update validation to match your token structure
+      const hasUserData = payload.id || payload.email;
+      if (!hasUserData) {
+        console.log('No user data found in token');
+        return false;
+      }
+
+      // Check issued at time if it exists
+      if (payload.iat) {
+        const issuedAt = payload.iat * 1000; // Convert to milliseconds
+        const tokenAge = Date.now() - issuedAt;
+        const maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
+        
+        const isExpired = tokenAge > maxAge;
+        console.log('Token age check:', {
+          issuedAt: new Date(issuedAt).toISOString(),
+          currentTime: new Date().toISOString(),
+          ageInDays: tokenAge / (24 * 60 * 60 * 1000),
+          isExpired
+        });
+        
+        return !isExpired;
+      }
+
+      // If no issuedAt time, consider it valid
+      console.log('No issuedAt time found, considering token valid');
+      return true;
     } catch (error) {
       console.error('Token validation error:', error);
       return false;
@@ -211,19 +302,30 @@ export class NotificationService {
 
   static async handleNotificationPress(notification: Notification, navigation: any) {
     try {
-      // Mark as read
-      await this.markNotificationAsRead(notification.id);
+      if (!this.token) {
+        throw new Error('No authentication token found');
+      }
 
-      // Navigate based on notification type
+      // First mark the notification as read
+      if (notification.is_read === '0') {
+        console.log('Marking notification as read:', notification.id);
+        await this.markNotificationAsRead(notification.id);
+      }
+
+      // Then navigate based on notification type
       if (notification.type === 'blog_post' && notification.reference_id) {
         navigation.navigate('BlogPostDetail', { 
           postId: notification.reference_id 
         });
       } else {
-        navigation.navigate('Notifications');
+        // For other notification types, just stay on the notifications screen
+        console.log('No specific navigation for notification type:', notification.type);
       }
+
+      return true;
     } catch (error) {
-      console.error('Error handling notification press:', error);
+      console.error('Error in handleNotificationPress:', error);
+      throw error;
     }
   }
 

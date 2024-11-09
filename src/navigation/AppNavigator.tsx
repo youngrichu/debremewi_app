@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { TouchableOpacity, View, Text, StyleSheet } from 'react-native';
+import { TouchableOpacity, View, Text, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { createStackNavigator } from '@react-navigation/stack';
 import LoginScreen from '../screens/LoginScreen';
@@ -33,11 +33,23 @@ export default function AppNavigator() {
   const [unreadCount, setUnreadCount] = useState(0);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  useEffect(() => {
-    checkAuthAndFetchNotifications();
-  }, []);
+  // Add function to fetch notifications count
+  const fetchNotificationsCount = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      if (token) {
+        NotificationService.setAuthToken(token);
+        const notifications = await NotificationService.getNotifications();
+        const unread = notifications.filter((n: Notification) => n.is_read === '0').length;
+        setUnreadCount(unread);
+      }
+    } catch (error) {
+      console.error('Error fetching notifications count:', error);
+    }
+  };
 
-  const checkAuthAndFetchNotifications = async () => {
+  // Check auth status and fetch notifications
+  const checkAuthStatus = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
       console.log('Retrieved token:', token ? 'exists' : 'none');
@@ -49,26 +61,25 @@ export default function AppNavigator() {
       }
 
       NotificationService.setAuthToken(token);
-      console.log('Token set in NotificationService');
-
       setIsAuthenticated(true);
       
-      try {
-        const notifications = await NotificationService.getNotifications();
-        console.log('Total notifications:', notifications.length);
-        const unread = notifications.filter((n: Notification) => n.is_read === '0').length;
-        console.log('Unread count:', unread);
-        setUnreadCount(unread);
-      } catch (error) {
-        console.error('Error fetching initial notifications:', error);
-        setUnreadCount(0);
-      }
+      // Fetch notifications count after setting auth
+      await fetchNotificationsCount();
+      
     } catch (error) {
       console.error('Auth check error:', error);
+      setIsAuthenticated(false);
+      setUnreadCount(0);
     }
   };
 
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
+
   const renderNotificationIcon = ({ navigation }: { navigation: any }) => {
+    if (!isAuthenticated) return null;
+
     const handleNotificationPress = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
@@ -121,6 +132,12 @@ export default function AppNavigator() {
         name="Login" 
         component={LoginScreen} 
         options={{ headerShown: false }}
+        listeners={{
+          beforeRemove: () => {
+            // Fetch notifications when leaving login screen (successful login)
+            fetchNotificationsCount();
+          },
+        }}
       />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
@@ -129,8 +146,13 @@ export default function AppNavigator() {
         component={HomeScreen}
         options={({ navigation }) => ({
           headerRight: () => renderNotificationIcon({ navigation }),
-          // Remove headerLeft: null to allow back navigation
         })}
+        listeners={{
+          focus: () => {
+            // Fetch notifications when returning to Home screen
+            fetchNotificationsCount();
+          },
+        }}
       />
       <Stack.Screen 
         name="BlogPostDetail" 
@@ -151,21 +173,11 @@ export default function AppNavigator() {
         }}
         listeners={({ navigation }) => ({
           focus: () => {
-            const fetchNotifications = async () => {
-              try {
-                const token = await AsyncStorage.getItem('userToken');
-                if (token) {
-                  NotificationService.setAuthToken(token);
-                  const notifications = await NotificationService.getNotifications();
-                  const unread = notifications.filter((n: Notification) => n.is_read === '0').length;
-                  setUnreadCount(unread);
-                }
-              } catch (error) {
-                console.error('Error fetching notifications:', error);
-                // Don't change auth state or redirect on error
-              }
-            };
-            fetchNotifications();
+            fetchNotificationsCount();
+          },
+          beforeRemove: () => {
+            // Update count when leaving notifications screen
+            fetchNotificationsCount();
           },
         })}
       />
