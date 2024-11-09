@@ -184,7 +184,7 @@ export const resetPassword = async (email: string, newPassword: string, jwt: str
 // Fetch blog posts
 export const fetchBlogPosts = async (): Promise<Post[]> => {
   try {
-    const response = await apiClient.get('/?rest_route=/wp/v2/posts');
+    const response = await apiClient.get('/?rest_route=/wp/v2/posts&_embed');
     console.log('Blog posts response:', response.data);
     return response.data;
   } catch (error) {

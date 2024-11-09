@@ -1,17 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, FlatList, Text, StyleSheet, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
+import { View, FlatList, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native';
 import { NotificationService } from '../services/NotificationService';
+import { NotificationCard } from '../components/NotificationCard';
+import { Notification } from '../types';
 
-interface Notification {
-  id: string;
-  title: string;
-  body: string;
-  is_read: string;
-  created_at: string;
-  type: string;
-}
-
-export default function NotificationsScreen({ navigation }) {
+export default function NotificationsScreen({ navigation }: { navigation: any }) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -34,67 +27,48 @@ export default function NotificationsScreen({ navigation }) {
 
   const handleNotificationPress = async (notification: Notification) => {
     try {
-      // First update the UI optimistically
+      await NotificationService.handleNotificationPress(notification, navigation);
+      
+      // Update the local state to mark notification as read
       setNotifications(prevNotifications =>
         prevNotifications.map(n =>
           n.id === notification.id ? { ...n, is_read: '1' } : n
         )
       );
-
-      // Then handle the notification press
-      await NotificationService.handleNotificationPress(notification, navigation);
-      
-      // Refresh the notifications list
-      fetchNotifications();
     } catch (error) {
       console.error('Error handling notification press:', error);
-      // Revert the optimistic update if there was an error
-      setNotifications(prevNotifications =>
-        prevNotifications.map(n =>
-          n.id === notification.id ? { ...n, is_read: '0' } : n
-        )
-      );
     }
   };
 
-  const renderNotification = ({ item }: { item: Notification }) => (
-    <TouchableOpacity
-      style={[
-        styles.notificationItem,
-        item.is_read === '0' && styles.unreadNotification
-      ]}
-      onPress={() => handleNotificationPress(item)}
-    >
-      <Text style={styles.title}>{item.title}</Text>
-      <Text style={styles.body}>{item.body}</Text>
-      <Text style={styles.date}>
-        {new Date(item.created_at).toLocaleDateString()}
-      </Text>
-    </TouchableOpacity>
-  );
-
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-    fetchNotifications();
-  }, []);
-
   if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
   }
 
   return (
     <FlatList
+      style={styles.container}
       data={notifications}
-      renderItem={renderNotification}
+      renderItem={({ item }) => (
+        <NotificationCard
+          notification={item}
+          onPress={() => handleNotificationPress(item)}
+        />
+      )}
       keyExtractor={item => item.id}
       refreshControl={
-        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={() => {
+            setRefreshing(true);
+            fetchNotifications();
+          }}
+        />
       }
-      ListEmptyComponent={() => (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>No notifications</Text>
-        </View>
-      )}
+      contentContainerStyle={styles.listContent}
     />
   );
 }
@@ -102,46 +76,14 @@ export default function NotificationsScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f5f5f5',
   },
   center: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  notificationItem: {
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  unreadNotification: {
-    backgroundColor: '#f0f9ff',
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  body: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 5,
-  },
-  date: {
-    fontSize: 12,
-    color: '#999',
-  },
-  blogPostNotification: {
-    borderLeftWidth: 4,
-    borderLeftColor: '#4CAF50',
-  },
-  emptyContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  emptyText: {
-    fontSize: 16,
-    color: '#999',
+  listContent: {
+    paddingVertical: 8,
   },
 }); 

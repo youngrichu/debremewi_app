@@ -25,6 +25,21 @@ interface Notification {
   user_id: string;
   reference_id?: string;
   reference_type?: string;
+  excerpt?: string;
+  featured_image?: {
+    url: string;
+    alt?: string;
+  };
+  blog_post?: {
+    id: string;
+    slug: string;
+    title: string;
+    excerpt: string;
+    featured_image?: {
+      url: string;
+      alt?: string;
+    };
+  };
 }
 
 export class NotificationService {
@@ -312,13 +327,13 @@ export class NotificationService {
         await this.markNotificationAsRead(notification.id);
       }
 
-      // Then navigate based on notification type
-      if (notification.type === 'blog_post' && notification.reference_id) {
-        navigation.navigate('BlogPostDetail', { 
-          postId: notification.reference_id 
+      // Handle blog post notifications
+      if (notification.type === 'blog_post' && notification.blog_post) {
+        navigation.navigate('BlogPostDetail', {
+          postId: notification.blog_post.id,
+          post: notification.blog_post // Pass the blog post data
         });
       } else {
-        // For other notification types, just stay on the notifications screen
         console.log('No specific navigation for notification type:', notification.type);
       }
 
@@ -333,13 +348,42 @@ export class NotificationService {
     // Request permission and register for push notifications
     const token = await this.registerForPushNotifications();
     
-    // Set up notification handler
-    Notifications.addNotificationResponseReceivedListener(response => {
-      const data = response.notification.request.content.data;
-      if (data.type === 'blog_post' && data.post_id) {
-        // Navigate to the blog post
-        // You'll need to implement this navigation logic
+    // Set up notification handler for when app is in foreground
+    Notifications.setNotificationHandler({
+      handleNotification: async (notification) => {
+        const data = notification.request.content.data;
+        
+        // Configure notification presentation
+        return {
+          shouldShowAlert: true,
+          shouldPlaySound: true,
+          shouldSetBadge: true,
+          // Show image if available
+          shouldPresentImage: !!data.featured_image,
+        };
+      },
+    });
+
+    // Handle notification taps
+    Notifications.addNotificationResponseReceivedListener(async (response) => {
+      try {
+        const data = response.notification.request.content.data;
+        
+        if (data.type === 'blog_post' && data.blog_post?.id) {
+          // Navigate to the blog post
+          // We'll need to access navigation here, so we'll use a navigation ref
+          if (navigationRef.current) {
+            navigationRef.current.navigate('BlogPostDetail', {
+              postId: data.blog_post.id,
+              post: data.blog_post // Pass the blog post data if available
+            });
+          }
+        }
+      } catch (error) {
+        console.error('Error handling notification response:', error);
       }
     });
+
+    return token;
   }
 } 

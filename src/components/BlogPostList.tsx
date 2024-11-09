@@ -1,83 +1,110 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { fetchBlogPosts } from '../services/AuthService';
+import { View, Text, FlatList, StyleSheet, ActivityIndicator, RefreshControl } from 'react-native';
+import { BlogPostCard } from './BlogPostCard';
 import { Post } from '../types';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../types';
+import { fetchBlogPosts } from '../services/AuthService';
 
-type BlogPostListProps = {
-  navigation: StackNavigationProp<RootStackParamList, 'Home'>;
-};
+interface BlogPostListProps {
+  navigation: any;
+}
 
-const BlogPostList = ({ navigation }: BlogPostListProps) => {
+export const BlogPostList = ({ navigation }: BlogPostListProps) => {
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
-
-  useEffect(() => {
-    loadPosts();
-  }, []);
+  const [error, setError] = useState<string | null>(null);
 
   const loadPosts = async () => {
-    setLoading(true);
     try {
       const fetchedPosts = await fetchBlogPosts();
+      console.log('Fetched posts:', fetchedPosts);
       setPosts(fetchedPosts);
+      setError(null);
     } catch (err) {
       console.error('Error loading posts:', err);
       setError(err instanceof Error ? err.message : 'Failed to load posts');
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
-  const onRefresh = async () => {
-    setRefreshing(true);
-    await loadPosts();
-    setRefreshing(false);
+  useEffect(() => {
+    loadPosts();
+  }, []);
+
+  const handlePostPress = (post: Post) => {
+    navigation.navigate('BlogPostDetail', { post });
   };
 
   if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" />;
+    return (
+      <View style={styles.center}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
   }
 
   if (error) {
-    return <Text style={styles.error}>{error}</Text>;
+    return (
+      <View style={styles.center}>
+        <Text style={styles.error}>{error}</Text>
+      </View>
+    );
   }
 
   return (
     <FlatList
+      style={styles.container}
       data={posts}
-      keyExtractor={(item) => item.id.toString()}
       renderItem={({ item }) => (
-        <TouchableOpacity onPress={() => navigation.navigate('BlogPostDetail', { post: item })}>
-          <View style={styles.postContainer}>
-            <Text style={styles.title}>{item.title.rendered}</Text>
-            <Text>{item.excerpt.rendered.replace(/<[^>]+>/g, '')}</Text>
-          </View>
-        </TouchableOpacity>
+        <BlogPostCard
+          post={item}
+          onPress={() => handlePostPress(item)}
+        />
       )}
-      refreshing={refreshing}
-      onRefresh={onRefresh}
+      keyExtractor={(item) => item.id.toString()}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={() => {
+            setRefreshing(true);
+            loadPosts();
+          }}
+        />
+      }
+      contentContainerStyle={styles.listContent}
+      ListEmptyComponent={() => (
+        <View style={styles.center}>
+          <Text style={styles.emptyText}>No blog posts available</Text>
+        </View>
+      )}
     />
   );
 };
 
 const styles = StyleSheet.create({
-  postContainer: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+  container: {
+    flex: 1,
+    backgroundColor: '#f5f5f5',
   },
-  title: {
-    fontSize: 18,
-    fontWeight: 'bold',
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  listContent: {
+    padding: 16,
   },
   error: {
     color: 'red',
+    fontSize: 16,
     textAlign: 'center',
   },
-});
-
-export default BlogPostList; 
+  emptyText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+  },
+}); 
