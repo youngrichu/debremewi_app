@@ -7,6 +7,7 @@ export interface User {
 export interface Post {
   id: number;
   date?: string;
+  link?: string;
   title: {
     rendered: string;
   };

@@ -1,7 +1,16 @@
-import React, { useState } from 'react';
-import { View, ScrollView, Text, Image, StyleSheet, Dimensions, ActivityIndicator, Linking, TouchableOpacity } from 'react-native';
+import React, { useState, useCallback, memo } from 'react';
+import { View, ScrollView, Text, Image, StyleSheet, Dimensions, ActivityIndicator, Linking, Share, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { Post } from '../types';
-import HTMLView from 'react-native-htmlview';
+import RenderHTML, { 
+  HTMLElementModel,
+  HTMLContentModel,
+  CustomRendererProps,
+  TRenderEngineConfig,
+  TNode
+} from 'react-native-render-html';
+import ImageView from 'react-native-image-viewing';
+import { Ionicons } from '@expo/vector-icons';
+import { decode } from 'html-entities';
 
 interface BlogPostDetailProps {
   route: {
@@ -11,223 +20,194 @@ interface BlogPostDetailProps {
   };
 }
 
+interface CustomFigureProps extends CustomRendererProps<TRenderEngineConfig> {
+  onImagePress: (url: string) => void;
+}
+
+const CustomFigureRenderer = memo(({ TDefaultRenderer, tnode, onImagePress, ...props }: CustomFigureProps) => {
+  const { width } = useWindowDimensions();
+  const [isLoading, setIsLoading] = useState(true);
+
+  const imgElement = tnode.children?.find(
+    (child: TNode) => child.tagName === 'img'
+  );
+  
+  if (!imgElement) return null;
+
+  const imgSrc = imgElement.attributes.src;
+  const imgAlt = imgElement.attributes.alt || '';
+  const caption = tnode.children?.find(
+    (child: TNode) => child.tagName === 'figcaption'
+  );
+  
+  const imgWidth = parseInt(imgElement.attributes.width) || width - 32;
+  const imgHeight = parseInt(imgElement.attributes.height) || imgWidth * 0.75;
+  const aspectRatio = imgWidth / imgHeight;
+  
+  return (
+    <View style={styles.figureContainer}>
+      <TouchableOpacity 
+        onPress={() => onImagePress(imgSrc)}
+        style={styles.imageWrapper}
+      >
+        <Image
+          source={{ uri: imgSrc }}
+          style={[
+            styles.contentImage,
+            {
+              width: width - 32,
+              height: (width - 32) / aspectRatio,
+            }
+          ]}
+          resizeMode="cover"
+          accessibilityLabel={imgAlt}
+          onLoadStart={() => setIsLoading(true)}
+          onLoadEnd={() => setIsLoading(false)}
+        />
+        {isLoading && (
+          <ActivityIndicator 
+            style={styles.imageLoader}
+            size="large"
+            color="#0000ff"
+          />
+        )}
+      </TouchableOpacity>
+      {caption && (
+        <View style={styles.figcaption}>
+          <TDefaultRenderer tnode={caption} {...props} />
+        </View>
+      )}
+    </View>
+  );
+});
+
 export default function BlogPostDetail({ route }: BlogPostDetailProps) {
+  const { width } = useWindowDimensions();
   const { post } = route.params;
-  const [imageLoading, setImageLoading] = useState(true);
-  const { width } = Dimensions.get('window');
+  const [isImageViewVisible, setIsImageViewVisible] = useState(false);
+  const [selectedImageUrl, setSelectedImageUrl] = useState<string>('');
 
   const stripHtmlAndDecode = (html: string): string => {
     if (!html) return '';
-    const decoded = html.replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&quot;/g, '"')
-      .replace(/&#039;/g, "'")
-      .replace(/&hellip;/g, '...')
-      .replace(/&nbsp;/g, ' ');
-    return decoded.replace(/<[^>]*>/g, '');
+    return decode(html.replace(/<[^>]*>/g, ''));
   };
 
-  const getFeaturedImageUrl = (): string | undefined => {
-    if (post._embedded?.['wp:featuredmedia']?.[0]?.source_url) {
-      return post._embedded['wp:featuredmedia'][0].source_url;
+  const handleShare = async () => {
+    try {
+      await Share.share({
+        message: `${stripHtmlAndDecode(post.title.rendered)}\n\n${stripHtmlAndDecode(post.excerpt.rendered)}\n\n${post.link}`,
+        title: stripHtmlAndDecode(post.title.rendered),
+        url: post.link,
+      });
+    } catch (error) {
+      console.error('Error sharing:', error);
     }
-    return undefined;
   };
 
-  const imageUrl = getFeaturedImageUrl();
+  const handleImagePress = useCallback((imageUrl: string) => {
+    setSelectedImageUrl(imageUrl);
+    setIsImageViewVisible(true);
+  }, []);
 
-  const processContent = (content: string): string => {
-    let processedContent = content
-      .replace(/<figure[^>]*>.*?<\/figure>/, '')
-      .replace(/\s*<p>\s*/g, '<p>')
-      .replace(/\s*<\/p>\s*/g, '</p>')
-      .replace(/\n\s*\n/g, '\n')
-      .replace(/\s+/g, ' ')
-      .trim();
-    
-    return processedContent;
+  const renderers = {
+    figure: useCallback((props: CustomRendererProps<TRenderEngineConfig>) => (
+      <CustomFigureRenderer {...props} onImagePress={handleImagePress} />
+    ), [handleImagePress])
   };
 
-  const renderNode = (node: any, index: number) => {
-    switch (node.name) {
-      case 'figure':
-        const imgNode = node.children?.find((child: any) => child.name === 'img');
-        const figcaptionNode = node.children?.find((child: any) => child.name === 'figcaption');
-        
-        if (imgNode?.attribs?.src) {
-          const width = imgNode.attribs.width || Dimensions.get('window').width - 32;
-          const height = imgNode.attribs.height || width * 0.6;
-          
-          return (
-            <View key={index} style={styles.figureContainer}>
-              <Image
-                source={{ uri: imgNode.attribs.src }}
-                style={[styles.contentImage, { aspectRatio: width / height }]}
-                resizeMode="contain"
-              />
-              {figcaptionNode && (
-                <View style={styles.figcaption}>
-                  <Text style={styles.figcaptionText}>
-                    {'Photo by '}
-                    {figcaptionNode.children.map((child: any, i: number) => {
-                      if (child.name === 'a') {
-                        return (
-                          <Text 
-                            key={i}
-                            style={styles.figcaptionLink}
-                            onPress={() => Linking.openURL(child.attribs.href)}
-                          >
-                            {child.children[0].data}
-                          </Text>
-                        );
-                      }
-                      return child.data || '';
-                    })}
-                  </Text>
-                </View>
-              )}
-            </View>
-          );
-        }
-        break;
+  const customHTMLElementModels = {
+    figure: HTMLElementModel.fromCustomModel({
+      tagName: 'figure',
+      contentModel: HTMLContentModel.block,
+      isVoid: false,
+      renderDirection: 'ltr',
+    })
+  };
 
-      case 'a':
-        return (
-          <TouchableOpacity 
-            key={index}
-            onPress={() => Linking.openURL(node.attribs.href)}
-            style={styles.linkContainer}
-          >
-            <Text style={styles.linkText}>
-              {node.children[0].data}
-            </Text>
-          </TouchableOpacity>
-        );
-
-      case 'p':
-        return (
-          <Text key={index} style={styles.paragraph}>
-            {node.children.map((child: any, i: number) => {
-              if (child.name === 'a') {
-                return (
-                  <TouchableOpacity 
-                    key={i}
-                    onPress={() => Linking.openURL(child.attribs.href)}
-                    style={styles.inlineLinkContainer}
-                  >
-                    <Text style={styles.linkText}>
-                      {child.children[0].data}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              }
-              return child.data || '';
-            })}
-          </Text>
-        );
-
-      case 'img':
-        const width = node.attribs.width || Dimensions.get('window').width - 32;
-        const height = node.attribs.height || width * 0.6;
-        
-        return (
-          <View key={index} style={styles.contentImageContainer}>
-            <Image
-              source={{ uri: node.attribs.src }}
-              style={[styles.contentImage, { aspectRatio: width / height }]}
-              resizeMode="contain"
-            />
-          </View>
-        );
-    }
+  const tagsStyles = {
+    body: {
+      fontSize: 16,
+      lineHeight: 24,
+      color: '#333',
+    },
+    figure: {
+      margin: 0,
+      padding: 0,
+    },
+    figcaption: {
+      fontSize: 14,
+      color: '#666',
+      fontStyle: 'italic' as const,
+      textAlign: 'center' as const,
+      padding: 8,
+      backgroundColor: '#f9f9f9',
+    },
+    a: {
+      color: '#2196F3',
+      textDecorationLine: 'underline' as const,
+    },
+    p: {
+      marginVertical: 8,
+    },
+    img: {
+      marginVertical: 8,
+    },
   };
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
-      <View style={styles.header}>
-        <Text style={styles.title}>
-          {stripHtmlAndDecode(post.title.rendered)}
-        </Text>
-        
-        <View style={styles.meta}>
-          <Text style={styles.date}>
-            {post.date ? new Date(post.date).toLocaleDateString() : ''}
+    <>
+      <ScrollView 
+        style={styles.container} 
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <View style={styles.header}>
+          <Text style={styles.title}>
+            {stripHtmlAndDecode(post.title.rendered)}
           </Text>
-          {post._embedded?.author?.[0]?.name && (
-            <Text style={styles.author}>
-              By {post._embedded.author[0].name}
+          
+          <View style={styles.meta}>
+            <Text style={styles.date}>
+              {post.date ? new Date(post.date).toLocaleDateString() : ''}
             </Text>
-          )}
-        </View>
-      </View>
-
-      {imageUrl && (
-        <View style={styles.featuredImageContainer}>
-          <Image
-            source={{ uri: imageUrl }}
-            style={styles.featuredImage}
-            resizeMode="cover"
-            onLoadStart={() => setImageLoading(true)}
-            onLoadEnd={() => setImageLoading(false)}
-          />
-          {imageLoading && (
-            <View style={styles.imageLoader}>
-              <ActivityIndicator size="large" color="#0000ff" />
+            <View style={styles.metaRight}>
+              {post._embedded?.author?.[0]?.name && (
+                <Text style={styles.author}>
+                  By {post._embedded.author[0].name}
+                </Text>
+              )}
+              <TouchableOpacity onPress={handleShare} style={styles.shareButton}>
+                <Ionicons name="share-outline" size={24} color="#666" />
+              </TouchableOpacity>
             </View>
-          )}
+          </View>
         </View>
-      )}
-      
-      <View style={styles.content}>
-        <HTMLView
-          value={processContent(post.content.rendered)}
-          renderNode={renderNode}
-          stylesheet={htmlStyles}
-        />
-      </View>
-    </ScrollView>
+        
+        <View style={styles.content}>
+          <RenderHTML
+            contentWidth={width}
+            source={{ html: post.content.rendered }}
+            renderers={renderers}
+            customHTMLElementModels={customHTMLElementModels}
+            tagsStyles={tagsStyles}
+            enableExperimentalBRCollapsing
+            enableExperimentalMarginCollapsing
+          />
+        </View>
+      </ScrollView>
+
+      <ImageView
+        images={[{ uri: selectedImageUrl }]}
+        imageIndex={0}
+        visible={isImageViewVisible}
+        onRequestClose={() => setIsImageViewVisible(false)}
+        swipeToCloseEnabled={true}
+        doubleTapToZoomEnabled={true}
+        presentationStyle="overFullScreen"
+      />
+    </>
   );
 }
-
-const htmlStyles = StyleSheet.create({
-  div: {
-    marginVertical: 0,
-    paddingVertical: 0,
-  },
-  p: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: '#333',
-    marginTop: 0,
-    marginBottom: 8,
-    paddingVertical: 0,
-  },
-  h1: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#333',
-    marginTop: 16,
-    marginBottom: 8,
-    paddingVertical: 0,
-  },
-  h2: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#333',
-    marginTop: 16,
-    marginBottom: 8,
-    paddingVertical: 0,
-  },
-  h3: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-    marginTop: 16,
-    marginBottom: 8,
-    paddingVertical: 0,
-  },
-});
 
 const styles = StyleSheet.create({
   container: {
@@ -250,6 +230,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
+  metaRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  shareButton: {
+    marginLeft: 16,
+    padding: 4,
+  },
   date: {
     fontSize: 14,
     color: '#666',
@@ -258,22 +246,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     fontStyle: 'italic',
-  },
-  featuredImageContainer: {
-    width: '100%',
-    height: 250,
-    backgroundColor: '#f5f5f5',
-    marginBottom: 24,
-  },
-  featuredImage: {
-    width: '100%',
-    height: '100%',
-  },
-  imageLoader: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255,255,255,0.8)',
   },
   content: {
     padding: 16,
@@ -288,19 +260,30 @@ const styles = StyleSheet.create({
   },
   figureContainer: {
     width: '100%',
-    marginVertical: 8,
-    backgroundColor: '#f5f5f5',
-    borderRadius: 4,
+    marginVertical: 16,
+    backgroundColor: '#fff',
+    borderRadius: 8,
     overflow: 'hidden',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  imageWrapper: {
+    width: '100%',
+    backgroundColor: '#f5f5f5',
+    position: 'relative',
   },
   contentImage: {
     width: '100%',
-    height: undefined,
+    backgroundColor: '#f5f5f5',
   },
   figcaption: {
-    padding: 8,
-    backgroundColor: '#f9f9f9',
-    marginBottom: 0,
+    padding: 12,
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderTopColor: '#f0f0f0',
   },
   figcaptionText: {
     fontSize: 14,
@@ -340,5 +323,8 @@ const styles = StyleSheet.create({
     marginTop: 0,
     marginBottom: 8,
     paddingVertical: 0,
+  },
+  scrollContent: {
+    flexGrow: 1,
   },
 }); 
