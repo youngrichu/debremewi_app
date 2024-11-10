@@ -18,6 +18,8 @@ import { Event } from '../types';
 import { format } from 'date-fns';
 import * as Calendar from 'expo-calendar';
 import { useNavigation } from '@react-navigation/native';
+import RenderHtml from 'react-native-render-html';
+import { useWindowDimensions } from 'react-native';
 
 interface EventDetailsScreenProps {
   route: {
@@ -32,6 +34,7 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigation = useNavigation();
+  const { width } = useWindowDimensions();
 
   const formatContent = (content: string): string => {
     return content
@@ -210,6 +213,50 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
     }
   };
 
+  const tagsStyles = {
+    body: {
+      fontFamily: undefined, // Use default system font
+      fontSize: 16,
+      lineHeight: 24,
+      color: '#444',
+    },
+    p: {
+      marginBottom: 16,
+    },
+    h1: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      marginVertical: 12,
+      color: '#333',
+    },
+    h2: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      marginVertical: 10,
+      color: '#333',
+    },
+    h3: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginVertical: 8,
+      color: '#333',
+    },
+    a: {
+      color: '#2196F3',
+      textDecorationLine: 'underline',
+    },
+    ul: {
+      marginBottom: 16,
+    },
+    li: {
+      marginBottom: 8,
+    },
+    img: {
+      borderRadius: 8,
+      marginVertical: 8,
+    },
+  };
+
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
@@ -290,7 +337,22 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
 
         <View style={styles.descriptionContainer}>
           <Text style={styles.descriptionTitle}>Description</Text>
-          <Text style={styles.description}>{event.content}</Text>
+          <RenderHtml
+            contentWidth={width - 32} // Account for padding
+            source={{
+              html: event.content
+            }}
+            tagsStyles={tagsStyles}
+            renderersProps={{
+              img: {
+                enableExperimentalPercentWidth: true,
+              },
+            }}
+            defaultTextProps={{
+              selectable: true, // Makes text selectable
+            }}
+            systemFonts={undefined} // Use system default fonts
+          />
         </View>
       </View>
     </ScrollView>
@@ -402,10 +464,5 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 12,
     color: '#333',
-  },
-  description: {
-    fontSize: 16,
-    lineHeight: 24,
-    color: '#444',
   },
 });

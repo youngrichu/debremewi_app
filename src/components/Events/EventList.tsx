@@ -23,13 +23,18 @@ export const EventList: React.FC<EventListProps> = ({
   onRefresh,
   loading,
 }) => {
+  // Sort events by date in descending order (newest first)
+  const sortedEvents = [...events].sort((a, b) => 
+    new Date(b.date).getTime() - new Date(a.date).getTime()
+  );
+
   const renderItem = ({ item }: { item: Event }) => (
     <EventCard event={item} onPress={() => onEventPress(item.id)} />
   );
 
   return (
     <FlatList
-      data={events}
+      data={sortedEvents}
       renderItem={renderItem}
       keyExtractor={(item) => item.id.toString()}
       refreshControl={

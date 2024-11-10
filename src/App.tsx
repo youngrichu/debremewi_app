@@ -11,7 +11,8 @@ LogBox.ignoreLogs([
   'Support for defaultProps will be removed',
   'TRenderEngineProvider:',
   'MemoizedTNodeRenderer:',
-  'TNodeChildrenRenderer:'
+  'TNodeChildrenRenderer:',
+  'bound renderChildren:'
 ]);
 
 function AppContent() {
