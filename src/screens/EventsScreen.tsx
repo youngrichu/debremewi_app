@@ -367,7 +367,10 @@ export default function EventsScreen() {
   };
 
   const handleEventPress = (eventId: number) => {
-    navigation.navigate('EventDetails', { eventId });
+    navigation.navigate('HomeStack', {
+      screen: 'EventDetails',
+      params: { eventId }
+    });
   };
 
   const handleViewModeChange = (mode: 'month' | 'week' | 'day') => {

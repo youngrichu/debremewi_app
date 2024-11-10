@@ -38,12 +38,14 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onPress }) => {
             </Text>
           </View>
 
-          <View style={styles.metaItem}>
-            <Ionicons name="location" size={16} color="#666" />
-            <Text style={styles.metaText} numberOfLines={1}>
-              {event.location}
-            </Text>
-          </View>
+          {event.location && (
+            <View style={styles.metaItem}>
+              <Ionicons name="location" size={16} color="#666" />
+              <Text style={styles.metaText} numberOfLines={1}>
+                {event.location}
+              </Text>
+            </View>
+          )}
         </View>
       </View>
     </TouchableOpacity>
@@ -55,11 +57,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 8,
     marginBottom: 16,
-    elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    elevation: 3,
   },
   image: {
     width: '100%',
@@ -72,18 +74,19 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '600',
     marginBottom: 8,
   },
   metaContainer: {
+    flexDirection: 'column',
     gap: 8,
   },
   metaItem: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 8,
   },
   metaText: {
-    marginLeft: 8,
     color: '#666',
     fontSize: 14,
   },

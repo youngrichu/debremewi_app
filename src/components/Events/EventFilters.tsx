@@ -7,6 +7,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { EventCategory } from '../../types';
+import { Ionicons } from '@expo/vector-icons';
 
 interface EventFiltersProps {
   categories: EventCategory[];
@@ -23,34 +24,36 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
   viewMode,
   onViewModeChange,
 }) => {
-  const viewModes = [
-    { label: 'Month', value: 'month' },
-    { label: 'Week', value: 'week' },
-    { label: 'Day', value: 'day' },
-  ] as const;
-
   return (
     <View style={styles.container}>
       <View style={styles.viewModeContainer}>
-        {viewModes.map((mode) => (
-          <TouchableOpacity
-            key={mode.value}
-            style={[
-              styles.viewModeButton,
-              viewMode === mode.value && styles.viewModeButtonActive,
-            ]}
-            onPress={() => onViewModeChange(mode.value)}
-          >
-            <Text
-              style={[
-                styles.viewModeText,
-                viewMode === mode.value && styles.viewModeTextActive,
-              ]}
-            >
-              {mode.label}
-            </Text>
-          </TouchableOpacity>
-        ))}
+        <TouchableOpacity
+          style={[styles.viewModeButton, viewMode === 'month' && styles.activeViewMode]}
+          onPress={() => onViewModeChange('month')}
+        >
+          <Ionicons name="calendar" size={20} color={viewMode === 'month' ? '#2196F3' : '#666'} />
+          <Text style={[styles.viewModeText, viewMode === 'month' && styles.activeViewModeText]}>
+            Month
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.viewModeButton, viewMode === 'week' && styles.activeViewMode]}
+          onPress={() => onViewModeChange('week')}
+        >
+          <Ionicons name="calendar-outline" size={20} color={viewMode === 'week' ? '#2196F3' : '#666'} />
+          <Text style={[styles.viewModeText, viewMode === 'week' && styles.activeViewModeText]}>
+            Week
+          </Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.viewModeButton, viewMode === 'day' && styles.activeViewMode]}
+          onPress={() => onViewModeChange('day')}
+        >
+          <Ionicons name="today" size={20} color={viewMode === 'day' ? '#2196F3' : '#666'} />
+          <Text style={[styles.viewModeText, viewMode === 'day' && styles.activeViewModeText]}>
+            Day
+          </Text>
+        </TouchableOpacity>
       </View>
 
       <ScrollView
@@ -59,35 +62,26 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
         style={styles.categoriesContainer}
       >
         <TouchableOpacity
-          style={[
-            styles.categoryChip,
-            !selectedCategory && styles.categoryChipActive,
-          ]}
+          style={[styles.categoryButton, !selectedCategory && styles.activeCategory]}
           onPress={() => onCategorySelect(null)}
         >
-          <Text
-            style={[
-              styles.categoryText,
-              !selectedCategory && styles.categoryTextActive,
-            ]}
-          >
+          <Text style={[styles.categoryText, !selectedCategory && styles.activeCategoryText]}>
             All
           </Text>
         </TouchableOpacity>
-
         {categories.map((category) => (
           <TouchableOpacity
             key={category.id}
             style={[
-              styles.categoryChip,
-              selectedCategory === category.slug && styles.categoryChipActive,
+              styles.categoryButton,
+              selectedCategory === category.id.toString() && styles.activeCategory,
             ]}
-            onPress={() => onCategorySelect(category.slug)}
+            onPress={() => onCategorySelect(category.id.toString())}
           >
             <Text
               style={[
                 styles.categoryText,
-                selectedCategory === category.slug && styles.categoryTextActive,
+                selectedCategory === category.id.toString() && styles.activeCategoryText,
               ]}
             >
               {category.name}
@@ -101,47 +95,52 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
     backgroundColor: '#fff',
+    paddingVertical: 8,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
   viewModeContainer: {
     flexDirection: 'row',
-    marginBottom: 16,
+    justifyContent: 'space-around',
+    paddingHorizontal: 16,
+    marginBottom: 8,
   },
   viewModeButton: {
-    flex: 1,
-    paddingVertical: 8,
+    flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 4,
+    padding: 8,
+    borderRadius: 20,
+    gap: 4,
   },
-  viewModeButtonActive: {
-    backgroundColor: '#2196F3',
+  activeViewMode: {
+    backgroundColor: '#E3F2FD',
   },
   viewModeText: {
     color: '#666',
+    fontSize: 14,
   },
-  viewModeTextActive: {
-    color: '#fff',
+  activeViewModeText: {
+    color: '#2196F3',
   },
   categoriesContainer: {
-    flexDirection: 'row',
+    paddingHorizontal: 16,
   },
-  categoryChip: {
+  categoryButton: {
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: '#f0f0f0',
     marginRight: 8,
+    backgroundColor: '#f5f5f5',
   },
-  categoryChipActive: {
+  activeCategory: {
     backgroundColor: '#2196F3',
   },
   categoryText: {
     color: '#666',
+    fontSize: 14,
   },
-  categoryTextActive: {
+  activeCategoryText: {
     color: '#fff',
   },
 }); 
