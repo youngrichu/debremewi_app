@@ -1,81 +1,56 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
+  Text,
   StyleSheet,
-  ActivityIndicator,
   FlatList,
-  RefreshControl,
+  TouchableOpacity,
+  ActivityIndicator,
+  Image,
 } from 'react-native';
-import { Post } from '../types';
-import { BlogPostCard } from '../components/BlogPostCard';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp, CompositeNavigationProp } from '@react-navigation/native';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../types';
+import { Post } from '../types';
 import { API_URL } from '../config';
+import { RootStackParamList } from '../types';
 
-type BlogPostsScreenNavigationProp = StackNavigationProp<RootStackParamList, 'BlogPosts'>;
+type BlogPostsScreenNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<RootStackParamList, 'BlogPosts'>,
+  StackNavigationProp<RootStackParamList>
+>;
 
 export default function BlogPostsScreen() {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [refreshing, setRefreshing] = useState(false);
-  const [page, setPage] = useState(1);
-  const [hasMore, setHasMore] = useState(true);
   const navigation = useNavigation<BlogPostsScreenNavigationProp>();
-
-  const loadPosts = async (pageNumber: number = 1, shouldRefresh: boolean = false) => {
-    try {
-      if (shouldRefresh) {
-        setRefreshing(true);
-      }
-      const response = await fetch(
-        `${API_URL}/wp-json/wp/v2/posts?_embed&per_page=10&page=${pageNumber}`
-      );
-      const data = await response.json();
-      
-      if (data.length < 10) {
-        setHasMore(false);
-      }
-
-      if (shouldRefresh || pageNumber === 1) {
-        setPosts(data);
-      } else {
-        setPosts((prevPosts) => [...prevPosts, ...data]);
-      }
-    } catch (error) {
-      console.error('Error loading posts:', error);
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
-  };
+  const [loading, setLoading] = useState(true);
+  const [posts, setPosts] = useState<Post[]>([]);
 
   useEffect(() => {
     loadPosts();
   }, []);
 
-  const handleRefresh = () => {
-    setPage(1);
-    setHasMore(true);
-    loadPosts(1, true);
-  };
-
-  const handleLoadMore = () => {
-    if (!loading && hasMore) {
-      const nextPage = page + 1;
-      setPage(nextPage);
-      loadPosts(nextPage);
+  const loadPosts = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch(`${API_URL}/wp-json/wp/v2/posts?_embed`);
+      const data = await response.json();
+      setPosts(data);
+    } catch (error) {
+      console.error('Error loading posts:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const renderItem = ({ item }: { item: Post }) => (
-    <BlogPostCard
-      post={item}
-      onPress={() => navigation.navigate('BlogPostDetail', { post: item })}
-    />
-  );
+  const handlePostPress = (post: Post) => {
+    // Navigate to HomeStack first, then to BlogPostDetail
+    navigation.navigate('HomeStack', {
+      screen: 'BlogPostDetail',
+      params: { post }
+    });
+  };
 
-  if (loading && !refreshing) {
+  if (loading) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#2196F3" />
@@ -83,42 +58,107 @@ export default function BlogPostsScreen() {
     );
   }
 
+  const renderItem = ({ item }: { item: Post }) => (
+    <TouchableOpacity
+      style={styles.postCard}
+      onPress={() => handlePostPress(item)}
+    >
+      {item._embedded?.['wp:featuredmedia']?.[0]?.source_url && (
+        <Image
+          source={{ uri: item._embedded['wp:featuredmedia'][0].source_url }}
+          style={styles.postImage}
+        />
+      )}
+      <View style={styles.postContent}>
+        <Text style={styles.title}>{item.title.rendered}</Text>
+        <Text style={styles.excerpt} numberOfLines={2}>
+          {item.excerpt.rendered.replace(/<[^>]*>/g, '')}
+        </Text>
+        <View style={styles.postFooter}>
+          <Text style={styles.date}>
+            {new Date(item.date || '').toLocaleDateString()}
+          </Text>
+          <Text style={styles.readMore}>Read More →</Text>
+        </View>
+      </View>
+    </TouchableOpacity>
+  );
+
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={posts}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.listContainer}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
-        }
-        onEndReached={handleLoadMore}
-        onEndReachedThreshold={0.5}
-        ListFooterComponent={
-          loading && hasMore ? (
-            <ActivityIndicator size="small" color="#2196F3" style={styles.footer} />
-          ) : null
-        }
-      />
-    </View>
+    <FlatList
+      style={styles.container}
+      contentContainerStyle={styles.listContent}
+      data={posts}
+      keyExtractor={(item) => item.id.toString()}
+      renderItem={renderItem}
+      showsVerticalScrollIndicator={false}
+      ItemSeparatorComponent={() => <View style={styles.separator} />}
+    />
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: '#fff',
+  },
+  listContent: {
+    padding: 16,
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  listContainer: {
+  postCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  postImage: {
+    width: '100%',
+    height: 200,
+    backgroundColor: '#f5f5f5',
+  },
+  postContent: {
     padding: 16,
   },
-  footer: {
-    paddingVertical: 20,
+  title: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 8,
+  },
+  excerpt: {
+    fontSize: 14,
+    color: '#666',
+    lineHeight: 20,
+    marginBottom: 12,
+  },
+  postFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  date: {
+    fontSize: 12,
+    color: '#999',
+  },
+  readMore: {
+    fontSize: 14,
+    color: '#2196F3',
+    fontWeight: '600',
+  },
+  separator: {
+    height: 16,
   },
 }); 

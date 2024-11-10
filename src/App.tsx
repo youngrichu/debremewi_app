@@ -1,36 +1,18 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { Provider, useDispatch } from 'react-redux';
+import { Provider } from 'react-redux';
 import { store } from './store';
 import AppNavigator from './navigation/AppNavigator';
-import { checkAuth } from './store/authSlice';
-import { LogBox } from 'react-native';
-
-// Ignore specific warnings
-LogBox.ignoreLogs([
-  'Support for defaultProps will be removed',
-  'TRenderEngineProvider:',
-  'MemoizedTNodeRenderer:',
-  'TNodeChildrenRenderer:',
-  'bound renderChildren:'
-]);
-
-function AppContent() {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(checkAuth());
-  }, [dispatch]);
-
-  return <AppNavigator />;
-}
+import { ToastProvider } from 'react-native-toast-notifications';
 
 export default function App() {
   return (
     <Provider store={store}>
-      <NavigationContainer>
-        <AppContent />
-      </NavigationContainer>
+      <ToastProvider>
+        <NavigationContainer>
+          <AppNavigator />
+        </NavigationContainer>
+      </ToastProvider>
     </Provider>
   );
 } 

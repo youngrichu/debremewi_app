@@ -1,4 +1,17 @@
-export interface User {
+export interface UserProfile {
+  id?: number;
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  gender: 'male' | 'female' | 'prefer_not_to_say';
+  christianName?: string;
+  residencyCity: string;
+  isOnboardingComplete: boolean;
+}
+
+export interface User extends UserProfile {
   id?: number;
   username: string;
   email: string;
@@ -92,14 +105,33 @@ export interface EventsState {
 }
 
 export type RootStackParamList = {
+  // Auth & Onboarding
   Login: undefined;
   Register: undefined;
   ForgotPassword: undefined;
+  Onboarding: undefined;
+
+  // Main App Tabs
+  MainTabs: undefined;
+  HomeStack: undefined;
+  Events: undefined;
+  BlogPosts: undefined;
+  Profile: undefined;
+
+  // Nested Screens
   Home: undefined;
   BlogPostDetail: { post: Post };
   Notifications: undefined;
-  Events: undefined;
   EventDetails: { eventId: number };
   EventCalendar: undefined;
-  BlogPosts: undefined;
+  EditProfile: undefined;
+  Community: undefined;
 };
+
+export interface ValidationErrors {
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  residencyCity?: string;
+  christianName?: string;
+}

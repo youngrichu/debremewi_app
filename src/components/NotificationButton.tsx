@@ -3,8 +3,8 @@ import { TouchableOpacity, View, Text, StyleSheet, ActivityIndicator } from 'rea
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
+import { AppDispatch, RootState } from '../store';
 import { fetchNotifications } from '../store/notificationsSlice';
-import { RootState } from '../store';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types';
 
@@ -12,7 +12,7 @@ type NavigationProp = StackNavigationProp<RootStackParamList>;
 
 export const NotificationButton: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const { unreadCount, loading, error } = useSelector((state: RootState) => state.notifications);
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
 
@@ -42,7 +42,9 @@ export const NotificationButton: React.FC = () => {
   return (
     <TouchableOpacity 
       style={styles.container}
-      onPress={() => navigation.navigate('Notifications')}
+      onPress={() => navigation.navigate('HomeStack', {
+        screen: 'Notifications'
+      })}
       disabled={loading}
     >
       {loading ? (

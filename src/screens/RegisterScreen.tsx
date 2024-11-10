@@ -3,6 +3,9 @@ import { View, Text, TextInput, Button, StyleSheet, Alert } from 'react-native';
 import { register, verifyLogin } from '../services/AuthService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StackNavigationProp } from '@react-navigation/stack';
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from '../store/authSlice';
+import { AppDispatch } from '../store';
 
 type RegisterScreenProps = {
   navigation: StackNavigationProp<any>;
@@ -12,6 +15,7 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch<AppDispatch>();
 
   const handleRegister = async () => {
     if (!username.trim() || !password.trim()) {
@@ -26,21 +30,11 @@ export default function RegisterScreen({ navigation }: RegisterScreenProps) {
       // Store the token
       await AsyncStorage.setItem('userToken', response.token);
       
-      // Store the credentials for future use (optional)
-      await AsyncStorage.setItem('userEmail', username);
+      // Dispatch login action to set up auth state and fetch user profile
+      await dispatch(login({ username, password })).unwrap();
       
-      // Verify the login works
-      const loginVerified = await verifyLogin(username, password);
-      if (!loginVerified) {
-        console.warn('Registration successful but login verification failed');
-        Alert.alert(
-          'Warning',
-          'Your account was created but there might be issues logging in later. Please contact support if you experience problems.'
-        );
-      }
-      
-      // Navigate to Home screen
-      navigation.replace('Home');
+      // Navigate to Onboarding (AppNavigator will handle this automatically)
+      // based on isOnboardingComplete flag
     } catch (error) {
       console.error('Registration error:', error);
       Alert.alert(
