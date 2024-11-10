@@ -21,6 +21,10 @@ import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
 import TestToastScreen from '../screens/TestToastScreen';
 import { RootStackParamList } from '../types';
 import { NotificationButton } from '../components/NotificationButton';
+import AboutUsScreen from '../screens/AboutUsScreen';
+import ServicesScreen from '../screens/ServicesScreen';
+import ContactUsScreen from '../screens/ContactUsScreen';
+import MoreMenuScreen from '../screens/MoreMenuScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -44,6 +48,9 @@ function MainTabs() {
               break;
             case 'Profile':
               iconName = focused ? 'person' : 'person-outline';
+              break;
+            case 'More':
+              iconName = focused ? 'menu' : 'menu-outline';
               break;
             default:
               iconName = 'square';
@@ -72,6 +79,19 @@ function MainTabs() {
         options={{ title: 'Blog' }}
       />
       <Tab.Screen name="Profile" component={ProfileScreen} />
+      <Tab.Screen 
+        name="More" 
+        component={MoreStackScreen}
+        options={{
+          tabBarIcon: ({ focused, color, size }) => (
+            <Ionicons 
+              name={focused ? 'menu' : 'menu-outline'} 
+              size={size} 
+              color={color} 
+            />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 }
@@ -87,6 +107,23 @@ function HomeStackScreen() {
       <Stack.Screen name="Notifications" component={NotificationsScreen} />
       <Stack.Screen name="TestToast" component={TestToastScreen} />
     </Stack.Navigator>
+  );
+}
+
+const MoreStack = createStackNavigator();
+
+function MoreStackScreen() {
+  return (
+    <MoreStack.Navigator>
+      <MoreStack.Screen 
+        name="MoreMenu" 
+        component={MoreMenuScreen} 
+        options={{ title: 'More' }}
+      />
+      <MoreStack.Screen name="About Us" component={AboutUsScreen} />
+      <MoreStack.Screen name="Services" component={ServicesScreen} />
+      <MoreStack.Screen name="Contact Us" component={ContactUsScreen} />
+    </MoreStack.Navigator>
   );
 }
 
