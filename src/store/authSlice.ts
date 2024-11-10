@@ -1,172 +1,149 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_URL } from '../config';
 
-import apiClient, { API_ROUTES } from '../api/client';
-import { User } from '../types';
+interface AuthState {
+  isAuthenticated: boolean;
+  user: any | null;
+  loading: boolean;
+  error: string | null;
+  token: string | null;
+}
 
-export const login = createAsyncThunk('auth/login', async ({ username, password }: { username: string; password: string }, { rejectWithValue }) => {
-  try {
-    if (!username || !password) {
-      return rejectWithValue('Please fill in both username and password fields.');
-    }
-    console.log('Attempting to login with:', { username, password });
-    const url = `${apiClient.defaults.baseURL}${API_ROUTES.auth}`;
-    console.log('Full Login URL:', url);
-    console.log('Requesting login with:', {
-      method: 'POST',
-      url,
-      data: { username, password },
-    });
-    const response = await apiClient.post<{ token: string; user: User }>(url, {
-      username,
-      password,
-    });
-    console.log('Login successful:', response.data);
-    const token = response.data.data.jwt;
-    console.log('Extracted token:', token);
-    return {
-      token,
-      user: {
-        email: username,
-        // Add other user properties if needed
-      },
-    };
-  } catch (error) {
-    if (error.response && error.response.data) {
-      console.error('Login error response:', error.response.data);
-      const errorMessage = error.response.data.data?.message || 'Login failed';
-      return rejectWithValue(errorMessage);
-    } else if (error.message) {
-      console.error('Login error:', error.message);
-      return rejectWithValue(error.message);
-    } else {
-      console.error('Login error:', error);
-      return rejectWithValue('An unknown error occurred. Please try again.');
-    }
-  }
-});
+interface LoginResponse {
+  data: {
+    jwt: string;
+    email?: string;
+    id?: string;
+    username?: string;
+  };
+  success: boolean;
+}
 
-export const register = createAsyncThunk('auth/register', async ({ username, password }: { username: string; password: string }, { rejectWithValue }) => {
-  try {
-    if (!username || !password) {
-      return rejectWithValue('Please fill in both username and password fields.');
-    }
-    const url = `${apiClient.defaults.baseURL}${API_ROUTES.register}`;
-    console.log('Attempting to register with:', { email: username, password, AUTH_KEY: 'debremewi' });
-    console.log('Full Register URL:', url);
-    console.log('Requesting registration with:', {
-      method: 'POST',
-      url,
-      data: { email: username, password, AUTH_KEY: 'debremewi' },
-    });
+const initialState: AuthState = {
+  isAuthenticated: false,
+  user: null,
+  loading: false,
+  error: null,
+  token: null,
+};
+
+export const login = createAsyncThunk(
+  'auth/login',
+  async ({ username, password }: { username: string; password: string }, { rejectWithValue }) => {
     try {
-      const response = await apiClient.post<{ token: string; user: User }>(url, {
-        AUTH_KEY: 'debremewi',
-        email: username,
-        password,
-      });
-      console.log('Registration successful:', response.data);
-      // Dispatch login action after successful registration
-      const loginResponse = await apiClient.post<{ token: string; user: User }>(`${apiClient.defaults.baseURL}${API_ROUTES.auth}`, {
-        username,
-        password,
-      });
-      console.log('Auto-login successful:', loginResponse.data);
-      return {
-        token: loginResponse.data.token,
-        user: {
-          email: username,
-          // Add other user properties if needed
+      const response = await fetch(`${API_URL}/wp-json/simple-jwt-login/v1/auth`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data: LoginResponse = await response.json();
+      console.log('Login Response:', data);
+
+      if (!data.success || !data.data.jwt) {
+        return rejectWithValue('Login failed');
+      }
+
+      // Store the token
+      await AsyncStorage.setItem('userToken', data.data.jwt);
+      
+      // Create user object from response
+      const user = {
+        id: data.data.id,
+        email: data.data.email,
+        username: data.data.username,
       };
-    } catch (error) {
-      if (error.response) {
-        console.error('Registration error response:', error.response.data);
-        const errorMessage = error.response.data.message || 'Registration failed';
-        if (error.response.data.data && error.response.data.data.errorCode) {
-          switch (error.response.data.data.errorCode) {
-            case 38:
-              return rejectWithValue('User already exists. Please try logging in.');
-            // Add more cases as needed for different error codes
-            default:
-              return rejectWithValue(errorMessage);
-          }
-        }
-        return rejectWithValue(errorMessage);
-      } else {
-        console.error('Registration error:', error.message);
-      }
-      if (error.response) {
-        console.error('Registration error response:', error.response.data);
-        return rejectWithValue(error.response.data.message || 'Registration failed');
-      } else {
-        console.error('Registration error:', error.message);
-        return rejectWithValue('Network error. Please try again.');
-      }
+      await AsyncStorage.setItem('user', JSON.stringify(user));
+
+      return {
+        token: data.data.jwt,
+        user,
+      };
+    } catch (error: any) {
+      console.error('Login error:', error);
+      return rejectWithValue(error.message || 'Login failed');
     }
-    return {
-      token: response.data.data.jwt,
-      user: {
-        email: username,
-        // Add other user properties if needed
-      },
-    };
-  } catch (error) {
-    console.error('Registration error:', error);
-    return rejectWithValue(error.response?.data || 'Registration failed');
   }
-});
+);
+
+export const checkAuth = createAsyncThunk(
+  'auth/checkAuth',
+  async (_, { rejectWithValue }) => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const userStr = await AsyncStorage.getItem('user');
+
+      if (!token || !userStr) {
+        return rejectWithValue('No auth token found');
+      }
+
+      const user = JSON.parse(userStr);
+      return { token, user };
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const logout = createAsyncThunk(
+  'auth/logout',
+  async (_, { rejectWithValue }) => {
+    try {
+      await AsyncStorage.removeItem('userToken');
+      await AsyncStorage.removeItem('user');
+      return true;
+    } catch (error: any) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
 const authSlice = createSlice({
   name: 'auth',
-  initialState: {
-    user: null as User | null,
-    token: null as string | null,
-    loading: false,
-    error: null as string | null,
-  } as {
-    user: User | null;
-    token: string | null;
-    loading: boolean;
-    error: string | null;
-  },
-  reducers: {
-    logout: (state) => {
-      state.user = null;
-      state.token = null;
-    },
-  },
+  initialState,
+  reducers: {},
   extraReducers: (builder) => {
     builder
+      // Login
       .addCase(login.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(login.fulfilled, (state, action) => {
-        console.log('Login fulfilled, setting token:', action.payload.token);
-        state.loading = false;
+        state.isAuthenticated = true;
         state.user = action.payload.user;
         state.token = action.payload.token;
-        console.log('Token set in state:', state.token);
+        state.loading = false;
+        state.error = null;
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload || action.error.message || 'Login failed';
+        state.error = action.payload as string;
+        state.isAuthenticated = false;
+        state.user = null;
+        state.token = null;
       })
-      .addCase(register.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(register.fulfilled, (state, action) => {
-        state.loading = false;
+      // Check Auth
+      .addCase(checkAuth.fulfilled, (state, action) => {
+        state.isAuthenticated = true;
         state.user = action.payload.user;
         state.token = action.payload.token;
       })
-      .addCase(register.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload || action.error.message || 'Registration failed';
+      .addCase(checkAuth.rejected, (state) => {
+        state.isAuthenticated = false;
+        state.user = null;
+        state.token = null;
+      })
+      // Logout
+      .addCase(logout.fulfilled, (state) => {
+        state.isAuthenticated = false;
+        state.user = null;
+        state.token = null;
       });
   },
 });
 
-export const { logout } = authSlice.actions;
 export default authSlice.reducer;

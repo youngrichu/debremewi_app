@@ -18,17 +18,36 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCalendarsUsageDescription": "This app needs access to your calendar to add events you're interested in.",
+        "NSRemindersUsageDescription": "This app needs access to your reminders to set event reminders.",
+        "LSApplicationQueriesSchemes": [
+          "calshow"
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.churchapp"
+      "package": "com.anonymous.churchapp",
+      "permissions": [
+        "READ_CALENDAR",
+        "WRITE_CALENDAR"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-calendar",
+        {
+          "calendarPermission": "The app needs to access your calendar to add events."
+        }
+      ]
+    ]
   }
 }
