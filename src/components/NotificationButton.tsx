@@ -4,47 +4,36 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../store';
-import { fetchNotifications } from '../store/notificationsSlice';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../types';
+import { setUnreadCount, setLoading, setError } from '../store/notificationsSlice';
 
-type NavigationProp = StackNavigationProp<RootStackParamList>;
-
-export const NotificationButton: React.FC = () => {
-  const navigation = useNavigation<NavigationProp>();
+export const NotificationButton = () => {
+  const navigation = useNavigation();
   const dispatch = useDispatch<AppDispatch>();
-  const { unreadCount, loading, error } = useSelector((state: RootState) => state.notifications);
+  const notifications = useSelector((state: RootState) => state.notifications);
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+
+  // Safely access notifications state with default values
+  const unreadCount = notifications?.unreadCount ?? 0;
+  const loading = notifications?.loading ?? false;
+  const error = notifications?.error ?? null;
 
   useEffect(() => {
     if (isAuthenticated) {
-      // Initial fetch
-      dispatch(fetchNotifications());
-
-      // Set up periodic refresh
-      const interval = setInterval(() => {
-        dispatch(fetchNotifications());
-      }, 5 * 60 * 1000); // Every 5 minutes
-
-      return () => clearInterval(interval);
+      // Initialize notifications state
+      dispatch(setUnreadCount(0));
+      dispatch(setLoading(false));
+      dispatch(setError(null));
     }
   }, [dispatch, isAuthenticated]);
 
-  if (!isAuthenticated) {
-    return null;
-  }
-
-  // Don't show anything if there's an error (notifications might not be enabled)
-  if (error) {
+  if (!isAuthenticated || error) {
     return null;
   }
 
   return (
     <TouchableOpacity 
       style={styles.container}
-      onPress={() => navigation.navigate('HomeStack', {
-        screen: 'Notifications'
-      })}
+      onPress={() => navigation.navigate('HomeStack', { screen: 'Notifications' })}
       disabled={loading}
     >
       {loading ? (
@@ -73,18 +62,18 @@ const styles = StyleSheet.create({
   container: {
     padding: 8,
     marginRight: 8,
-    position: 'relative',
   },
   badge: {
     position: 'absolute',
-    right: 2,
-    top: 2,
-    backgroundColor: '#FF4444',
+    right: 0,
+    top: 0,
+    backgroundColor: '#FF3B30',
     borderRadius: 10,
     minWidth: 20,
     height: 20,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 4,
   },
   badgeText: {
     color: '#FFF',

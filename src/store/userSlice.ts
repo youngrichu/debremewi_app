@@ -1,49 +1,40 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { User, UserProfile } from '../types';
+import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { ProfileService } from '../services/ProfileService';
 
-interface UserState extends User {
-  loading: boolean;
-  error: string | null;
-  updateSuccess: boolean;
+interface UserState {
+  id: number | null;
+  email: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  phoneNumber: string | null;
+  gender: string | null;
+  christianName: string | null;
+  residencyCity: string | null;
+  isOnboardingComplete: boolean;
 }
 
 const initialState: UserState = {
-  id: undefined,
-  username: '',
-  email: '',
-  firstName: '',
-  lastName: '',
-  phoneNumber: '',
-  gender: 'prefer_not_to_say',
-  christianName: '',
-  residencyCity: '',
+  id: null,
+  email: null,
+  firstName: null,
+  lastName: null,
+  phoneNumber: null,
+  gender: null,
+  christianName: null,
+  residencyCity: null,
   isOnboardingComplete: false,
-  loading: false,
-  error: null,
-  updateSuccess: false
 };
 
+// Async thunk for updating user profile
 export const updateUserProfile = createAsyncThunk(
   'user/updateProfile',
-  async (profileData: Partial<UserProfile>, { rejectWithValue }) => {
+  async (profileData: Partial<UserState>, { rejectWithValue }) => {
     try {
-      const updatedProfile = await ProfileService.updateProfile(profileData);
-      return updatedProfile;
+      const updatedUser = await ProfileService.updateProfile(profileData);
+      return updatedUser;
     } catch (error) {
+      console.error('Profile update error:', error);
       return rejectWithValue(error instanceof Error ? error.message : 'Failed to update profile');
-    }
-  }
-);
-
-export const fetchUserProfile = createAsyncThunk(
-  'user/fetchProfile',
-  async (_, { rejectWithValue }) => {
-    try {
-      const profile = await ProfileService.getProfile();
-      return profile;
-    } catch (error) {
-      return rejectWithValue(error instanceof Error ? error.message : 'Failed to fetch profile');
     }
   }
 );
@@ -52,33 +43,27 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUser: (state, action) => {
+    setUser(state, action: PayloadAction<Partial<UserState>>) {
       return { ...state, ...action.payload };
     },
-    clearUser: () => initialState,
-    resetUpdateSuccess: (state) => {
-      state.updateSuccess = false;
-    }
+    clearUser() {
+      return initialState;
+    },
+    completeOnboarding(state) {
+      state.isOnboardingComplete = true;
+    },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(updateUserProfile.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-        state.updateSuccess = false;
-      })
       .addCase(updateUserProfile.fulfilled, (state, action) => {
-        state.loading = false;
-        state.updateSuccess = true;
-        Object.assign(state, action.payload);
+        return { ...state, ...action.payload };
       })
       .addCase(updateUserProfile.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-        state.updateSuccess = false;
+        // Handle error state if needed
+        console.error('Profile update failed:', action.payload);
       });
   },
 });
 
-export const { setUser, clearUser, resetUpdateSuccess } = userSlice.actions;
+export const { setUser, clearUser, completeOnboarding } = userSlice.actions;
 export default userSlice.reducer;

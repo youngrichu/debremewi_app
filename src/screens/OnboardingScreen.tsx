@@ -7,102 +7,93 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
-import { useDispatch, useSelector } from 'react-redux';
-import { RootState, AppDispatch } from '../store';
-import { updateUserProfile } from '../store/userSlice';
+import { useDispatch } from 'react-redux';
+import { completeOnboarding, setUser } from '../store/userSlice';
+import { ProfileService } from '../services/ProfileService';
 import { Picker } from '@react-native-picker/picker';
-import { useNavigation, NavigationProp } from '@react-navigation/native';
-import { RootStackParamList, UserProfile, ValidationErrors } from '../types';
-import { getValidationError } from '../utils/validation';
 
-type OnboardingScreenNavigationProp = NavigationProp<RootStackParamList>;
+interface FormErrors {
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  gender?: string;
+  residencyCity?: string;
+  christianName?: string;
+}
 
 export default function OnboardingScreen() {
-  const dispatch = useDispatch<AppDispatch>();
-  const navigation = useNavigation<OnboardingScreenNavigationProp>();
-  
-  const [formData, setFormData] = useState<Partial<UserProfile>>({
+  const dispatch = useDispatch();
+  const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     phoneNumber: '',
-    gender: 'prefer_not_to_say' as const,
+    gender: '',
     christianName: '',
     residencyCity: '',
   });
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [loading, setLoading] = useState(false);
 
-  const [errors, setErrors] = useState<ValidationErrors>({});
-  const [touched, setTouched] = useState<Record<string, boolean>>({});
-
-  const validateField = (field: string, value: string) => {
-    const error = getValidationError(field, value);
-    setErrors(prev => ({
-      ...prev,
-      [field]: error
-    }));
-    return !error;
-  };
-
-  const handleChange = (field: keyof UserProfile, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (touched[field]) {
-      validateField(field, value);
+  const validateForm = () => {
+    const newErrors: FormErrors = {};
+    
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = 'First name is required';
     }
-  };
-
-  const handleBlur = (field: string) => {
-    setTouched(prev => ({ ...prev, [field]: true }));
-    if (formData[field as keyof UserProfile]) {
-      validateField(field, formData[field as keyof UserProfile] as string);
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = 'Last name is required';
     }
+    if (!formData.phoneNumber.trim()) {
+      newErrors.phoneNumber = 'Phone number is required';
+    }
+    if (!formData.residencyCity.trim()) {
+      newErrors.residencyCity = 'City of residence is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async () => {
-    // Validate all fields
-    const validationErrors: ValidationErrors = {};
-    let isValid = true;
-
-    ['firstName', 'lastName', 'phoneNumber', 'residencyCity'].forEach(field => {
-      const error = getValidationError(field, formData[field as keyof UserProfile] as string);
-      if (error) {
-        validationErrors[field as keyof ValidationErrors] = error;
-        isValid = false;
-      }
-    });
-
-    if (!isValid) {
-      setErrors(validationErrors);
-      Alert.alert('Validation Error', 'Please correct the errors in the form');
+    if (!validateForm()) {
       return;
     }
 
+    setLoading(true);
     try {
-      await dispatch(updateUserProfile({
+      // Update profile using the service
+      const updatedUser = await ProfileService.updateProfile({
         ...formData,
-        isOnboardingComplete: true
-      })).unwrap();
-      
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'MainTabs' }],
+        isOnboardingComplete: true,
       });
+
+      // Update Redux store with the user data
+      dispatch(setUser({
+        ...updatedUser,
+        isOnboardingComplete: true,
+      }));
+
+      // Mark onboarding as complete
+      dispatch(completeOnboarding());
+
     } catch (error) {
-      let errorMessage = 'Failed to save profile';
-      
-      if (error instanceof Error) {
-        switch (error.message) {
-          case 'Network Error':
-            errorMessage = 'Please check your internet connection';
-            break;
-          case 'Invalid phone number format':
-            errorMessage = 'The phone number format is invalid';
-            break;
-          default:
-            errorMessage = error.message;
-        }
-      }
-      
-      Alert.alert('Error', errorMessage);
+      console.error('Onboarding error:', error);
+      Alert.alert(
+        'Error',
+        'Failed to complete profile setup. Please try again.'
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChange = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    // Clear error when user types
+    if (errors[field as keyof FormErrors]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
     }
   };
 
@@ -118,10 +109,9 @@ export default function OnboardingScreen() {
             style={[styles.input, errors.firstName && styles.inputError]}
             value={formData.firstName}
             onChangeText={(text) => handleChange('firstName', text)}
-            onBlur={() => handleBlur('firstName')}
             placeholder="Enter your first name"
           />
-          {touched.firstName && errors.firstName && (
+          {errors.firstName && (
             <Text style={styles.errorText}>{errors.firstName}</Text>
           )}
         </View>
@@ -129,22 +119,28 @@ export default function OnboardingScreen() {
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Last Name *</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, errors.lastName && styles.inputError]}
             value={formData.lastName}
-            onChangeText={(text) => setFormData(prev => ({ ...prev, lastName: text }))}
+            onChangeText={(text) => handleChange('lastName', text)}
             placeholder="Enter your last name"
           />
+          {errors.lastName && (
+            <Text style={styles.errorText}>{errors.lastName}</Text>
+          )}
         </View>
 
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Phone Number *</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, errors.phoneNumber && styles.inputError]}
             value={formData.phoneNumber}
-            onChangeText={(text) => setFormData(prev => ({ ...prev, phoneNumber: text }))}
+            onChangeText={(text) => handleChange('phoneNumber', text)}
             placeholder="Enter your phone number"
             keyboardType="phone-pad"
           />
+          {errors.phoneNumber && (
+            <Text style={styles.errorText}>{errors.phoneNumber}</Text>
+          )}
         </View>
 
         <View style={styles.inputGroup}>
@@ -152,10 +148,10 @@ export default function OnboardingScreen() {
           <View style={styles.pickerContainer}>
             <Picker
               selectedValue={formData.gender}
-              onValueChange={(value: 'male' | 'female' | 'prefer_not_to_say') => setFormData(prev => ({ ...prev, gender: value }))}
+              onValueChange={(value) => handleChange('gender', value)}
               style={styles.picker}
             >
-              <Picker.Item label="Prefer not to say" value="prefer_not_to_say" />
+              <Picker.Item label="Choose Gender" value="" />
               <Picker.Item label="Male" value="male" />
               <Picker.Item label="Female" value="female" />
             </Picker>
@@ -167,7 +163,7 @@ export default function OnboardingScreen() {
           <TextInput
             style={styles.input}
             value={formData.christianName}
-            onChangeText={(text) => setFormData(prev => ({ ...prev, christianName: text }))}
+            onChangeText={(text) => handleChange('christianName', text)}
             placeholder="Enter your Christian name"
           />
         </View>
@@ -175,15 +171,26 @@ export default function OnboardingScreen() {
         <View style={styles.inputGroup}>
           <Text style={styles.label}>City of Residence *</Text>
           <TextInput
-            style={styles.input}
+            style={[styles.input, errors.residencyCity && styles.inputError]}
             value={formData.residencyCity}
-            onChangeText={(text) => setFormData(prev => ({ ...prev, residencyCity: text }))}
+            onChangeText={(text) => handleChange('residencyCity', text)}
             placeholder="Enter your city"
           />
+          {errors.residencyCity && (
+            <Text style={styles.errorText}>{errors.residencyCity}</Text>
+          )}
         </View>
 
-        <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-          <Text style={styles.submitButtonText}>Complete Profile</Text>
+        <TouchableOpacity 
+          style={[styles.submitButton, loading && styles.submitButtonDisabled]} 
+          onPress={handleSubmit}
+          disabled={loading}
+        >
+          {loading ? (
+            <ActivityIndicator color="#fff" />
+          ) : (
+            <Text style={styles.submitButtonText}>Complete Profile</Text>
+          )}
         </TouchableOpacity>
       </View>
     </ScrollView>

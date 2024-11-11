@@ -1,141 +1,271 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  ActivityIndicator,
+} from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useDispatch } from 'react-redux';
-import { login } from '../store/authSlice';
-import { AppDispatch } from '../store';
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../types';
+import { login } from '../services/auth';
+import { setUser } from '../store/userSlice';
+import { setAuthState } from '../store/authSlice';
 
-type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
-
-export default function LoginScreen() {
-  const [username, setUsername] = useState('');
+const LoginScreen = ({ navigation }) => {
+  const dispatch = useDispatch();
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const dispatch = useDispatch<AppDispatch>();
-  const navigation = useNavigation<LoginScreenNavigationProp>();
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const validateLogin = (email: string, password: string): string | null => {
+    if (!email.trim()) return 'Email is required';
+    if (!/\S+@\S+\.\S+/.test(email)) return 'Email is invalid';
+    if (!password) return 'Password is required';
+    if (password.length < 6) return 'Password must be at least 6 characters';
+    return null;
+  };
 
   const handleLogin = async () => {
-    if (!username.trim()) {
-      Alert.alert('Validation Error', 'Username is required');
-      return;
-    }
-    if (!password.trim()) {
-      Alert.alert('Validation Error', 'Password is required');
+    const error = validateLogin(email, password);
+    if (error) {
+      setErrorMessage(error);
       return;
     }
 
+    setLoading(true);
+    setErrorMessage('');
+
     try {
-      setLoading(true);
-      const result = await dispatch(login({ username, password })).unwrap();
+      const response = await login(email, password);
       
-      if (result.token) {
-        // No need to manually navigate - AppNavigator will handle this
-        // based on the authentication state
-        console.log('Login successful');
+      if (response.success) {
+        // Update Redux store with authentication state and token
+        dispatch(setAuthState({ 
+          isAuthenticated: true, 
+          token: response.token 
+        }));
+        
+        // Update user data if available
+        if (response.user) {
+          dispatch(setUser(response.user));
+        }
+      } else {
+        setErrorMessage(response.message || 'Login failed');
       }
     } catch (error) {
-      Alert.alert(
-        'Login Failed',
-        error instanceof Error ? error.message : 'An error occurred during login'
-      );
+      console.error('Login error:', error);
+      setErrorMessage(error instanceof Error ? error.message : 'Login failed');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Email"
-        value={username}
-        onChangeText={setUsername}
-        keyboardType="email-address"
-        autoCapitalize="none"
-        editable={!loading}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-        editable={!loading}
-      />
-      <TouchableOpacity
-        style={[styles.button, loading && styles.buttonDisabled]}
-        onPress={handleLogin}
-        disabled={loading}
+    <KeyboardAvoidingView 
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      style={styles.container}
+    >
+      <LinearGradient
+        colors={['#2196F3', '#1976D2']}
+        style={styles.gradient}
       >
-        <Text style={styles.buttonText}>
-          {loading ? 'Logging in...' : 'Login'}
-        </Text>
-      </TouchableOpacity>
+        <ScrollView 
+          contentContainerStyle={styles.scrollContent}
+          showsVerticalScrollIndicator={false}
+        >
+          <View style={styles.headerSection}>
+            <Text style={styles.welcomeText}>Welcome Back</Text>
+            <Text style={styles.subtitle}>Please sign in to continue</Text>
+          </View>
 
-      <View style={styles.links}>
-        <TouchableOpacity 
-          onPress={() => navigation.navigate('Register')}
-          disabled={loading}
-        >
-          <Text style={styles.linkText}>Register</Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-          onPress={() => navigation.navigate('ForgotPassword')}
-          disabled={loading}
-        >
-          <Text style={styles.linkText}>Forgot Password?</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+          <View style={styles.formContainer}>
+            <View style={styles.inputContainer}>
+              <Ionicons name="mail-outline" size={20} color="#666" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="Email"
+                placeholderTextColor="#666"
+                keyboardType="email-address"
+                autoCapitalize="none"
+                value={email}
+                onChangeText={(text) => {
+                  setEmail(text);
+                  setErrorMessage(''); // Clear error when user types
+                }}
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Ionicons name="lock-closed-outline" size={20} color="#666" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder="Password"
+                placeholderTextColor="#666"
+                secureTextEntry={!showPassword}
+                value={password}
+                onChangeText={(text) => {
+                  setPassword(text);
+                  setErrorMessage(''); // Clear error when user types
+                }}
+              />
+              <TouchableOpacity 
+                onPress={() => setShowPassword(!showPassword)}
+                style={styles.eyeIcon}
+              >
+                <Ionicons 
+                  name={showPassword ? "eye-off-outline" : "eye-outline"} 
+                  size={20} 
+                  color="#666" 
+                />
+              </TouchableOpacity>
+            </View>
+
+            {errorMessage ? (
+              <Text style={styles.errorText}>{errorMessage}</Text>
+            ) : null}
+
+            <TouchableOpacity 
+              onPress={() => navigation.navigate('ForgotPassword')}
+              style={styles.forgotPassword}
+            >
+              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              style={[styles.loginButton, loading && styles.loginButtonDisabled]}
+              onPress={handleLogin}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text style={styles.loginButtonText}>Sign In</Text>
+              )}
+            </TouchableOpacity>
+
+            <View style={styles.registerContainer}>
+              <Text style={styles.registerText}>Don't have an account? </Text>
+              <TouchableOpacity onPress={() => navigation.navigate('Register')}>
+                <Text style={styles.registerLink}>Sign Up</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ScrollView>
+      </LinearGradient>
+    </KeyboardAvoidingView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    padding: 20,
-    backgroundColor: '#fff',
   },
-  title: {
-    fontSize: 24,
+  gradient: {
+    flex: 1,
+  },
+  scrollContent: {
+    flexGrow: 1,
+    justifyContent: 'center',
+  },
+  headerSection: {
+    alignItems: 'center',
+    marginBottom: 40,
+  },
+  welcomeText: {
+    fontSize: 32,
     fontWeight: 'bold',
-    marginBottom: 20,
-    textAlign: 'center',
+    color: '#FFF',
+    marginBottom: 8,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: '#FFF',
+    opacity: 0.8,
+  },
+  formContainer: {
+    backgroundColor: '#FFF',
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    paddingHorizontal: 20,
+    paddingTop: 30,
+    paddingBottom: 20,
+    marginTop: 20,
+  },
+  inputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F5F5F5',
+    borderRadius: 10,
+    marginBottom: 16,
+    paddingHorizontal: 12,
+  },
+  inputIcon: {
+    marginRight: 10,
   },
   input: {
+    flex: 1,
     height: 50,
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    marginBottom: 15,
+    color: '#333',
     fontSize: 16,
   },
-  button: {
+  eyeIcon: {
+    padding: 8,
+  },
+  forgotPassword: {
+    alignSelf: 'flex-end',
+    marginBottom: 20,
+  },
+  forgotPasswordText: {
+    color: '#2196F3',
+    fontSize: 14,
+  },
+  loginButton: {
     backgroundColor: '#2196F3',
-    padding: 15,
-    borderRadius: 8,
+    borderRadius: 10,
+    height: 50,
+    justifyContent: 'center',
     alignItems: 'center',
+    marginBottom: 20,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
   },
-  buttonDisabled: {
-    backgroundColor: '#ccc',
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 16,
+  loginButtonText: {
+    color: '#FFF',
+    fontSize: 18,
     fontWeight: '600',
   },
-  links: {
-    marginTop: 20,
+  registerContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
+    marginTop: 10,
   },
-  linkText: {
+  registerText: {
+    color: '#666',
+    fontSize: 14,
+  },
+  registerLink: {
     color: '#2196F3',
-    fontSize: 16,
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  errorText: {
+    color: '#FF3B30',
+    fontSize: 14,
+    marginBottom: 16,
+    marginLeft: 4,
+    textAlign: 'center',
   },
 });
+
+export default LoginScreen;

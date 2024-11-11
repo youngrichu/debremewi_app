@@ -25,6 +25,7 @@ import ServicesScreen from '../screens/ServicesScreen';
 import ContactUsScreen from '../screens/ContactUsScreen';
 import MoreMenuScreen from '../screens/MoreMenuScreen';
 import CommunityScreen from '../screens/CommunityScreen';
+import NewPasswordScreen from '../screens/NewPasswordScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -150,6 +151,7 @@ export default function AppNavigator() {
         // Main App Stack with Bottom Tabs
         <Stack.Screen name="MainTabs" component={MainTabs} />
       )}
+      <Stack.Screen name="NewPassword" component={NewPasswordScreen} />
     </Stack.Navigator>
   );
 }
