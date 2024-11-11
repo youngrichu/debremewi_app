@@ -69,7 +69,7 @@ function MainTabs() {
         component={HomeStackScreen}
         options={{ 
           title: 'Home',
-          headerTitle: 'Welcome to Church App'
+          headerTitle: 'Dubai Debremewi'
         }}
       />
       <Tab.Screen name="Events" component={EventsScreen} />

@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import { Post, Event } from '../types';
 import { API_URL } from '../config';
+import WelcomeCard from '../components/WelcomeCard';
 
 export default function HomeScreen() {
   const navigation = useNavigation();
@@ -81,6 +82,8 @@ export default function HomeScreen() {
       contentContainerStyle={styles.contentContainer}
       showsVerticalScrollIndicator={false}
     >
+      <WelcomeCard />
+
       <View style={styles.quickActionsGrid}>
         <TouchableOpacity 
           style={styles.quickActionItem}
