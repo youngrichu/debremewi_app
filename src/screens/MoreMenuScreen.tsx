@@ -22,6 +22,11 @@ const MoreMenuScreen = () => {
       screen: 'Services' as const,
     },
     {
+      title: 'Location',
+      icon: 'location-outline' as const,
+      screen: 'Location' as const,
+    },
+    {
       title: 'Contact Us',
       icon: 'mail-outline' as const,
       screen: 'Contact Us' as const,

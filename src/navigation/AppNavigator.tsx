@@ -18,13 +18,13 @@ import BlogPostDetail from '../screens/BlogPostDetail';
 import NotificationsScreen from '../screens/NotificationsScreen';
 import BlogPostsScreen from '../screens/BlogPostsScreen';
 import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
-import TestToastScreen from '../screens/TestToastScreen';
 import { RootStackParamList } from '../types';
 import { NotificationButton } from '../components/NotificationButton';
 import AboutUsScreen from '../screens/AboutUsScreen';
 import ServicesScreen from '../screens/ServicesScreen';
 import ContactUsScreen from '../screens/ContactUsScreen';
 import MoreMenuScreen from '../screens/MoreMenuScreen';
+import CommunityScreen from '../screens/CommunityScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -105,7 +105,6 @@ function HomeStackScreen() {
       <Stack.Screen name="BlogPostDetail" component={BlogPostDetail} />
       <Stack.Screen name="EditProfile" component={EditProfileScreen} />
       <Stack.Screen name="Notifications" component={NotificationsScreen} />
-      <Stack.Screen name="TestToast" component={TestToastScreen} />
     </Stack.Navigator>
   );
 }
@@ -123,6 +122,10 @@ function MoreStackScreen() {
       <MoreStack.Screen name="About Us" component={AboutUsScreen} />
       <MoreStack.Screen name="Services" component={ServicesScreen} />
       <MoreStack.Screen name="Contact Us" component={ContactUsScreen} />
+      <MoreStack.Screen 
+        name="Location" 
+        component={CommunityScreen}
+      />
     </MoreStack.Navigator>
   );
 }

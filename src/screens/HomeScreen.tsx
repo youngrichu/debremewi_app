@@ -104,12 +104,14 @@ export default function HomeScreen() {
 
         <TouchableOpacity 
           style={styles.quickActionItem}
-          onPress={() => navigation.navigate('Community')}
+          onPress={() => navigation.navigate('More', {
+            screen: 'Location'
+          })}
         >
           <View style={[styles.iconContainer, { backgroundColor: '#2196F3' }]}>
-            <Ionicons name="people" size={32} color="#FFF" />
+            <Ionicons name="location" size={32} color="#FFF" />
           </View>
-          <Text style={styles.quickActionText}>Community</Text>
+          <Text style={styles.quickActionText}>Location</Text>
         </TouchableOpacity>
       </View>
 

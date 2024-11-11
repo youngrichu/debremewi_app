@@ -3,7 +3,6 @@ export type RootStackParamList = {
   Profile: undefined;
   EditProfile: undefined;
   Notifications: undefined;
-  TestToast: undefined;
   HomeStack: {
     screen: string;
     params?: object;
@@ -12,6 +11,10 @@ export type RootStackParamList = {
   Register: undefined;
   ForgotPassword: undefined;
   Onboarding: undefined;
+  More: {
+    screen: string;
+    params?: object;
+  };
 };
 
 export type MoreStackParamList = {
@@ -19,4 +22,5 @@ export type MoreStackParamList = {
   'About Us': undefined;
   Services: undefined;
   'Contact Us': undefined;
+  Location: undefined;
 }; 
