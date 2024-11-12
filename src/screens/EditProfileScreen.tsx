@@ -150,11 +150,11 @@ export default function EditProfileScreen() {
           <View style={styles.pickerContainer}>
             <Picker
               selectedValue={formData.gender}
-              onValueChange={(value: 'male' | 'female' | 'prefer_not_to_say') => 
+              onValueChange={(value: 'male' | 'female') => 
                 handleChange('gender', value)}
               style={styles.picker}
             >
-              <Picker.Item label="Prefer not to say" value="prefer_not_to_say" />
+              <Picker.Item label="Choose Gender" value="choose_gender" />
               <Picker.Item label="Male" value="male" />
               <Picker.Item label="Female" value="female" />
             </Picker>

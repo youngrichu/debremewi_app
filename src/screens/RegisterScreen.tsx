@@ -9,23 +9,42 @@ import {
   Platform,
   ScrollView,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { register } from '../services/AuthService';
+
+interface FormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+}
+
+interface FormErrors {
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
+  submit?: string;
+}
 
 const RegisterScreen = ({ navigation }) => {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
     email: '',
     password: '',
     confirmPassword: '',
   });
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
 
-  const validateForm = (data: RegisterFormData): ValidationErrors => {
-    const errors: ValidationErrors = {};
+  const validateForm = (data: FormData): FormErrors => {
+    const errors: FormErrors = {};
 
     if (!data.firstName.trim()) errors.firstName = 'First name is required';
     if (!data.lastName.trim()) errors.lastName = 'Last name is required';
@@ -58,16 +77,39 @@ const RegisterScreen = ({ navigation }) => {
 
     setLoading(true);
     try {
-      // Add your registration API call here
-      // Example:
-      // await authService.register(formData);
-      // navigation.navigate('Login');
+      const response = await register(formData.email, formData.password);
+      
+      if (response.token) {
+        Alert.alert(
+          'Success',
+          'Registration successful! Please login to continue.',
+          [
+            {
+              text: 'OK',
+              onPress: () => navigation.navigate('Login')
+            }
+          ]
+        );
+      } else {
+        setErrors({ 
+          submit: 'Registration failed. Please try again.' 
+        });
+      }
     } catch (error) {
+      console.error('Registration error:', error);
       setErrors({ 
         submit: error instanceof Error ? error.message : 'Registration failed' 
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleChange = (field: keyof FormData, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    // Clear error when user types
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: undefined }));
     }
   };
 
@@ -98,7 +140,7 @@ const RegisterScreen = ({ navigation }) => {
                   placeholder="First Name"
                   placeholderTextColor="#666"
                   value={formData.firstName}
-                  onChangeText={(text) => setFormData({ ...formData, firstName: text })}
+                  onChangeText={(text) => handleChange('firstName', text)}
                 />
               </View>
               <View style={[styles.inputContainer, styles.halfInput]}>
@@ -107,7 +149,7 @@ const RegisterScreen = ({ navigation }) => {
                   placeholder="Last Name"
                   placeholderTextColor="#666"
                   value={formData.lastName}
-                  onChangeText={(text) => setFormData({ ...formData, lastName: text })}
+                  onChangeText={(text) => handleChange('lastName', text)}
                 />
               </View>
             </View>
@@ -124,7 +166,7 @@ const RegisterScreen = ({ navigation }) => {
                 keyboardType="email-address"
                 autoCapitalize="none"
                 value={formData.email}
-                onChangeText={(text) => setFormData({ ...formData, email: text })}
+                onChangeText={(text) => handleChange('email', text)}
               />
             </View>
             {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
@@ -137,7 +179,7 @@ const RegisterScreen = ({ navigation }) => {
                 placeholderTextColor="#666"
                 secureTextEntry={true}
                 value={formData.password}
-                onChangeText={(text) => setFormData({ ...formData, password: text })}
+                onChangeText={(text) => handleChange('password', text)}
               />
             </View>
             {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
@@ -150,7 +192,7 @@ const RegisterScreen = ({ navigation }) => {
                 placeholderTextColor="#666"
                 secureTextEntry={true}
                 value={formData.confirmPassword}
-                onChangeText={(text) => setFormData({ ...formData, confirmPassword: text })}
+                onChangeText={(text) => handleChange('confirmPassword', text)}
               />
             </View>
             {errors.confirmPassword && (
