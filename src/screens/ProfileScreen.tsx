@@ -1,21 +1,27 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { useSelector, useDispatch } from 'react-redux';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/native';
 import { RootState } from '../store';
-import { useNavigation, NavigationProp, CompositeNavigationProp } from '@react-navigation/native';
-import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../types';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { ProfileScreenNavigationProp } from '../types';
 
-type ProfileScreenNavigationProp = CompositeNavigationProp<
-  BottomTabNavigationProp<RootStackParamList, 'Profile'>,
-  StackNavigationProp<RootStackParamList>
->;
+const formatDisplayValue = (value: string | null | undefined, options?: { [key: string]: string }) => {
+  if (!value) return 'Not provided';
+  
+  if (options && options[value]) {
+    return options[value];
+  }
+
+  return value
+    .split('_')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .join(' ');
+};
 
 export default function ProfileScreen() {
-  const dispatch = useDispatch();
-  const user = useSelector((state: RootState) => state.user);
   const navigation = useNavigation<ProfileScreenNavigationProp>();
+  const user = useSelector((state: RootState) => state.user);
 
   const handleEditPress = () => {
     navigation.navigate('HomeStack', {
@@ -23,61 +29,106 @@ export default function ProfileScreen() {
     });
   };
 
+  const renderDetailItem = (
+    label: string, 
+    value: string | null | undefined, 
+    icon: string,
+    iconFamily: 'Ionicons' | 'MaterialCommunity' = 'Ionicons',
+    options?: { [key: string]: string }
+  ) => (
+    <View style={styles.detailItem}>
+      <View style={styles.labelContainer}>
+        {iconFamily === 'Ionicons' ? (
+          <Ionicons name={icon as any} size={20} color="#666" style={styles.icon} />
+        ) : (
+          <MaterialCommunityIcons name={icon as any} size={20} color="#666" style={styles.icon} />
+        )}
+        <Text style={styles.detailLabel}>{label}:</Text>
+      </View>
+      <Text style={styles.detailValue}>
+        {formatDisplayValue(value, options)}
+      </Text>
+    </View>
+  );
+
   return (
     <ScrollView style={styles.container}>
       {/* Profile Header */}
       <View style={styles.header}>
-        <View style={styles.avatarContainer}>
-          <Text style={styles.avatarText}>
-            {user.firstName ? user.firstName[0].toUpperCase() : '?'}
-          </Text>
-        </View>
+        {(user.profilePhotoUrl || user.profilePhoto || user.photo) ? (
+          <Image 
+            source={{ 
+              uri: user.profilePhotoUrl || user.profilePhoto || user.photo 
+            }} 
+            style={styles.profilePhoto} 
+          />
+        ) : (
+          <View style={styles.avatarContainer}>
+            <Text style={styles.avatarText}>
+              {user.firstName ? user.firstName[0].toUpperCase() : '?'}
+            </Text>
+          </View>
+        )}
         <Text style={styles.fullName}>
           {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : 'Complete Your Profile'}
         </Text>
         <Text style={styles.email}>{user.email}</Text>
+        <TouchableOpacity style={styles.editButton} onPress={handleEditPress}>
+          <Ionicons name="pencil" size={20} color="#FFF" />
+          <Text style={styles.editButtonText}>Edit Profile</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Profile Details */}
       <View style={styles.detailsContainer}>
-        <View style={styles.detailItem}>
-          <Text style={styles.detailLabel}>First Name:</Text>
-          <Text style={styles.detailValue}>{user.firstName || 'Not provided'}</Text>
-        </View>
+        <Text style={styles.sectionTitle}>Personal Information</Text>
+        {renderDetailItem('First Name', user.firstName, 'person-outline')}
+        {renderDetailItem('Last Name', user.lastName, 'person-outline')}
+        {renderDetailItem('Christian Name', user.christianName, 'cross', 'MaterialCommunity')}
+        {renderDetailItem('Gender', user.gender, 'male-female-outline')}
+        {renderDetailItem('Marital Status', user.maritalStatus, 'heart-outline')}
+        {renderDetailItem('Children', user.hasChildren === 'yes' ? 
+          `Yes (${user.numberOfChildren || 'number not specified'})` : 
+          'No', 'people-outline')}
+        {renderDetailItem('Education Level', user.educationLevel, 'school-outline', 'Ionicons', {
+          'grade_10': 'Completed Grade 10',
+          'grade_12': 'Completed Grade 12',
+        })}
+        {renderDetailItem('Occupation', user.occupation, 'briefcase-outline')}
 
-        <View style={styles.detailItem}>
-          <Text style={styles.detailLabel}>Last Name:</Text>
-          <Text style={styles.detailValue}>{user.lastName || 'Not provided'}</Text>
-        </View>
+        <Text style={styles.sectionTitle}>Contact Information</Text>
+        {renderDetailItem('Phone Number', user.phoneNumber, 'call-outline')}
+        {renderDetailItem('City of Residence', user.residencyCity, 'location-outline', 'Ionicons', {
+          'abu_dhabi': 'Abu Dhabi',
+          'ras_al_khaimah': 'Ras Al Khaimah',
+          'umm_al_quwain': 'Umm Al Quwain',
+          'al_ain': 'Al Ain',
+        })}
+        {renderDetailItem('Residence Address', user.residenceAddress, 'home-outline')}
+        {renderDetailItem('Emergency Contact', user.emergencyContact, 'alert-circle-outline')}
+        {renderDetailItem('Residence Permit', user.residencePermit === 'yes' ? 'Yes' : 'No', 'document-text-outline')}
 
-        <View style={styles.detailItem}>
-          <Text style={styles.detailLabel}>Phone Number:</Text>
-          <Text style={styles.detailValue}>{user.phoneNumber || 'Not provided'}</Text>
-        </View>
-
-        <View style={styles.detailItem}>
-          <Text style={styles.detailLabel}>Gender:</Text>
-          <Text style={styles.detailValue}>{user.gender || 'Not specified'}</Text>
-        </View>
-
-        <View style={styles.detailItem}>
-          <Text style={styles.detailLabel}>Christian Name:</Text>
-          <Text style={styles.detailValue}>{user.christianName || 'Not provided'}</Text>
-        </View>
-
-        <View style={styles.detailItem}>
-          <Text style={styles.detailLabel}>City:</Text>
-          <Text style={styles.detailValue}>{user.residencyCity || 'Not provided'}</Text>
-        </View>
+        <Text style={styles.sectionTitle}>Church Information</Text>
+        {renderDetailItem('Christian Life Status', user.christianLife, 'church', 'MaterialCommunity', {
+          'not_repent': 'Not Repented',
+          'repent': 'Repented',
+          'communion': 'Takes Holy Communion',
+        })}
+        {renderDetailItem('Service at Parish', user.serviceAtParish, 'church', 'MaterialCommunity', {
+          'sub_department': 'Sub-department Service',
+          'sunday_school': 'Sunday School Service',
+        })}
+        {renderDetailItem('Sub-department', user.ministryService, 'account-group', 'MaterialCommunity', {
+          'media_it': 'Media and IT',
+          'public_relation': 'Public Relations',
+        })}
+        {renderDetailItem('Father Confessor', user.hasFatherConfessor === 'yes' ? 
+          `Yes (${user.fatherConfessorName || 'name not specified'})` : 
+          'No', 'account-tie', 'MaterialCommunity')}
+        {renderDetailItem('Association Membership', user.hasAssociationMembership === 'yes' ? 
+          `Yes (${user.associationName || 'name not specified'})` : 
+          'No', 'account-group-outline', 'MaterialCommunity')}
       </View>
-
-      {/* Edit Profile Button */}
-      <TouchableOpacity 
-        style={styles.editButton}
-        onPress={handleEditPress}
-      >
-        <Text style={styles.editButtonText}>Edit Profile</Text>
-      </TouchableOpacity>
     </ScrollView>
   );
 }
@@ -85,19 +136,20 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#F5F5F5',
   },
   header: {
+    backgroundColor: '#FFF',
+    padding: 20,
     alignItems: 'center',
-    paddingVertical: 32,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-    backgroundColor: '#fff',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 2,
+    borderBottomColor: '#E0E0E0',
+  },
+  profilePhoto: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 10,
   },
   avatarContainer: {
     width: 100,
@@ -106,66 +158,77 @@ const styles = StyleSheet.create({
     backgroundColor: '#2196F3',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 4,
+    marginBottom: 10,
   },
   avatarText: {
+    color: '#FFF',
     fontSize: 40,
-    color: '#fff',
     fontWeight: 'bold',
   },
   fullName: {
-    fontSize: 26,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 8,
-    textAlign: 'center',
+    marginBottom: 5,
   },
   email: {
     fontSize: 16,
     color: '#666',
-    marginBottom: 8,
-  },
-  detailsContainer: {
-    padding: 24,
-    backgroundColor: '#fff',
-  },
-  detailItem: {
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#f0f0f0',
-  },
-  detailLabel: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 4,
-  },
-  detailValue: {
-    fontSize: 18,
-    color: '#333',
-    fontWeight: '500',
+    marginBottom: 15,
   },
   editButton: {
-    marginHorizontal: 24,
-    marginTop: 8,
-    marginBottom: 32,
+    flexDirection: 'row',
     backgroundColor: '#2196F3',
-    padding: 16,
-    borderRadius: 12,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 4,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 20,
+    alignItems: 'center',
   },
   editButtonText: {
-    color: '#fff',
-    textAlign: 'center',
+    color: '#FFF',
+    marginLeft: 5,
+    fontSize: 16,
+  },
+  detailsContainer: {
+    backgroundColor: '#FFF',
+    padding: 15,
+    margin: 10,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  sectionTitle: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: 'bold',
+    color: '#333',
+    marginTop: 20,
+    marginBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+    paddingBottom: 5,
+  },
+  detailItem: {
+    marginBottom: 15,
+  },
+  labelContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 5,
+  },
+  icon: {
+    marginRight: 8,
+  },
+  detailLabel: {
+    fontSize: 14,
+    color: '#666',
+    fontWeight: '500',
+  },
+  detailValue: {
+    fontSize: 16,
+    color: '#333',
+    marginLeft: 28,
   },
 });

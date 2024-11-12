@@ -58,7 +58,7 @@ interface FormErrors {
   fatherConfessorName: string;
 }
 
-const UAE_CITIES = [
+export const UAE_CITIES = [
   { label: 'Dubai', value: 'dubai' },
   { label: 'Abu Dhabi', value: 'abu_dhabi' },
   { label: 'Sharjah', value: 'sharjah' },
@@ -69,15 +69,70 @@ const UAE_CITIES = [
   { label: 'Al Ain', value: 'al_ain' }
 ];
 
-// Add these constants for dropdown options
-const MARITAL_STATUS_OPTIONS = [
+// Update the interface for options
+interface DropdownOption {
+  label: string;
+  value: string;
+  disabled?: boolean;
+}
+
+// Update the constants with disabled first options
+export const SERVICE_AT_PARISH_OPTIONS: DropdownOption[] = [
+  { label: 'Select a Service Type', value: 'sub_department', disabled: true },
+  { label: 'Accounting and Budget', value: 'accounting' },
+  { label: 'Finance', value: 'finance' },
+  { label: 'Treasurer', value: 'treasurer' },
+  { label: 'Education and Training', value: 'education' },
+  { label: 'Public Relation', value: 'public_relation' },
+  { label: 'Development', value: 'development' },
+  { label: 'Construction and Renovation', value: 'construction' },
+  { label: 'Law and Order/Discipline', value: 'law_order' },
+  { label: 'Charity/Philanthropy', value: 'charity' },
+  { label: 'Religious Education', value: 'religious_education' },
+  { label: 'Property Management', value: 'property' },
+  { label: 'Parish Council Coordination', value: 'council' },
+  { label: 'Offering Collector', value: 'offering' },
+  { label: 'Statistician', value: 'statistician' },
+  { label: 'Media and IT', value: 'media_it' }
+];
+
+export const MINISTRY_SERVICE_OPTIONS: DropdownOption[] = [
+  { label: 'Select a Sub-department Service', value: 'sub_department', disabled: true },
+  { label: 'Accounting and Budget', value: 'accounting' },
+  { label: 'Finance', value: 'finance' },
+  { label: 'Treasurer', value: 'treasurer' },
+  { label: 'Education and Training', value: 'education' },
+  { label: 'Public Relation', value: 'public_relation' },
+  { label: 'Development', value: 'development' },
+  { label: 'Construction and Renovation', value: 'construction' },
+  { label: 'Law and Order/Discipline', value: 'law_order' },
+  { label: 'Charity/Philanthropy', value: 'charity' },
+  { label: 'Religious Education', value: 'religious_education' },
+  { label: 'Property Management', value: 'property' },
+  { label: 'Parish Council Coordination', value: 'council' },
+  { label: 'Offering Collector', value: 'offering' },
+  { label: 'Statistician', value: 'statistician' },
+  { label: 'Media', value: 'media' },
+  { label: 'IT', value: 'it' }
+];
+
+export const CHRISTIAN_LIFE_OPTIONS: DropdownOption[] = [
+  { label: 'Select Christian Life Status', value: '', disabled: true },
+  { label: 'Not Repented', value: 'not_repent' },
+  { label: 'Repented', value: 'repent' },
+  { label: 'Takes Holy Communion', value: 'communion' }
+];
+
+export const MARITAL_STATUS_OPTIONS: DropdownOption[] = [
+  { label: 'Select Marital Status', value: '', disabled: true },
   { label: 'Single', value: 'single' },
   { label: 'Married', value: 'married' },
   { label: 'Divorced', value: 'divorced' },
   { label: 'Widowed', value: 'widowed' }
 ];
 
-const EDUCATION_LEVEL_OPTIONS = [
+export const EDUCATION_LEVEL_OPTIONS: DropdownOption[] = [
+  { label: 'Select Education Level', value: '', disabled: true },
   { label: 'Student', value: 'student' },
   { label: 'Completed Grade 10', value: 'grade_10' },
   { label: 'Completed Grade 12', value: 'grade_12' },
@@ -87,81 +142,24 @@ const EDUCATION_LEVEL_OPTIONS = [
   { label: 'Doctorate', value: 'doctorate' }
 ];
 
-// Update the interface for the openDropdowns state
-interface DropdownState {
-  gender: boolean;
-  maritalStatus: boolean;
-  education: boolean;
-  city: boolean;
-  christianLife: boolean;
-  serviceParish: boolean;
-  confessionFather: boolean;
-  residencePermit: boolean;
-}
-
-// Add this with other constants at the top of the file
-const CHRISTIAN_LIFE_OPTIONS = [
-  { label: 'Not Repented', value: 'not_repent' },
-  { label: 'Repented', value: 'repent' },
-  { label: 'Takes Holy Communion', value: 'communion' }
+// Add these constants at the top with other options
+export const HAS_CHILDREN_OPTIONS = [
+  { label: 'Yes', value: 'yes' },
+  { label: 'No', value: 'no' }
 ];
 
 // Add these constants at the top with other options
-const HAS_CHILDREN_OPTIONS = [
+export const FATHER_IN_FAITH_OPTIONS = [
   { label: 'Yes', value: 'yes' },
   { label: 'No', value: 'no' }
 ];
 
-const SERVICE_AT_PARISH_OPTIONS = [
-  { label: 'Sub-department service', value: 'sub_department' },
-  { label: 'Accounting and Budget', value: 'accounting' },
-  { label: 'Finance', value: 'finance' },
-  { label: 'Treasurer', value: 'treasurer' },
-  { label: 'Education and Training', value: 'education' },
-  { label: 'Public Relation', value: 'public_relation' },
-  { label: 'Development', value: 'development' },
-  { label: 'Construction and Renovation', value: 'construction' },
-  { label: 'Law and Order/Discipline', value: 'law_order' },
-  { label: 'Charity/Philanthropy', value: 'charity' },
-  { label: 'Religious Education', value: 'religious_education' },
-  { label: 'Property Management', value: 'property' },
-  { label: 'Parish Council Coordination', value: 'council' },
-  { label: 'Offering Collector', value: 'offering' },
-  { label: 'Statistician', value: 'statistician' },
-  { label: 'Media and IT', value: 'media_it' }
-];
-
-const MINISTRY_SERVICE_OPTIONS = [
-  { label: 'Ministry Service', value: 'ministry' },
-  { label: 'Accounting and Budget', value: 'accounting' },
-  { label: 'Finance', value: 'finance' },
-  { label: 'Treasurer', value: 'treasurer' },
-  { label: 'Education and Training', value: 'education' },
-  { label: 'Public Relation', value: 'public_relation' },
-  { label: 'Development', value: 'development' },
-  { label: 'Construction and Renovation', value: 'construction' },
-  { label: 'Law and Order/Discipline', value: 'law_order' },
-  { label: 'Charity/Philanthropy', value: 'charity' },
-  { label: 'Religious Education', value: 'religious_education' },
-  { label: 'Property Management', value: 'property' },
-  { label: 'Parish Council Coordination', value: 'council' },
-  { label: 'Offering Collector', value: 'offering' },
-  { label: 'Statistician', value: 'statistician' },
-  { label: 'Media and IT', value: 'media_it' }
-];
-
-// Add these constants at the top with other options
-const FATHER_IN_FAITH_OPTIONS = [
+export const ASSOCIATION_MEMBERSHIP_OPTIONS = [
   { label: 'Yes', value: 'yes' },
   { label: 'No', value: 'no' }
 ];
 
-const ASSOCIATION_MEMBERSHIP_OPTIONS = [
-  { label: 'Yes', value: 'yes' },
-  { label: 'No', value: 'no' }
-];
-
-const FATHER_CONFESSOR_OPTIONS = [
+export const FATHER_CONFESSOR_OPTIONS = [
   { label: 'Yes', value: 'yes' },
   { label: 'No', value: 'no' }
 ];
@@ -329,8 +327,15 @@ export default function OnboardingScreen() {
 
     setLoading(true);
     try {
+      const cleanedFormData = Object.entries(formData).reduce((acc, [key, value]) => {
+        if (value !== null && value !== '') {
+          acc[key] = value;
+        }
+        return acc;
+      }, {} as Record<string, string>);
+
       const updatedUser = await ProfileService.updateProfile({
-        ...formData,
+        ...cleanedFormData,
         isOnboardingComplete: true,
       });
 
@@ -351,7 +356,10 @@ export default function OnboardingScreen() {
   const handleChange = (field: string, value: string) => {
     console.log(`Updating ${field} with value:`, value);
     setFormData(prev => {
-      const newState = { ...prev, [field]: value };
+      const newState = { 
+        ...prev, 
+        [field]: value.trim() === '' ? null : value 
+      };
       console.log('New form state:', newState);
       return newState;
     });
@@ -816,7 +824,7 @@ export default function OnboardingScreen() {
                 <Text style={styles.helperText}>Select the sub-department where you currently serve or wish to serve</Text>
                 <TouchableOpacity 
                   style={styles.pickerButton}
-                  onPress={() => setOpenPicker('subDepartmentService')}
+                  onPress={() => setOpenPicker('ministryService')}
                 >
                   <Text style={[
                     styles.pickerButtonText,
@@ -1069,7 +1077,7 @@ export default function OnboardingScreen() {
       case 'hasChildren':
         return 'Do you have children?';
       case 'ministryService':
-        return 'Select Ministry Service';
+        return 'Select Sub-department Service';
       case 'hasAssociationMembership':
         return 'Are you a member of any Church Association?';
       case 'hasFatherInFaith':

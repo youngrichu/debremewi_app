@@ -13,6 +13,7 @@ import { Ionicons } from '@expo/vector-icons';
 interface Option {
   label: string;
   value: string;
+  disabled?: boolean;
 }
 
 interface CustomPickerProps {
@@ -56,20 +57,25 @@ export const CustomPicker: React.FC<CustomPickerProps> = ({
                     key={option.value}
                     style={[
                       styles.option,
-                      selectedValue === option.value && styles.selectedOption
+                      selectedValue === option.value && styles.selectedOption,
+                      option.disabled && styles.disabledOption
                     ]}
                     onPress={() => {
-                      onSelect(option.value);
-                      onClose();
+                      if (!option.disabled) {
+                        onSelect(option.value);
+                        onClose();
+                      }
                     }}
+                    disabled={option.disabled}
                   >
                     <Text style={[
                       styles.optionText,
-                      selectedValue === option.value && styles.selectedOptionText
+                      selectedValue === option.value && styles.selectedOptionText,
+                      option.disabled && styles.disabledOptionText
                     ]}>
                       {option.label}
                     </Text>
-                    {selectedValue === option.value && (
+                    {selectedValue === option.value && !option.disabled && (
                       <Ionicons name="checkmark" size={24} color="#2196F3" />
                     )}
                   </TouchableOpacity>
@@ -129,5 +135,13 @@ const styles = StyleSheet.create({
   selectedOptionText: {
     color: '#2196F3',
     fontWeight: '500',
+  },
+  disabledOption: {
+    backgroundColor: '#F5F5F5',
+    opacity: 0.7,
+  },
+  disabledOptionText: {
+    color: '#999',
+    fontStyle: 'italic',
   },
 }); 

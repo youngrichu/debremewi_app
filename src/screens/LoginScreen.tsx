@@ -82,8 +82,8 @@ const LoginScreen = ({ navigation }) => {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.headerSection}>
-            <Text style={styles.welcomeText}>Welcome Back</Text>
-            <Text style={styles.subtitle}>Please sign in to continue</Text>
+            <Text style={styles.welcomeText}>Welcome</Text>
+            <Text style={styles.subtitle}>Please sign in to access your account</Text>
           </View>
 
           <View style={styles.formContainer}>

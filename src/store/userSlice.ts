@@ -11,6 +11,9 @@ interface UserState {
   christianName: string | null;
   residencyCity: string | null;
   isOnboardingComplete: boolean;
+  photo: string | null;
+  profilePhoto: string | null;
+  profilePhotoUrl: string | null;
 }
 
 const initialState: UserState = {
@@ -23,6 +26,9 @@ const initialState: UserState = {
   christianName: null,
   residencyCity: null,
   isOnboardingComplete: false,
+  photo: null,
+  profilePhoto: null,
+  profilePhotoUrl: null,
 };
 
 // Async thunk for updating user profile
