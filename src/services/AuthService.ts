@@ -1,6 +1,8 @@
 import apiClient from '../api/client';
 import { User, Post } from '../types';
 import axios, { isAxiosError } from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { API_URL } from '../config';
 
 export const login = async (username: string, password: string): Promise<{ token: string; user: User }> => {
   console.log('Login service called with:', { username, password });
@@ -190,5 +192,23 @@ export const fetchBlogPosts = async (): Promise<Post[]> => {
   } catch (error) {
     console.error('Error fetching blog posts:', error);
     throw new Error('Failed to fetch blog posts');
+  }
+};
+
+export const deleteAccount = async (): Promise<void> => {
+  try {
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) throw new Error('No authentication token found');
+
+    await axios.delete(`${API_URL}/wp-json/church-app/v1/delete-account`, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    console.log('Account deletion successful');
+  } catch (error) {
+    console.error('Delete account error:', error);
+    throw error;
   }
 };

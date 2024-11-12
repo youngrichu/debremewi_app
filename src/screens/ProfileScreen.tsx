@@ -1,10 +1,14 @@
 import React from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import { useSelector } from 'react-redux';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { RootState } from '../store';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { ProfileScreenNavigationProp } from '../types';
+import { clearUser } from '../store/userSlice';
+import { setAuthState } from '../store/authSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { deleteAccount } from '../services/AuthService';
 
 const formatDisplayValue = (value: string | null | undefined, options?: { [key: string]: string }) => {
   if (!value) return 'Not provided';
@@ -22,11 +26,58 @@ const formatDisplayValue = (value: string | null | undefined, options?: { [key: 
 export default function ProfileScreen() {
   const navigation = useNavigation<ProfileScreenNavigationProp>();
   const user = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch();
 
   const handleEditPress = () => {
     navigation.navigate('HomeStack', {
       screen: 'EditProfile'
     });
+  };
+
+  const handleLogout = async () => {
+    try {
+      await AsyncStorage.removeItem('userToken');
+      dispatch(clearUser());
+      dispatch(setAuthState({ isAuthenticated: false, token: null }));
+    } catch (error) {
+      console.error('Logout error:', error);
+      Alert.alert('Error', 'Failed to logout. Please try again.');
+    }
+  };
+
+  const confirmLogout = () => {
+    Alert.alert(
+      'Logout',
+      'Are you sure you want to logout?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Logout', onPress: handleLogout, style: 'destructive' }
+      ]
+    );
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      await deleteAccount();
+      dispatch(clearUser());
+      dispatch(setAuthState({ isAuthenticated: false, token: null }));
+      Alert.alert('Account Deleted', 'Your account has been successfully deleted.');
+      navigation.navigate('Login');
+    } catch (error) {
+      console.error('Delete account error:', error);
+      Alert.alert('Error', 'Failed to delete account. Please try again.');
+    }
+  };
+
+  const confirmDeleteAccount = () => {
+    Alert.alert(
+      'Delete Account',
+      'Are you sure you want to delete your account? This action cannot be undone.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete', onPress: handleDeleteAccount, style: 'destructive' }
+      ]
+    );
   };
 
   const renderDetailItem = (
@@ -129,6 +180,17 @@ export default function ProfileScreen() {
           `Yes (${user.associationName || 'name not specified'})` : 
           'No', 'account-group-outline', 'MaterialCommunity')}
       </View>
+
+      {/* Logout and Delete Account Buttons */}
+      <TouchableOpacity style={styles.logoutButton} onPress={confirmLogout}>
+        <Ionicons name="log-out-outline" size={24} color="#FF3B30" />
+        <Text style={styles.logoutButtonText}>Logout</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity style={styles.deleteButton} onPress={confirmDeleteAccount}>
+        <Ionicons name="trash-outline" size={24} color="#FF3B30" />
+        <Text style={styles.deleteButtonText}>Delete Account</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 }
@@ -230,5 +292,42 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
     marginLeft: 28,
+  },
+  logoutButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 15,
+    marginTop: 30,
+    marginBottom: 50,
+    marginHorizontal: 20,
+    backgroundColor: '#FFF',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#FF3B30',
+  },
+  logoutButtonText: {
+    color: '#FF3B30',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
+  },
+  deleteButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 15,
+    marginHorizontal: 20,
+    backgroundColor: '#FFF',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#FF3B30',
+    marginBottom: 50,
+  },
+  deleteButtonText: {
+    color: '#FF3B30',
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 8,
   },
 });
