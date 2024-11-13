@@ -3,6 +3,8 @@ import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Event } from '../../types';
 import { format } from 'date-fns';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
+import { toEthiopian, getEthiopianMonthName, formatEthiopianDate } from '../../utils/ethiopianCalendar';
 
 interface EventCardProps {
   event: Event;
@@ -10,6 +12,20 @@ interface EventCardProps {
 }
 
 export const EventCard: React.FC<EventCardProps> = ({ event, onPress }) => {
+  const { i18n } = useTranslation();
+  const isAmharic = i18n.language === 'am';
+
+  const formatDate = (date: string) => {
+    if (isAmharic) {
+      return formatEthiopianDate(new Date(date));
+    }
+    return format(new Date(date), 'PPP');
+  };
+
+  const formatTime = (date: string) => {
+    return format(new Date(date), 'p');
+  };
+
   return (
     <TouchableOpacity style={styles.container} onPress={onPress}>
       {event.thumbnail && (
@@ -27,14 +43,14 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onPress }) => {
           <View style={styles.metaItem}>
             <Ionicons name="calendar" size={16} color="#666" />
             <Text style={styles.metaText}>
-              {format(new Date(event.date), 'PPP')}
+              {formatDate(event.date)}
             </Text>
           </View>
 
           <View style={styles.metaItem}>
             <Ionicons name="time" size={16} color="#666" />
             <Text style={styles.metaText}>
-              {format(new Date(event.date), 'p')}
+              {formatTime(event.date)}
             </Text>
           </View>
 
@@ -42,7 +58,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onPress }) => {
             <View style={styles.metaItem}>
               <Ionicons name="location" size={16} color="#666" />
               <Text style={styles.metaText} numberOfLines={1}>
-                {event.location}
+                {isAmharic ? 'ቦታ፡ ' : 'Location: '}{event.location}
               </Text>
             </View>
           )}
@@ -57,28 +73,27 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 8,
     marginBottom: 16,
+    overflow: 'hidden',
+    elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3,
   },
   image: {
     width: '100%',
-    height: 150,
-    borderTopLeftRadius: 8,
-    borderTopRightRadius: 8,
+    height: 200,
   },
   content: {
     padding: 16,
   },
   title: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: 'bold',
     marginBottom: 8,
+    color: '#333',
   },
   metaContainer: {
-    flexDirection: 'column',
     gap: 8,
   },
   metaItem: {

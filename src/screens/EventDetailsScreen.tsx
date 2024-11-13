@@ -21,6 +21,7 @@ import { useNavigation } from '@react-navigation/native';
 import RenderHTML from 'react-native-render-html';
 import { useWindowDimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { formatEthiopianDate } from '../utils/ethiopianCalendar';
 
 interface EventDetailsScreenProps {
   route: {
@@ -31,12 +32,13 @@ interface EventDetailsScreenProps {
 }
 
 export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigation = useNavigation();
   const { width } = useWindowDimensions();
+  const isAmharic = i18n.language === 'am';
 
   const formatContent = (content: string): string => {
     return content
@@ -216,6 +218,17 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
     }
   };
 
+  const formatDate = (date: string) => {
+    if (isAmharic) {
+      return formatEthiopianDate(new Date(date));
+    }
+    return format(new Date(date), 'PPP');
+  };
+
+  const formatTime = (date: string) => {
+    return format(new Date(date), 'p');
+  };
+
   const tagsStyles = {
     body: {
       fontFamily: undefined, // Use default system font
@@ -306,24 +319,27 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
 
         <View style={styles.metaContainer}>
           <View style={styles.metaItem}>
-            <Ionicons name="calendar" size={20} color="#666" />
+            <Ionicons name="calendar-outline" size={24} color="#666" />
             <Text style={styles.metaText}>
-              {format(new Date(event.date), 'PPP')}
+              {formatDate(event.date)}
             </Text>
           </View>
 
           <View style={styles.metaItem}>
-            <Ionicons name="time" size={20} color="#666" />
+            <Ionicons name="time-outline" size={24} color="#666" />
             <Text style={styles.metaText}>
-              {format(new Date(event.date), 'p')} -{' '}
-              {format(new Date(event.end_date), 'p')}
+              {formatTime(event.date)}
             </Text>
           </View>
 
-          <View style={styles.metaItem}>
-            <Ionicons name="location" size={20} color="#666" />
-            <Text style={styles.metaText}>{event.location}</Text>
-          </View>
+          {event.location && (
+            <View style={styles.metaItem}>
+              <Ionicons name="location-outline" size={24} color="#666" />
+              <Text style={styles.metaText}>
+                {isAmharic ? 'ቦታ፡ ' : 'Location: '}{event.location}
+              </Text>
+            </View>
+          )}
         </View>
 
         <View style={styles.actions}>
