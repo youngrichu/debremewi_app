@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { View, StyleSheet, ActivityIndicator, ScrollView, Text, Dimensions, TouchableOpacity } from 'react-native';
 import { Calendar, DateData } from 'react-native-calendars';
 import { EventList } from '../components/Events/EventList';
@@ -8,8 +8,9 @@ import { Event, EventCategory } from '../types';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '../types';
 import { format, addHours, startOfDay, startOfWeek, addDays, isSameDay } from 'date-fns';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { toEthiopian, getEthiopianMonthName, getEthiopianDayName, ETHIOPIAN_MONTHS } from '../utils/ethiopianCalendar';
 
 const TIME_LABELS = [
   '12 AM', '1 AM', '2 AM', '3 AM', '4 AM', '5 AM', '6 AM', '7 AM', '8 AM', '9 AM', '10 AM', '11 AM',
@@ -30,6 +31,15 @@ interface MarkedDates {
   };
 }
 
+// Helper function to convert Date to Ethiopian date
+const convertDateToEthiopian = (date: Date) => {
+  return toEthiopian(
+    date.getFullYear(),
+    date.getMonth() + 1,
+    date.getDate()
+  );
+};
+
 const WeekView = ({ 
   events, 
   onEventPress, 
@@ -41,18 +51,54 @@ const WeekView = ({
   selectedDate: Date,
   onDayPress: (date: Date) => void,
 }) => {
-  const [currentWeekStart, setCurrentWeekStart] = useState(() => {
-    const date = new Date(selectedDate);
-    const day = date.getDay(); // 0 = Sunday, 1 = Monday, etc.
-    date.setDate(date.getDate() - day); // Go back to Sunday
-    return date;
+  const { i18n } = useTranslation();
+  const isAmharic = i18n.language === 'am';
+
+  const [currentWeekStart, setCurrentWeekStart] = useState<Date>(() => {
+    try {
+      const date = new Date(selectedDate);
+      if (isNaN(date.getTime())) {
+        // If invalid date, return current date
+        return new Date();
+      }
+      const day = date.getDay();
+      date.setDate(date.getDate() - day);
+      return date;
+    } catch (error) {
+      console.error('Error setting initial week:', error);
+      return new Date(); // Fallback to current date
+    }
   });
 
-  const weekDays = Array.from({ length: 7 }, (_, i) => {
-    const date = new Date(currentWeekStart);
-    date.setDate(currentWeekStart.getDate() + i);
-    return date;
-  });
+  const weekDays = useMemo(() => {
+    try {
+      return Array.from({ length: 7 }, (_, i) => {
+        const date = new Date(currentWeekStart);
+        date.setDate(currentWeekStart.getDate() + i);
+        return date;
+      });
+    } catch (error) {
+      console.error('Error generating week days:', error);
+      // Return current week as fallback
+      const today = new Date();
+      const startOfWeek = new Date(today);
+      startOfWeek.setDate(today.getDate() - today.getDay());
+      return Array.from({ length: 7 }, (_, i) => {
+        const date = new Date(startOfWeek);
+        date.setDate(startOfWeek.getDate() + i);
+        return date;
+      });
+    }
+  }, [currentWeekStart]);
+
+  // Add error boundary
+  if (!currentWeekStart || !weekDays) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text>Error loading calendar view</Text>
+      </View>
+    );
+  }
 
   const navigateWeek = (direction: 'prev' | 'next') => {
     setCurrentWeekStart(prev => {
@@ -104,7 +150,15 @@ const WeekView = ({
           <Ionicons name="chevron-back" size={24} color="#666" />
         </TouchableOpacity>
         <Text style={styles.weekRangeText}>
-          {format(weekDays[0], 'MMM d')} - {format(weekDays[6], 'MMM d, yyyy')}
+          {isAmharic ? (
+            (() => {
+              const startEth = convertDateToEthiopian(weekDays[0]);
+              const endEth = convertDateToEthiopian(weekDays[6]);
+              return `${getEthiopianMonthName(startEth.month)} ${startEth.day} - ${getEthiopianMonthName(endEth.month)} ${endEth.day}፣ ${endEth.year}`;
+            })()
+          ) : (
+            `${format(weekDays[0], 'MMM d')} - ${format(weekDays[6], 'MMM d, yyyy')}`
+          )}
         </Text>
         <TouchableOpacity onPress={() => navigateWeek('next')} style={styles.navButton}>
           <Ionicons name="chevron-forward" size={24} color="#666" />
@@ -120,12 +174,20 @@ const WeekView = ({
             style={styles.dayHeader}
             onPress={() => onDayPress(day)}
           >
-            <Text style={styles.dayHeaderText}>{format(day, 'EEE')}</Text>
+            <Text style={styles.dayHeaderText}>
+              {isAmharic ? 
+                getEthiopianDayName(day.getDay()) :
+                format(day, 'EEE')
+              }
+            </Text>
             <Text style={[
               styles.dayHeaderDate,
               isSameDay(day, new Date()) && styles.todayDate
             ]}>
-              {format(day, 'd')}
+              {isAmharic ? 
+                convertDateToEthiopian(day).day :
+                format(day, 'd')
+              }
             </Text>
           </TouchableOpacity>
         ))}
@@ -204,9 +266,17 @@ const DayView = ({ events, onEventPress, selectedDate }: {
   onEventPress: (eventId: number) => void,
   selectedDate: Date
 }) => {
+  const { i18n } = useTranslation();
+  const isAmharic = i18n.language === 'am';
+
   const [currentDate, setCurrentDate] = useState(() => {
-    // Ensure we have a valid date object
-    return new Date(selectedDate.getTime());
+    try {
+      const date = new Date(selectedDate);
+      return isNaN(date.getTime()) ? new Date() : date;
+    } catch (error) {
+      console.error('Error setting initial date:', error);
+      return new Date();
+    }
   });
 
   const navigateDay = (direction: 'prev' | 'next') => {
@@ -236,7 +306,14 @@ const DayView = ({ events, onEventPress, selectedDate }: {
           <Ionicons name="chevron-back" size={24} color="#666" />
         </TouchableOpacity>
         <Text style={styles.dayHeaderText}>
-          {format(currentDate, 'EEEE, MMMM d, yyyy')}
+          {isAmharic ? (
+            (() => {
+              const ethDate = convertDateToEthiopian(currentDate);
+              return `${getEthiopianDayName(currentDate.getDay())}፣ ${getEthiopianMonthName(ethDate.month)} ${ethDate.day}፣ ${ethDate.year}`;
+            })()
+          ) : (
+            format(currentDate, 'EEEE, MMMM d, yyyy')
+          )}
         </Text>
         <TouchableOpacity onPress={() => navigateDay('next')} style={styles.navButton}>
           <Ionicons name="chevron-forward" size={24} color="#666" />
@@ -306,6 +383,108 @@ const DayView = ({ events, onEventPress, selectedDate }: {
   );
 };
 
+// Add helper function for Ethiopian month view
+const getEthiopianMonthDates = (date: Date) => {
+  const ethiopianDate = convertDateToEthiopian(date);
+  const daysInMonth = 30; // Ethiopian months have 30 days except Pagume
+  
+  const days = Array.from({ length: daysInMonth }, (_, i) => {
+    const day = i + 1;
+    return {
+      gregorian: new Date(date), // You'll need to calculate corresponding Gregorian date
+      ethiopian: {
+        year: ethiopianDate.year,
+        month: ethiopianDate.month,
+        day
+      }
+    };
+  });
+
+  return days;
+};
+
+// Custom day component for Ethiopian calendar
+const renderEthiopianDay = (dateData: any) => {
+  try {
+    // Extract date information from the date object
+    const { date } = dateData;
+    if (!date) {
+      return <Text>{dateData.children}</Text>;
+    }
+
+    // Convert to Ethiopian date using the timestamp
+    const gregorianDate = new Date(date.timestamp);
+    const ethiopianDate = toEthiopian(
+      gregorianDate.getFullYear(),
+      gregorianDate.getMonth() + 1,
+      gregorianDate.getDate()
+    );
+
+    // Create the day component
+    return (
+      <TouchableOpacity
+        style={[
+          styles.ethiopianDayContainer,
+          dateData.marking?.selected && styles.selectedContainer,
+          dateData.state === 'disabled' && styles.disabledContainer,
+        ]}
+        onPress={() => {
+          const formattedDate = format(gregorianDate, 'yyyy-MM-dd');
+          dateData.onPress({ 
+            dateString: formattedDate,
+            day: gregorianDate.getDate(),
+            month: gregorianDate.getMonth() + 1,
+            year: gregorianDate.getFullYear(),
+            timestamp: date.timestamp
+          });
+        }}
+        disabled={dateData.state === 'disabled'}
+      >
+        <Text style={[
+          styles.ethiopianDayText,
+          dateData.state === 'today' && { color: '#2196F3' }, // Match English calendar today color
+          dateData.state === 'disabled' && styles.disabledText,
+          dateData.marking?.selected && styles.selectedText,
+        ]}>
+          {ethiopianDate.day}
+        </Text>
+        {dateData.marking?.marked && (
+          <View style={styles.dotContainer}>
+            <View style={styles.dot} />
+          </View>
+        )}
+      </TouchableOpacity>
+    );
+  } catch (error) {
+    console.error('Error rendering Ethiopian day:', error);
+    return <Text>{dateData.children}</Text>;
+  }
+};
+
+// Update the formatMonthHeader function to use the same conversion as week and day views
+const formatMonthHeader = (date: any) => {
+  try {
+    // Convert the date to a proper Date object
+    const gregorianDate = new Date(date);
+    
+    // Use the same conversion method as week/day views
+    const ethiopianDate = toEthiopian(
+      gregorianDate.getFullYear(),
+      gregorianDate.getMonth() + 1,
+      gregorianDate.getDate()
+    );
+    
+    // Return formatted Ethiopian month and year
+    return `${getEthiopianMonthName(ethiopianDate.month)} ${ethiopianDate.year}`;
+  } catch (error) {
+    console.error('Error formatting month header:', error, {
+      input: date,
+      type: typeof date
+    });
+    return format(new Date(date), 'MMMM yyyy'); // Fallback to Gregorian
+  }
+};
+
 export default function EventsScreen() {
   const { t } = useTranslation();
   const [viewMode, setViewMode] = useState<'month' | 'week' | 'day'>('month');
@@ -316,6 +495,10 @@ export default function EventsScreen() {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
+  // Add state for calendar display type
+  const { i18n } = useTranslation();
+  const isAmharic = i18n.language === 'am';
 
   const loadEvents = useCallback(async () => {
     try {
@@ -384,7 +567,7 @@ export default function EventsScreen() {
     setViewMode('day');
   };
 
-  // Create marked dates object for calendar
+  // Modify the getMarkedDates function to handle both calendar types
   const getMarkedDates = (): MarkedDates => {
     const markedDates: MarkedDates = {};
 
@@ -432,7 +615,7 @@ export default function EventsScreen() {
         onViewModeChange={handleViewModeChange}
       />
       
-      {viewMode === 'month' ? (
+      {viewMode === 'month' && (
         <>
           <Calendar
             current={selectedDate || undefined}
@@ -442,7 +625,20 @@ export default function EventsScreen() {
               selectedDayBackgroundColor: '#2196F3',
               todayTextColor: '#2196F3',
               dotColor: '#2196F3',
+              textDayFontFamily: isAmharic ? 'YourEthiopianFont' : undefined,
+              monthTextColor: '#000',
+              textMonthFontSize: 16,
+              textMonthFontWeight: 'bold',
             }}
+            dayComponent={isAmharic ? renderEthiopianDay : undefined}
+            monthFormat={isAmharic ? 'yyyy MMMM' : 'MMMM yyyy'}
+            renderHeader={(date) => (
+              <View style={styles.monthHeaderContainer}>
+                <Text style={styles.monthHeaderText}>
+                  {isAmharic ? formatMonthHeader(date) : format(new Date(date), 'MMMM yyyy')}
+                </Text>
+              </View>
+            )}
           />
           <EventList
             events={selectedDate ? filteredEvents : events}
@@ -451,7 +647,8 @@ export default function EventsScreen() {
             loading={loading}
           />
         </>
-      ) : viewMode === 'week' ? (
+      )}
+      {viewMode === 'week' ? (
         <WeekView 
           events={events}
           onEventPress={handleEventPress}
@@ -714,5 +911,54 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'relative',
     marginLeft: 60, // Width of time labels
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  ethiopianDayContainer: {
+    width: 32,
+    height: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 16,
+  },
+  ethiopianDayText: {
+    fontSize: 16,
+    color: '#000',
+  },
+  selectedContainer: {
+    backgroundColor: '#2196F3',
+  },
+  selectedText: {
+    color: '#fff',
+  },
+  disabledContainer: {
+    opacity: 0.4,
+  },
+  disabledText: {
+    color: '#666',
+  },
+  dotContainer: {
+    alignItems: 'center',
+    marginTop: 1,
+  },
+  dot: {
+    width: 4,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: '#2196F3',
+  },
+  monthHeaderContainer: {
+    padding: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  monthHeaderText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#000',
   },
 });
