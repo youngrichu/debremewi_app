@@ -15,6 +15,14 @@ interface EventFiltersProps {
   onCategorySelect: (category: string | null) => void;
   viewMode: 'month' | 'week' | 'day';
   onViewModeChange: (mode: 'month' | 'week' | 'day') => void;
+  labels: {
+    month: string;
+    week: string;
+    day: string;
+    all: string;
+    gubae: string;
+    sermon: string;
+  };
 }
 
 export const EventFilters: React.FC<EventFiltersProps> = ({
@@ -23,6 +31,7 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
   onCategorySelect,
   viewMode,
   onViewModeChange,
+  labels
 }) => {
   return (
     <View style={styles.container}>
@@ -32,9 +41,7 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
           onPress={() => onViewModeChange('month')}
         >
           <Ionicons name="calendar" size={20} color={viewMode === 'month' ? '#2196F3' : '#666'} />
-          <Text style={[styles.viewModeText, viewMode === 'month' && styles.activeViewModeText]}>
-            Month
-          </Text>
+          <Text style={styles.viewModeText}>{labels.month}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.viewModeButton, viewMode === 'week' && styles.activeViewMode]}
@@ -42,7 +49,7 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
         >
           <Ionicons name="calendar-outline" size={20} color={viewMode === 'week' ? '#2196F3' : '#666'} />
           <Text style={[styles.viewModeText, viewMode === 'week' && styles.activeViewModeText]}>
-            Week
+            {labels.week}
           </Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -51,7 +58,7 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
         >
           <Ionicons name="today" size={20} color={viewMode === 'day' ? '#2196F3' : '#666'} />
           <Text style={[styles.viewModeText, viewMode === 'day' && styles.activeViewModeText]}>
-            Day
+            {labels.day}
           </Text>
         </TouchableOpacity>
       </View>
@@ -66,7 +73,7 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
           onPress={() => onCategorySelect(null)}
         >
           <Text style={[styles.categoryText, !selectedCategory && styles.activeCategoryText]}>
-            All
+            {labels.all}
           </Text>
         </TouchableOpacity>
         {categories.map((category) => (

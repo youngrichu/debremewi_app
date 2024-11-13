@@ -486,7 +486,7 @@ const formatMonthHeader = (date: any) => {
 };
 
 export default function EventsScreen() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [viewMode, setViewMode] = useState<'month' | 'week' | 'day'>('month');
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
@@ -497,7 +497,6 @@ export default function EventsScreen() {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   // Add state for calendar display type
-  const { i18n } = useTranslation();
   const isAmharic = i18n.language === 'am';
 
   const loadEvents = useCallback(async () => {
@@ -613,6 +612,14 @@ export default function EventsScreen() {
         onCategorySelect={handleCategorySelect}
         viewMode={viewMode}
         onViewModeChange={handleViewModeChange}
+        labels={{
+          month: isAmharic ? 'ወር' : 'Month',
+          week: isAmharic ? 'ሳምንት' : 'Week',
+          day: isAmharic ? 'ቀን' : 'Day',
+          all: isAmharic ? 'ሁሉም' : 'All',
+          gubae: isAmharic ? 'ጉባኤ' : 'Gubae',
+          sermon: isAmharic ? 'ስብከት' : 'Sermon'
+        }}
       />
       
       {viewMode === 'month' && (
@@ -631,7 +638,6 @@ export default function EventsScreen() {
               textMonthFontWeight: 'bold',
             }}
             dayComponent={isAmharic ? renderEthiopianDay : undefined}
-            monthFormat={isAmharic ? 'yyyy MMMM' : 'MMMM yyyy'}
             renderHeader={(date) => (
               <View style={styles.monthHeaderContainer}>
                 <Text style={styles.monthHeaderText}>
@@ -639,23 +645,38 @@ export default function EventsScreen() {
                 </Text>
               </View>
             )}
+            hideArrows={false}
+            renderArrow={(direction) => (
+              <Text style={styles.arrowText}>
+                {direction === 'left' ? '◀' : '▶'}
+              </Text>
+            )}
+            hideExtraDays={true}
+            hideDayNames={true}
           />
           <EventList
             events={selectedDate ? filteredEvents : events}
             onEventPress={handleEventPress}
             onRefresh={loadEvents}
             loading={loading}
+            labels={{
+              noEvents: isAmharic ? 'ምንም መርሃግብር የለም' : 'No events',
+              loading: isAmharic ? 'በመጫን ላይ...' : 'Loading...',
+              error: isAmharic ? 'ስህተት ተከስቷል' : 'Error loading events',
+              retry: isAmharic ? 'እንደገና ሞክር' : 'Retry'
+            }}
           />
         </>
       )}
-      {viewMode === 'week' ? (
+      {viewMode === 'week' && (
         <WeekView 
           events={events}
           onEventPress={handleEventPress}
           selectedDate={selectedDate ? new Date(selectedDate) : new Date()}
           onDayPress={handleDayPress}
         />
-      ) : (
+      )}
+      {viewMode === 'day' && (
         <DayView
           events={events}
           onEventPress={handleEventPress}
@@ -960,5 +981,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#000',
+  },
+  arrowText: {
+    fontSize: 20,
+    color: '#2196F3',
+    padding: 10,
   },
 });

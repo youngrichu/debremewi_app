@@ -15,6 +15,12 @@ interface EventListProps {
   onEventPress: (eventId: number) => void;
   onRefresh: () => void;
   loading: boolean;
+  labels: {
+    noEvents: string;
+    loading: string;
+    error: string;
+    retry: string;
+  };
 }
 
 export const EventList: React.FC<EventListProps> = ({
@@ -22,7 +28,25 @@ export const EventList: React.FC<EventListProps> = ({
   onEventPress,
   onRefresh,
   loading,
+  labels
 }) => {
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" />
+        <Text style={styles.loadingText}>{labels.loading}</Text>
+      </View>
+    );
+  }
+
+  if (events.length === 0) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Text style={styles.emptyText}>{labels.noEvents}</Text>
+      </View>
+    );
+  }
+
   // Sort events by date in descending order (newest first)
   const sortedEvents = [...events].sort((a, b) => 
     new Date(b.date).getTime() - new Date(a.date).getTime()
