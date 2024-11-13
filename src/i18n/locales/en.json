@@ -1,0 +1,149 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "loading": "Loading...",
+    "success": "Success",
+    "error": "Error",
+    "required": "Required",
+    "select": "Select",
+    "yes": "Yes",
+    "no": "No",
+    "notProvided": "Not provided",
+    "none": "None"
+  },
+  "profile": {
+    "title": "Profile",
+    "editProfile": "Edit Profile",
+    "sections": {
+      "personalInfo": "Personal Information",
+      "contactInfo": "Contact Information",
+      "churchInfo": "Church Information",
+      "additionalInfo": "Additional Information"
+    },
+    "fields": {
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "christianName": "Christian Name",
+      "phoneNumber": "Phone Number",
+      "gender": "Gender",
+      "maritalStatus": "Marital Status",
+      "educationLevel": "Education Level",
+      "occupation": "Occupation",
+      "residencyCity": "City of Residence",
+      "residenceAddress": "Residence Address",
+      "emergencyContact": "Emergency Contact",
+      "photo": "Photo",
+      "changePhoto": "Change Photo",
+      "christianLife": "Christian Life",
+      "serviceAtParish": "Service at Parish",
+      "ministryService": "Ministry Service",
+      "hasFatherConfessor": "Do you have a Father Confessor?",
+      "fatherConfessorName": "Father Confessor Name",
+      "hasAssociationMembership": "Church Association Membership",
+      "associationName": "Association Name",
+      "residencePermit": "UAE Residence Status"
+    },
+    "placeholders": {
+      "enterOccupation": "Enter your occupation",
+      "enterAddress": "Enter your address",
+      "enterEmergencyContact": "Enter emergency contact",
+      "enterFatherConfessorName": "Enter Father Confessor name",
+      "enterAssociationName": "Enter association name"
+    },
+    "selects": {
+      "selectGender": "Select Gender",
+      "selectMaritalStatus": "Select Marital Status",
+      "selectEducationLevel": "Select Education Level",
+      "selectCity": "Select City",
+      "selectChristianLife": "Select Christian Life Status",
+      "selectServiceType": "Select Service Type",
+      "selectMinistryService": "Select Ministry Service",
+      "selectResidencePermit": "Select Residence Status"
+    },
+    "options": {
+      "gender": {
+        "male": "Male",
+        "female": "Female"
+      },
+      "maritalStatus": {
+        "single": "Single",
+        "married": "Married",
+        "divorced": "Divorced",
+        "widowed": "Widowed"
+      },
+      "educationLevel": {
+        "student": "Student",
+        "grade_10": "Grade 10",
+        "grade_12": "Grade 12",
+        "diploma": "Diploma",
+        "degree": "Degree",
+        "masters": "Masters",
+        "doctorate": "Doctorate"
+      },
+      "christianLife": {
+        "not_repent": "Not Repented",
+        "repent": "Repented",
+        "communion": "Takes Holy Communion"
+      },
+      "serviceAtParish": {
+        "priesthood": "Priesthood service",
+        "deacon": "Deacon service",
+        "choir": "Choir service",
+        "sunday_school": "Sunday School service",
+        "council": "Parish council service",
+        "chalice_association": "Chalice association service",
+        "parents": "Parent's service",
+        "childrens_department": "Children's department service"
+      },
+      "ministryService": {
+        "gospel": "Gospel",
+        "accounting": "Accounting and Budget",
+        "finance": "Finance",
+        "treasurer": "Treasurer",
+        "education": "Education and Training",
+        "public_relation": "Public Relation",
+        "development": "Development",
+        "construction": "Construction and Renovation",
+        "law_order": "Law and Order/Discipline",
+        "charity": "Charity/Philanthropy",
+        "religious_education": "Religious Education",
+        "property": "Property Management",
+        "offering": "Offering Collector",
+        "statistician": "Statistician",
+        "media": "Media",
+        "it": "IT"
+      },
+      "cities": {
+        "dubai": "Dubai",
+        "abu_dhabi": "Abu Dhabi",
+        "sharjah": "Sharjah",
+        "ajman": "Ajman",
+        "ras_al_khaimah": "Ras Al Khaimah",
+        "umm_al_quwain": "Umm Al Quwain",
+        "fujairah": "Fujairah",
+        "al_ain": "Al Ain"
+      }
+    },
+    "messages": {
+      "saveChanges": "Save Changes",
+      "updateSuccess": "Profile updated successfully",
+      "updateError": "Failed to update profile",
+      "permissionRequired": "Permission Required",
+      "photoPermissionMessage": "Sorry, we need camera roll permissions to upload photos",
+      "errorPickingImage": "Failed to pick image",
+      "fillRequiredFields": "Please fill in all required fields"
+    }
+  },
+  "validation": {
+    "required": {
+      "firstName": "First name is required",
+      "lastName": "Last name is required",
+      "phoneNumber": "Phone number is required",
+      "city": "City is required",
+      "address": "Address is required"
+    }
+  }
+} 

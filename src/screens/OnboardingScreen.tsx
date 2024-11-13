@@ -79,25 +79,20 @@ interface DropdownOption {
 // Update the constants with disabled first options
 export const SERVICE_AT_PARISH_OPTIONS: DropdownOption[] = [
   { label: 'Select a Service Type', value: 'sub_department', disabled: true },
-  { label: 'Accounting and Budget', value: 'accounting' },
-  { label: 'Finance', value: 'finance' },
-  { label: 'Treasurer', value: 'treasurer' },
-  { label: 'Education and Training', value: 'education' },
-  { label: 'Public Relation', value: 'public_relation' },
-  { label: 'Development', value: 'development' },
-  { label: 'Construction and Renovation', value: 'construction' },
-  { label: 'Law and Order/Discipline', value: 'law_order' },
-  { label: 'Charity/Philanthropy', value: 'charity' },
-  { label: 'Religious Education', value: 'religious_education' },
-  { label: 'Property Management', value: 'property' },
-  { label: 'Parish Council Coordination', value: 'council' },
-  { label: 'Offering Collector', value: 'offering' },
-  { label: 'Statistician', value: 'statistician' },
-  { label: 'Media and IT', value: 'media_it' }
+  { label: 'Priesthood service', value: 'priesthood' },
+  { label: 'Deacon service', value: 'deacon' },
+  { label: 'Choir service', value: 'choir' },
+  { label: 'Sunday School service', value: 'sunday_school' },
+  { label: 'Parish council service', value: 'council' },
+  { label: "Chalice association service", value: 'chalice_association' },
+  { label: "Parent's service", value: 'parents' },
+  { label: "Children's department service", value: 'childrens_department' },
+  { label: "I don't have any", value: 'none' },
 ];
 
 export const MINISTRY_SERVICE_OPTIONS: DropdownOption[] = [
   { label: 'Select a Sub-department Service', value: 'sub_department', disabled: true },
+  { label: "Gospel", value: 'gospel' },
   { label: 'Accounting and Budget', value: 'accounting' },
   { label: 'Finance', value: 'finance' },
   { label: 'Treasurer', value: 'treasurer' },

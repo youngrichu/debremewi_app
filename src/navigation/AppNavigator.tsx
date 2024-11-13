@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useSelector } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import { RootState } from '../store';
+import { TouchableOpacity, View } from 'react-native';
 
 // Import screens
 import HomeScreen from '../screens/HomeScreen';
@@ -26,6 +27,7 @@ import ContactUsScreen from '../screens/ContactUsScreen';
 import MoreMenuScreen from '../screens/MoreMenuScreen';
 import CommunityScreen from '../screens/CommunityScreen';
 import NewPasswordScreen from '../screens/NewPasswordScreen';
+import { LanguageSelector } from '../components/LanguageSelector';
 
 const Stack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator();
@@ -61,7 +63,13 @@ function MainTabs() {
         },
         tabBarActiveTintColor: '#2196F3',
         tabBarInactiveTintColor: 'gray',
-        headerRight: () => <NotificationButton />,
+        headerRight: () => (
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <LanguageSelector />
+            <NotificationButton />
+          </View>
+        ),
+        headerRightContainerStyle: { paddingRight: 15 },
         headerTitleAlign: 'center',
       })}
     >
@@ -136,22 +144,70 @@ export default function AppNavigator() {
   const { isOnboardingComplete } = useSelector((state: RootState) => state.user);
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
       {!isAuthenticated ? (
         // Auth Stack
         <>
-          <Stack.Screen name="Login" component={LoginScreen} />
-          <Stack.Screen name="Register" component={RegisterScreen} />
-          <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+          <Stack.Screen 
+            name="Login" 
+            component={LoginScreen}
+            options={{
+              headerShown: true,
+              headerRight: () => <LanguageSelector />,
+              headerRightContainerStyle: { paddingRight: 15 },
+            }}
+          />
+          <Stack.Screen 
+            name="Register" 
+            component={RegisterScreen}
+            options={{
+              headerShown: true,
+              headerRight: () => <LanguageSelector />,
+              headerRightContainerStyle: { paddingRight: 15 },
+            }}
+          />
+          <Stack.Screen 
+            name="ForgotPassword" 
+            component={ForgotPasswordScreen}
+            options={{
+              headerShown: true,
+              headerRight: () => <LanguageSelector />,
+              headerRightContainerStyle: { paddingRight: 15 },
+            }}
+          />
         </>
       ) : !isOnboardingComplete ? (
         // Onboarding Stack
-        <Stack.Screen name="Onboarding" component={OnboardingScreen} />
+        <Stack.Screen 
+          name="Onboarding" 
+          component={OnboardingScreen}
+          options={{
+            headerShown: true,
+            headerRight: () => <LanguageSelector />,
+            headerRightContainerStyle: { paddingRight: 15 },
+          }}
+        />
       ) : (
         // Main App Stack with Bottom Tabs
-        <Stack.Screen name="MainTabs" component={MainTabs} />
+        <Stack.Screen 
+          name="MainTabs" 
+          component={MainTabs}
+          options={{ headerShown: false }}
+        />
       )}
-      <Stack.Screen name="NewPassword" component={NewPasswordScreen} />
+      <Stack.Screen 
+        name="NewPassword" 
+        component={NewPasswordScreen}
+        options={{
+          headerShown: true,
+          headerRight: () => <LanguageSelector />,
+          headerRightContainerStyle: { paddingRight: 15 },
+        }}
+      />
     </Stack.Navigator>
   );
 }

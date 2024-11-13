@@ -1,102 +1,118 @@
 import React from 'react';
-import { 
-  Modal, 
-  View, 
-  Text, 
-  TouchableOpacity, 
-  StyleSheet,
-  ScrollView,
-  TouchableWithoutFeedback
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-
-interface Option {
-  label: string;
-  value: string;
-  disabled?: boolean;
-}
+import { View, Modal, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { Text } from './Text';
+import { useTranslation } from 'react-i18next';
+import { getPickerConfig } from '../constants/options';
 
 interface CustomPickerProps {
   visible: boolean;
   onClose: () => void;
-  options: Option[];
+  pickerName: string;
   onSelect: (value: string) => void;
   selectedValue?: string;
-  title: string;
 }
 
-export const CustomPicker: React.FC<CustomPickerProps> = ({
-  visible,
-  onClose,
-  options = [],
-  onSelect,
-  selectedValue,
-  title
-}) => {
-  if (!options) return null;
+export function CustomPicker({ visible, onClose, pickerName, onSelect, selectedValue }: CustomPickerProps) {
+  const { t } = useTranslation();
+  const { options } = getPickerConfig(pickerName as any);
+
+  const getPickerTitle = () => {
+    switch (pickerName) {
+      case 'serviceAtParish':
+        return t('profile.selects.selectServiceType');
+      case 'ministryService':
+        return t('profile.selects.selectMinistryService');
+      case 'christianLife':
+        return t('profile.selects.selectChristianLife');
+      case 'residencyCity':
+        return t('profile.selects.selectCity');
+      case 'hasFatherConfessor':
+        return t('profile.fields.hasFatherConfessor');
+      case 'hasAssociationMembership':
+        return t('profile.fields.hasAssociationMembership');
+      case 'residencePermit':
+        return t('profile.selects.selectResidencePermit');
+      case 'gender':
+        return t('profile.selects.selectGender');
+      case 'maritalStatus':
+        return t('profile.selects.selectMaritalStatus');
+      case 'educationLevel':
+        return t('profile.selects.selectEducationLevel');
+      default:
+        return t('common.select');
+    }
+  };
+
+  const getTranslatedOption = (value: string) => {
+    if (['hasFatherConfessor', 'hasAssociationMembership', 'residencePermit'].includes(pickerName)) {
+      return t(`common.${value.toLowerCase()}`);
+    }
+    if (value === 'none') {
+      return t('common.none');
+    }
+    if (pickerName === 'residencyCity') {
+      return t(`profile.options.cities.${value}`);
+    }
+    return t(`profile.options.${pickerName}.${value}`);
+  };
 
   return (
     <Modal
       visible={visible}
-      transparent
+      transparent={true}
       animationType="slide"
+      onRequestClose={onClose}
     >
-      <TouchableWithoutFeedback onPress={onClose}>
-        <View style={styles.overlay}>
-          <TouchableWithoutFeedback>
-            <View style={styles.content}>
-              <View style={styles.header}>
-                <Text style={styles.title}>{title}</Text>
-                <TouchableOpacity onPress={onClose} style={styles.closeButton}>
-                  <Ionicons name="close" size={24} color="#333" />
-                </TouchableOpacity>
-              </View>
-              <ScrollView>
-                {options.map((option) => (
-                  <TouchableOpacity
-                    key={option.value}
-                    style={[
-                      styles.option,
-                      selectedValue === option.value && styles.selectedOption,
-                      option.disabled && styles.disabledOption
-                    ]}
-                    onPress={() => {
-                      if (!option.disabled) {
-                        onSelect(option.value);
-                        onClose();
-                      }
-                    }}
-                    disabled={option.disabled}
-                  >
-                    <Text style={[
-                      styles.optionText,
-                      selectedValue === option.value && styles.selectedOptionText,
-                      option.disabled && styles.disabledOptionText
-                    ]}>
-                      {option.label}
-                    </Text>
-                    {selectedValue === option.value && !option.disabled && (
-                      <Ionicons name="checkmark" size={24} color="#2196F3" />
-                    )}
-                  </TouchableOpacity>
-                ))}
-              </ScrollView>
-            </View>
-          </TouchableWithoutFeedback>
+      <View style={styles.modalOverlay}>
+        <View style={styles.modalContent}>
+          <View style={styles.header}>
+            <Text style={styles.title}>{getPickerTitle()}</Text>
+            <TouchableOpacity onPress={onClose}>
+              <Text style={styles.closeButton}>✕</Text>
+            </TouchableOpacity>
+          </View>
+          
+          <ScrollView style={styles.optionsList}>
+            {options.map((option) => (
+              <TouchableOpacity
+                key={option}
+                style={[
+                  styles.option,
+                  selectedValue === option && styles.selectedOption
+                ]}
+                onPress={() => {
+                  onSelect(option);
+                  onClose();
+                }}
+              >
+                <Text
+                  style={[
+                    styles.optionText,
+                    selectedValue === option && styles.selectedOptionText
+                  ]}
+                >
+                  {getTranslatedOption(option)}
+                </Text>
+                {selectedValue === option && (
+                  <Text style={styles.checkmark}>✓</Text>
+                )}
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
         </View>
-      </TouchableWithoutFeedback>
+      </View>
     </Modal>
   );
-};
+}
 
 const styles = StyleSheet.create({
-  overlay: {
+  modalOverlay: {
     flex: 1,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
     justifyContent: 'flex-end',
   },
-  content: {
-    backgroundColor: '#FFF',
+  modalContent: {
+    backgroundColor: 'white',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: '80%',
@@ -105,28 +121,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 20,
+    padding: 15,
     borderBottomWidth: 1,
-    borderBottomColor: '#EEE',
+    borderBottomColor: '#eee',
   },
   title: {
     fontSize: 18,
-    fontWeight: '600',
-    color: '#333',
+    fontWeight: 'bold',
   },
   closeButton: {
-    padding: 4,
+    fontSize: 20,
+    color: '#666',
+    padding: 5,
+  },
+  optionsList: {
+    padding: 15,
   },
   option: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 16,
-    borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#EEE',
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+    borderRadius: 8,
   },
   selectedOption: {
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#F5F9FF',
   },
   optionText: {
     fontSize: 16,
@@ -134,14 +154,11 @@ const styles = StyleSheet.create({
   },
   selectedOptionText: {
     color: '#2196F3',
-    fontWeight: '500',
+    fontWeight: '600',
   },
-  disabledOption: {
-    backgroundColor: '#F5F5F5',
-    opacity: 0.7,
-  },
-  disabledOptionText: {
-    color: '#999',
-    fontStyle: 'italic',
+  checkmark: {
+    color: '#2196F3',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 }); 

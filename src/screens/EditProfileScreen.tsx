@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   View,
-  Text,
   TextInput,
   StyleSheet,
   TouchableOpacity,
@@ -13,7 +12,7 @@ import {
   Image,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUser } from '../store/userSlice';
+import { setUser, UserState } from '../store/userSlice';
 import { ProfileService } from '../services/ProfileService';
 import { CustomPicker } from '../components/CustomPicker';
 import { Ionicons } from '@expo/vector-icons';
@@ -21,6 +20,9 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as ImagePicker from 'expo-image-picker';
 import { RootState } from '../store';
 import { useNavigation } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
+import { Text } from '../components/Text';
+import { LanguageSelector } from '../components/LanguageSelector';
 
 // Import the same constants and options from OnboardingScreen
 import {
@@ -65,30 +67,41 @@ const formatDisplayValue = (value: string | null | undefined, options?: { [key: 
 // Add these functions before the return statement in EditProfileScreen
 const getPickerOptions = (pickerName: string) => {
   console.log('Getting options for:', pickerName);
+  let options;
   switch (pickerName) {
     case 'gender':
-      return GENDER_OPTIONS;
+      options = GENDER_OPTIONS;
+      break;
     case 'maritalStatus':
-      return MARITAL_STATUS_OPTIONS;
+      options = MARITAL_STATUS_OPTIONS;
+      break;
     case 'educationLevel':
-      return EDUCATION_LEVEL_OPTIONS;
+      options = EDUCATION_LEVEL_OPTIONS;
+      break;
     case 'residencyCity':
-      return UAE_CITIES;
+      options = UAE_CITIES;
+      break;
     case 'christianLife':
-      return CHRISTIAN_LIFE_OPTIONS;
+      options = CHRISTIAN_LIFE_OPTIONS;
+      break;
     case 'serviceAtParish':
-      return SERVICE_AT_PARISH_OPTIONS;
+      options = SERVICE_AT_PARISH_OPTIONS;
+      break;
     case 'ministryService':
-      return MINISTRY_SERVICE_OPTIONS;
+      options = MINISTRY_SERVICE_OPTIONS;
+      break;
     case 'hasFatherConfessor':
     case 'residencePermit':
     case 'hasChildren':
     case 'hasAssociationMembership':
-      return YES_NO_OPTIONS;
+      options = YES_NO_OPTIONS;
+      break;
     default:
       console.log('No options found for:', pickerName);
-      return [];
+      options = [];
   }
+  console.log('Options:', options);
+  return options;
 };
 
 const getPickerTitle = (pickerName: string) => {
@@ -127,9 +140,10 @@ export default function EditProfileScreen() {
   const [loading, setLoading] = useState(false);
   const [openPicker, setOpenPicker] = useState<string | null>(null);
   const [formData, setFormData] = useState(currentUser);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Record<string, string | undefined>>({});
+  const { t } = useTranslation();
 
-  const handleChange = (field: string, value: string) => {
+  const handleChange = (field: keyof UserState, value: string) => {
     setFormData(prev => ({
       ...prev,
       [field]: value.trim() === '' ? null : value
@@ -207,28 +221,93 @@ export default function EditProfileScreen() {
     }
   };
 
-  // Add this helper function for rendering form fields
+  const getSelectedValueDisplay = (field: string, value: string | null | undefined) => {
+    if (!value) return t('common.select');
+
+    // For yes/no fields
+    if (['hasFatherConfessor', 'hasAssociationMembership', 'residencePermit'].includes(field)) {
+      return t(`common.${value.toLowerCase()}`);
+    }
+
+    // For cities
+    if (field === 'residencyCity') {
+      return t(`profile.options.cities.${value}`);
+    }
+
+    // For all other fields
+    return t(`profile.options.${field}.${value}`);
+  };
+
+  // Update renderFormField to use proper translation paths
   const renderFormField = (
-    label: string,
-    field: keyof typeof formData,
-    placeholder: string,
+    field: keyof UserState,
     isRequired: boolean = false,
     keyboardType: 'default' | 'email-address' | 'numeric' | 'phone-pad' = 'default'
   ) => (
     <View style={styles.inputGroup}>
       <Text style={styles.label}>
-        {label} {isRequired && <Text style={styles.required}>*</Text>}
+        {t(`profile.fields.${field}`)} {isRequired && <Text style={styles.required}>*</Text>}
       </Text>
       <TextInput
-        style={[styles.input, errors[field] && styles.inputError]}
+        style={[styles.input, errors[field] ? styles.inputError : undefined]}
         value={formData[field]?.toString() || ''}
         onChangeText={(text) => handleChange(field, text)}
-        placeholder={placeholder}
+        placeholder={t(`profile.placeholders.enter${field.charAt(0).toUpperCase() + field.slice(1)}`)}
         keyboardType={keyboardType}
       />
       {errors[field] && (
-        <Text style={styles.errorText}>{errors[field]}</Text>
+        <Text style={styles.errorText}>{t(`validation.required.${field}`)}</Text>
       )}
+    </View>
+  );
+
+  // Fix section titles
+  const renderSectionTitle = (section: string) => (
+    <Text style={styles.sectionTitle}>
+      {t(`profile.sections.${section}`)}
+    </Text>
+  );
+
+  // Fix field labels
+  const renderFieldLabel = (field: string, isRequired: boolean = false) => (
+    <Text style={styles.label}>
+      {t(`profile.fields.${field}`)} {isRequired && <Text style={styles.required}>*</Text>}
+    </Text>
+  );
+
+  // Fix picker display values
+  const getPickerDisplayValue = (field: string, value: string | null | undefined) => {
+    if (!value) return t('common.select');
+
+    // For yes/no fields
+    if (['hasFatherConfessor', 'hasAssociationMembership', 'residencePermit'].includes(field)) {
+      return t(`common.${value.toLowerCase()}`);
+    }
+
+    // For cities
+    if (field === 'residencyCity') {
+      return t(`profile.options.cities.${value}`);
+    }
+
+    // For all other fields
+    return t(`profile.options.${field}.${value}`);
+  };
+
+  // Fix picker button
+  const renderPickerButton = (field: string, isRequired: boolean = false) => (
+    <View style={styles.inputGroup}>
+      {renderFieldLabel(field, isRequired)}
+      <TouchableOpacity 
+        style={styles.pickerButton}
+        onPress={() => setOpenPicker(field)}
+      >
+        <Text style={styles.pickerButtonText}>
+          {formData[field as keyof typeof formData] 
+            ? getPickerDisplayValue(field, formData[field as keyof typeof formData])
+            : t(`profile.selects.select${field.charAt(0).toUpperCase() + field.slice(1)}`)}
+        </Text>
+        <Ionicons name="chevron-down" size={20} color="#666" />
+      </TouchableOpacity>
     </View>
   );
 
@@ -237,10 +316,7 @@ export default function EditProfileScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
-      <LinearGradient
-        colors={['#2196F3', '#1976D2']}
-        style={styles.gradient}
-      >
+      <LinearGradient colors={['#2196F3', '#1976D2']} style={styles.gradient}>
         <View style={styles.header}>
           <TouchableOpacity 
             style={styles.backButton} 
@@ -248,8 +324,8 @@ export default function EditProfileScreen() {
           >
             <Ionicons name="arrow-back" size={24} color="#FFF" />
           </TouchableOpacity>
-          <Text style={styles.headerText}>Edit Profile</Text>
-          <View style={styles.backButton} />
+          <Text style={styles.headerText}>{t('profile.editProfile')}</Text>
+          <LanguageSelector />
         </View>
 
         <ScrollView 
@@ -265,7 +341,7 @@ export default function EditProfileScreen() {
               ) : (
                 <View style={styles.photoPlaceholder}>
                   <Ionicons name="camera" size={40} color="#666" />
-                  <Text style={styles.changePhotoText}>Change Photo</Text>
+                  <Text style={styles.changePhotoText}>{t('profile.fields.changePhoto')}</Text>
                 </View>
               )}
             </TouchableOpacity>
@@ -274,173 +350,37 @@ export default function EditProfileScreen() {
           {/* Form Fields */}
           <View style={styles.formSection}>
             {/* Personal Information */}
-            <Text style={styles.sectionTitle}>Personal Information</Text>
-            {renderFormField('First Name', 'firstName', 'Enter your first name', true)}
-            {renderFormField('Last Name', 'lastName', 'Enter your last name', true)}
-            {renderFormField('Christian Name', 'christianName', 'Enter your Christian name')}
-            
-            {/* Gender Picker */}
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Gender *</Text>
-              <TouchableOpacity 
-                style={styles.pickerButton}
-                onPress={() => setOpenPicker('gender')}
-              >
-                <Text style={styles.pickerButtonText}>
-                  {formData.gender ? formatDisplayValue(formData.gender) : 'Select Gender'}
-                </Text>
-                <Ionicons name="chevron-down" size={20} color="#666" />
-              </TouchableOpacity>
-            </View>
-
-            {/* Marital Status Picker */}
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Marital Status</Text>
-              <TouchableOpacity 
-                style={styles.pickerButton}
-                onPress={() => setOpenPicker('maritalStatus')}
-              >
-                <Text style={styles.pickerButtonText}>
-                  {formData.maritalStatus ? formatDisplayValue(formData.maritalStatus) : 'Select Marital Status'}
-                </Text>
-                <Ionicons name="chevron-down" size={20} color="#666" />
-              </TouchableOpacity>
-            </View>
-
-            {/* Education Level Picker */}
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Education Level</Text>
-              <TouchableOpacity 
-                style={styles.pickerButton}
-                onPress={() => setOpenPicker('educationLevel')}
-              >
-                <Text style={styles.pickerButtonText}>
-                  {formData.educationLevel ? formatDisplayValue(formData.educationLevel) : 'Select Education Level'}
-                </Text>
-                <Ionicons name="chevron-down" size={20} color="#666" />
-              </TouchableOpacity>
-            </View>
-
-            {renderFormField('Occupation', 'occupation', 'Enter your occupation')}
+            {renderSectionTitle('personalInfo')}
+            {renderFormField('firstName', true)}
+            {renderFormField('lastName', true)}
+            {renderFormField('christianName')}
+            {renderPickerButton('gender', true)}
+            {renderPickerButton('maritalStatus')}
+            {renderPickerButton('educationLevel')}
+            {renderFormField('occupation')}
 
             {/* Contact Information */}
-            <Text style={styles.sectionTitle}>Contact Information</Text>
-            {renderFormField('Phone Number', 'phoneNumber', '+971 50 123 4567', true, 'phone-pad')}
-            
-            {/* City Picker */}
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>City of Residence *</Text>
-              <TouchableOpacity 
-                style={styles.pickerButton}
-                onPress={() => setOpenPicker('residencyCity')}
-              >
-                <Text style={styles.pickerButtonText}>
-                  {formData.residencyCity ? formatDisplayValue(formData.residencyCity) : 'Select City'}
-                </Text>
-                <Ionicons name="chevron-down" size={20} color="#666" />
-              </TouchableOpacity>
-            </View>
-
-            {renderFormField('Residence Address', 'residenceAddress', 'Enter your address', true)}
-            {renderFormField('Emergency Contact', 'emergencyContact', 'Enter emergency contact details')}
+            {renderSectionTitle('contactInfo')}
+            {renderFormField('phoneNumber', true, 'phone-pad')}
+            {renderPickerButton('residencyCity', true)}
+            {renderFormField('residenceAddress', true)}
+            {renderFormField('emergencyContact')}
 
             {/* Church Information */}
-            <Text style={styles.sectionTitle}>Church Information</Text>
-            
-            {/* Christian Life Status Picker */}
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Christian Life Status</Text>
-              <TouchableOpacity 
-                style={styles.pickerButton}
-                onPress={() => setOpenPicker('christianLife')}
-              >
-                <Text style={styles.pickerButtonText}>
-                  {formData.christianLife ? formatDisplayValue(formData.christianLife) : 'Select Christian Life Status'}
-                </Text>
-                <Ionicons name="chevron-down" size={20} color="#666" />
-              </TouchableOpacity>
-            </View>
-
-            {/* Service at Parish Picker */}
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Service at Parish</Text>
-              <TouchableOpacity 
-                style={styles.pickerButton}
-                onPress={() => setOpenPicker('serviceAtParish')}
-              >
-                <Text style={styles.pickerButtonText}>
-                  {formData.serviceAtParish ? formatDisplayValue(formData.serviceAtParish) : 'Select Service Type'}
-                </Text>
-                <Ionicons name="chevron-down" size={20} color="#666" />
-              </TouchableOpacity>
-            </View>
-
-            {/* Ministry Service Picker */}
+            {renderSectionTitle('churchInfo')}
+            {renderPickerButton('christianLife')}
+            {renderPickerButton('serviceAtParish')}
             {formData.serviceAtParish && formData.serviceAtParish !== 'none' && (
-              <View style={styles.inputGroup}>
-                <Text style={styles.label}>Sub-department Service</Text>
-                <TouchableOpacity 
-                  style={styles.pickerButton}
-                  onPress={() => setOpenPicker('ministryService')}
-                >
-                  <Text style={styles.pickerButtonText}>
-                    {formData.ministryService ? formatDisplayValue(formData.ministryService) : 'Select Sub-department Service'}
-                  </Text>
-                  <Ionicons name="chevron-down" size={20} color="#666" />
-                </TouchableOpacity>
-              </View>
+              renderPickerButton('ministryService')
             )}
-
-            {/* Father Confessor Section */}
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Do you have a Father Confessor?</Text>
-              <TouchableOpacity 
-                style={styles.pickerButton}
-                onPress={() => setOpenPicker('hasFatherConfessor')}
-              >
-                <Text style={styles.pickerButtonText}>
-                  {formData.hasFatherConfessor ? formatDisplayValue(formData.hasFatherConfessor) : 'Select Option'}
-                </Text>
-                <Ionicons name="chevron-down" size={20} color="#666" />
-              </TouchableOpacity>
-            </View>
-
-            {formData.hasFatherConfessor === 'yes' && 
-              renderFormField('Father Confessor Name', 'fatherConfessorName', 'Enter name of your Father Confessor')}
-
-            {/* Association Membership Section */}
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Church Association Membership</Text>
-              <TouchableOpacity 
-                style={styles.pickerButton}
-                onPress={() => setOpenPicker('hasAssociationMembership')}
-              >
-                <Text style={styles.pickerButtonText}>
-                  {formData.hasAssociationMembership ? formatDisplayValue(formData.hasAssociationMembership) : 'Select Option'}
-                </Text>
-                <Ionicons name="chevron-down" size={20} color="#666" />
-              </TouchableOpacity>
-            </View>
-
-            {formData.hasAssociationMembership === 'yes' && 
-              renderFormField('Association Name', 'associationName', 'Enter name of association')}
+            {renderPickerButton('hasFatherConfessor')}
+            {formData.hasFatherConfessor === 'yes' && renderFormField('fatherConfessorName')}
+            {renderPickerButton('hasAssociationMembership')}
+            {formData.hasAssociationMembership === 'yes' && renderFormField('associationName')}
 
             {/* Additional Information */}
-            <Text style={styles.sectionTitle}>Additional Information</Text>
-            
-            {/* Residence Permit Picker */}
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>UAE Residence Status</Text>
-              <TouchableOpacity 
-                style={styles.pickerButton}
-                onPress={() => setOpenPicker('residencePermit')}
-              >
-                <Text style={styles.pickerButtonText}>
-                  {formData.residencePermit ? formatDisplayValue(formData.residencePermit) : 'Select Residence Permit Status'}
-                </Text>
-                <Ionicons name="chevron-down" size={20} color="#666" />
-              </TouchableOpacity>
-            </View>
+            {renderSectionTitle('additionalInfo')}
+            {renderPickerButton('residencePermit')}
 
             {/* Submit Button */}
             <TouchableOpacity
@@ -451,7 +391,7 @@ export default function EditProfileScreen() {
               {loading ? (
                 <ActivityIndicator color="#FFF" />
               ) : (
-                <Text style={styles.submitButtonText}>Save Changes</Text>
+                <Text style={styles.submitButtonText}>{t('profile.messages.saveChanges')}</Text>
               )}
             </TouchableOpacity>
           </View>
@@ -462,13 +402,12 @@ export default function EditProfileScreen() {
           <CustomPicker
             visible={true}
             onClose={() => setOpenPicker(null)}
-            options={getPickerOptions(openPicker)}
+            pickerName={openPicker}
             onSelect={(value) => {
-              handleChange(openPicker, value);
+              handleChange(openPicker as keyof UserState, value);
               setOpenPicker(null);
             }}
             selectedValue={formData[openPicker as keyof typeof formData]?.toString()}
-            title={getPickerTitle(openPicker)}
           />
         )}
       </LinearGradient>
@@ -489,6 +428,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     padding: 20,
     paddingTop: Platform.OS === 'ios' ? 60 : 20,
+    backgroundColor: 'transparent',
   },
   headerText: {
     fontSize: 20,
@@ -583,6 +523,19 @@ const styles = StyleSheet.create({
   },
   required: {
     color: '#FF3B30',
+  },
+  pickerButton: {
+    borderWidth: 1,
+    borderColor: '#DDD',
+    borderRadius: 8,
+    padding: 12,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  pickerButtonText: {
+    fontSize: 16,
+    color: '#333',
   },
   // Add more styles as needed...
 }); 

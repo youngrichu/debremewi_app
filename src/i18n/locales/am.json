@@ -1,0 +1,149 @@
+{
+  "common": {
+    "save": "አስቀምጥ",
+    "cancel": "ሰርዝ",
+    "edit": "አስተካክል",
+    "delete": "ሰርዝ",
+    "loading": "እባክዎ ይጠብቁ...",
+    "success": "ተሳክቷል",
+    "error": "ስህተት ተፈጥሯል",
+    "required": "አስፈላጊ",
+    "select": "ይምረጡ",
+    "yes": "አዎ",
+    "no": "አይ",
+    "notProvided": "አልተሰጠም",
+    "none": "የለም"
+  },
+  "profile": {
+    "title": "መገለጫ",
+    "editProfile": "መገለጫ አስተካክል",
+    "sections": {
+      "personalInfo": "የግል መረጃ",
+      "contactInfo": "የመገኛ መረጃ",
+      "churchInfo": "የቤተክርስቲያን መረጃ",
+      "additionalInfo": "ተጨማሪ መረጃ"
+    },
+    "fields": {
+      "firstName": "መጠሪያ ስም",
+      "lastName": "የአባት ስም",
+      "christianName": "የክርስትና ስም",
+      "phoneNumber": "ስልክ ቁጥር",
+      "gender": "ጾታ",
+      "maritalStatus": "የጋብቻ ሁኔታ",
+      "educationLevel": "የትምህርት ደረጃ",
+      "occupation": "ሥራ",
+      "residencyCity": "የመኖሪያ ከተማ",
+      "residenceAddress": "የመኖሪያ አድራሻ",
+      "emergencyContact": "የአደጋ ጊዜ ተጠሪ",
+      "photo": "ፎቶ",
+      "changePhoto": "ፎቶ ለውጥ",
+      "christianLife": "የክርስትና ሕይወት",
+      "serviceAtParish": "በደብሩ ላይ የሚሳተፉበት አገልግሎት",
+      "ministryService": "የንዑስ ክፍል አገልግሎት",
+      "hasFatherConfessor": "የንስሐ አባት አለዎት?",
+      "fatherConfessorName": "የንስሐ አባት ስም",
+      "hasAssociationMembership": "በማህበር ውስጥ አባል ነዎት?",
+      "associationName": "የማህበሩ ስም",
+      "residencePermit": "የመኖሪያ ፈቃድ"
+    },
+    "placeholders": {
+      "enterOccupation": "ሥራዎን ያስገቡ",
+      "enterAddress": "አድራሻዎን ያስገቡ",
+      "enterEmergencyContact": "የአደጋ ጊዜ ተጠሪ ያስገቡ",
+      "enterFatherConfessorName": "የንስሐ አባት ስም ያስገቡ",
+      "enterAssociationName": "የማህበሩን ስም ያስገቡ"
+    },
+    "selects": {
+      "selectGender": "ጾታ ይምረጡ",
+      "selectMaritalStatus": "የጋብቻ ሁኔታ ይምረጡ",
+      "selectEducationLevel": "የትምህርት ደረጃ ይምረጡ",
+      "selectCity": "ከተማ ይምረጡ",
+      "selectChristianLife": "የክርስትና ሕይወት ሁኔታ ይምረጡ",
+      "selectServiceType": "የአገልግሎት ዓይነት ይምረጡ",
+      "selectMinistryService": "የንዑስ አገልግሎት ዘርፍ ይምረጡ",
+      "selectResidencePermit": "የመኖሪያ ፈቃድ ሁኔታ ይምረጡ"
+    },
+    "options": {
+      "gender": {
+        "male": "ወንድ",
+        "female": "ሴት"
+      },
+      "maritalStatus": {
+        "single": "ያላገባ",
+        "married": "ያገባ",
+        "divorced": "የፈታ",
+        "widowed": "መበለት"
+      },
+      "educationLevel": {
+        "student": "ተማሪ",
+        "grade_10": "ክፍል 10",
+        "grade_12": "ክፍል 12",
+        "diploma": "ዲፕሎማ",
+        "degree": "ዲግሪ",
+        "masters": "ማስተርስ",
+        "doctorate": "ዶክትሬት"
+      },
+      "christianLife": {
+        "not_repent": "ንስሐ ያልገባ",
+        "repent": "በንስሐ ያለ",
+        "communion": "ቁርባን የሚቀበል"
+      },
+      "serviceAtParish": {
+        "priesthood": "የካህናት አገልግሎት",
+        "deacon": "የዲያቆን አገልግሎት",
+        "choir": "የመዘምራን አገልግሎት",
+        "sunday_school": "የሰንበት ትምህርት ቤት አገልግሎት",
+        "council": "የቤተክርስቲያን ምክር ቤት አገልግሎት",
+        "chalice_association": "የጽዋ ማህበር አገልግሎት",
+        "parents": "የወላጆች አገልግሎት",
+        "childrens_department": "የህፃናት ክፍል አገልግሎት"
+      },
+      "ministryService": {
+        "gospel": "ወንጌል",
+        "accounting": "የሂሳብና በጀት",
+        "finance": "ፋይናንስ",
+        "treasurer": "ገንዘብ ያዥ",
+        "education": "ትምህርትና ስልጠና",
+        "public_relation": "የህዝብ ግንኙነት",
+        "development": "ልማት",
+        "construction": "ግንባታና እድሳት",
+        "law_order": "ሕግና ስርዓት",
+        "charity": "የበጎ አድራጎት",
+        "religious_education": "የሃይማኖት ትምህርት",
+        "property": "የንብረት አስተዳደር",
+        "offering": "መባ ሰብሳቢ",
+        "statistician": "ስታትስቲክስ",
+        "media": "ሚዲያ",
+        "it": "አይቲ"
+      },
+      "cities": {
+        "dubai": "ዱባይ",
+        "abu_dhabi": "አቡዳቢ",
+        "sharjah": "ሻርጃ",
+        "ajman": "አጅማን",
+        "ras_al_khaimah": "ራስ አል ካይማ",
+        "umm_al_quwain": "ኡም አል ቁዋይን",
+        "fujairah": "ፉጀይራ",
+        "al_ain": "አል ዐይን"
+      }
+    },
+    "messages": {
+      "saveChanges": "ለውጦችን አስቀምጥ",
+      "updateSuccess": "መገለጫው በተሳካ ሁኔታ ተዘምኗል",
+      "updateError": "መገለጫውን ማዘመን አልተቻለም",
+      "permissionRequired": "ፈቃድ ያስፈልጋል",
+      "photoPermissionMessage": "ፎቶ ለመውሰድ የካሜራ ፈቃድ ያስፈልጋል",
+      "errorPickingImage": "ፎቶ መውሰድ አልተቻለም",
+      "fillRequiredFields": "እባክዎ አስፈላጊ መረጃዎችን ሁሉ ያስገቡ"
+    }
+  },
+  "validation": {
+    "required": {
+      "firstName": "መጠሪያ ስም አስፈላጊ ነው",
+      "lastName": "የአባት ስም አስፈላጊ ነው",
+      "phoneNumber": "ስልክ ቁጥር አስፈላጊ ነው",
+      "city": "ከተማ አስፈላጊ ነው",
+      "address": "አድራሻ አስፈላጊ ነው"
+    }
+  }
+} 

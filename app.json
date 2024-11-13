@@ -47,7 +47,11 @@
         {
           "calendarPermission": "The app needs to access your calendar to add events."
         }
-      ]
-    ]
+      ],
+      "expo-localization"
+    ],
+    "extra": {
+      "supportsRTL": true
+    }
   }
 }

@@ -1,34 +1,47 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { ProfileService } from '../services/ProfileService';
 
-interface UserState {
-  id: number | null;
-  email: string | null;
-  firstName: string | null;
-  lastName: string | null;
-  phoneNumber: string | null;
-  gender: string | null;
-  christianName: string | null;
-  residencyCity: string | null;
-  isOnboardingComplete: boolean;
-  photo: string | null;
-  profilePhoto: string | null;
-  profilePhotoUrl: string | null;
+export interface UserState {
+  id?: string;
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  christianName?: string;
+  phoneNumber?: string;
+  photo?: string;
+  profilePhoto?: string;
+  profilePhotoUrl?: string;
+  gender?: string;
+  maritalStatus?: string;
+  educationLevel?: string;
+  occupation?: string;
+  residencyCity?: string;
+  residenceAddress?: string;
+  emergencyContact?: string;
+  christianLife?: string;
+  serviceAtParish?: string;
+  ministryService?: string;
+  hasFatherConfessor?: string;
+  fatherConfessorName?: string;
+  hasAssociationMembership?: string;
+  associationName?: string;
+  residencePermit?: string;
+  isOnboardingComplete?: boolean;
 }
 
 const initialState: UserState = {
-  id: null,
-  email: null,
-  firstName: null,
-  lastName: null,
-  phoneNumber: null,
-  gender: null,
-  christianName: null,
-  residencyCity: null,
+  id: undefined,
+  email: undefined,
+  firstName: undefined,
+  lastName: undefined,
+  phoneNumber: undefined,
+  gender: undefined,
+  christianName: undefined,
+  residencyCity: undefined,
   isOnboardingComplete: false,
-  photo: null,
-  profilePhoto: null,
-  profilePhotoUrl: null,
+  photo: undefined,
+  profilePhoto: undefined,
+  profilePhotoUrl: undefined,
 };
 
 // Async thunk for updating user profile
