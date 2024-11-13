@@ -14,10 +14,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { StackScreenProps } from '@react-navigation/stack';
 import { RootStackParamList } from '../types';
 import { resetPassword } from '../services/AuthService';
+import { useTranslation } from 'react-i18next';
 
 type Props = StackScreenProps<RootStackParamList, 'NewPassword'>;
 
 const NewPasswordScreen = ({ navigation, route }: Props) => {
+  const { t } = useTranslation();
   const { email, jwt } = route.params;
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -26,9 +28,9 @@ const NewPasswordScreen = ({ navigation, route }: Props) => {
   const [success, setSuccess] = useState(false);
 
   const validatePasswords = (newPass: string, confirmPass: string): string | null => {
-    if (!newPass) return 'New password is required';
-    if (newPass.length < 6) return 'Password must be at least 6 characters';
-    if (newPass !== confirmPass) return 'Passwords do not match';
+    if (!newPass) return t('auth.newPassword.errors.required');
+    if (newPass.length < 6) return t('auth.newPassword.errors.minLength');
+    if (newPass !== confirmPass) return t('auth.newPassword.errors.mismatch');
     return null;
   };
 
@@ -66,10 +68,10 @@ const NewPasswordScreen = ({ navigation, route }: Props) => {
           navigation.navigate('Login');
         }, 2000);
       } else {
-        setError('Failed to update password');
+        setError(t('auth.newPassword.errors.updateFailed'));
       }
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Failed to update password');
+      setError(error instanceof Error ? error.message : t('auth.newPassword.errors.updateFailed'));
     } finally {
       setLoading(false);
     }
@@ -85,9 +87,9 @@ const NewPasswordScreen = ({ navigation, route }: Props) => {
         style={styles.gradient}
       >
         <View style={styles.headerSection}>
-          <Text style={styles.headerText}>Set New Password</Text>
+          <Text style={styles.headerText}>{t('auth.newPassword.title')}</Text>
           <Text style={styles.subtitle}>
-            Please enter your new password below.
+            {t('auth.newPassword.subtitle')}
           </Text>
         </View>
 
@@ -96,7 +98,7 @@ const NewPasswordScreen = ({ navigation, route }: Props) => {
             <Ionicons name="lock-closed-outline" size={20} color="#666" style={styles.inputIcon} />
             <TextInput
               style={styles.input}
-              placeholder="New Password"
+              placeholder={t('auth.newPassword.placeholders.newPassword')}
               placeholderTextColor="#666"
               secureTextEntry={true}
               value={newPassword}
@@ -108,7 +110,7 @@ const NewPasswordScreen = ({ navigation, route }: Props) => {
             <Ionicons name="lock-closed-outline" size={20} color="#666" style={styles.inputIcon} />
             <TextInput
               style={styles.input}
-              placeholder="Confirm Password"
+              placeholder={t('auth.newPassword.placeholders.confirmPassword')}
               placeholderTextColor="#666"
               secureTextEntry={true}
               value={confirmPassword}
@@ -117,7 +119,7 @@ const NewPasswordScreen = ({ navigation, route }: Props) => {
           </View>
 
           {error ? <Text style={styles.errorText}>{error}</Text> : null}
-          {success ? <Text style={styles.successText}>Password updated successfully!</Text> : null}
+          {success ? <Text style={styles.successText}>{t('auth.newPassword.success')}</Text> : null}
 
           <TouchableOpacity
             style={[styles.updateButton, loading && styles.updateButtonDisabled]}
@@ -127,7 +129,7 @@ const NewPasswordScreen = ({ navigation, route }: Props) => {
             {loading ? (
               <ActivityIndicator color="#fff" />
             ) : (
-              <Text style={styles.updateButtonText}>Update Password</Text>
+              <Text style={styles.updateButtonText}>{t('auth.newPassword.updateButton')}</Text>
             )}
           </TouchableOpacity>
 
@@ -135,7 +137,7 @@ const NewPasswordScreen = ({ navigation, route }: Props) => {
             style={styles.cancelButton}
             onPress={() => navigation.goBack()}
           >
-            <Text style={styles.cancelButtonText}>Cancel</Text>
+            <Text style={styles.cancelButtonText}>{t('auth.newPassword.cancelButton')}</Text>
           </TouchableOpacity>
         </View>
       </LinearGradient>

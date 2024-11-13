@@ -1,8 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTranslation } from 'react-i18next';
 
 const WelcomeCard = () => {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.container}>
       <LinearGradient
@@ -10,16 +13,16 @@ const WelcomeCard = () => {
         style={styles.gradient}
       >
         <View style={styles.content}>
-          <Text style={styles.welcomeAmharic}>እንኳን ደህና መጣችሁ</Text>
-          <Text style={styles.welcomeEnglish}>Welcome</Text>
-          <Text style={styles.churchName}>Dubai Debre Mewi</Text>
+          <Text style={styles.welcomeTitle}>{t('home.welcome.title')}</Text>
           <Text style={styles.churchSubtitle}>
-            St. Michael and St. Hripsime Ethiopian Orthodox Tewahedo Church
+            {t('home.welcome.subtitle')}
           </Text>
           <Text style={styles.verseText}>
-            "This is the house of God. This is the gate of heaven."
+            {t('home.welcome.verse.text')}
           </Text>
-          <Text style={styles.verseReference}>Genesis 28:17</Text>
+          <Text style={styles.verseReference}>
+            {t('home.welcome.verse.reference')}
+          </Text>
         </View>
       </LinearGradient>
     </View>
@@ -42,29 +45,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
   },
-  welcomeAmharic: {
+  welcomeTitle: {
     fontSize: 32,
     fontWeight: 'bold',
     color: '#FFF',
-    marginBottom: 8,
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
-    textShadowOffset: { width: -1, height: 1 },
-    textShadowRadius: 10,
-  },
-  welcomeEnglish: {
-    fontSize: 28,
-    fontWeight: '600',
-    color: '#FFF',
     marginBottom: 12,
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
-    textShadowOffset: { width: -1, height: 1 },
-    textShadowRadius: 10,
-  },
-  churchName: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    color: '#FFF',
-    marginBottom: 8,
     textAlign: 'center',
     textShadowColor: 'rgba(0, 0, 0, 0.3)',
     textShadowOffset: { width: -1, height: 1 },

@@ -1,33 +1,40 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 const CommunityScreen = () => {
+  const { t } = useTranslation();
+
   const churches = [
     {
-      name: "Dubai Debre Mewi St. Michael and St. Hripsime Church",
-      location: "8 19dStreet - Umm Hurair 2 - Dubai",
-      coordinates: "25.2385° N, 55.3189° E",
+      id: 'dubai',
       mapLink: "https://maps.app.goo.gl/4KivcCDzxMf4MAWi7",
       isMain: true
     },
     {
-      name: "St. Mary Ethiopian Orthodox Church",
-      location: "Abu Dhabi",
-      coordinates: "24.4539° N, 54.3773° E",
-      mapLink: "https://maps.google.com/?q=24.4539,54.3773"
+      id: 'abuDhabi',
+      mapLink: "https://maps.app.goo.gl/2aDvNZXC5muHncq69"
     },
     {
-      name: "St. Gabriel Ethiopian Orthodox Church",
-      location: "Sharjah",
-      coordinates: "25.3463° N, 55.4209° E",
+      id: 'sharjah',
       mapLink: "https://maps.google.com/?q=25.3463,55.4209"
     },
     {
-      name: "St. Michael Ethiopian Orthodox Church",
-      location: "Al Ain",
-      coordinates: "24.1302° N, 55.8023° E",
-      mapLink: "https://maps.google.com/?q=24.1302,55.8023"
+      id: 'alAin',
+      mapLink: "https://goo.gl/maps/4p9Rwcf4AAEuqk2Q7"
+    },
+    {
+      id: 'fujairah',
+      mapLink: "https://maps.app.goo.gl/4KivcCDzxMf4MAWi7"
+    },
+    {
+      id: 'jebelAli',
+      mapLink: "https://maps.app.goo.gl/usVixg9saDYHwdh46"
+    },
+    {
+      id: 'rak',
+      mapLink: "https://maps.app.goo.gl/4KivcCDzxMf4MAWi7"
     }
   ];
 
@@ -41,11 +48,11 @@ const CommunityScreen = () => {
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.title}>Ethiopian Orthodox Churches in UAE</Text>
+      <Text style={styles.title}>{t('location.title')}</Text>
 
-      {churches.map((church, index) => (
+      {churches.map((church) => (
         <View 
-          key={index} 
+          key={church.id} 
           style={[
             styles.churchCard,
             church.isMain && styles.mainChurchCard
@@ -53,26 +60,40 @@ const CommunityScreen = () => {
         >
           {church.isMain && (
             <View style={styles.mainChurchBadge}>
-              <Text style={styles.mainChurchBadgeText}>Our Church</Text>
+              <Text style={styles.mainChurchBadgeText}>{t('location.mainChurchBadge')}</Text>
             </View>
           )}
           
-          <Text style={styles.churchName}>{church.name}</Text>
+          <Text style={styles.churchName}>
+            {t(`location.churches.${church.id}.name`)}
+          </Text>
           <View style={styles.locationContainer}>
             <Ionicons name="location" size={16} color="#666" />
-            <Text style={styles.locationText}>{church.location}</Text>
+            <Text style={styles.locationText}>
+              {t(`location.churches.${church.id}.city`)}
+            </Text>
           </View>
           <View style={styles.coordinatesContainer}>
             <Ionicons name="navigate" size={16} color="#666" />
-            <Text style={styles.coordinatesText}>{church.coordinates}</Text>
+            <Text style={styles.coordinatesText}>
+              {t(`location.churches.${church.id}.venue`) || t('location.notSpecified.venue')}
+            </Text>
           </View>
+          {t(`location.churches.${church.id}.location`) && (
+            <View style={styles.locationDetailContainer}>
+              <Ionicons name="pin" size={16} color="#666" />
+              <Text style={styles.locationDetailText}>
+                {t(`location.churches.${church.id}.location`) || t('location.notSpecified.location')}
+              </Text>
+            </View>
+          )}
           
           <TouchableOpacity 
             style={styles.mapButton}
             onPress={() => handleMapPress(church.mapLink)}
           >
             <Ionicons name="map" size={20} color="#fff" />
-            <Text style={styles.mapButtonText}>Open in Maps</Text>
+            <Text style={styles.mapButtonText}>{t('location.openInMaps')}</Text>
           </TouchableOpacity>
         </View>
       ))}
@@ -163,6 +184,16 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: '500',
+    marginLeft: 8,
+  },
+  locationDetailContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  locationDetailText: {
+    fontSize: 14,
+    color: '#666',
     marginLeft: 8,
   },
 });

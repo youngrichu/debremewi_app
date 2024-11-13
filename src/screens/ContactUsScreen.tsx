@@ -1,10 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Linking, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useTranslation } from 'react-i18next';
 
 const ContactUsScreen = () => {
-  const email = 'dubaidebremewi2021@gmail.com';
-  const whatsappNumber = '+971525591976';
+  const { t } = useTranslation();
+  const email = t('contact.email.value');
+  const whatsappNumber = t('contact.whatsapp.value');
   const socialMedia = {
     facebook: 'https://www.facebook.com/p/የዱባይ-ደብረ-መዊዕጥ-ቅዱስ-ሚካኤል-ወቅድስት-አርሴማ-ቤተክርስቲያን-100066376306439/',
     youtube: 'https://www.youtube.com/@-dubaidebremewi',
@@ -40,14 +42,14 @@ const ContactUsScreen = () => {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Contact Us</Text>
+        <Text style={styles.title}>{t('contact.title')}</Text>
         
         <TouchableOpacity style={styles.contactItem} onPress={handleEmailPress}>
           <View style={styles.iconContainer}>
             <Ionicons name="mail" size={24} color="#fff" />
           </View>
           <View style={styles.contactDetails}>
-            <Text style={styles.contactLabel}>Email</Text>
+            <Text style={styles.contactLabel}>{t('contact.email.label')}</Text>
             <Text style={styles.contactValue}>{email}</Text>
           </View>
           <Ionicons name="chevron-forward" size={24} color="#666" />
@@ -58,13 +60,13 @@ const ContactUsScreen = () => {
             <Ionicons name="logo-whatsapp" size={24} color="#fff" />
           </View>
           <View style={styles.contactDetails}>
-            <Text style={styles.contactLabel}>WhatsApp</Text>
+            <Text style={styles.contactLabel}>{t('contact.whatsapp.label')}</Text>
             <Text style={styles.contactValue}>{whatsappNumber}</Text>
           </View>
           <Ionicons name="chevron-forward" size={24} color="#666" />
         </TouchableOpacity>
 
-        <Text style={styles.sectionTitle}>Social Media</Text>
+        <Text style={styles.sectionTitle}>{t('contact.sections.socialMedia')}</Text>
 
         <TouchableOpacity 
           style={styles.contactItem} 
@@ -74,8 +76,8 @@ const ContactUsScreen = () => {
             <Ionicons name="logo-facebook" size={24} color="#fff" />
           </View>
           <View style={styles.contactDetails}>
-            <Text style={styles.contactLabel}>Facebook</Text>
-            <Text style={styles.contactValue}>Follow us on Facebook</Text>
+            <Text style={styles.contactLabel}>{t('contact.social.facebook.label')}</Text>
+            <Text style={styles.contactValue}>{t('contact.social.facebook.value')}</Text>
           </View>
           <Ionicons name="chevron-forward" size={24} color="#666" />
         </TouchableOpacity>
@@ -88,8 +90,8 @@ const ContactUsScreen = () => {
             <Ionicons name="logo-youtube" size={24} color="#fff" />
           </View>
           <View style={styles.contactDetails}>
-            <Text style={styles.contactLabel}>YouTube</Text>
-            <Text style={styles.contactValue}>Subscribe to our channel</Text>
+            <Text style={styles.contactLabel}>{t('contact.social.youtube.label')}</Text>
+            <Text style={styles.contactValue}>{t('contact.social.youtube.value')}</Text>
           </View>
           <Ionicons name="chevron-forward" size={24} color="#666" />
         </TouchableOpacity>
@@ -102,8 +104,8 @@ const ContactUsScreen = () => {
             <Ionicons name="logo-tiktok" size={24} color="#fff" />
           </View>
           <View style={styles.contactDetails}>
-            <Text style={styles.contactLabel}>TikTok</Text>
-            <Text style={styles.contactValue}>Follow us on TikTok</Text>
+            <Text style={styles.contactLabel}>{t('contact.social.tiktok.label')}</Text>
+            <Text style={styles.contactValue}>{t('contact.social.tiktok.value')}</Text>
           </View>
           <Ionicons name="chevron-forward" size={24} color="#666" />
         </TouchableOpacity>

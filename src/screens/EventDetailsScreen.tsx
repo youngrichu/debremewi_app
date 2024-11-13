@@ -18,8 +18,9 @@ import { Event } from '../types';
 import { format } from 'date-fns';
 import * as Calendar from 'expo-calendar';
 import { useNavigation } from '@react-navigation/native';
-import RenderHtml from 'react-native-render-html';
+import RenderHTML from 'react-native-render-html';
 import { useWindowDimensions } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 interface EventDetailsScreenProps {
   route: {
@@ -30,6 +31,7 @@ interface EventDetailsScreenProps {
 }
 
 export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
+  const { t } = useTranslation();
   const [event, setEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -84,7 +86,11 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
     if (event) {
       try {
         await Share.share({
-          message: `Check out this event: ${event.title}\n${event.permalink}`,
+          message: t('events.details.share.message', {
+            title: event.title,
+            date: format(new Date(event.date), 'PPP'),
+            location: event.location
+          }),
         });
       } catch (error) {
         console.error('Error sharing event:', error);
@@ -96,7 +102,6 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
     if (!event) return;
 
     try {
-      // First, request calendar permissions
       const { status: existingStatus } = await Calendar.getCalendarPermissionsAsync();
       let finalStatus = existingStatus;
 
@@ -107,8 +112,8 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
 
       if (finalStatus !== 'granted') {
         Alert.alert(
-          'Permission Required',
-          'Please grant calendar permissions to add events to your calendar.',
+          t('events.details.addToCalendar.permission.title'),
+          t('events.details.addToCalendar.permission.message'),
           [{ text: 'OK' }]
         );
         return;
@@ -144,10 +149,10 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
 
       if (!defaultCalendar) {
         Alert.alert(
-          'Calendar Not Found',
+          t('events.details.addToCalendar.permission.notFound.title'),
           Platform.OS === 'ios' 
-            ? 'Could not find a writable calendar. Please check your calendar settings.'
-            : 'Could not find your Google Calendar. Please make sure you have added your Google account to your device.',
+            ? t('events.details.addToCalendar.permission.notFound.ios')
+            : t('events.details.addToCalendar.permission.notFound.android'),
           [{ text: 'OK' }]
         );
         return;
@@ -183,16 +188,14 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
       if (eventId) {
         Alert.alert(
           'Success',
-          'Event has been added to your calendar',
+          t('events.details.addToCalendar.success'),
           [
             { 
               text: 'OK',
               onPress: () => {
-                // On iOS, open the Calendar app using the universal link
                 if (Platform.OS === 'ios') {
                   Linking.openURL('calshow://');
                 } else {
-                  // On Android, use the content URI
                   Linking.openURL('content://com.android.calendar/time/');
                 }
               }
@@ -207,7 +210,7 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
       console.error('Error adding to calendar:', error);
       Alert.alert(
         'Error',
-        'Failed to add event to calendar. Please try again.',
+        t('events.details.addToCalendar.error'),
         [{ text: 'OK' }]
       );
     }
@@ -261,6 +264,7 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#2196F3" />
+        <Text style={styles.loadingText}>{t('events.details.loading')}</Text>
       </View>
     );
   }
@@ -268,18 +272,20 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
   if (error || !event) {
     return (
       <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>{error || 'Event not found'}</Text>
+        <Text style={styles.errorText}>
+          {error || t('events.details.error.notFound')}
+        </Text>
         <TouchableOpacity
           style={styles.retryButton}
           onPress={loadEvent}
         >
-          <Text style={styles.retryButtonText}>Retry</Text>
+          <Text style={styles.retryButtonText}>{t('events.details.error.retry')}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.backButton}
           onPress={() => navigation.goBack()}
         >
-          <Text style={styles.backButtonText}>Go Back</Text>
+          <Text style={styles.backButtonText}>{t('events.details.error.goBack')}</Text>
         </TouchableOpacity>
       </View>
     );
@@ -326,19 +332,25 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
             onPress={handleAddToCalendar}
           >
             <Ionicons name="calendar" size={20} color="#fff" />
-            <Text style={styles.actionButtonText}>Add to Calendar</Text>
+            <Text style={styles.actionButtonText}>
+              {t('events.details.addToCalendar.button')}
+            </Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.actionButton} onPress={handleShare}>
             <Ionicons name="share" size={20} color="#fff" />
-            <Text style={styles.actionButtonText}>Share</Text>
+            <Text style={styles.actionButtonText}>
+              {t('events.details.share.button')}
+            </Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.descriptionContainer}>
-          <Text style={styles.descriptionTitle}>Description</Text>
-          <RenderHtml
-            contentWidth={width - 32} // Account for padding
+          <Text style={styles.descriptionTitle}>
+            {t('events.details.description')}
+          </Text>
+          <RenderHTML
+            contentWidth={width - 32}
             source={{
               html: event.content
             }}
@@ -349,9 +361,9 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
               },
             }}
             defaultTextProps={{
-              selectable: true, // Makes text selectable
+              selectable: true,
             }}
-            systemFonts={undefined} // Use system default fonts
+            systemFonts={undefined}
           />
         </View>
       </View>

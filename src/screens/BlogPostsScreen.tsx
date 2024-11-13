@@ -1,67 +1,57 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  ActivityIndicator,
   Image,
+  TextInput,
+  ActivityIndicator,
+  RefreshControl
 } from 'react-native';
-import { useNavigation, NavigationProp, CompositeNavigationProp } from '@react-navigation/native';
-import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { Post } from '../types';
+import { useNavigation } from '@react-navigation/native';
+import { Ionicons } from '@expo/vector-icons';
 import { API_URL } from '../config';
-import { RootStackParamList } from '../types';
+import { useTranslation } from 'react-i18next';
 
-type BlogPostsScreenNavigationProp = CompositeNavigationProp<
-  BottomTabNavigationProp<RootStackParamList, 'BlogPosts'>,
-  StackNavigationProp<RootStackParamList>
->;
-
-export default function BlogPostsScreen() {
-  const navigation = useNavigation<BlogPostsScreenNavigationProp>();
+const BlogPostsScreen = () => {
+  const { t } = useTranslation();
+  const navigation = useNavigation();
+  const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [posts, setPosts] = useState<Post[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    loadPosts();
-  }, []);
-
-  const loadPosts = async () => {
+  const fetchPosts = async () => {
     try {
-      setLoading(true);
+      setError(null);
       const response = await fetch(`${API_URL}/wp-json/wp/v2/posts?_embed`);
       const data = await response.json();
       setPosts(data);
     } catch (error) {
-      console.error('Error loading posts:', error);
+      console.error('Error fetching posts:', error);
+      setError(t('blog.error'));
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   };
 
-  const handlePostPress = (post: Post) => {
-    // Navigate to HomeStack first, then to BlogPostDetail
-    navigation.navigate('HomeStack', {
-      screen: 'BlogPostDetail',
-      params: { post }
-    });
+  useEffect(() => {
+    fetchPosts();
+  }, []);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchPosts();
   };
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#2196F3" />
-      </View>
-    );
-  }
-
-  const renderItem = ({ item }: { item: Post }) => (
+  const renderPost = ({ item }) => (
     <TouchableOpacity
       style={styles.postCard}
-      onPress={() => handlePostPress(item)}
+      onPress={() => navigation.navigate('BlogPostDetail', { post: item })}
     >
       {item._embedded?.['wp:featuredmedia']?.[0]?.source_url && (
         <Image
@@ -70,74 +60,134 @@ export default function BlogPostsScreen() {
         />
       )}
       <View style={styles.postContent}>
-        <Text style={styles.title}>{item.title.rendered}</Text>
-        <Text style={styles.excerpt} numberOfLines={2}>
+        <Text style={styles.postTitle}>{item.title.rendered}</Text>
+        <Text style={styles.postExcerpt} numberOfLines={2}>
           {item.excerpt.rendered.replace(/<[^>]*>/g, '')}
         </Text>
         <View style={styles.postFooter}>
-          <Text style={styles.date}>
-            {new Date(item.date || '').toLocaleDateString()}
+          <Text style={styles.postDate}>
+            {t('blog.postedOn', { 
+              date: new Date(item.date).toLocaleDateString() 
+            })}
           </Text>
-          <Text style={styles.readMore}>Read More →</Text>
+          <Text style={styles.readMore}>{t('blog.readMore')}</Text>
         </View>
       </View>
     </TouchableOpacity>
   );
 
-  return (
-    <FlatList
-      style={styles.container}
-      contentContainerStyle={styles.listContent}
-      data={posts}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={renderItem}
-      showsVerticalScrollIndicator={false}
-      ItemSeparatorComponent={() => <View style={styles.separator} />}
-    />
+  if (loading) {
+    return (
+      <View style={styles.centerContainer}>
+        <ActivityIndicator size="large" color="#2196F3" />
+        <Text style={styles.loadingText}>{t('blog.loading')}</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={styles.centerContainer}>
+        <Text style={styles.errorText}>{error}</Text>
+        <TouchableOpacity style={styles.retryButton} onPress={fetchPosts}>
+          <Text style={styles.retryButtonText}>{t('blog.retry')}</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+
+  const filteredPosts = posts.filter(post =>
+    post.title.rendered.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    post.excerpt.rendered.toLowerCase().includes(searchQuery.toLowerCase())
   );
-}
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.searchContainer}>
+        <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
+        <TextInput
+          style={styles.searchInput}
+          placeholder={t('blog.search.placeholder')}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+      </View>
+
+      {filteredPosts.length === 0 ? (
+        <View style={styles.emptyContainer}>
+          <Text style={styles.emptyText}>
+            {searchQuery ? t('blog.search.noResults') : t('blog.empty')}
+          </Text>
+        </View>
+      ) : (
+        <FlatList
+          data={filteredPosts}
+          renderItem={renderPost}
+          keyExtractor={item => item.id.toString()}
+          contentContainerStyle={styles.listContainer}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        />
+      )}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f5f5f5',
   },
-  listContent: {
-    padding: 16,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
+  searchContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: '#fff',
+    margin: 16,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  searchIcon: {
+    marginRight: 8,
+  },
+  searchInput: {
+    flex: 1,
+    paddingVertical: 12,
+    fontSize: 16,
+  },
+  listContainer: {
+    padding: 16,
   },
   postCard: {
     backgroundColor: '#fff',
     borderRadius: 12,
+    marginBottom: 16,
     overflow: 'hidden',
+    elevation: 3,
     shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    elevation: 3,
   },
   postImage: {
     width: '100%',
     height: 200,
-    backgroundColor: '#f5f5f5',
   },
   postContent: {
     padding: 16,
   },
-  title: {
+  postTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 8,
   },
-  excerpt: {
+  postExcerpt: {
     fontSize: 14,
     color: '#666',
     lineHeight: 20,
@@ -147,18 +197,55 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 8,
   },
-  date: {
+  postDate: {
     fontSize: 12,
     color: '#999',
   },
   readMore: {
     fontSize: 14,
     color: '#2196F3',
-    fontWeight: '600',
+    fontWeight: '500',
   },
-  separator: {
-    height: 16,
+  centerContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
   },
-}); 
+  loadingText: {
+    marginTop: 10,
+    fontSize: 16,
+    color: '#666',
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#FF3B30',
+    textAlign: 'center',
+    marginBottom: 16,
+  },
+  retryButton: {
+    backgroundColor: '#2196F3',
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 8,
+  },
+  retryButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
+  },
+});
+
+export default BlogPostsScreen; 

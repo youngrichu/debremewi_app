@@ -11,14 +11,17 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTranslation } from 'react-i18next';
+import { login } from '../services/auth';
 
 const ForgotPasswordScreen = ({ navigation }) => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
 
   const validateEmail = (email: string): string | null => {
-    if (!email.trim()) return 'Email is required';
-    if (!/\S+@\S+\.\S+/.test(email)) return 'Email is invalid';
+    if (!email.trim()) return t('auth.forgotPassword.errors.requiredEmail');
+    if (!/\S+@\S+\.\S+/.test(email)) return t('auth.forgotPassword.errors.invalidEmail');
     return null;
   };
 
@@ -38,10 +41,10 @@ const ForgotPasswordScreen = ({ navigation }) => {
           jwt: response.token
         });
       } else {
-        setError('Failed to verify email');
+        setError(t('auth.forgotPassword.errors.verificationFailed'));
       }
     } catch (error) {
-      setError(error instanceof Error ? error.message : 'Email verification failed');
+      setError(error instanceof Error ? error.message : t('auth.forgotPassword.errors.failedToVerify'));
     }
   };
 
@@ -59,9 +62,9 @@ const ForgotPasswordScreen = ({ navigation }) => {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.headerSection}>
-            <Text style={styles.headerText}>Reset Password</Text>
+            <Text style={styles.headerText}>{t('auth.forgotPassword.title')}</Text>
             <Text style={styles.subtitle}>
-              Enter your email address to proceed.
+              {t('auth.forgotPassword.subtitle')}
             </Text>
           </View>
 
@@ -70,7 +73,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
               <Ionicons name="mail-outline" size={20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="Email Address"
+                placeholder={t('auth.forgotPassword.placeholders.email')}
                 placeholderTextColor="#666"
                 keyboardType="email-address"
                 autoCapitalize="none"
@@ -85,7 +88,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
               style={styles.nextButton}
               onPress={handleNext}
             >
-              <Text style={styles.nextButtonText}>Next</Text>
+              <Text style={styles.nextButtonText}>{t('auth.forgotPassword.nextButton')}</Text>
             </TouchableOpacity>
           </View>
         </ScrollView>

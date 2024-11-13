@@ -12,7 +12,9 @@
     "yes": "Yes",
     "no": "No",
     "notProvided": "Not provided",
-    "none": "None"
+    "none": "None",
+    "uploadPhoto": "Upload Photo",
+    "changePhoto": "Change Photo"
   },
   "profile": {
     "title": "Profile",
@@ -44,14 +46,22 @@
       "fatherConfessorName": "Father Confessor Name",
       "hasAssociationMembership": "Church Association Membership",
       "associationName": "Association Name",
-      "residencePermit": "UAE Residence Status"
+      "residencePermit": "UAE Residence Status",
+      "hasChildren": "Do you have children?",
+      "numberOfChildren": "Number of Children"
     },
     "placeholders": {
+      "enterFirstName": "Enter your first name",
+      "enterLastName": "Enter your last name",
+      "enterChristianName": "Enter your Christian name",
       "enterOccupation": "Enter your occupation",
       "enterAddress": "Enter your address",
-      "enterEmergencyContact": "Enter emergency contact",
+      "enterEmergencyContact": "Enter emergency contact information",
       "enterFatherConfessorName": "Enter Father Confessor name",
-      "enterAssociationName": "Enter association name"
+      "enterAssociationName": "Enter association name",
+      "enterNumberOfChildren": "Enter number of children",
+      "enterPhoneNumber": "Enter your phone number",
+      "enterResidenceAddress": "Enter your residence address"
     },
     "selects": {
       "selectGender": "Select Gender",
@@ -114,7 +124,8 @@
         "offering": "Offering Collector",
         "statistician": "Statistician",
         "media": "Media",
-        "it": "IT"
+        "it": "IT",
+        "council": "Parish Council Coordination"
       },
       "cities": {
         "dubai": "Dubai",
@@ -125,6 +136,22 @@
         "umm_al_quwain": "Umm Al Quwain",
         "fujairah": "Fujairah",
         "al_ain": "Al Ain"
+      },
+      "hasChildren": {
+        "yes": "Yes",
+        "no": "No"
+      },
+      "hasFatherConfessor": {
+        "yes": "Yes",
+        "no": "No"
+      },
+      "hasAssociationMembership": {
+        "yes": "Yes",
+        "no": "No"
+      },
+      "residencePermit": {
+        "yes": "Yes",
+        "no": "No"
       }
     },
     "messages": {
@@ -134,7 +161,64 @@
       "permissionRequired": "Permission Required",
       "photoPermissionMessage": "Sorry, we need camera roll permissions to upload photos",
       "errorPickingImage": "Failed to pick image",
-      "fillRequiredFields": "Please fill in all required fields"
+      "fillRequiredFields": "Please fill in all required fields",
+      "logoutError": "Failed to logout. Please try again.",
+      "accountDeleted": "Account Deleted",
+      "accountDeletedSuccess": "Your account has been successfully deleted.",
+      "accountDeleteError": "Failed to delete account. Please try again.",
+      "completeProfile": "Complete Your Profile"
+    },
+    "helpers": {
+      "residenceAddress": "Please provide your complete residential address",
+      "emergencyContact": "Please provide contact details for emergency situations",
+      "serviceAtParish": "Select your main service area in the church",
+      "ministryService": "Select your specific ministry service",
+      "hasFatherConfessor": "Do you have a spiritual father for confession?",
+      "hasAssociationMembership": "Are you a member of any church association?",
+      "residencePermit": "What is your current residence status in UAE?",
+      "photo": "Please upload a clear photo of yourself",
+      "changePhoto": "Tap to change your profile photo"
+    },
+    "view": {
+      "title": "Profile",
+      "personalInfo": "Personal Information",
+      "contactInfo": "Contact Information",
+      "churchInfo": "Church Information",
+      "additionalInfo": "Additional Information",
+      "editProfile": "Edit Profile",
+      "logOut": "Log Out",
+      "confirmLogout": {
+        "title": "Confirm Logout",
+        "message": "Are you sure you want to log out?",
+        "cancel": "Cancel",
+        "confirm": "Yes, Log Out"
+      },
+      "labels": {
+        "name": "Name",
+        "christianName": "Christian Name",
+        "phoneNumber": "Phone Number",
+        "gender": "Gender",
+        "maritalStatus": "Marital Status",
+        "educationLevel": "Education Level",
+        "occupation": "Occupation",
+        "residencyCity": "City of Residence",
+        "residenceAddress": "Address",
+        "emergencyContact": "Emergency Contact",
+        "christianLife": "Christian Life",
+        "serviceAtParish": "Service at Parish",
+        "ministryService": "Ministry Service",
+        "hasFatherConfessor": "Father Confessor",
+        "hasAssociationMembership": "Association Membership",
+        "residencePermit": "Residence Permit",
+        "hasChildren": "Children",
+        "numberOfChildren": "Number of Children"
+      },
+      "deleteAccount": {
+        "title": "Delete Account",
+        "message": "Are you sure you want to delete your account? This action cannot be undone.",
+        "confirm": "Delete Account",
+        "button": "Delete Account"
+      }
     }
   },
   "validation": {
@@ -144,6 +228,442 @@
       "phoneNumber": "Phone number is required",
       "city": "City is required",
       "address": "Address is required"
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "Welcome to\nDubai Debre Mewi \nSt. Michael \nand\n St. Hripsime\nEthiopian Orthodox Tewahedo Church",
+      "subtitle": "St. Michael and St. Hripsime\nEthiopian Orthodox Tewahedo Church",
+      "description": "Join our vibrant church community and stay connected with these features:",
+      "features": {
+        "events": {
+          "title": "Church Events",
+          "description": "Stay updated with church services and events"
+        },
+        "community": {
+          "title": "Community",
+          "description": "Connect with fellow church members"
+        },
+        "notifications": {
+          "title": "Notifications",
+          "description": "Receive important church announcements"
+        },
+        "resources": {
+          "title": "Spiritual Resources",
+          "description": "Access prayers and religious content"
+        }
+      }
+    },
+    "sections": {
+      "personalInfo": "Personal Information",
+      "contactInfo": "Contact Information",
+      "churchInfo": "Church Information",
+      "additionalInfo": "Additional Information"
+    },
+    "helpers": {
+      "personalInfo": "Please provide your basic personal information",
+      "contactInfo": "How can we reach you?",
+      "churchInfo": "Tell us about your church involvement",
+      "additionalInfo": "Just a few more details to complete your profile",
+      "hasChildren": "Please indicate if you have children",
+      "numberOfChildren": "How many children do you have?",
+      "residenceAddress": "Please provide your complete residential address",
+      "emergencyContact": "Please provide contact details for emergency situations",
+      "photo": "Upload a clear photo of yourself",
+      "serviceAtParish": "Select your main service area in the church",
+      "ministryService": "Select your specific ministry service",
+      "hasFatherConfessor": "Do you have a spiritual father for confession?",
+      "hasAssociationMembership": "Are you a member of any church association?",
+      "residencePermit": "What is your current residence status in UAE?"
+    },
+    "profileSetup": "Profile Setup",
+    "stepIndicator": "Step {{current}} of {{total}}",
+    "navigation": {
+      "next": "Next",
+      "previous": "Previous",
+      "complete": "Complete"
+    },
+    "steps": {
+      "welcome": "Welcome",
+      "personal": "Personal",
+      "contact": "Contact",
+      "church": "Church",
+      "additional": "Additional"
+    },
+    "validation": {
+      "required": {
+        "gender": "Please select your gender",
+        "maritalStatus": "Please select your marital status",
+        "educationLevel": "Please select your education level",
+        "christianLife": "Please select your Christian life status",
+        "serviceAtParish": "Please select your service at parish",
+        "ministryService": "Please select your ministry service",
+        "residencePermit": "Please select your residence permit status",
+        "numberOfChildren": "Please enter number of children",
+        "fatherConfessorName": "Please enter father confessor name",
+        "associationName": "Please enter association name"
+      }
+    }
+  },
+  "navigation": {
+    "tabs": {
+      "home": "Home",
+      "events": "Events",
+      "blog": "Blog",
+      "profile": "Profile",
+      "more": "More"
+    },
+    "screens": {
+      "login": "Login",
+      "register": "Register",
+      "forgotPassword": "Forgot Password",
+      "newPassword": "New Password",
+      "onboarding": "Profile Setup",
+      "editProfile": "Edit Profile",
+      "notifications": "Notifications",
+      "eventDetails": "Event Details",
+      "blogPostDetail": "Blog Post",
+      "aboutUs": "About Us",
+      "services": "Services",
+      "contactUs": "Contact Us",
+      "community": "Community"
+    },
+    "appName": "Dubai Debremewi"
+  },
+  "more": {
+    "menu": {
+      "title": "More",
+      "aboutUs": "About Us",
+      "services": "Services",
+      "location": "Location",
+      "contactUs": "Contact Us"
+    }
+  },
+  "aboutUs": {
+    "title": "About Us",
+    "intro": "Dubai Debiremewi St. Michael and St. Hripsime Church serves as a significant religious and cultural center for the Ethiopian and Eritrean communities in Dubai.",
+    "sections": {
+      "history": {
+        "title": "History",
+        "content": "The Dubai Debiremewi St. Michael and St. Hripsime Church was established to cater to the spiritual needs of Ethiopian and Eritrean Orthodox Christians residing in Dubai. This church is named after two important figures in Ethiopian Christianity: St. Michael, who is revered as a protector and leader of angels, and St. Hripsime, a martyr who symbolizes faith and courage."
+      },
+      "governance": {
+        "title": "Governance",
+        "content": "The governance of the church is structured under the Ethiopian Orthodox Tewahedo Church's hierarchy. A priest leads the congregation, supported by a council made up of community members who assist in administrative duties and organizing events."
+      },
+      "faith": {
+        "title": "Faith",
+        "content": "The faith practiced at Dubai Debiremewi St. Michael and St. Hripsime Church is deeply rooted in the Ethiopian Orthodox tradition. Worship includes regular liturgical services, prayers, and sacraments such as baptism and marriage."
+      },
+      "mission": {
+        "title": "Mission",
+        "content": "The mission of the church extends beyond spiritual guidance; it aims to foster a sense of community among its members while promoting cultural heritage. The church engages in various outreach programs that support local charities and assist those in need within the community."
+      }
+    }
+  },
+  "services": {
+    "title": "Our Services",
+    "routineServices": "Routine Services",
+    "services": {
+      "liturgy": "Liturgy",
+      "communion": "Communion",
+      "sermon": "Sermon",
+      "christianing": "Christianing",
+      "matrimony": "Matrimony",
+      "prayers": "Prayers",
+      "fitihat": "FITIHAT (Prayer for the dead)",
+      "congregation": "Congregation"
+    },
+    "schedule": {
+      "sunday": {
+        "day": "EVERY SUNDAY",
+        "time": "5:00AM - 11:00AM",
+        "description": "Liturgy, Sermon and Other Services"
+      },
+      "friday": {
+        "day": "EVERY FRIDAY",
+        "time": "6:00PM - 7:30PM",
+        "description": "Evening prayer and Sermon"
+      },
+      "saturday": {
+        "day": "EVERY SATURDAY",
+        "time": "6:00AM - 7:30AM",
+        "description": "Morning prayers, Liturgy and other services"
+      }
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "sections": {
+      "socialMedia": "Social Media"
+    },
+    "email": {
+      "label": "Email",
+      "value": "dubaidebremewi2021@gmail.com"
+    },
+    "whatsapp": {
+      "label": "WhatsApp",
+      "value": "+971525591976"
+    },
+    "social": {
+      "facebook": {
+        "label": "Facebook",
+        "value": "Follow us on Facebook"
+      },
+      "youtube": {
+        "label": "YouTube",
+        "value": "Subscribe to our channel"
+      },
+      "tiktok": {
+        "label": "TikTok",
+        "value": "Follow us on TikTok"
+      }
+    }
+  },
+  "location": {
+    "title": "Ethiopian Orthodox Churches in UAE",
+    "mainChurchBadge": "Our Church",
+    "openInMaps": "Open in Maps",
+    "notSpecified": {
+      "venue": "Venue not specified",
+      "location": "Location not specified"
+    },
+    "churches": {
+      "dubai": {
+        "name": "Dubai Debre Mewi St. Michael & St. Hripsime Church",
+        "city": "Dubai",
+        "location": "8 19dStreet - Umm Hurair 2 - Dubai",
+        "venue": "Holy Trinity Church"
+      },
+      "abuDhabi": {
+        "name": "Abu Dhabi Meskaye Hizunan Medhanialem & Abune TekleHaymanot Ethiopian Orthodox Church",
+        "city": "Abu Dhabi",
+        "location": "Al Sharia",
+        "venue": "Abu Dhabi Meskaye Hizunan Medhanialem & Abune TekleHaymanot Ethiopian Orthodox Church"
+      },
+      "sharjah": {
+        "name": "Sealite Mihret Kidist Mariam Orthodox Church",
+        "city": "Sharjah",
+        "location": "",
+        "venue": ""
+      },
+      "alAin": {
+        "name": "St. Gabriel Ethiopian Orthodox Church",
+        "city": "Al Ain",
+        "location": "",
+        "venue": ""
+      },
+      "fujairah": {
+        "name": "Hamere Birhan Kidane Mihiret & Abune Aregawi",
+        "city": "Fujairah",
+        "location": "",
+        "venue": ""
+      },
+      "jebelAli": {
+        "name": "Selassie & St. Rufael Church",
+        "city": "Jebel Ali",
+        "location": "Jebel Ali Village - Jebel Ali Freezone - Dubai",
+        "venue": "Christ Church Jebel Ali"
+      },
+      "rak": {
+        "name": "St. Gregorios Ethiopian Orthodox Church",
+        "city": "Ras Al Khaimah",
+        "location": "",
+        "venue": ""
+      }
+    }
+  },
+  "landing": {
+    "welcome": {
+      "title": "Welcome to Dubai Debremewi",
+      "subtitle": "St. Michael and St. Hripsime Ethiopian Orthodox Tewahedo Church"
+    },
+    "buttons": {
+      "login": "Login",
+      "register": "Register"
+    },
+    "footer": {
+      "version": "Version {{version}}"
+    }
+  },
+  "home": {
+    "welcome": {
+      "title": "Welcome to Dubai Debre Mewi",
+      "churchName": "Dubai Debre Mewi",
+      "subtitle": "St. Michael and St. Hripsime Ethiopian Orthodox Tewahedo Church",
+      "verse": {
+        "text": "\"This is the house of God. This is the gate of heaven.\"",
+        "reference": "Genesis 28:17"
+      }
+    },
+    "quickActions": {
+      "events": "Events",
+      "blog": "Blog Posts",
+      "location": "Location"
+    },
+    "sections": {
+      "recentPosts": {
+        "title": "Recent Blog Posts",
+        "seeAll": "See All",
+        "empty": "No blog posts available"
+      },
+      "upcomingEvents": {
+        "title": "Upcoming Events",
+        "seeAll": "See All",
+        "empty": "No upcoming events at the moment",
+        "time": "Time",
+        "location": "Location"
+      }
+    }
+  },
+  "blog": {
+    "title": "Blog Posts",
+    "empty": "No blog posts available",
+    "readMore": "Read More",
+    "postedOn": "Posted on {{date}}",
+    "loading": "Loading blog posts...",
+    "error": "Failed to load blog posts",
+    "retry": "Retry",
+    "search": {
+      "placeholder": "Search blog posts...",
+      "noResults": "No posts found matching your search"
+    },
+    "categories": {
+      "all": "All Posts",
+      "news": "News",
+      "events": "Events",
+      "teachings": "Teachings",
+      "announcements": "Announcements"
+    },
+    "detail": {
+      "postedBy": "By {{author}}",
+      "share": {
+        "title": "Share Post",
+        "message": "Check out this post: {{title}}"
+      },
+      "imageViewer": {
+        "close": "Close"
+      },
+      "loading": {
+        "image": "Loading image..."
+      }
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "Welcome",
+      "subtitle": "Please sign in to access your account",
+      "email": "Email",
+      "password": "Password",
+      "loginButton": "Sign In",
+      "forgotPassword": "Forgot Password?",
+      "noAccount": "Don't have an account? ",
+      "register": "Sign Up",
+      "errors": {
+        "invalidEmail": "Please enter a valid email",
+        "requiredEmail": "Email is required",
+        "requiredPassword": "Password is required",
+        "minLengthPassword": "Password must be at least 6 characters",
+        "loginFailed": "Login failed. Please check your credentials and try again."
+      },
+      "placeholders": {
+        "email": "Enter your email",
+        "password": "Enter your password"
+      }
+    },
+    "forgotPassword": {
+      "title": "Reset Password",
+      "subtitle": "Enter your email address to proceed.",
+      "email": "Email Address",
+      "nextButton": "Next",
+      "errors": {
+        "invalidEmail": "Please enter a valid email",
+        "requiredEmail": "Email is required",
+        "verificationFailed": "Email verification failed",
+        "failedToVerify": "Failed to verify email"
+      },
+      "placeholders": {
+        "email": "Enter your email address"
+      }
+    },
+    "newPassword": {
+      "title": "Set New Password",
+      "subtitle": "Please enter your new password below.",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password",
+      "updateButton": "Update Password",
+      "cancelButton": "Cancel",
+      "success": "Password updated successfully!",
+      "errors": {
+        "required": "New password is required",
+        "minLength": "Password must be at least 6 characters",
+        "mismatch": "Passwords do not match",
+        "updateFailed": "Failed to update password"
+      },
+      "placeholders": {
+        "newPassword": "Enter new password",
+        "confirmPassword": "Confirm new password"
+      }
+    },
+    "register": {
+      "title": "Create Account",
+      "subtitle": "Join our community",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm Password",
+      "createButton": "Create Account",
+      "haveAccount": "Already have an account? ",
+      "signIn": "Sign In",
+      "success": "Registration successful! Please login to continue.",
+      "errors": {
+        "firstName": "First name is required",
+        "lastName": "Last name is required",
+        "invalidEmail": "Please enter a valid email",
+        "requiredEmail": "Email is required",
+        "requiredPassword": "Password is required",
+        "minLengthPassword": "Password must be at least 6 characters",
+        "passwordMismatch": "Passwords do not match",
+        "registrationFailed": "Registration failed. Please try again."
+      },
+      "placeholders": {
+        "firstName": "Enter your first name",
+        "lastName": "Enter your last name",
+        "email": "Enter your email",
+        "password": "Enter your password",
+        "confirmPassword": "Confirm your password"
+      }
+    }
+  },
+  "events": {
+    "details": {
+      "loading": "Loading event details...",
+      "error": {
+        "notFound": "Event not found",
+        "loadFailed": "Failed to load event details",
+        "retry": "Retry",
+        "goBack": "Go Back"
+      },
+      "description": "Description",
+      "addToCalendar": {
+        "button": "Add to Calendar",
+        "success": "Event has been added to your calendar",
+        "error": "Failed to add event to calendar. Please try again.",
+        "permission": {
+          "title": "Permission Required",
+          "message": "Please grant calendar permissions to add events to your calendar.",
+          "notFound": {
+            "title": "Calendar Not Found",
+            "ios": "Could not find a writable calendar. Please check your calendar settings.",
+            "android": "Could not find your Google Calendar. Please make sure you have added your Google account to your device."
+          }
+        }
+      },
+      "share": {
+        "button": "Share",
+        "message": "Check out this event: {{title}} at {{location}}"
+      }
     }
   }
 } 

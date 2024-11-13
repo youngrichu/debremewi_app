@@ -16,6 +16,7 @@ import { useDispatch } from 'react-redux';
 import { login } from '../services/auth';
 import { setUser } from '../store/userSlice';
 import { setAuthState } from '../store/authSlice';
+import { useTranslation } from 'react-i18next';
 
 const LoginScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -24,6 +25,7 @@ const LoginScreen = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const { t } = useTranslation();
 
   const validateLogin = (email: string, password: string): string | null => {
     if (!email.trim()) return 'Email is required';
@@ -82,8 +84,8 @@ const LoginScreen = ({ navigation }) => {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.headerSection}>
-            <Text style={styles.welcomeText}>Welcome</Text>
-            <Text style={styles.subtitle}>Please sign in to access your account</Text>
+            <Text style={styles.welcomeText}>{t('auth.login.title')}</Text>
+            <Text style={styles.subtitle}>{t('auth.login.subtitle')}</Text>
           </View>
 
           <View style={styles.formContainer}>
@@ -91,14 +93,14 @@ const LoginScreen = ({ navigation }) => {
               <Ionicons name="mail-outline" size={20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="Email"
+                placeholder={t('auth.login.placeholders.email')}
                 placeholderTextColor="#666"
                 keyboardType="email-address"
                 autoCapitalize="none"
                 value={email}
                 onChangeText={(text) => {
                   setEmail(text);
-                  setErrorMessage(''); // Clear error when user types
+                  setErrorMessage('');
                 }}
               />
             </View>
@@ -107,13 +109,13 @@ const LoginScreen = ({ navigation }) => {
               <Ionicons name="lock-closed-outline" size={20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="Password"
+                placeholder={t('auth.login.placeholders.password')}
                 placeholderTextColor="#666"
                 secureTextEntry={!showPassword}
                 value={password}
                 onChangeText={(text) => {
                   setPassword(text);
-                  setErrorMessage(''); // Clear error when user types
+                  setErrorMessage('');
                 }}
               />
               <TouchableOpacity 
@@ -129,14 +131,14 @@ const LoginScreen = ({ navigation }) => {
             </View>
 
             {errorMessage ? (
-              <Text style={styles.errorText}>{errorMessage}</Text>
+              <Text style={styles.errorText}>{t(`auth.login.errors.${errorMessage}`)}</Text>
             ) : null}
 
             <TouchableOpacity 
               onPress={() => navigation.navigate('ForgotPassword')}
               style={styles.forgotPassword}
             >
-              <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+              <Text style={styles.forgotPasswordText}>{t('auth.login.forgotPassword')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
@@ -147,14 +149,14 @@ const LoginScreen = ({ navigation }) => {
               {loading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text style={styles.loginButtonText}>Sign In</Text>
+                <Text style={styles.loginButtonText}>{t('auth.login.loginButton')}</Text>
               )}
             </TouchableOpacity>
 
             <View style={styles.registerContainer}>
-              <Text style={styles.registerText}>Don't have an account? </Text>
+              <Text style={styles.registerText}>{t('auth.login.noAccount')}</Text>
               <TouchableOpacity onPress={() => navigation.navigate('Register')}>
-                <Text style={styles.registerLink}>Sign Up</Text>
+                <Text style={styles.registerLink}>{t('auth.login.register')}</Text>
               </TouchableOpacity>
             </View>
           </View>
@@ -267,5 +269,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
-
 export default LoginScreen;
+

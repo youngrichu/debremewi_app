@@ -36,6 +36,31 @@ import {
   YES_NO_OPTIONS,
 } from '../constants/options';
 
+// Add these interfaces at the top
+interface FormErrors {
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  gender?: string;
+  residencyCity?: string;
+  residenceAddress?: string;
+  [key: string]: string | undefined;
+}
+
+interface DropdownState {
+  gender: boolean;
+  maritalStatus: boolean;
+  educationLevel: boolean;
+  residencyCity: boolean;
+  christianLife: boolean;
+  serviceAtParish: boolean;
+  ministryService: boolean;
+  hasFatherConfessor: boolean;
+  hasAssociationMembership: boolean;
+  residencePermit: boolean;
+  hasChildren: boolean;
+}
+
 // Update the formatDisplayValue function
 const formatDisplayValue = (value: string | null | undefined, options?: { [key: string]: string }) => {
   if (!value) return 'Not provided';
@@ -65,9 +90,10 @@ const formatDisplayValue = (value: string | null | undefined, options?: { [key: 
 };
 
 // Add these functions before the return statement in EditProfileScreen
-const getPickerOptions = (pickerName: string) => {
+const getPickerOptions = (pickerName: string): string[] => {
   console.log('Getting options for:', pickerName);
-  let options;
+  let options: string[] = [];
+  
   switch (pickerName) {
     case 'gender':
       options = GENDER_OPTIONS;
@@ -98,8 +124,8 @@ const getPickerOptions = (pickerName: string) => {
       break;
     default:
       console.log('No options found for:', pickerName);
-      options = [];
   }
+  
   console.log('Options:', options);
   return options;
 };
@@ -280,7 +306,7 @@ export default function EditProfileScreen() {
     if (!value) return t('common.select');
 
     // For yes/no fields
-    if (['hasFatherConfessor', 'hasAssociationMembership', 'residencePermit'].includes(field)) {
+    if (['hasFatherConfessor', 'hasAssociationMembership', 'residencePermit', 'hasChildren'].includes(field)) {
       return t(`common.${value.toLowerCase()}`);
     }
 

@@ -38,6 +38,8 @@ export function CustomPicker({ visible, onClose, pickerName, onSelect, selectedV
         return t('profile.selects.selectMaritalStatus');
       case 'educationLevel':
         return t('profile.selects.selectEducationLevel');
+      case 'hasChildren':
+        return t('profile.fields.hasChildren');
       default:
         return t('common.select');
     }

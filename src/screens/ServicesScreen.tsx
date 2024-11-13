@@ -1,53 +1,61 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 const ServicesScreen = () => {
+  const { t } = useTranslation();
+
   const services = [
-    'Liturgy',
-    'Communion',
-    'Sermon',
-    'Christianing',
-    'MATRIMONY',
-    'Prayers',
-    'FITIHAT (Prayer for the dead)',
-    'Congregation',
+    'liturgy',
+    'communion',
+    'sermon',
+    'christianing',
+    'matrimony',
+    'prayers',
+    'fitihat',
+    'congregation',
   ];
 
   const routineServices = [
     {
-      day: 'EVERY SUNDAY',
-      time: '5:00AM - 11:00AM',
-      description: 'Litany, Liturgy, Sermon and Other Services',
+      key: 'sunday',
+      day: t('services.schedule.sunday.day'),
+      time: t('services.schedule.sunday.time'),
+      description: t('services.schedule.sunday.description'),
     },
     {
-      day: 'EVERY FRIDAY',
-      time: '6:00PM - 7:30PM',
-      description: 'Evening prayer and Sermon',
+      key: 'friday',
+      day: t('services.schedule.friday.day'),
+      time: t('services.schedule.friday.time'),
+      description: t('services.schedule.friday.description'),
     },
     {
-      day: 'EVERY SATURDAY',
-      time: '6:00AM - 7:30AM',
-      description: 'Morning prayers, Litany and Other Services',
+      key: 'saturday',
+      day: t('services.schedule.saturday.day'),
+      time: t('services.schedule.saturday.time'),
+      description: t('services.schedule.saturday.description'),
     },
   ];
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.section}>
-        <Text style={styles.title}>Our Services</Text>
+        <Text style={styles.title}>{t('services.title')}</Text>
         <View style={styles.servicesList}>
           {services.map((service, index) => (
             <View key={index} style={styles.serviceItem}>
-              <Text style={styles.serviceText}>{service}</Text>
+              <Text style={styles.serviceText}>
+                {t(`services.services.${service}`)}
+              </Text>
             </View>
           ))}
         </View>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Routine Services</Text>
-        {routineServices.map((service, index) => (
-          <View key={index} style={styles.routineService}>
+        <Text style={styles.sectionTitle}>{t('services.routineServices')}</Text>
+        {routineServices.map((service) => (
+          <View key={service.key} style={styles.routineService}>
             <Text style={styles.dayText}>{service.day}</Text>
             <Text style={styles.timeText}>{service.time}</Text>
             <Text style={styles.descriptionText}>{service.description}</Text>

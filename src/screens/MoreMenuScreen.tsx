@@ -4,30 +4,32 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { MoreStackParamList } from '../types';
+import { useTranslation } from 'react-i18next';
 
 type MoreScreenNavigationProp = StackNavigationProp<MoreStackParamList>;
 
 const MoreMenuScreen = () => {
   const navigation = useNavigation<MoreScreenNavigationProp>();
+  const { t } = useTranslation();
 
   const menuItems = [
     {
-      title: 'About Us',
+      title: t('more.menu.aboutUs'),
       icon: 'information-circle-outline' as const,
       screen: 'About Us' as const,
     },
     {
-      title: 'Services',
+      title: t('more.menu.services'),
       icon: 'list-outline' as const,
       screen: 'Services' as const,
     },
     {
-      title: 'Location',
+      title: t('more.menu.location'),
       icon: 'location-outline' as const,
       screen: 'Location' as const,
     },
     {
-      title: 'Contact Us',
+      title: t('more.menu.contactUs'),
       icon: 'mail-outline' as const,
       screen: 'Contact Us' as const,
     },

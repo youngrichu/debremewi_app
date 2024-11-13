@@ -14,6 +14,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { register } from '../services/AuthService';
+import { useTranslation } from 'react-i18next';
 
 interface FormData {
   firstName: string;
@@ -33,6 +34,7 @@ interface FormErrors {
 }
 
 const RegisterScreen = ({ navigation }) => {
+  const { t } = useTranslation();
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
@@ -46,23 +48,23 @@ const RegisterScreen = ({ navigation }) => {
   const validateForm = (data: FormData): FormErrors => {
     const errors: FormErrors = {};
 
-    if (!data.firstName.trim()) errors.firstName = 'First name is required';
-    if (!data.lastName.trim()) errors.lastName = 'Last name is required';
+    if (!data.firstName.trim()) errors.firstName = t('auth.register.errors.firstName');
+    if (!data.lastName.trim()) errors.lastName = t('auth.register.errors.lastName');
     
     if (!data.email.trim()) {
-      errors.email = 'Email is required';
+      errors.email = t('auth.register.errors.requiredEmail');
     } else if (!/\S+@\S+\.\S+/.test(data.email)) {
-      errors.email = 'Email is invalid';
+      errors.email = t('auth.register.errors.invalidEmail');
     }
 
     if (!data.password) {
-      errors.password = 'Password is required';
+      errors.password = t('auth.register.errors.requiredPassword');
     } else if (data.password.length < 6) {
-      errors.password = 'Password must be at least 6 characters';
+      errors.password = t('auth.register.errors.minLengthPassword');
     }
 
     if (data.password !== data.confirmPassword) {
-      errors.confirmPassword = 'Passwords do not match';
+      errors.confirmPassword = t('auth.register.errors.passwordMismatch');
     }
 
     return errors;
@@ -82,7 +84,7 @@ const RegisterScreen = ({ navigation }) => {
       if (response.token) {
         Alert.alert(
           'Success',
-          'Registration successful! Please login to continue.',
+          t('auth.register.success'),
           [
             {
               text: 'OK',
@@ -92,13 +94,13 @@ const RegisterScreen = ({ navigation }) => {
         );
       } else {
         setErrors({ 
-          submit: 'Registration failed. Please try again.' 
+          submit: t('auth.register.errors.registrationFailed')
         });
       }
     } catch (error) {
       console.error('Registration error:', error);
       setErrors({ 
-        submit: error instanceof Error ? error.message : 'Registration failed' 
+        submit: error instanceof Error ? error.message : t('auth.register.errors.registrationFailed')
       });
     } finally {
       setLoading(false);
@@ -127,8 +129,8 @@ const RegisterScreen = ({ navigation }) => {
           showsVerticalScrollIndicator={false}
         >
           <View style={styles.headerSection}>
-            <Text style={styles.welcomeText}>Create Account</Text>
-            <Text style={styles.subtitle}>Join our community</Text>
+            <Text style={styles.welcomeText}>{t('auth.register.title')}</Text>
+            <Text style={styles.subtitle}>{t('auth.register.subtitle')}</Text>
           </View>
 
           <View style={styles.formContainer}>
@@ -137,7 +139,7 @@ const RegisterScreen = ({ navigation }) => {
                 <Ionicons name="person-outline" size={20} color="#666" style={styles.inputIcon} />
                 <TextInput
                   style={styles.input}
-                  placeholder="First Name"
+                  placeholder={t('auth.register.placeholders.firstName')}
                   placeholderTextColor="#666"
                   value={formData.firstName}
                   onChangeText={(text) => handleChange('firstName', text)}
@@ -146,7 +148,7 @@ const RegisterScreen = ({ navigation }) => {
               <View style={[styles.inputContainer, styles.halfInput]}>
                 <TextInput
                   style={styles.input}
-                  placeholder="Last Name"
+                  placeholder={t('auth.register.placeholders.lastName')}
                   placeholderTextColor="#666"
                   value={formData.lastName}
                   onChangeText={(text) => handleChange('lastName', text)}
@@ -161,7 +163,7 @@ const RegisterScreen = ({ navigation }) => {
               <Ionicons name="mail-outline" size={20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="Email"
+                placeholder={t('auth.register.placeholders.email')}
                 placeholderTextColor="#666"
                 keyboardType="email-address"
                 autoCapitalize="none"
@@ -175,7 +177,7 @@ const RegisterScreen = ({ navigation }) => {
               <Ionicons name="lock-closed-outline" size={20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="Password"
+                placeholder={t('auth.register.placeholders.password')}
                 placeholderTextColor="#666"
                 secureTextEntry={true}
                 value={formData.password}
@@ -188,7 +190,7 @@ const RegisterScreen = ({ navigation }) => {
               <Ionicons name="lock-closed-outline" size={20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="Confirm Password"
+                placeholder={t('auth.register.placeholders.confirmPassword')}
                 placeholderTextColor="#666"
                 secureTextEntry={true}
                 value={formData.confirmPassword}
@@ -207,16 +209,16 @@ const RegisterScreen = ({ navigation }) => {
               {loading ? (
                 <ActivityIndicator color="#fff" />
               ) : (
-                <Text style={styles.registerButtonText}>Create Account</Text>
+                <Text style={styles.registerButtonText}>{t('auth.register.createButton')}</Text>
               )}
             </TouchableOpacity>
 
             {errors.submit && <Text style={styles.errorText}>{errors.submit}</Text>}
 
             <View style={styles.loginContainer}>
-              <Text style={styles.loginText}>Already have an account? </Text>
+              <Text style={styles.loginText}>{t('auth.register.haveAccount')}</Text>
               <TouchableOpacity onPress={() => navigation.navigate('Login')}>
-                <Text style={styles.loginLink}>Sign In</Text>
+                <Text style={styles.loginLink}>{t('auth.register.signIn')}</Text>
               </TouchableOpacity>
             </View>
           </View>

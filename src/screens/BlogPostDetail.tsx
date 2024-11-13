@@ -11,6 +11,7 @@ import RenderHTML, {
 import ImageView from 'react-native-image-viewing';
 import { Ionicons } from '@expo/vector-icons';
 import { decode } from 'html-entities';
+import { useTranslation } from 'react-i18next';
 
 interface BlogPostDetailProps {
   route: {
@@ -25,6 +26,7 @@ interface CustomFigureProps extends CustomRendererProps<TRenderEngineConfig> {
 }
 
 const CustomFigureRenderer = memo(({ TDefaultRenderer, tnode, onImagePress, ...props }: CustomFigureProps) => {
+  const { t } = useTranslation();
   const { width } = useWindowDimensions();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -68,7 +70,7 @@ const CustomFigureRenderer = memo(({ TDefaultRenderer, tnode, onImagePress, ...p
           <ActivityIndicator 
             style={styles.imageLoader}
             size="large"
-            color="#0000ff"
+            color="#2196F3"
           />
         )}
       </TouchableOpacity>
@@ -82,6 +84,7 @@ const CustomFigureRenderer = memo(({ TDefaultRenderer, tnode, onImagePress, ...p
 });
 
 export default function BlogPostDetail({ route }: BlogPostDetailProps) {
+  const { t } = useTranslation();
   const { width } = useWindowDimensions();
   const { post } = route.params;
   const [isImageViewVisible, setIsImageViewVisible] = useState(false);
@@ -94,9 +97,10 @@ export default function BlogPostDetail({ route }: BlogPostDetailProps) {
 
   const handleShare = async () => {
     try {
+      const title = stripHtmlAndDecode(post.title.rendered);
       await Share.share({
-        message: `${stripHtmlAndDecode(post.title.rendered)}\n\n${stripHtmlAndDecode(post.excerpt.rendered)}\n\n${post.link}`,
-        title: stripHtmlAndDecode(post.title.rendered),
+        message: t('blog.detail.share.message', { title }) + '\n\n' + post.link,
+        title: title,
         url: post.link,
       });
     } catch (error) {
@@ -137,14 +141,14 @@ export default function BlogPostDetail({ route }: BlogPostDetailProps) {
     figcaption: {
       fontSize: 14,
       color: '#666',
-      fontStyle: 'italic' as const,
-      textAlign: 'center' as const,
+      fontStyle: 'italic',
+      textAlign: 'center',
       padding: 8,
       backgroundColor: '#f9f9f9',
     },
     a: {
       color: '#2196F3',
-      textDecorationLine: 'underline' as const,
+      textDecorationLine: 'underline',
     },
     p: {
       marginVertical: 8,
@@ -173,7 +177,7 @@ export default function BlogPostDetail({ route }: BlogPostDetailProps) {
             <View style={styles.metaRight}>
               {post._embedded?.author?.[0]?.name && (
                 <Text style={styles.author}>
-                  By {post._embedded.author[0].name}
+                  {t('blog.detail.postedBy', { author: post._embedded.author[0].name })}
                 </Text>
               )}
               <TouchableOpacity onPress={handleShare} style={styles.shareButton}>

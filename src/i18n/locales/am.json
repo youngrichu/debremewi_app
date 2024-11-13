@@ -12,7 +12,9 @@
     "yes": "አዎ",
     "no": "አይ",
     "notProvided": "አልተሰጠም",
-    "none": "የለም"
+    "none": "የለም",
+    "uploadPhoto": "ፎቶ ያስገቡ",
+    "changePhoto": "ፎቶ ይለውጡ"
   },
   "profile": {
     "title": "መገለጫ",
@@ -42,16 +44,25 @@
       "ministryService": "የንዑስ ክፍል አገልግሎት",
       "hasFatherConfessor": "የንስሐ አባት አለዎት?",
       "fatherConfessorName": "የንስሐ አባት ስም",
-      "hasAssociationMembership": "በማህበር ውስጥ አባል ነዎት?",
-      "associationName": "የማህበሩ ስም",
-      "residencePermit": "የመኖሪያ ፈቃድ"
+      "hasAssociationMembership": "የጽዋ አባል ኖት?",
+      "associationName": "የጽዋ የማኅበሩ ስም",
+      "residencePermit": "የመኖሪያ ፈቃድ",
+      "hasChildren": "ልጆች አሉዎት?",
+      "numberOfChildren": "የልጆች ብዛት"
     },
     "placeholders": {
       "enterOccupation": "ሥራዎን ያስገቡ",
       "enterAddress": "አድራሻዎን ያስገቡ",
       "enterEmergencyContact": "የአደጋ ጊዜ ተጠሪ ያስገቡ",
       "enterFatherConfessorName": "የንስሐ አባት ስም ያስገቡ",
-      "enterAssociationName": "የማህበሩን ስም ያስገቡ"
+      "enterAssociationName": "የማኅበሩን ስም ያስገቡ",
+      "enterNumberOfChildren": "የልጆችዎን ብዛት ያስገቡ",
+      "enterFirstName": "መጠሪያ ስምዎን ያስገቡ",
+      "enterLastName": "የአባት ስምዎን ያስገቡ",
+      "enterChristianName": "የክርስትና ስምዎን ያስገቡ",
+      "enterPhoneNumber": "ስልክ ቁጥርዎን ያስገቡ",
+      "enterResidenceAddress": "የመኖሪያ አድራሻዎን ያስገቡ",
+      "enterEmergencyContact": "የአደጋ ጊዜ ተጠሪ መረጃ ያስገቡ"
     },
     "selects": {
       "selectGender": "ጾታ ይምረጡ",
@@ -94,7 +105,7 @@
         "choir": "የመዘምራን አገልግሎት",
         "sunday_school": "የሰንበት ትምህርት ቤት አገልግሎት",
         "council": "የቤተክርስቲያን ምክር ቤት አገልግሎት",
-        "chalice_association": "የጽዋ ማህበር አገልግሎት",
+        "chalice_association": "የጽዋ ማኅበር አገልግሎት",
         "parents": "የወላጆች አገልግሎት",
         "childrens_department": "የህፃናት ክፍል አገልግሎት"
       },
@@ -114,7 +125,8 @@
         "offering": "መባ ሰብሳቢ",
         "statistician": "ስታትስቲክስ",
         "media": "ሚዲያ",
-        "it": "አይቲ"
+        "it": "አይቲ",
+        "council": "የቤተክርስቲያን ምክር ቤት አስተባባሪ"
       },
       "cities": {
         "dubai": "ዱባይ",
@@ -125,6 +137,22 @@
         "umm_al_quwain": "ኡም አል ቁዋይን",
         "fujairah": "ፉጀይራ",
         "al_ain": "አል ዐይን"
+      },
+      "hasChildren": {
+        "yes": "አዎ",
+        "no": "አይ"
+      },
+      "hasFatherConfessor": {
+        "yes": "አዎ",
+        "no": "አይ"
+      },
+      "hasAssociationMembership": {
+        "yes": "አዎ",
+        "no": "አይ"
+      },
+      "residencePermit": {
+        "yes": "አዎ",
+        "no": "አይ"
       }
     },
     "messages": {
@@ -134,7 +162,64 @@
       "permissionRequired": "ፈቃድ ያስፈልጋል",
       "photoPermissionMessage": "ፎቶ ለመውሰድ የካሜራ ፈቃድ ያስፈልጋል",
       "errorPickingImage": "ፎቶ መውሰድ አልተቻለም",
-      "fillRequiredFields": "እባክዎ አስፈላጊ መረጃዎችን ሁሉ ያስገቡ"
+      "fillRequiredFields": "እባክዎ አስፈላጊ መረጃዎችን ሁሉ ያስገቡ",
+      "logoutError": "መውጣት አልተቻለም። እባክዎ እንደገና ይሞክሩ።",
+      "accountDeleted": "መለያ ተሰርዟል",
+      "accountDeletedSuccess": "መለያዎ በተሳካ ሁኔታ ተሰርዟል።",
+      "accountDeleteError": " መሰ አልለ እባክዎ እንደገና ይሞክሩ።",
+      "completeProfile": "መገለጫዎን ያጠናቅቁ"
+    },
+    "helpers": {
+      "residenceAddress": "እባክዎ ሙሉ የመኖሪያ አድራሻዎን ያስገቡ",
+      "emergencyContact": "እባክዎ የአደጋ ጊዜ ተጠሪ መረጃ ያስገቡ",
+      "serviceAtParish": "በቤተክርስቲያን ያለዎት ዋና የአገልግሎት ዘርፍ ይምረጡ",
+      "ministryService": "የንዑስ የአገልግሎት ዘርፍዎን ይምረጡ",
+      "hasFatherConfessor": "ለንስሐ የሚያስተዳድርዎት አባት አለዎት?",
+      "hasAssociationMembership": "በቤተክርስቲያን የጽዋ ማኅበር አባል ነዎት?",
+      "residencePermit": "በዩኤኢ ያለዎት የመኖሪያ ፈቃድ ሁኔታ ምንድን ነው?",
+      "photo": "እባክዎ የራስዎን ግልጽ ፎቶ ያስገቡ",
+      "changePhoto": "ፎቶዎን ለመለወጥ ይንኩ"
+    },
+    "view": {
+      "title": "መገለጫ",
+      "personalInfo": "የግል መረጃ",
+      "contactInfo": "የመገኛ መረጃ",
+      "churchInfo": "የቤተክርስቲያን መረጃ",
+      "additionalInfo": "ተጨማሪ መረጃ",
+      "editProfile": "መገለጫ አስተካክል",
+      "logOut": "ውጣ",
+      "confirmLogout": {
+        "title": "መውጣትዎን ያረጋግጡ",
+        "message": "እርግጠኛ ነዎት መውት ይፈልጋሉ?",
+        "cancel": "ሰርዝ",
+        "confirm": "አዎ፣ ውጣ"
+      },
+      "labels": {
+        "name": "ስም",
+        "christianName": "የክርስትና ስም",
+        "phoneNumber": "ስልክ ቁጥር",
+        "gender": "ጾታ",
+        "maritalStatus": "የጋብቻ ሁኔታ",
+        "educationLevel": "የትምህርት ደረጃ",
+        "occupation": "ሥራ",
+        "residencyCity": "የመኖሪያ ከተማ",
+        "residenceAddress": "አድራሻ",
+        "emergencyContact": "የአደጋ ጊዜ ተጠሪ",
+        "christianLife": "የክርስትና ሕይወት",
+        "serviceAtParish": "በደብሩ ላይ የሚሳተፉበት አገልግሎት",
+        "ministryService": "የንዑስ ክፍል አገልግሎት",
+        "hasFatherConfessor": "የንስሐ አባት",
+        "hasAssociationMembership": "የጽዋ አባልነት",
+        "residencePermit": "የመኖሪያ ፈቃድ",
+        "hasChildren": "ልጆች",
+        "numberOfChildren": "የልጆች ብዛት"
+      },
+      "deleteAccount": {
+        "title": "መለያ ሰርዝ",
+        "message": "መለያዎን መሰረዝ እርግጠኛ ነዎት? ይህ እርምጃ ሊቀለበስ አይችልም።",
+        "confirm": "መለያ ሰርዝ",
+        "button": "መለያ ሰርዝ"
+      }
     }
   },
   "validation": {
@@ -144,6 +229,450 @@
       "phoneNumber": "ስልክ ቁጥር አስፈላጊ ነው",
       "city": "ከተማ አስፈላጊ ነው",
       "address": "አድራሻ አስፈላጊ ነው"
+    }
+  },
+  "onboarding": {
+    "welcome": {
+      "title": "እንኳን ወደ ዱባይ ደብረመዊ",
+      "subtitle": "ቅዱስ ሚካኤል ወቅድስት አርሴማ\nኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተክርስቲያን",
+      "description": "ከቤተክርስቲያናችን ማህበረሰብ ጋር ይገናኙ እና በሚከተሉት አገልግሎቶች ይጠቀሙ፡",
+      "features": {
+        "events": {
+          "title": "የቤተክርስቲያን መርሃግብሮች",
+          "description": "የቤተክርስቲያን አገልግሎቶችን እና መርሃግብሮችን ይከታተሉ"
+        },
+        "community": {
+          "title": "ማህበረሰብ",
+          "description": "ከሌሎች የቤተክርስቲያን አባላት ጋር ይገናኙ"
+        },
+        "notifications": {
+          "title": "ማሳወቂያዎች",
+          "description": "አስፈላጊ ���ቤተክርስቲያን ማሳወቂያዎችን ይቀበሉ"
+        },
+        "resources": {
+          "title": "መንፈሳዊ ይዘቶች",
+          "description": "ጸሎቶችን እና ሃይማኖታዊ ይዘቶችን ያግኙ"
+        }
+      }
+    },
+    "sections": {
+      "personalInfo": "የግል መረጃ",
+      "contactInfo": "የመገናኛ መረጃ",
+      "churchInfo": "የቤተክርስቲያን መረጃ",
+      "additionalInfo": "ተጨማሪ መረጃ"
+    },
+    "helpers": {
+      "personalInfo": "እባክዎ መሰረታዊ የግል መረጃዎን ያስገቡ",
+      "contactInfo": "እንዴት ልናገኝዎት እንችላለን?",
+      "churchInfo": "ስለ ቤተክርስቲያን ተሳትፎዎ ይንገሩን",
+      "additionalInfo": "መገለጫዎን ለማጠናቀቅ ጥቂት ተጨማሪ መረጃዎች",
+      "hasChildren": "ልጆች ካሉዎት እባክዎ ይግለጹ",
+      "numberOfChildren": "ስንት ልጆች አሉዎት?",
+      "residenceAddress": "እባክዎ ሙሉ የመኖሪያ አድራሻዎን ያስገቡ",
+      "emergencyContact": "እባክዎ የአደጋ ጊዜ ተጠሪ መረጃ ያስገቡ",
+      "photo": "የእርስዎን ግልጽ ፎቶ ያስገቡ",
+      "serviceAtParish": "በቤተክርስቲያን ያለዎትን ዋና የአገልግሎት ዘርፍ ይምረጡ",
+      "ministryService": "የንዑስ የአገልግሎት ዘርፍዎን ይምረጡ",
+      "hasFatherConfessor": "የንስሐ አባት አለዎት?",
+      "hasAssociationMembership": "በቤተክርስቲያን የጽዋ ማኅበር አባል ኖት?",
+      "residencePermit": "በዩኤኢ ያለዎት የመኖሪያ ፈቃድ ሁኔታ ምንድን ነው?"
+    },
+    "profileSetup": "መገለጫ ማዘጋጀት",
+    "stepIndicator": "ደረጃ {{current}} ከ {{total}}",
+    "navigation": {
+      "next": "ቀጣይ",
+      "previous": "ተመለስ",
+      "complete": "አጠናቅቅ"
+    },
+    "steps": {
+      "welcome": "መግቢያ",
+      "personal": "የግል ",
+      "contact": "አድራሻ",
+      "church": "ክርስትና",
+      "additional": "ተጨማሪ"
+    }
+  },
+  "navigation": {
+    "tabs": {
+      "home": "ዋና ገጽ",
+      "events": "መርሃግብሮች",
+      "blog": "ብሎግ",
+      "profile": "መገለጫ",
+      "more": "ተጨማሪ"
+    },
+    "screens": {
+      "login": "ግባ",
+      "register": "ተመዝገብ",
+      "forgotPassword": "የይለፍ ቃል ረሳሁ",
+      "newPassword": "አዲስ የይለፍ ቃል",
+      "onboarding": "መገለጫ ማዘጋጀት",
+      "editProfile": "መገለጫ አስተካክል",
+      "notifications": "ማሳወቂያዎች",
+      "eventDetails": "የመርሃግብር ዝርዝር",
+      "blogPostDetail": "የብሎግ ፅሁፍ",
+      "aboutUs": "ስለ እኛ",
+      "services": "አገልግሎቶች",
+      "contactUs": "አግኙን",
+      "community": "ማህበረሰብ"
+    },
+    "appName": "ዱባይ ደብረመዊ"
+  },
+  "more": {
+    "menu": {
+      "title": "ተጨማሪ",
+      "aboutUs": "ስለ እኛ",
+      "services": "አገልግሎቶች",
+      "location": "አድራ",
+      "contactUs": "አግኙን"
+    }
+  },
+  "aboutUs": {
+    "title": "ስለ እኛ",
+    "intro": "ዱባይ ደብረመዊ ቅዱስ ሚካኤ��� ወቅድስት አርሴማ ቤተክርስቲያን በዱባይ ለሚኖሩ ኢትዮጵያውያን እና ኤርትራውያን እምነታዊ እና ባህላዊ ማዕከል ሆ ታገለግላለች።",
+    "sections": {
+      "history": {
+        "title": "ታሪክ",
+        "content": "ዱባይ ደብረመዊ ቅዱስ ሚካኤል እና ቅድስት አርሴማ ቤተክርስቲያን በዱባይ ለሚኖሩ የኢትዮጵያ እና ኤርትራ ኦርቶዶ���ስ ክርስቲያኖች መንፈሳዊ ፍላጎት ለማሟላት ተመስርታለች። ይህ ቤተክርስቲያን በኢትዮጵያ ክርስትና ውስጥ ከፍተኛ ቦታ ያላቸውን ሁለት ታላላቅ ቅዱሳንን፣ የመላእክት መሪ እና ጠባቂ የሆነውን ቅዱስ ሚካኤልን እና የእምነት እና የድፍረት ምሳሌ የሆነችውን ቅድስት አርሴማን መሰየሟል።"
+      },
+      "governance": {
+        "title": "አስተዳደር",
+        "content": "የቤተክርስቲያኗ አስተዳደር በኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተክርስቲያን ሥርዓት መሠረት የተዋቀረ ነው። ካህን በበላይነት ይመራል፣ በአስተዳደራዊ ጉዳዮች እና በመርሃግብሮች አደረጃጀት የሚረዱ የማህበረሰቡ አባላት የሆኑ የምክር ቤት አባላት ይደግፋሉ።"
+      },
+      "faith": {
+        "title": "እምነት",
+        "content": "በዱባይ ደብረመዊ ቅዱስ ሚካኤል እና ቅድስት አርሴማ ቤተክርስቲያን የሚከናወነው እምነት በኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተክርስቲያን ትውፊት ላይ የተመሰረተ ነው። አምልኮው መደበኛ የቅዳሴ አገልግሎቶችን፣ ጸሎቶችን እና እንደ ጥምቀት እና ጋብቻ ያሉ ምስጢራትን ያካትታል።"
+      },
+      "mission": {
+        "title": "ተልዕኮ",
+        "content": "የቤተክርስቲያኗ ተልዕኮ ከመንፈሳዊ መመሪያ አልፎ፣ ባህላዊ ቅርሶችን በማስተዋወቅ በአባላቷ መካከል የማህበረሰብ ስሜትን ለማዳበር ያለመ ነው። ቤተክርስቲያኗ በአካባቢው ያሉ የበጎ አድራጎት ድርጅቶችን የሚደግፉ እና በማህበረሰቡ ውስጥ ያሉ ችግረኞችን የሚረዱ የተለያዩ የማህበረሰብ ተኮር ፕሮግራሞችን ታካሂዳለች።"
+      }
+    }
+  },
+  "services": {
+    "title": "የቤተክርስቲያን አገልግሎቶች",
+    "routineServices": "መደበኛ አገልግሎቶች",
+    "services": {
+      "liturgy": "ቅዳሴ",
+      "communion": "ቁርባን",
+      "sermon": "ስብከት",
+      "christianing": "ጥምቀት",
+      "matrimony": "ጋብቻ",
+      "prayers": "ጸሎቶች",
+      "fitihat": "ፍትሐት",
+      "congregation": "ጉባኤ"
+    },
+    "schedule": {
+      "sunday": {
+        "day": "በየእሁድ",
+        "time": "5:00 ጠዋት - 11:00 ጠዋት",
+        "description": "ቅዳሴ፣ ስብከት እና ሌሎች አገልግሎቶች"
+      },
+      "friday": {
+        "day": "በየአርብ",
+        "time": "6:00 ማታ - 7:30 ማታ",
+        "description": "የማታ ጸሎት እና ስብከት"
+      },
+      "saturday": {
+        "day": "በየቅዳሜ",
+        "time": "6:00 ጠዋት - 7:30 ጠዋት",
+        "description": "የጠዋት ጸሎት፣ ቅዳሴ፣ እና ሌሎች አገልግሎቶች"
+      }
+    }
+  },
+  "contact": {
+    "title": "አግኙን",
+    "sections": {
+      "socialMedia": "ሶሻል ሚዲያ"
+    },
+    "email": {
+      "label": "ኢሜይል",
+      "value": "dubaidebremewi2021@gmail.com"
+    },
+    "whatsapp": {
+      "label": "ዋትስአፕ",
+      "value": "+971525591976"
+    },
+    "social": {
+      "facebook": {
+        "label": "ፌስቡክ",
+        "value": "በፌስቡክ ይከተሉን"
+      },
+      "youtube": {
+        "label": "ዩቲዩብ",
+        "value": "ቻናላችንን ይቀላቀሉ"
+      },
+      "tiktok": {
+        "label": "ቲክቶክ",
+        "value": "በቲክቶክ ይከተሉን"
+      }
+    }
+  },
+  "location": {
+    "title": "በዩኤኢ የሚገኙ የኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተክርስቲያናት",
+    "mainChurchBadge": "ቤተክርስቲያናችን",
+    "openInMaps": "በካርታ ላይ ይመልከቱ",
+    "notSpecified": {
+      "venue": "ቦታው አልተገለጸም",
+      "location": "አድራሻው አልተገለጸም"
+    },
+    "churches": {
+      "dubai": {
+        "name": "ዱባይ ደብረመዊ ቅዱስ ሚካኤል ወቅድስት አርሴማ ቤተክርስቲያን",
+        "city": "ዱባይ",
+        "location": "8 19dStreet - Umm Hurair 2 - Dubai",
+        "venue": "Holy Trinity Church"
+      },
+      "abuDhabi": {
+        "name": "አቡዳቢ መስቀየ ህዙናን መድኃኔዓለም ወአቡነ ተክለሃይማኖት ኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተክርስቲያን",
+        "city": "አቡዳቢ",
+        "location": "Al Sharia",
+        "venue": "አቡዳቢ መስቀየ ህዙናን መድኃኔዓለም ወአቡነ ተክለሃይማኖት ኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተክርስቲያን"
+      },
+      "sharjah": {
+        "name": "ጽዓሊተ ምሕረት ቅድስት ማርያም ኦርቶዶክስ ቤተክርስቲያን",
+        "city": "ሻርጃ",
+        "location": "",
+        "venue": ""
+      },
+      "alAin": {
+        "name": "ቅዱስ ገብርኤል ኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተክርስቲያን",
+        "city": "አል ዐይን",
+        "location": "",
+        "venue": ""
+      },
+      "fujairah": {
+        "name": "ሃመረ ብርሃን ኪዳነ ምሕረት ወአቡነ አረጋዊ",
+        "city": "ፉጀይራ",
+        "location": "",
+        "venue": ""
+      },
+      "jebelAli": {
+        "name": "ሥላሴ ወቅዱስ ሩፋኤል ቤተክርስቲያን",
+        "city": "ጀበል አሊ",
+        "location": "Jebel Ali Village - Jebel Ali Freezone - Dubai",
+        "venue": "Christ Church Jebel Ali"
+      },
+      "rak": {
+        "name": "ቅዱስ ግሪጎሪዮስ ኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተክርስቲያን",
+        "city": "ራስ አል ካይማ",
+        "location": "",
+        "venue": ""
+      }
+    }
+  },
+  "landing": {
+    "welcome": {
+      "title": "እንኳን ደህና መጡ ወደ ዱባይ ደብረመዊ",
+      "subtitle": "ቅዱስ ሚካኤል ወቅድስት አርሴማ ኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተክርስቲያን"
+    },
+    "buttons": {
+      "login": "ግባ",
+      "register": "ተመዝገብ"
+    },
+    "footer": {
+      "version": "ስሪት {{version}}"
+    }
+  },
+  "home": {
+    "welcome": {
+      "title": "እንኳን ደህና መጡ ወደ ዱባይ ደብረመዊ",
+      "churchName": "ዱባይ ደብረመዊ",
+      "subtitle": "ቅዱስ ሚካኤል ወቅድስት አርሴማ ኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተክርስቲያን",
+      "verse": {
+        "text": "\"ይህ ስፍራ የእግዚአብሔር ቤት ነው እንጂ ሌላ አይደለም፤ ይህም የሰማይ ደጅ ነው።\"",
+        "reference": "ዘፍጥረት ፳፰፥፲፯"
+      }
+    },
+    "quickActions": {
+      "events": "መርሃግብሮች",
+      "blog": "ብሎግ ጽሑፎች",
+      "location": "አድራሻ"
+    },
+    "sections": {
+      "recentPosts": {
+        "title": "የቅርብ ጊዜ ብሎግ ጽሑፎች",
+        "seeAll": "ሁሉንም ይመልከቱ",
+        "empty": "ምንም ብሎግ ጽሑፎች የሉም"
+      },
+      "upcomingEvents": {
+        "title": "የሚመጡ መርሃግብሮች",
+        "seeAll": "ሁሉንም ይመልከቱ",
+        "empty": "በአሁኑ ጊዜ ምንም መርሃግብሮች የሉም",
+        "time": "ሰዓት",
+        "location": "ቦታ"
+      }
+    }
+  },
+  "blog": {
+    "title": "ብሎግ ጽሑፎች",
+    "empty": "ምንም ብሎግ ጽሑፎች የሉም",
+    "readMore": "ተጨማሪ ያንብቡ",
+    "postedOn": "የተለጠፈው በ {{date}}",
+    "loading": "ብሎግ ጽሑፎችን በመጫን ላይ...",
+    "error": "ብሎግ ጽሑፎችን መጫን አልተቻለም",
+    "retry": "እንደገና ሞክር",
+    "search": {
+      "placeholder": "ብሎግ ጽሑፎችን ይፈልጉ...",
+      "noResults": "ከፍለጋዎ ጋር የሚዛመ ምንም ጽፍ አልተገኘም"
+    },
+    "categories": {
+      "all": "ሁሉም ጽሑፎች",
+      "news": "ዜናዎች",
+      "events": "መርሃግብሮች",
+      "teachings": "ትምህርቶች",
+      "announcements": "ማስታወቂያዎች"
+    },
+    "detail": {
+      "postedBy": "በ {{author}}",
+      "share": {
+        "title": "ጽሑፉን አጋራ",
+        "message": "ይህን ጽሑፍ ይመልከቱ: {{title}}"
+      },
+      "imageViewer": {
+        "close": "ዝጋ"
+      },
+      "loading": {
+        "image": "ምስሉን በመጫን ላይ..."
+      }
+    }
+  },
+  "auth": {
+    "login": {
+      "title": "እንኳን ደህና መጡ",
+      "subtitle": "እባክዎ ወደ መለያዎ ለመግባት ይመዝገቡ",
+      "email": "ኢሜይል",
+      "password": "የይለፍ ቃል",
+      "loginButton": "ግባ",
+      "forgotPassword": "የይለፍ ቃል ረሳሁ?",
+      "noAccount": "መለያ የለዎትም? ",
+      "register": "ተመዝገብ",
+      "errors": {
+        "invalidEmail": "እባክዎ ትክክለኛ ኢሜይል ያስገቡ",
+        "requiredEmail": "ኢሜይል አስፈላጊ ነው",
+        "requiredPassword": "የይለፍ ቃል አስፈላጊ ነው",
+        "minLengthPassword": "የይለፍ ቃል ቢያንስ 6 ቁምፊዎች ሊኖሩት ይገባል",
+        "loginFailed": "መግባት አልተሳካም። እባክዎ መረጃዎችዎን ያረጋግጡና እንደገና ይሞክሩ።"
+      },
+      "placeholders": {
+        "email": "ኢሜይልዎን ያስገቡ",
+        "password": "የይለፍ ቃልዎን ያስገቡ"
+      }
+    },
+    "forgotPassword": {
+      "title": "የይለፍ ቃል ዳግም ያስተካክሉ",
+      "subtitle": "እባክዎ ኢሜይልዎን ያስገቡ።",
+      "email": "ኢሜይል",
+      "nextButton": "ቀጣይ",
+      "errors": {
+        "invalidEmail": "እባክ ትክክለኛ ኢሜይል ያስገቡ",
+        "requiredEmail": "ኢሜይል አስፈላጊ ነው",
+        "verificationFailed": "ኢሜይል ማረጋገጥ አልተሳካም",
+        "failedToVerify": "ኢሜይል ማረጋገጥ አልተሳካም"
+      },
+      "placeholders": {
+        "email": "ኢሜይልዎን ያስገቡ"
+      }
+    },
+    "newPassword": {
+      "title": "አዲስ የይለፍ ቃል ያስገቡ",
+      "subtitle": "እባክዎ አዲስ የይለፍ ቃልዎን ከታች ያስገቡ።",
+      "newPassword": "አዲስ የይለፍ ቃል",
+      "confirmPassword": "የይለፍ ቃል ያረጋግጡ",
+      "updateButton": "የይለፍ ቃል ያዘምኑ",
+      "cancelButton": "ይቅር",
+      "success": "የይለፍ ቃል በተሳካ ሁኔታ ተዘምኗል!",
+      "errors": {
+        "required": "አዲስ የይለፍ ቃል አስፈላጊ ነው",
+        "minLength": "የይለፍ ቃል ቢያንስ 6 ቁምፊዎች ሊኖሩት ይገባል",
+        "mismatch": "የይለፍ ቃሎቹ አይዛመዱም",
+        "updateFailed": "የይለፍ ቃል ማዘመን አልተሳካም"
+      },
+      "placeholders": {
+        "newPassword": "አዲስ የይለፍ ቃል ያስገቡ",
+        "confirmPassword": "የይለፍ ቃል ያረጋግጡ"
+      }
+    },
+    "register": {
+      "title": "መለያ ፍጠር",
+      "subtitle": "ወደ ማህበረሰባችን ይቀላቀሉ",
+      "firstName": "መጠሪያ ስም",
+      "lastName": "የአባት ስም",
+      "email": "ኢሜይል",
+      "password": "የይለፍ ቃል",
+      "confirmPassword": "የይለፍ ቃል ያረጋግጡ",
+      "createButton": "መለያ ፍጠር",
+      "haveAccount": "መለያ አለዎት? ",
+      "signIn": "ግባ",
+      "success": "ምዝገባው ተሳክቷል! እባክዎ ለመግባት ይመዝገቡ።",
+      "errors": {
+        "firstName": "መጠሪያ ስም አስፈላጊ ነው",
+        "lastName": "የአባት ስም አስፈላጊ ነው",
+        "invalidEmail": "እባክዎ ትክክለኛ ኢሜይል ያስገቡ",
+        "requiredEmail": "ኢሜይል አስፈላጊ ነው",
+        "requiredPassword": "የይለፍ ቃል አስፈላጊ ነው",
+        "minLengthPassword": "የይለፍ ቃል ቢያንስ 6 ቁምፊዎች ሊኖሩት ይገባል",
+        "passwordMismatch": "የይለፍ ቃሎቹ አይዛመዱም",
+        "registrationFailed": "ምዝገባ አልተሳካም። እባክዎ እንደገና ይሞክሩ።"
+      },
+      "placeholders": {
+        "firstName": "መጠሪያ ስምዎን ያስገቡ",
+        "lastName": "የአባት ስምዎን ያስገቡ",
+        "email": "ኢሜይልዎን ያስገቡ",
+        "password": "የይለፍ ቃልዎን ያስገቡ",
+        "confirmPassword": "የይለፍ ቃልዎን ያረጋግጡ"
+      }
+    }
+  },
+  "events": {
+    "details": {
+      "loading": "የዝግጅት ዝርዝሮችን በመጫን ላይ...",
+      "error": {
+        "notFound": "ዝግጅቱ አልተገኘም",
+        "loadFailed": "የዝግጅት ዝርዝሮችን መጫን አልተሳካም",
+        "retry": "እንደገና ሞክር",
+        "goBack": "ተመለስ"
+      },
+      "description": "መግለጫ",
+      "addToCalendar": {
+        "button": "ወደ ቀን መቁጠሪያ ጨምር",
+        "success": "ዝግጅቱ ወደ ቀን መቁጠሪያ ተጨምሯል",
+        "error": "ዝግጅቱን ወደ ቀን መቁጠሪያ መጨመር አልተሳካም። እባክዎ እንደገና ይሞክሩ።",
+        "permission": {
+          "title": "ፈቃድ ያስፈልጋል",
+          "message": "እባክዎ ዝግጅቶችን ወደ ቀን መቁጠሪያዎ ለመጨመር የቀን መቁጠሪያ ፈቃዶችን ይስጡ።",
+          "notFound": {
+            "title": "ቀን መቁጠሪያ አልተገኘም",
+            "ios": "መጻፍ የሚቻልበት ቀን መቁጠሪያ ማግኘት አልተቻለም። እባክዎ የቀን መቁጠሪያ ቅንብሮችዎን ያረጋግጡ።",
+            "android": "የGoogle ቀን መቁጠሪያዎን ማግኘት አልተቻለም። እባክዎ የGoogle መለያዎን ወደ መሳሪያዎ መጨመርዎን ያረጋግጡ።"
+          }
+        }
+      },
+      "share": {
+        "button": "አጋራ",
+        "message": "ይህን ዝግጅት ይመልከቱ: {{title}} በ {{location}}"
+      }
+    },
+    "screen": {
+      "title": "መርሃግብሮች",
+      "empty": "ምንም መርሃግብሮች አልተገኙም",
+      "loading": "መርሃግብሮችን በመጫን ላይ...",
+      "error": "መርሃግብሮችን መጫን አልተሳካም",
+      "retry": "እንደገና ሞክር",
+      "viewModes": {
+        "month": "ወር",
+        "week": "ሳምንት",
+        "day": "ቀን"
+      },
+      "today": "ዛሬ",
+      "filters": {
+        "all": "ሁሉም መርሃግብሮች",
+        "upcoming": "የሚመጡ",
+        "past": "ያለፉ"
+      },
+      "timeLabels": {
+        "am": "ጠዋት",
+        "pm": "ከሰዓት"
+      }
     }
   }
 } 

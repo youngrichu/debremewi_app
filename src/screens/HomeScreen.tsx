@@ -5,8 +5,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { Post, Event } from '../types';
 import { API_URL } from '../config';
 import WelcomeCard from '../components/WelcomeCard';
+import { useTranslation } from 'react-i18next';
 
 export default function HomeScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation();
   const [recentPosts, setRecentPosts] = useState<Post[]>([]);
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
@@ -41,7 +43,7 @@ export default function HomeScreen() {
       return (
         <View style={styles.emptyStateContainer}>
           <Text style={styles.emptyStateText}>
-            No upcoming events at the moment
+            {t('home.sections.upcomingEvents.empty')}
           </Text>
         </View>
       );
@@ -51,7 +53,10 @@ export default function HomeScreen() {
       <TouchableOpacity
         key={event.id}
         style={styles.eventCard}
-        onPress={() => navigation.navigate('EventDetails', { eventId: event.id })}
+        onPress={() => navigation.navigate('Events', {
+          screen: 'EventDetails',
+          params: { eventId: event.id }
+        })}
       >
         <View style={styles.eventDateBox}>
           <Text style={styles.eventDateDay}>
@@ -76,6 +81,10 @@ export default function HomeScreen() {
     ));
   };
 
+  const handleBlogPostPress = (post: Post) => {
+    navigation.navigate('BlogPostDetail', { post });
+  };
+
   return (
     <ScrollView 
       style={styles.container}
@@ -92,7 +101,7 @@ export default function HomeScreen() {
           <View style={[styles.iconContainer, { backgroundColor: '#FF9800' }]}>
             <Ionicons name="calendar" size={32} color="#FFF" />
           </View>
-          <Text style={styles.quickActionText}>Events</Text>
+          <Text style={styles.quickActionText}>{t('home.quickActions.events')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity 
@@ -102,7 +111,7 @@ export default function HomeScreen() {
           <View style={[styles.iconContainer, { backgroundColor: '#4CAF50' }]}>
             <Ionicons name="newspaper" size={32} color="#FFF" />
           </View>
-          <Text style={styles.quickActionText}>Blog Posts</Text>
+          <Text style={styles.quickActionText}>{t('home.quickActions.blog')}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity 
@@ -114,51 +123,57 @@ export default function HomeScreen() {
           <View style={[styles.iconContainer, { backgroundColor: '#2196F3' }]}>
             <Ionicons name="location" size={32} color="#FFF" />
           </View>
-          <Text style={styles.quickActionText}>Location</Text>
+          <Text style={styles.quickActionText}>{t('home.quickActions.location')}</Text>
         </TouchableOpacity>
       </View>
 
       {/* Recent Blog Posts Section */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Recent Blog Posts</Text>
+          <Text style={styles.sectionTitle}>{t('home.sections.recentPosts.title')}</Text>
           <TouchableOpacity onPress={() => navigation.navigate('BlogPosts')}>
-            <Text style={styles.seeAllText}>See All</Text>
+            <Text style={styles.seeAllText}>{t('home.sections.recentPosts.seeAll')}</Text>
           </TouchableOpacity>
         </View>
-        {recentPosts.map((post) => (
-          <TouchableOpacity
-            key={post.id}
-            style={styles.blogCard}
-            onPress={() => navigation.navigate('BlogPostDetail', { post })}
-          >
-            <View style={styles.blogCardContent}>
-              {post._embedded?.['wp:featuredmedia']?.[0]?.source_url && (
-                <Image
-                  source={{ uri: post._embedded['wp:featuredmedia'][0].source_url }}
-                  style={styles.blogThumbnail}
-                />
-              )}
-              <View style={styles.blogTextContent}>
-                <Text style={styles.blogTitle}>{post.title.rendered}</Text>
-                <Text style={styles.blogExcerpt} numberOfLines={2}>
-                  {post.excerpt.rendered.replace(/<[^>]*>/g, '')}
-                </Text>
-                <Text style={styles.blogDate}>
-                  {new Date(post.date || '').toLocaleDateString()}
-                </Text>
+        {recentPosts.length === 0 ? (
+          <View style={styles.emptyStateContainer}>
+            <Text style={styles.emptyStateText}>{t('home.sections.recentPosts.empty')}</Text>
+          </View>
+        ) : (
+          recentPosts.map((post) => (
+            <TouchableOpacity
+              key={post.id}
+              style={styles.blogCard}
+              onPress={() => handleBlogPostPress(post)}
+            >
+              <View style={styles.blogCardContent}>
+                {post._embedded?.['wp:featuredmedia']?.[0]?.source_url && (
+                  <Image
+                    source={{ uri: post._embedded['wp:featuredmedia'][0].source_url }}
+                    style={styles.blogThumbnail}
+                  />
+                )}
+                <View style={styles.blogTextContent}>
+                  <Text style={styles.blogTitle}>{post.title.rendered}</Text>
+                  <Text style={styles.blogExcerpt} numberOfLines={2}>
+                    {post.excerpt.rendered.replace(/<[^>]*>/g, '')}
+                  </Text>
+                  <Text style={styles.blogDate}>
+                    {new Date(post.date || '').toLocaleDateString()}
+                  </Text>
+                </View>
               </View>
-            </View>
-          </TouchableOpacity>
-        ))}
+            </TouchableOpacity>
+          ))
+        )}
       </View>
 
       {/* Upcoming Events Section */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Upcoming Events</Text>
+          <Text style={styles.sectionTitle}>{t('home.sections.upcomingEvents.title')}</Text>
           <TouchableOpacity onPress={() => navigation.navigate('Events')}>
-            <Text style={styles.seeAllText}>See All</Text>
+            <Text style={styles.seeAllText}>{t('home.sections.upcomingEvents.seeAll')}</Text>
           </TouchableOpacity>
         </View>
         {renderEvents()}

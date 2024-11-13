@@ -1,41 +1,44 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
 
 const AboutUsScreen = () => {
+  const { t } = useTranslation();
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.section}>
-        <Text style={styles.title}>About Us</Text>
+        <Text style={styles.title}>{t('aboutUs.title')}</Text>
         <Text style={styles.paragraph}>
-          Dubai Debiremewi St. Michael and St. Hripsime Church serves as a significant religious and cultural center for the Ethiopian and Eritrean communities in Dubai.
+          {t('aboutUs.intro')}
         </Text>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>History</Text>
+        <Text style={styles.sectionTitle}>{t('aboutUs.sections.history.title')}</Text>
         <Text style={styles.paragraph}>
-          The Dubai Debiremewi St. Michael and St. Hripsime Church was established to cater to the spiritual needs of Ethiopian and Eritrean Orthodox Christians residing in Dubai. This church is named after two important figures in Ethiopian Christianity: St. Michael, who is revered as a protector and leader of angels, and St. Hripsime, a martyr who symbolizes faith and courage.
+          {t('aboutUs.sections.history.content')}
         </Text>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Governance</Text>
+        <Text style={styles.sectionTitle}>{t('aboutUs.sections.governance.title')}</Text>
         <Text style={styles.paragraph}>
-          The governance of the church is structured under the Ethiopian Orthodox Tewahedo Church's hierarchy. A priest leads the congregation, supported by a council made up of community members who assist in administrative duties and organizing events.
+          {t('aboutUs.sections.governance.content')}
         </Text>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Faith</Text>
+        <Text style={styles.sectionTitle}>{t('aboutUs.sections.faith.title')}</Text>
         <Text style={styles.paragraph}>
-          The faith practiced at Dubai Debiremewi St. Michael and St. Hripsime Church is deeply rooted in the Ethiopian Orthodox tradition. Worship includes regular liturgical services, prayers, and sacraments such as baptism and marriage.
+          {t('aboutUs.sections.faith.content')}
         </Text>
       </View>
 
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Mission</Text>
+        <Text style={styles.sectionTitle}>{t('aboutUs.sections.mission.title')}</Text>
         <Text style={styles.paragraph}>
-          The mission of the church extends beyond spiritual guidance; it aims to foster a sense of community among its members while promoting cultural heritage. The church engages in various outreach programs that support local charities and assist those in need within the community.
+          {t('aboutUs.sections.mission.content')}
         </Text>
       </View>
     </ScrollView>

@@ -22,13 +22,14 @@ import { CustomPicker } from '../components/CustomPicker';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as ImagePicker from 'expo-image-picker';
+import { useTranslation } from 'react-i18next';
 
 const STEPS = [
-  'Welcome',
-  'Personal',
-  'Contact',
-  'Church',
-  'Additional'
+  'welcome',
+  'personal',
+  'contact',
+  'church',
+  'additional'
 ];
 
 interface FormErrors {
@@ -37,7 +38,7 @@ interface FormErrors {
   phoneNumber?: string;
   gender?: string;
   residencyCity?: string;
-  christianName: string;
+  christianName?: string;
   maritalStatus?: string;
   hasChildren?: string;
   numberOfChildren?: string;
@@ -45,17 +46,17 @@ interface FormErrors {
   serviceAtParish?: string;
   ministryService?: string;
   confessionFather?: string;
-  residenceAddress: string;
+  residenceAddress?: string;
   educationLevel?: string;
   occupation?: string;
   residencePermit?: string;
   emergencyContact?: string;
   photo?: string;
-  hasFatherInFaith: string;
-  fatherInFaithName: string;
-  hasAssociationMembership: string;
-  hasFatherConfessor: string;
-  fatherConfessorName: string;
+  hasFatherInFaith?: string;
+  fatherInFaithName?: string;
+  hasAssociationMembership?: string;
+  hasFatherConfessor?: string;
+  fatherConfessorName?: string;
 }
 
 export const UAE_CITIES = [
@@ -159,7 +160,23 @@ export const FATHER_CONFESSOR_OPTIONS = [
   { label: 'No', value: 'no' }
 ];
 
+// Update the DropdownState interface
+interface DropdownState {
+  gender: boolean;
+  maritalStatus: boolean;
+  educationLevel: boolean;
+  residencyCity: boolean;
+  christianLife: boolean;
+  serviceAtParish: boolean;
+  ministryService: boolean;
+  hasFatherConfessor: boolean;
+  hasAssociationMembership: boolean;
+  residencePermit: boolean;
+  hasChildren: boolean;
+}
+
 export default function OnboardingScreen() {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<{
@@ -217,19 +234,22 @@ export default function OnboardingScreen() {
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [loading, setLoading] = useState(false);
-  const [openDropdowns, setOpenDropdowns] = useState<DropdownState>({
-    gender: false,
-    maritalStatus: false,
-    education: false,
-    city: false,
-    christianLife: false,
-    serviceParish: false,
-    confessionFather: false,
-    residencePermit: false,
-  });
   const [isAnyDropdownOpen, setIsAnyDropdownOpen] = useState(false);
   const [openPicker, setOpenPicker] = useState<string | null>(null);
   const scrollViewRef = useRef<ScrollView>(null);
+  const [openDropdowns, setOpenDropdowns] = useState<DropdownState>({
+    gender: false,
+    maritalStatus: false,
+    educationLevel: false,
+    residencyCity: false,
+    christianLife: false,
+    serviceAtParish: false,
+    ministryService: false,
+    hasFatherConfessor: false,
+    hasAssociationMembership: false,
+    residencePermit: false,
+    hasChildren: false
+  });
 
   const handleDropdownOpen = (dropdownName: keyof DropdownState) => {
     setOpenDropdowns(prev => {
@@ -245,36 +265,46 @@ export default function OnboardingScreen() {
   };
 
   const validateStep = (step: number): boolean => {
-    const newErrors: FormErrors = {};
+    const newErrors: FormErrors = {
+      christianName: '',
+      residenceAddress: '',
+      hasFatherInFaith: '',
+      fatherInFaithName: '',
+      hasAssociationMembership: '',
+      hasFatherConfessor: '',
+      fatherConfessorName: ''
+    };
     
     switch (step) {
       case 1: // Personal Info
-        if (!formData.firstName.trim()) {
-          newErrors.firstName = 'First name is required';
+        if (!formData.firstName?.trim()) {
+          newErrors.firstName = t('validation.required.firstName');
         }
-        if (!formData.lastName.trim()) {
-          newErrors.lastName = 'Last name is required';
+        if (!formData.lastName?.trim()) {
+          newErrors.lastName = t('validation.required.lastName');
         }
         if (!formData.gender) {
-          newErrors.gender = 'Gender is required';
+          newErrors.gender = t('validation.required.gender');
         }
         break;
-      case 2: // Contact Details
-        if (!formData.phoneNumber.trim()) {
-          newErrors.phoneNumber = 'Phone number is required';
+
+      case 2: // Contact Info
+        if (!formData.phoneNumber?.trim()) {
+          newErrors.phoneNumber = t('validation.required.phoneNumber');
         }
-        if (!formData.residencyCity.trim()) {
-          newErrors.residencyCity = 'City of residence is required';
+        if (!formData.residencyCity) {
+          newErrors.residencyCity = t('validation.required.city');
         }
-        if (!formData.residenceAddress.trim()) {
-          newErrors.residenceAddress = 'Address is required';
+        if (!formData.residenceAddress?.trim()) {
+          newErrors.residenceAddress = t('validation.required.address');
         }
         break;
-      // Add validation for other steps if needed
+
+      // ... other validation cases remain the same ...
     }
 
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return Object.values(newErrors).every(error => !error);
   };
 
   const handleNext = () => {
@@ -381,7 +411,7 @@ export default function OnboardingScreen() {
                 styles.progressStepText,
                 index === currentStep && styles.progressStepTextActive
               ]}>
-                {step}
+                {t(`onboarding.steps.${step}`)}
               </Text>
             </View>
             {index < STEPS.length - 1 && (
@@ -398,170 +428,86 @@ export default function OnboardingScreen() {
     </View>
   );
 
-  const renderWelcomeStep = () => (
-    <View style={styles.welcomeContainer}>
-      <View style={styles.welcomeHeader}>
-        <Text style={styles.welcomeTitle}>Welcome to{'\n'}Dubai Debre Mewi</Text>
-        <Text style={styles.welcomeSubtitle}>
-          St. Michael and St. Hripsime{'\n'}Ethiopian Orthodox Tewahedo Church
-        </Text>
-      </View>
-      
-      <Text style={styles.welcomeDescription}>
-        Join our vibrant church community and stay connected with these features:
-      </Text>
-      
-      <View style={styles.welcomePoints}>
-        <View style={styles.welcomePoint}>
-          <Ionicons name="calendar" size={24} color="#2196F3" />
-          <View style={styles.pointTextContainer}>
-            <Text style={styles.pointTitle}>Church Events</Text>
-            <Text style={styles.pointDescription}>Stay updated with church services and events</Text>
-          </View>
-        </View>
-
-        <View style={styles.welcomePoint}>
-          <Ionicons name="people" size={24} color="#2196F3" />
-          <View style={styles.pointTextContainer}>
-            <Text style={styles.pointTitle}>Community</Text>
-            <Text style={styles.pointDescription}>Connect with fellow church members</Text>
-          </View>
-        </View>
-
-        <View style={styles.welcomePoint}>
-          <Ionicons name="notifications" size={24} color="#2196F3" />
-          <View style={styles.pointTextContainer}>
-            <Text style={styles.pointTitle}>Notifications</Text>
-            <Text style={styles.pointDescription}>Receive important church announcements</Text>
-          </View>
-        </View>
-
-        <View style={styles.welcomePoint}>
-          <Ionicons name="book" size={24} color="#2196F3" />
-          <View style={styles.pointTextContainer}>
-            <Text style={styles.pointTitle}>Spiritual Resources</Text>
-            <Text style={styles.pointDescription}>Access prayers and religious content</Text>
-          </View>
-        </View>
-      </View>
-    </View>
-  );
-
   const renderStepContent = () => {
     switch (currentStep) {
       case 0:
         return renderWelcomeStep();
       case 1:
         return (
-          <View style={styles.stepContainer}>
-            <Text style={styles.stepTitle}>Personal Information</Text>
-            <Text style={styles.stepDescription}>
-              Please provide your basic personal details to help us serve you better.
-            </Text>
+          <View style={styles.stepContent}>
+            <Text style={styles.sectionTitle}>{t('onboarding.sections.personalInfo')}</Text>
+            <Text style={styles.helperText}>{t('onboarding.helpers.personalInfo')}</Text>
+
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>First Name (As per official documents) *</Text>
+              <Text style={styles.label}>{t('profile.fields.firstName')} <Text style={styles.required}>*</Text></Text>
               <TextInput
-                style={[styles.input, errors.firstName && styles.inputError]}
+                style={[
+                  styles.input as object,
+                  errors.firstName && (styles.inputError as object)
+                ]}
                 value={formData.firstName}
                 onChangeText={(text) => handleChange('firstName', text)}
-                placeholder="Enter your first name"
+                placeholder={t('profile.placeholders.enterFirstName')}
               />
-              {errors.firstName && (
-                <Text style={styles.errorText}>{errors.firstName}</Text>
-              )}
+              {errors.firstName && <Text style={styles.errorText}>{t('validation.required.firstName')}</Text>}
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Last Name (As per official documents) *</Text>
+              <Text style={styles.label}>{t('profile.fields.lastName')} <Text style={styles.required}>*</Text></Text>
               <TextInput
-                style={[styles.input, errors.lastName && styles.inputError]}
+                style={[
+                  styles.input as object,
+                  errors.lastName && (styles.inputError as object)
+                ]}
                 value={formData.lastName}
                 onChangeText={(text) => handleChange('lastName', text)}
-                placeholder="Enter your last name"
+                placeholder={t('profile.placeholders.enterLastName')}
               />
-              {errors.lastName && (
-                <Text style={styles.errorText}>{errors.lastName}</Text>
-              )}
+              {errors.lastName && <Text style={styles.errorText}>{t('validation.required.lastName')}</Text>}
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Christian Name (Baptismal Name)</Text>
+              <Text style={styles.label}>{t('profile.fields.christianName')}</Text>
               <TextInput
-                style={styles.input}
+                style={[
+                  styles.input as object,
+                  errors.christianName && (styles.inputError as object)
+                ]}
                 value={formData.christianName}
                 onChangeText={(text) => handleChange('christianName', text)}
-                placeholder="Enter your Christian name"
+                placeholder={t('profile.placeholders.enterChristianName')}
               />
+              {errors.christianName && <Text style={styles.errorText}>{t('validation.required.christianName')}</Text>}
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Gender *</Text>
+              <Text style={styles.label}>{t('profile.fields.gender')}</Text>
               <TouchableOpacity 
-                style={[styles.pickerButton, errors.gender && styles.inputError]}
+                style={styles.pickerButton}
                 onPress={() => setOpenPicker('gender')}
               >
-                <Text style={[
-                  styles.pickerButtonText,
-                  !formData.gender && { color: '#666' }
-                ]}>
-                  {formData.gender ? 
-                    formData.gender.charAt(0).toUpperCase() + formData.gender.slice(1) : 
-                    'Select Gender'
-                  }
+                <Text style={[styles.pickerButtonText, !formData.gender && { color: '#666' }]}>
+                  {formData.gender ? getPickerDisplayValue('gender', formData.gender) : t('common.select')}
                 </Text>
                 <Ionicons name="chevron-down" size={20} color="#666" />
               </TouchableOpacity>
-              {errors.gender && <Text style={styles.errorText}>{errors.gender}</Text>}
-              
-              <CustomPicker
-                visible={openPicker === 'gender'}
-                onClose={() => setOpenPicker(null)}
-                options={[
-                  { label: 'Male', value: 'male' },
-                  { label: 'Female', value: 'female' }
-                ]}
-                onSelect={(value) => {
-                  handleChange('gender', value);
-                  setOpenPicker(null);
-                }}
-                selectedValue={formData.gender}
-                title="Select Gender"
-              />
             </View>
 
             <View style={[styles.inputGroup, { zIndex: 4000 }]}>
-              <Text style={styles.label}>Current Marital Status</Text>
+              <Text style={styles.label}>{t('profile.fields.maritalStatus')}</Text>
               <TouchableOpacity 
                 style={styles.pickerButton}
                 onPress={() => setOpenPicker('maritalStatus')}
               >
-                <Text style={[
-                  styles.pickerButtonText,
-                  !formData.maritalStatus && { color: '#666' }
-                ]}>
-                  {formData.maritalStatus ? 
-                    formData.maritalStatus.charAt(0).toUpperCase() + formData.maritalStatus.slice(1) : 
-                    'Select Marital Status'
-                  }
+                <Text style={[styles.pickerButtonText, !formData.maritalStatus && { color: '#666' }]}>
+                  {formData.maritalStatus ? getPickerDisplayValue('maritalStatus', formData.maritalStatus) : t('common.select')}
                 </Text>
                 <Ionicons name="chevron-down" size={20} color="#666" />
               </TouchableOpacity>
-              
-              <CustomPicker
-                visible={openPicker === 'maritalStatus'}
-                onClose={() => setOpenPicker(null)}
-                options={MARITAL_STATUS_OPTIONS}
-                onSelect={(value) => {
-                  handleChange('maritalStatus', value);
-                  setOpenPicker(null);
-                }}
-                selectedValue={formData.maritalStatus}
-                title="Select Marital Status"
-              />
             </View>
 
             <View style={[styles.inputGroup, { zIndex: 3000 }]}>
-              <Text style={styles.label}>Highest Level of Education</Text>
+              <Text style={styles.label}>{t('profile.fields.educationLevel')}</Text>
               <TouchableOpacity 
                 style={styles.pickerButton}
                 onPress={() => {
@@ -569,392 +515,239 @@ export default function OnboardingScreen() {
                   setOpenPicker('educationLevel');
                 }}
               >
-                <Text style={[
-                  styles.pickerButtonText,
-                  !formData.educationLevel && { color: '#666' }
-                ]}>
-                  {formData.educationLevel ? 
-                    EDUCATION_LEVEL_OPTIONS.find(option => {
-                      return option.value === formData.educationLevel;
-                    })?.label || 
-                    formData.educationLevel : 
-                    'Select Education Level'
-                  }
+                <Text style={[styles.pickerButtonText, !formData.educationLevel && { color: '#666' }]}>
+                  {formData.educationLevel ? getPickerDisplayValue('educationLevel', formData.educationLevel) : t('common.select')}
                 </Text>
                 <Ionicons name="chevron-down" size={20} color="#666" />
               </TouchableOpacity>
-              
-              <CustomPicker
-                visible={openPicker === 'educationLevel'}
-                onClose={() => {
-                  setOpenPicker(null);
-                }}
-                options={EDUCATION_LEVEL_OPTIONS}
-                onSelect={(value) => {
-                  handleChange('educationLevel', value);
-                  setOpenPicker(null);
-                }}
-                selectedValue={formData.educationLevel}
-                title="Select Education Level"
-              />
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Do you have children under your care?</Text>
+              <Text style={styles.label}>{t('profile.fields.hasChildren')}</Text>
               <TouchableOpacity 
                 style={styles.pickerButton}
                 onPress={() => setOpenPicker('hasChildren')}
               >
-                <Text style={[
-                  styles.pickerButtonText,
-                  !formData.hasChildren && { color: '#666' }
-                ]}>
-                  {formData.hasChildren ? 
-                    formData.hasChildren === 'yes' ? 'Yes' : 'No' : 
-                    'Select Option'
-                  }
+                <Text style={[styles.pickerButtonText, !formData.hasChildren && { color: '#666' }]}>
+                  {formData.hasChildren ? getPickerDisplayValue('hasChildren', formData.hasChildren) : t('common.select')}
                 </Text>
                 <Ionicons name="chevron-down" size={20} color="#666" />
               </TouchableOpacity>
-              
-              <CustomPicker
-                visible={openPicker === 'hasChildren'}
-                onClose={() => setOpenPicker(null)}
-                options={HAS_CHILDREN_OPTIONS}
-                onSelect={(value) => {
-                  handleChange('hasChildren', value);
-                  // Clear numberOfChildren if 'no' is selected
-                  if (value === 'no') {
-                    handleChange('numberOfChildren', '');
-                  }
-                  setOpenPicker(null);
-                }}
-                selectedValue={formData.hasChildren}
-                title="Do you have children?"
-              />
             </View>
 
             {/* Conditional rendering for number of children */}
             {formData.hasChildren === 'yes' && (
               <View style={styles.inputGroup}>
-                <Text style={styles.label}>Number of Children</Text>
+                <Text style={styles.label}>{t('profile.fields.numberOfChildren')}</Text>
                 <TextInput
-                  style={styles.input}
+                  style={[
+                    styles.input as object,
+                    errors.numberOfChildren && (styles.inputError as object)
+                  ]}
                   value={formData.numberOfChildren}
                   onChangeText={(text) => handleChange('numberOfChildren', text)}
-                  placeholder="Enter number of children"
+                  placeholder={t('profile.placeholders.enterNumberOfChildren')}
                   keyboardType="numeric"
                 />
+                {errors.numberOfChildren && <Text style={styles.errorText}>{t('validation.required.numberOfChildren')}</Text>}
               </View>
             )}
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Current Occupation/Profession</Text>
+              <Text style={styles.label}>{t('profile.fields.occupation')}</Text>
               <TextInput
-                style={styles.input}
+                style={[
+                  styles.input as object,
+                  errors.occupation && (styles.inputError as object)
+                ]}
                 value={formData.occupation}
                 onChangeText={(text) => handleChange('occupation', text)}
-                placeholder="Enter your occupation"
+                placeholder={t('profile.placeholders.enterOccupation')}
               />
+              {errors.occupation && <Text style={styles.errorText}>{t('validation.required.occupation')}</Text>}
             </View>
           </View>
         );
       case 2:
         return (
-          <View style={styles.stepContainer}>
-            <Text style={styles.stepTitle}>Contact Information</Text>
-            <Text style={styles.stepDescription}>
-              Please provide your current contact details for church communications.
-            </Text>
+          <View style={styles.stepContent}>
+            <Text style={styles.sectionTitle}>{t('onboarding.sections.contactInfo')}</Text>
+            <Text style={styles.helperText}>{t('onboarding.helpers.contactInfo')}</Text>
+            
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Mobile Phone Number (UAE) *</Text>
+              <Text style={styles.label}>{t('profile.fields.phoneNumber')} <Text style={styles.required}>*</Text></Text>
               <TextInput
-                style={[styles.input, errors.phoneNumber && styles.inputError]}
+                style={[
+                  styles.input as object,
+                  errors.phoneNumber && (styles.inputError as object)
+                ]}
                 value={formData.phoneNumber}
                 onChangeText={(text) => handleChange('phoneNumber', text)}
-                placeholder="+971 50 123 4567"
+                placeholder={t('profile.placeholders.enterPhoneNumber')}
                 keyboardType="phone-pad"
               />
-              {errors.phoneNumber && <Text style={styles.errorText}>{errors.phoneNumber}</Text>}
+              {errors.phoneNumber && <Text style={styles.errorText}>{t('validation.required.phoneNumber')}</Text>}
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Current City of Residence in UAE *</Text>
+              <Text style={styles.label}>{t('profile.fields.residencyCity')}</Text>
               <TouchableOpacity 
-                style={[styles.pickerButton, errors.residencyCity && styles.inputError]}
+                style={styles.pickerButton}
                 onPress={() => setOpenPicker('residencyCity')}
               >
-                <Text style={[
-                  styles.pickerButtonText,
-                  !formData.residencyCity && { color: '#666' }
-                ]}>
+                <Text style={[styles.pickerButtonText, !formData.residencyCity && { color: '#666' }]}>
                   {formData.residencyCity ? 
-                    UAE_CITIES.find(city => city.value === formData.residencyCity)?.label || 
-                    formData.residencyCity.replace(/_/g, ' ').charAt(0).toUpperCase() + 
-                    formData.residencyCity.slice(1) : 
-                    'Select City'
+                    getPickerDisplayValue('residencyCity', formData.residencyCity) : 
+                    t('profile.selects.selectCity')
                   }
                 </Text>
                 <Ionicons name="chevron-down" size={20} color="#666" />
               </TouchableOpacity>
-              {errors.residencyCity && <Text style={styles.errorText}>{errors.residencyCity}</Text>}
-              
-              <CustomPicker
-                visible={openPicker === 'residencyCity'}
-                onClose={() => setOpenPicker(null)}
-                options={UAE_CITIES}
-                onSelect={(value) => {
-                  handleChange('residencyCity', value);
-                  setOpenPicker(null);
-                }}
-                selectedValue={formData.residencyCity}
-                title="Select City"
-              />
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Detailed Residential Address *</Text>
-              <Text style={styles.helperText}>Include building name, flat number, and area</Text>
+              <Text style={styles.label}>{t('profile.fields.residenceAddress')}</Text>
+              <Text style={styles.helperText}>{t('profile.helpers.residenceAddress')}</Text>
               <TextInput
-                style={[styles.input, errors.residenceAddress && styles.inputError]}
+                style={[
+                  styles.input as object,
+                  errors.residenceAddress && (styles.inputError as object)
+                ]}
                 value={formData.residenceAddress}
                 onChangeText={(text) => handleChange('residenceAddress', text)}
-                placeholder="Enter your address"
+                placeholder={t('profile.placeholders.enterResidenceAddress')}
                 multiline
               />
-              {errors.residenceAddress && <Text style={styles.errorText}>{errors.residenceAddress}</Text>}
+              {errors.residenceAddress && <Text style={styles.errorText}>{t('validation.required.residenceAddress')}</Text>}
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Emergency Contact Details</Text>
-              <Text style={styles.helperText}>Name and phone number of a person to contact in case of emergency</Text>
+              <Text style={styles.label}>{t('profile.fields.emergencyContact')}</Text>
+              <Text style={styles.helperText}>{t('profile.helpers.emergencyContact')}</Text>
               <TextInput
-                style={styles.input}
+                style={[
+                  styles.input as object,
+                  errors.emergencyContact && (styles.inputError as object)
+                ]}
                 value={formData.emergencyContact}
                 onChangeText={(text) => handleChange('emergencyContact', text)}
-                placeholder="Enter emergency contact details"
+                placeholder={t('profile.placeholders.enterEmergencyContact')}
                 multiline
               />
+              {errors.emergencyContact && <Text style={styles.errorText}>{t('validation.required.emergencyContact')}</Text>}
             </View>
           </View>
         );
       case 3:
         return (
-          <View style={styles.stepContainer}>
-            <Text style={styles.stepTitle}>Church Information</Text>
-            <Text style={styles.stepDescription}>
-              Please provide information about your church involvement and spiritual life.
-            </Text>
+          <View style={styles.stepContent}>
+            <Text style={styles.sectionTitle}>{t('onboarding.sections.churchInfo')}</Text>
+            <Text style={styles.helperText}>{t('onboarding.helpers.churchInfo')}</Text>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Current Christian Life Status</Text>
-              <Text style={styles.helperText}>Select your current spiritual journey stage</Text>
-              <TouchableOpacity 
-                style={styles.pickerButton}
-                onPress={() => setOpenPicker('christianLife')}
-              >
-                <Text style={[
-                  styles.pickerButtonText,
-                  !formData.christianLife && { color: '#666' }
-                ]}>
-                  {formData.christianLife ? 
-                    CHRISTIAN_LIFE_OPTIONS.find(option => option.value === formData.christianLife)?.label || 
-                    'Select Christian Life Status' : 
-                    'Select Christian Life Status'
-                  }
-                </Text>
-                <Ionicons name="chevron-down" size={20} color="#666" />
-              </TouchableOpacity>
-              
-              <CustomPicker
-                visible={openPicker === 'christianLife'}
-                onClose={() => setOpenPicker(null)}
-                options={CHRISTIAN_LIFE_OPTIONS}
-                onSelect={(value) => {
-                  handleChange('christianLife', value);
-                  setOpenPicker(null);
-                }}
-                selectedValue={formData.christianLife}
-                title="Select Christian Life Status"
-              />
-            </View>
-
-            <View style={styles.inputGroup}>
-              <Text style={styles.label}>Service at the Parish</Text>
-              <Text style={styles.helperText}>Select the Service where you currently serve or wish to serve</Text>
+              <Text style={styles.label}>{t('profile.fields.serviceAtParish')}</Text>
+              <Text style={styles.helperText}>{t('profile.helpers.serviceAtParish')}</Text>
               <TouchableOpacity 
                 style={styles.pickerButton}
                 onPress={() => setOpenPicker('serviceAtParish')}
               >
-                <Text style={[
-                  styles.pickerButtonText,
-                  !formData.serviceAtParish && { color: '#666' }
-                ]}>
+                <Text style={[styles.pickerButtonText, !formData.serviceAtParish && { color: '#666' }]}>
                   {formData.serviceAtParish ? 
-                    SERVICE_AT_PARISH_OPTIONS.find(option => option.value === formData.serviceAtParish)?.label || 
-                    'Select Service Type' : 
-                    'Select Service Type'
+                    getPickerDisplayValue('serviceAtParish', formData.serviceAtParish) : 
+                    t('profile.selects.selectServiceType')
                   }
                 </Text>
                 <Ionicons name="chevron-down" size={20} color="#666" />
               </TouchableOpacity>
-              
-              <CustomPicker
-                visible={openPicker === 'serviceAtParish'}
-                onClose={() => setOpenPicker(null)}
-                options={SERVICE_AT_PARISH_OPTIONS}
-                onSelect={(value) => {
-                  handleChange('serviceAtParish', value);
-                  setOpenPicker(null);
-                }}
-                selectedValue={formData.serviceAtParish}
-                title="Select Service Type"
-              />
             </View>
 
             {/* Conditional Sub-department Service dropdown */}
             {formData.serviceAtParish && formData.serviceAtParish !== 'none' && (
               <View style={styles.inputGroup}>
-                <Text style={styles.label}>Sub-department Service</Text>
-                <Text style={styles.helperText}>Select the sub-department where you currently serve or wish to serve</Text>
+                <Text style={styles.label}>{t('profile.fields.ministryService')}</Text>
+                <Text style={styles.helperText}>{t('profile.helpers.ministryService')}</Text>
                 <TouchableOpacity 
                   style={styles.pickerButton}
                   onPress={() => setOpenPicker('ministryService')}
                 >
-                  <Text style={[
-                    styles.pickerButtonText,
-                    !formData.ministryService && { color: '#666' }
-                  ]}>
-                    {formData.ministryService ? 
-                      MINISTRY_SERVICE_OPTIONS.find(option => option.value === formData.ministryService)?.label || 
-                      'Select Sub-department Service' : 
-                      'Select Sub-department Service'
-                    }
+                  <Text style={[styles.pickerButtonText, !formData.ministryService && { color: '#666' }]}>
+                    {formData.ministryService ? getPickerDisplayValue('ministryService', formData.ministryService) : t('common.select')}
                   </Text>
                   <Ionicons name="chevron-down" size={20} color="#666" />
                 </TouchableOpacity>
-                
-                <CustomPicker
-                  visible={openPicker === 'ministryService'}
-                  onClose={() => setOpenPicker(null)}
-                  options={MINISTRY_SERVICE_OPTIONS}
-                  onSelect={(value) => {
-                    handleChange('ministryService', value);
-                    setOpenPicker(null);
-                  }}
-                  selectedValue={formData.ministryService}
-                  title="Select Sub-department Service"
-                />
               </View>
             )}
 
-
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Do you have a Father Confessor in Dubai?</Text>
-              <Text style={styles.helperText}>A spiritual father who guides your Christian journey</Text>
+              <Text style={styles.label}>{t('profile.fields.hasFatherConfessor')}</Text>
+              <Text style={styles.helperText}>{t('profile.helpers.hasFatherConfessor')}</Text>
               <TouchableOpacity 
                 style={styles.pickerButton}
                 onPress={() => setOpenPicker('hasFatherConfessor')}
               >
-                <Text style={[
-                  styles.pickerButtonText,
-                  !formData.hasFatherConfessor && { color: '#666' }
-                ]}>
-                  {formData.hasFatherConfessor ? 
-                    formData.hasFatherConfessor === 'yes' ? 'Yes' : 'No' : 
-                    'Select Option'
-                  }
+                <Text style={[styles.pickerButtonText, !formData.hasFatherConfessor && { color: '#666' }]}>
+                  {formData.hasFatherConfessor ? getPickerDisplayValue('hasFatherConfessor', formData.hasFatherConfessor) : t('common.select')}
                 </Text>
                 <Ionicons name="chevron-down" size={20} color="#666" />
               </TouchableOpacity>
-              
-              <CustomPicker
-                visible={openPicker === 'hasFatherConfessor'}
-                onClose={() => setOpenPicker(null)}
-                options={FATHER_CONFESSOR_OPTIONS}
-                onSelect={(value) => {
-                  handleChange('hasFatherConfessor', value);
-                  if (value === 'no') {
-                    handleChange('fatherConfessorName', '');
-                  }
-                  setOpenPicker(null);
-                }}
-                selectedValue={formData.hasFatherConfessor}
-                title="Do you have a Father Confessor in Dubai?"
-              />
             </View>
 
             {formData.hasFatherConfessor === 'yes' && (
               <View style={styles.inputGroup}>
-                <Text style={styles.label}>Name of your Father Confessor</Text>
+                <Text style={styles.label}>{t('profile.fields.fatherConfessorName')}</Text>
                 <TextInput
-                  style={styles.input}
+                  style={[
+                    styles.input as object,
+                    errors.fatherConfessorName && (styles.inputError as object)
+                  ]}
                   value={formData.fatherConfessorName}
                   onChangeText={(text) => handleChange('fatherConfessorName', text)}
-                  placeholder="Enter name of your Father Confessor"
+                  placeholder={t('profile.placeholders.enterFatherConfessorName')}
                 />
+                {errors.fatherConfessorName && <Text style={styles.errorText}>{t('validation.required.fatherConfessorName')}</Text>}
               </View>
             )}
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Church Association Membership</Text>
-              <Text style={styles.helperText}>Are you a member of any church-related associations?</Text>
+              <Text style={styles.label}>{t('profile.fields.hasAssociationMembership')}</Text>
+              <Text style={styles.helperText}>{t('profile.helpers.hasAssociationMembership')}</Text>
               <TouchableOpacity 
                 style={styles.pickerButton}
                 onPress={() => setOpenPicker('hasAssociationMembership')}
               >
-                <Text style={[
-                  styles.pickerButtonText,
-                  !formData.hasAssociationMembership && { color: '#666' }
-                ]}>
-                  {formData.hasAssociationMembership ? 
-                    formData.hasAssociationMembership === 'yes' ? 'Yes' : 'No' : 
-                    'Select Option'
-                  }
+                <Text style={[styles.pickerButtonText, !formData.hasAssociationMembership && { color: '#666' }]}>
+                  {formData.hasAssociationMembership ? getPickerDisplayValue('hasAssociationMembership', formData.hasAssociationMembership) : t('common.select')}
                 </Text>
                 <Ionicons name="chevron-down" size={20} color="#666" />
               </TouchableOpacity>
-              
-              <CustomPicker
-                visible={openPicker === 'hasAssociationMembership'}
-                onClose={() => setOpenPicker(null)}
-                options={ASSOCIATION_MEMBERSHIP_OPTIONS}
-                onSelect={(value) => {
-                  handleChange('hasAssociationMembership', value);
-                  if (value === 'no') {
-                    handleChange('associationName', '');
-                  }
-                  setOpenPicker(null);
-                }}
-                selectedValue={formData.hasAssociationMembership}
-                title="Are you a member of any Church Association?"
-              />
             </View>
 
             {formData.hasAssociationMembership === 'yes' && (
               <View style={styles.inputGroup}>
-                <Text style={styles.label}>Name of Association</Text>
+                <Text style={styles.label}>{t('profile.fields.associationName')}</Text>
                 <TextInput
-                  style={styles.input}
+                  style={[
+                    styles.input as object,
+                    errors.associationName && (styles.inputError as object)
+                  ]}
                   value={formData.associationName}
                   onChangeText={(text) => handleChange('associationName', text)}
-                  placeholder="Enter name of association"
+                  placeholder={t('profile.placeholders.enterAssociationName')}
                 />
+                {errors.associationName && <Text style={styles.errorText}>{t('validation.required.associationName')}</Text>}
               </View>
             )}
           </View>
         );
       case 4:
         return (
-          <View style={styles.stepContainer}>
-            <Text style={styles.stepTitle}>Additional Information</Text>
-            <Text style={styles.stepDescription}>
-              Please provide additional details to complete your profile.
-            </Text>
+          <View style={styles.stepContent}>
+            <Text style={styles.sectionTitle}>{t('onboarding.sections.additionalInfo')}</Text>
+            <Text style={styles.helperText}>{t('onboarding.helpers.additionalInfo')}</Text>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>Profile Photo</Text>
-              <Text style={styles.helperText}>Please upload a clear, recent photo of yourself</Text>
+              <Text style={styles.label}>{t('profile.fields.photo')}</Text>
+              <Text style={styles.helperText}>{t('profile.helpers.photo')}</Text>
               <TouchableOpacity 
                 style={styles.photoUploadButton}
                 onPress={pickImage}
@@ -975,27 +768,21 @@ export default function OnboardingScreen() {
                 ) : (
                   <View style={styles.uploadPlaceholder}>
                     <Ionicons name="camera" size={32} color="#666" />
-                    <Text style={styles.uploadText}>Upload Photo</Text>
+                    <Text style={styles.uploadText}>{t('common.uploadPhoto')}</Text>
                   </View>
                 )}
               </TouchableOpacity>
             </View>
 
             <View style={styles.inputGroup}>
-              <Text style={styles.label}>UAE Residence Status</Text>
-              <Text style={styles.helperText}>Do you have a valid UAE residence permit/visa?</Text>
+              <Text style={styles.label}>{t('profile.fields.residencePermit')}</Text>
+              <Text style={styles.helperText}>{t('profile.helpers.residencePermit')}</Text>
               <TouchableOpacity 
                 style={styles.pickerButton}
                 onPress={() => setOpenPicker('residencePermit')}
               >
-                <Text style={[
-                  styles.pickerButtonText,
-                  !formData.residencePermit && { color: '#666' }
-                ]}>
-                  {formData.residencePermit ? 
-                    formData.residencePermit === 'yes' ? 'Yes' : 'No' : 
-                    'Select Residence Permit Status'
-                  }
+                <Text style={[styles.pickerButtonText, !formData.residencePermit && { color: '#666' }]}>
+                  {formData.residencePermit ? getPickerDisplayValue('residencePermit', formData.residencePermit) : t('common.select')}
                 </Text>
                 <Ionicons name="chevron-down" size={20} color="#666" />
               </TouchableOpacity>
@@ -1007,7 +794,56 @@ export default function OnboardingScreen() {
     }
   };
 
-  const handleOpenPicker = (pickerName: string) => {
+  const renderWelcomeStep = () => (
+    <View style={styles.welcomeContainer}>
+      <View style={styles.welcomeHeader}>
+        <Text style={styles.welcomeTitle}>{t('onboarding.welcome.title')}</Text>
+        {/* <Text style={styles.welcomeSubtitle}>
+          {t('onboarding.welcome.subtitle')}
+        </Text> */}
+      </View>
+      
+      <Text style={styles.welcomeDescription}>
+        {t('onboarding.welcome.description')}
+      </Text>
+      
+      <View style={styles.welcomePoints}>
+        <View style={styles.welcomePoint}>
+          <Ionicons name="calendar" size={24} color="#2196F3" />
+          <View style={styles.pointTextContainer}>
+            <Text style={styles.pointTitle}>{t('onboarding.welcome.features.events.title')}</Text>
+            <Text style={styles.pointDescription}>{t('onboarding.welcome.features.events.description')}</Text>
+          </View>
+        </View>
+
+        <View style={styles.welcomePoint}>
+          <Ionicons name="people" size={24} color="#2196F3" />
+          <View style={styles.pointTextContainer}>
+            <Text style={styles.pointTitle}>{t('onboarding.welcome.features.community.title')}</Text>
+            <Text style={styles.pointDescription}>{t('onboarding.welcome.features.community.description')}</Text>
+          </View>
+        </View>
+
+        <View style={styles.welcomePoint}>
+          <Ionicons name="notifications" size={24} color="#2196F3" />
+          <View style={styles.pointTextContainer}>
+            <Text style={styles.pointTitle}>{t('onboarding.welcome.features.notifications.title')}</Text>
+            <Text style={styles.pointDescription}>{t('onboarding.welcome.features.notifications.description')}</Text>
+          </View>
+        </View>
+
+        <View style={styles.welcomePoint}>
+          <Ionicons name="book" size={24} color="#2196F3" />
+          <View style={styles.pointTextContainer}>
+            <Text style={styles.pointTitle}>{t('onboarding.welcome.features.resources.title')}</Text>
+            <Text style={styles.pointDescription}>{t('onboarding.welcome.features.resources.description')}</Text>
+          </View>
+        </View>
+      </View>
+    </View>
+  );
+
+  const handleOpenPicker = (pickerName: keyof DropdownState) => {
     setOpenPicker(pickerName);
   };
 
@@ -1111,6 +947,44 @@ export default function OnboardingScreen() {
     }
   };
 
+  // Helper function to get translated display value for pickers
+  const getPickerDisplayValue = (field: string, value: string | null | undefined) => {
+    if (!value) return t('common.select');
+
+    // For yes/no fields including hasChildren
+    if (['hasFatherConfessor', 'hasAssociationMembership', 'residencePermit', 'hasChildren'].includes(field)) {
+      return t(`profile.options.${field}.${value.toLowerCase()}`);
+    }
+
+    // For cities
+    if (field === 'residencyCity') {
+      return t(`profile.options.cities.${value}`);
+    }
+
+    // For all other fields
+    return t(`profile.options.${field}.${value}`);
+  };
+
+  // Fix picker button rendering
+  const renderPickerButton = (field: string, isRequired: boolean = false) => (
+    <View style={styles.inputGroup}>
+      <Text style={styles.label}>
+        {t(`profile.fields.${field}`)} {isRequired && <Text style={styles.required}>*</Text>}
+      </Text>
+      <TouchableOpacity 
+        style={styles.pickerButton}
+        onPress={() => handleOpenPicker(field as keyof DropdownState)}
+      >
+        <Text style={[styles.pickerButtonText, !formData[field as keyof typeof formData] && { color: '#666' }]}>
+          {formData[field as keyof typeof formData] 
+            ? getPickerDisplayValue(field, formData[field as keyof typeof formData])
+            : t('common.select')}
+        </Text>
+        <Ionicons name="chevron-down" size={20} color="#666" />
+      </TouchableOpacity>
+    </View>
+  );
+
   return (
     <KeyboardAvoidingView 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -1122,9 +996,9 @@ export default function OnboardingScreen() {
         style={styles.gradient}
       >
         <View style={styles.header}>
-          <Text style={styles.headerText}>Profile Setup</Text>
+          <Text style={styles.headerText}>{t('onboarding.profileSetup')}</Text>
           <Text style={styles.stepIndicator}>
-            Step {currentStep + 1} of {STEPS.length}
+            {t('onboarding.stepIndicator', { current: currentStep + 1, total: STEPS.length })}
           </Text>
         </View>
 
@@ -1152,7 +1026,9 @@ export default function OnboardingScreen() {
                     activeOpacity={0.7}
                   >
                     <Ionicons name="arrow-back" size={20} color="#2196F3" />
-                    <Text style={styles.secondaryButtonText}>Previous</Text>
+                    <Text style={styles.secondaryButtonText}>
+                      {t('onboarding.navigation.previous')}
+                    </Text>
                   </TouchableOpacity>
                 )}
 
@@ -1170,7 +1046,10 @@ export default function OnboardingScreen() {
                   ) : (
                     <>
                       <Text style={styles.primaryButtonText}>
-                        {currentStep === STEPS.length - 1 ? 'Complete' : 'Next'}
+                        {currentStep === STEPS.length - 1 
+                          ? t('onboarding.navigation.complete')
+                          : t('onboarding.navigation.next')
+                        }
                       </Text>
                       {currentStep < STEPS.length - 1 && (
                         <Ionicons name="arrow-forward" size={20} color="#FFF" />
@@ -1187,13 +1066,12 @@ export default function OnboardingScreen() {
         <CustomPicker
           visible={true}
           onClose={() => setOpenPicker(null)}
-          options={getPickerOptions(openPicker)}
+          pickerName={openPicker}
           onSelect={(value) => {
             handleChange(openPicker, value);
             setOpenPicker(null);
           }}
-          selectedValue={formData[openPicker as keyof typeof formData]}
-          title={getPickerTitle(openPicker)}
+          selectedValue={formData[openPicker]?.toString()}
         />
       )}
     </KeyboardAvoidingView>
@@ -1409,11 +1287,11 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ddd',
+    borderColor: '#DDD',
     borderRadius: 8,
     padding: 12,
     fontSize: 16,
-  },
+  } as const,
   pickerContainer: {
     borderWidth: 1,
     borderColor: '#ddd',
@@ -1436,8 +1314,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   inputError: {
-    borderColor: '#ff0000',
-  },
+    borderColor: '#FF3B30',
+  } as const,
   errorText: {
     color: '#ff0000',
     fontSize: 12,
@@ -1517,15 +1395,13 @@ const styles = StyleSheet.create({
     paddingTop: 20,
   },
   pickerButton: {
+    borderWidth: 1,
+    borderColor: '#DDD',
+    borderRadius: 8,
+    padding: 12,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-    borderWidth: 1,
-    borderColor: '#ddd',
-    borderRadius: 8,
-    padding: 12,
-    minHeight: 50,
   },
   pickerButtonText: {
     fontSize: 16,
@@ -1608,5 +1484,16 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
+  },
+  stepContent: {
+    padding: 20,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  required: {
+    color: '#FF3B30',
   },
 });

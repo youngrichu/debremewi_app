@@ -9,6 +9,7 @@ import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { RootStackParamList } from '../types';
 import { format, addHours, startOfDay, startOfWeek, addDays, isSameDay } from 'date-fns';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useTranslation } from 'react-i18next';
 
 const TIME_LABELS = [
   '12 AM', '1 AM', '2 AM', '3 AM', '4 AM', '5 AM', '6 AM', '7 AM', '8 AM', '9 AM', '10 AM', '11 AM',
@@ -306,6 +307,7 @@ const DayView = ({ events, onEventPress, selectedDate }: {
 };
 
 export default function EventsScreen() {
+  const { t } = useTranslation();
   const [viewMode, setViewMode] = useState<'month' | 'week' | 'day'>('month');
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
@@ -367,10 +369,7 @@ export default function EventsScreen() {
   };
 
   const handleEventPress = (eventId: number) => {
-    navigation.navigate('HomeStack', {
-      screen: 'EventDetails',
-      params: { eventId }
-    });
+    navigation.navigate('EventDetails', { eventId });
   };
 
   const handleViewModeChange = (mode: 'month' | 'week' | 'day') => {

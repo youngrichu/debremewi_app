@@ -9,6 +9,7 @@ import { clearUser } from '../store/userSlice';
 import { setAuthState } from '../store/authSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { deleteAccount } from '../services/AuthService';
+import { useTranslation } from 'react-i18next';
 
 const formatDisplayValue = (value: string | null | undefined, options?: { [key: string]: string }) => {
   if (!value) return 'Not provided';
@@ -24,6 +25,7 @@ const formatDisplayValue = (value: string | null | undefined, options?: { [key: 
 };
 
 export default function ProfileScreen() {
+  const { t } = useTranslation();
   const navigation = useNavigation<ProfileScreenNavigationProp>();
   const user = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
@@ -41,17 +43,17 @@ export default function ProfileScreen() {
       dispatch(setAuthState({ isAuthenticated: false, token: null }));
     } catch (error) {
       console.error('Logout error:', error);
-      Alert.alert('Error', 'Failed to logout. Please try again.');
+      Alert.alert(t('common.error'), t('profile.messages.logoutError'));
     }
   };
 
   const confirmLogout = () => {
     Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
+      t('profile.view.confirmLogout.title'),
+      t('profile.view.confirmLogout.message'),
       [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Logout', onPress: handleLogout, style: 'destructive' }
+        { text: t('profile.view.confirmLogout.cancel'), style: 'cancel' },
+        { text: t('profile.view.confirmLogout.confirm'), onPress: handleLogout, style: 'destructive' }
       ]
     );
   };
@@ -61,43 +63,37 @@ export default function ProfileScreen() {
       await deleteAccount();
       dispatch(clearUser());
       dispatch(setAuthState({ isAuthenticated: false, token: null }));
-      Alert.alert('Account Deleted', 'Your account has been successfully deleted.');
+      Alert.alert(t('profile.messages.accountDeleted'), t('profile.messages.accountDeletedSuccess'));
       navigation.navigate('Login');
     } catch (error) {
       console.error('Delete account error:', error);
-      Alert.alert('Error', 'Failed to delete account. Please try again.');
+      Alert.alert(t('common.error'), t('profile.messages.accountDeleteError'));
     }
   };
 
   const confirmDeleteAccount = () => {
     Alert.alert(
-      'Delete Account',
-      'Are you sure you want to delete your account? This action cannot be undone.',
+      t('profile.view.deleteAccount.title'),
+      t('profile.view.deleteAccount.message'),
       [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Delete', onPress: handleDeleteAccount, style: 'destructive' }
+        { text: t('profile.view.confirmLogout.cancel'), style: 'cancel' },
+        { text: t('profile.view.deleteAccount.confirm'), onPress: handleDeleteAccount, style: 'destructive' }
       ]
     );
   };
 
-  const renderDetailItem = (
-    label: string, 
-    value: string | null | undefined, 
-    icon: string,
-    iconFamily: 'Ionicons' | 'MaterialCommunity' = 'Ionicons',
-    options?: { [key: string]: string }
-  ) => (
+  const renderDetailItem = (label: string, value: string | undefined, iconName: string, iconSet: string = 'Ionicons') => (
     <View style={styles.detailItem}>
       <View style={styles.labelContainer}>
-        {iconFamily === 'Ionicons' ? (
-          <Ionicons name={icon as any} size={20} color="#666" style={styles.icon} />
+        {iconSet === 'Ionicons' ? (
+          <Ionicons name={iconName as any} size={20} color="#666" style={styles.icon} />
         ) : (
-          <MaterialCommunityIcons name={icon as any} size={20} color="#666" style={styles.icon} />
+          <MaterialCommunityIcons name={iconName as any} size={20} color="#666" style={styles.icon} />
         )}
         <Text style={styles.detailLabel}>{label}:</Text>
       </View>
       <Text style={styles.detailValue}>
-        {formatDisplayValue(value, options)}
+        {formatDisplayValue(value)}
       </Text>
     </View>
   );
@@ -121,75 +117,83 @@ export default function ProfileScreen() {
           </View>
         )}
         <Text style={styles.fullName}>
-          {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : 'Complete Your Profile'}
+          {user.firstName && user.lastName 
+            ? `${user.firstName} ${user.lastName}` 
+            : t('profile.messages.completeProfile')}
         </Text>
         <Text style={styles.email}>{user.email}</Text>
         <TouchableOpacity style={styles.editButton} onPress={handleEditPress}>
           <Ionicons name="pencil" size={20} color="#FFF" />
-          <Text style={styles.editButtonText}>Edit Profile</Text>
+          <Text style={styles.editButtonText}>{t('profile.view.editProfile')}</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Profile Details */}
-      <View style={styles.detailsContainer}>
-        <Text style={styles.sectionTitle}>Personal Information</Text>
-        {renderDetailItem('First Name', user.firstName, 'person-outline')}
-        {renderDetailItem('Last Name', user.lastName, 'person-outline')}
-        {renderDetailItem('Christian Name', user.christianName, 'cross', 'MaterialCommunity')}
-        {renderDetailItem('Gender', user.gender, 'male-female-outline')}
-        {renderDetailItem('Marital Status', user.maritalStatus, 'heart-outline')}
-        {renderDetailItem('Children', user.hasChildren === 'yes' ? 
-          `Yes (${user.numberOfChildren || 'number not specified'})` : 
-          'No', 'people-outline')}
-        {renderDetailItem('Education Level', user.educationLevel, 'school-outline', 'Ionicons', {
-          'grade_10': 'Completed Grade 10',
-          'grade_12': 'Completed Grade 12',
-        })}
-        {renderDetailItem('Occupation', user.occupation, 'briefcase-outline')}
+      {/* Personal Information Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>{t('profile.view.personalInfo')}</Text>
+        {renderDetailItem(t('profile.view.labels.name'), 
+          `${user.firstName} ${user.lastName}`, 'person-outline')}
+        {renderDetailItem(t('profile.view.labels.christianName'), 
+          user.christianName, 'book-outline')}
+        {renderDetailItem(t('profile.view.labels.gender'), 
+          user.gender ? t(`profile.options.gender.${user.gender}`) : '', 'male-female-outline')}
+        {renderDetailItem(t('profile.view.labels.maritalStatus'), 
+          user.maritalStatus ? t(`profile.options.maritalStatus.${user.maritalStatus}`) : '', 'heart-outline')}
+        {renderDetailItem(t('profile.view.labels.educationLevel'), 
+          user.educationLevel ? t(`profile.options.educationLevel.${user.educationLevel}`) : '', 'school-outline')}
+        {renderDetailItem(t('profile.view.labels.occupation'), 
+          user.occupation, 'briefcase-outline')}
+      </View>
 
-        <Text style={styles.sectionTitle}>Contact Information</Text>
-        {renderDetailItem('Phone Number', user.phoneNumber, 'call-outline')}
-        {renderDetailItem('City of Residence', user.residencyCity, 'location-outline', 'Ionicons', {
-          'abu_dhabi': 'Abu Dhabi',
-          'ras_al_khaimah': 'Ras Al Khaimah',
-          'umm_al_quwain': 'Umm Al Quwain',
-          'al_ain': 'Al Ain',
-        })}
-        {renderDetailItem('Residence Address', user.residenceAddress, 'home-outline')}
-        {renderDetailItem('Emergency Contact', user.emergencyContact, 'alert-circle-outline')}
-        {renderDetailItem('Residence Permit', user.residencePermit === 'yes' ? 'Yes' : 'No', 'document-text-outline')}
+      {/* Contact Information Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>{t('profile.view.contactInfo')}</Text>
+        {renderDetailItem(t('profile.view.labels.phoneNumber'), 
+          user.phoneNumber, 'call-outline')}
+        {renderDetailItem(t('profile.view.labels.residencyCity'), 
+          user.residencyCity ? t(`profile.options.cities.${user.residencyCity}`) : '', 'location-outline')}
+        {renderDetailItem(t('profile.view.labels.residenceAddress'), 
+          user.residenceAddress, 'home-outline')}
+        {renderDetailItem(t('profile.view.labels.emergencyContact'), 
+          user.emergencyContact, 'alert-circle-outline')}
+      </View>
 
-        <Text style={styles.sectionTitle}>Church Information</Text>
-        {renderDetailItem('Christian Life Status', user.christianLife, 'church', 'MaterialCommunity', {
-          'not_repent': 'Not Repented',
-          'repent': 'Repented',
-          'communion': 'Takes Holy Communion',
-        })}
-        {renderDetailItem('Service at Parish', user.serviceAtParish, 'church', 'MaterialCommunity', {
-          'sub_department': 'Sub-department Service',
-          'sunday_school': 'Sunday School Service',
-        })}
-        {renderDetailItem('Sub-department', user.ministryService, 'account-group', 'MaterialCommunity', {
-          'media_it': 'Media and IT',
-          'public_relation': 'Public Relations',
-        })}
-        {renderDetailItem('Father Confessor', user.hasFatherConfessor === 'yes' ? 
-          `Yes (${user.fatherConfessorName || 'name not specified'})` : 
-          'No', 'account-tie', 'MaterialCommunity')}
-        {renderDetailItem('Association Membership', user.hasAssociationMembership === 'yes' ? 
-          `Yes (${user.associationName || 'name not specified'})` : 
-          'No', 'account-group-outline', 'MaterialCommunity')}
+      {/* Church Information Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>{t('profile.view.churchInfo')}</Text>
+        {renderDetailItem(t('profile.view.labels.christianLife'), 
+          user.christianLife ? t(`profile.options.christianLife.${user.christianLife}`) : '', 'heart-circle-outline')}
+        {renderDetailItem(t('profile.view.labels.serviceAtParish'), 
+          user.serviceAtParish ? t(`profile.options.serviceAtParish.${user.serviceAtParish}`) : '', 'people-outline')}
+        {renderDetailItem(t('profile.view.labels.ministryService'), 
+          user.ministryService ? t(`profile.options.ministryService.${user.ministryService}`) : '', 'business-outline')}
+      </View>
+
+      {/* Additional Information Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>{t('profile.view.additionalInfo')}</Text>
+        {renderDetailItem(t('profile.view.labels.hasFatherConfessor'), 
+          user.hasFatherConfessor === 'yes' ? 
+            `${t('common.yes')} (${user.fatherConfessorName || t('common.notProvided')})` : 
+            t('common.no'), 
+          'account-tie', 'MaterialCommunity')}
+        {renderDetailItem(t('profile.view.labels.hasAssociationMembership'), 
+          user.hasAssociationMembership === 'yes' ? t('common.yes') : t('common.no'), 
+          'people-outline')}
+        {renderDetailItem(t('profile.view.labels.residencePermit'), 
+          user.residencePermit === 'yes' ? t('common.yes') : t('common.no'), 
+          'card-outline')}
       </View>
 
       {/* Logout and Delete Account Buttons */}
       <TouchableOpacity style={styles.logoutButton} onPress={confirmLogout}>
         <Ionicons name="log-out-outline" size={24} color="#FF3B30" />
-        <Text style={styles.logoutButtonText}>Logout</Text>
+        <Text style={styles.logoutButtonText}>{t('profile.view.logOut')}</Text>
       </TouchableOpacity>
 
       <TouchableOpacity style={styles.deleteButton} onPress={confirmDeleteAccount}>
         <Ionicons name="trash-outline" size={24} color="#FF3B30" />
-        <Text style={styles.deleteButtonText}>Delete Account</Text>
+        <Text style={styles.deleteButtonText}>{t('profile.view.deleteAccount.button')}</Text>
       </TouchableOpacity>
     </ScrollView>
   );
@@ -206,6 +210,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
+    marginBottom: 15,
   },
   profilePhoto: {
     width: 100,
@@ -232,11 +237,13 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 5,
+    textAlign: 'center',
   },
   email: {
     fontSize: 16,
     color: '#666',
     marginBottom: 15,
+    textAlign: 'center',
   },
   editButton: {
     flexDirection: 'row',
@@ -251,10 +258,10 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontSize: 16,
   },
-  detailsContainer: {
+  section: {
     backgroundColor: '#FFF',
     padding: 15,
-    margin: 10,
+    marginBottom: 15,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -266,7 +273,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    marginTop: 20,
     marginBottom: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
