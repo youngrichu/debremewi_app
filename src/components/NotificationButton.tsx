@@ -33,7 +33,7 @@ export const NotificationButton = () => {
   return (
     <TouchableOpacity 
       style={styles.container}
-      onPress={() => navigation.navigate('HomeStack', { screen: 'Notifications' })}
+      onPress={() => navigation.navigate('Notifications')}
       disabled={loading}
     >
       {loading ? (

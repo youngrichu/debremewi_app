@@ -179,14 +179,6 @@ function HomeStackScreen() {
           title: t('navigation.screens.editProfile')
         }}
       />
-      <Stack.Screen 
-        name="Notifications" 
-        component={NotificationsScreen}
-        options={{
-          headerShown: true,
-          title: t('navigation.screens.notifications')
-        }}
-      />
     </Stack.Navigator>
   );
 }
@@ -316,12 +308,24 @@ export default function AppNavigator() {
           }}
         />
       ) : (
-        // Main App Stack with Bottom Tabs
-        <Stack.Screen 
-          name="MainTabs" 
-          component={MainTabs}
-          options={{ headerShown: false }}
-        />
+        // Main App Stack
+        <>
+          <Stack.Screen 
+            name="MainTabs" 
+            component={MainTabs}
+            options={{ headerShown: false }}
+          />
+          <Stack.Screen 
+            name="Notifications" 
+            component={NotificationsScreen}
+            options={{
+              headerShown: true,
+              title: t('navigation.screens.notifications'),
+              headerRight: () => <LanguageSelector />,
+              headerRightContainerStyle: { paddingRight: 15 },
+            }}
+          />
+        </>
       )}
       <Stack.Screen 
         name="NewPassword" 

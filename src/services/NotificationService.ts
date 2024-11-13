@@ -103,12 +103,24 @@ export const NotificationService = {
 
       // Navigate based on notification type
       if (notification.type === 'event' && notification.reference_id) {
-        navigation.navigate('EventDetails', { eventId: parseInt(notification.reference_id, 10) });
+        navigation.navigate('MainTabs', {
+          screen: 'Events',
+          params: {
+            screen: 'EventDetails',
+            params: { eventId: parseInt(notification.reference_id, 10) }
+          }
+        });
       } else if (notification.type === 'post' && notification.reference_url) {
         // For blog posts, you might need to fetch the post data first
         const postId = notification.reference_id;
         const response = await apiClient.get(`/wp-json/wp/v2/posts/${postId}?_embed`);
-        navigation.navigate('BlogPostDetail', { post: response.data });
+        navigation.navigate('MainTabs', {
+          screen: 'BlogPosts',
+          params: {
+            screen: 'BlogPostDetail',
+            params: { post: response.data }
+          }
+        });
       }
     } catch (error) {
       console.error('Error handling notification press:', error);
