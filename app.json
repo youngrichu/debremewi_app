@@ -52,6 +52,9 @@
     ],
     "extra": {
       "supportsRTL": true
+    },
+    "experiments": {
+      "newArchEnabled": true
     }
   }
 }

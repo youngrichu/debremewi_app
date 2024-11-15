@@ -1,14 +1,6 @@
 {
   "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "jsx": "react-native",
-    "lib": ["dom", "esnext"],
-    "moduleResolution": "node",
-    "noEmit": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "strict": true,
-    "types": ["react-native", "axios", "@reduxjs/toolkit"]
+    "strict": true
   },
   "extends": "expo/tsconfig.base"
 }
