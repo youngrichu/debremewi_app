@@ -5,26 +5,22 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/splash_screens/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0,
-      "devServerPort": 8082
+      "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
         "NSCalendarsUsageDescription": "This app needs access to your calendar to add events you're interested in.",
         "NSRemindersUsageDescription": "This app needs access to your reminders to set event reminders.",
-        "LSApplicationQueriesSchemes": [
-          "calshow"
-        ]
+        "LSApplicationQueriesSchemes": ["calshow"]
       }
     },
     "android": {
@@ -33,10 +29,7 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.anonymous.churchapp",
-      "permissions": [
-        "READ_CALENDAR",
-        "WRITE_CALENDAR"
-      ]
+      "permissions": ["READ_CALENDAR", "WRITE_CALENDAR"]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -52,9 +45,6 @@
     ],
     "extra": {
       "supportsRTL": true
-    },
-    "experiments": {
-      "newArchEnabled": true
     }
   }
 }
