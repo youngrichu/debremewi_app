@@ -14,13 +14,18 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
         "NSCalendarsUsageDescription": "This app needs access to your calendar to add events you're interested in.",
         "NSRemindersUsageDescription": "This app needs access to your reminders to set event reminders.",
-        "LSApplicationQueriesSchemes": ["calshow"]
+        "LSApplicationQueriesSchemes": [
+          "calshow"
+        ],
+        "ExpoLocalization_supportsRTL": true
       }
     },
     "android": {
@@ -29,7 +34,12 @@
         "backgroundColor": "#ffffff"
       },
       "package": "com.anonymous.churchapp",
-      "permissions": ["READ_CALENDAR", "WRITE_CALENDAR"]
+      "permissions": [
+        "READ_CALENDAR",
+        "WRITE_CALENDAR",
+        "android.permission.READ_CALENDAR",
+        "android.permission.WRITE_CALENDAR"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -44,7 +54,10 @@
       "expo-localization"
     ],
     "extra": {
-      "supportsRTL": true
+      "supportsRTL": true,
+      "eas": {
+        "projectId": "6985e10d-9694-4f7e-a16f-7fb1cfdc8ef1"
+      }
     }
   }
 }
