@@ -77,18 +77,18 @@ interface DropdownOption {
   disabled?: boolean;
 }
 
-// Update the constants with disabled first options
-export const SERVICE_AT_PARISH_OPTIONS: DropdownOption[] = [
-  { label: 'Select a Service Type', value: 'sub_department', disabled: true },
-  { label: 'Priesthood service', value: 'priesthood' },
-  { label: 'Deacon service', value: 'deacon' },
-  { label: 'Choir service', value: 'choir' },
-  { label: 'Sunday School service', value: 'sunday_school' },
-  { label: 'Parish council service', value: 'council' },
-  { label: "Chalice association service", value: 'chalice_association' },
-  { label: "Parent's service", value: 'parents' },
-  { label: "Children's department service", value: 'childrens_department' },
-  { label: "I don't have any", value: 'none' },
+// Remove the static SERVICE_AT_PARISH_OPTIONS constant and add this function:
+const getServiceAtParishOptions = (t: any): DropdownOption[] => [
+  { label: t('profile.selects.selectServiceType'), value: 'sub_department', disabled: true },
+  { label: t('profile.options.serviceAtParish.priesthood'), value: 'priesthood' },
+  { label: t('profile.options.serviceAtParish.deacon'), value: 'deacon' },
+  { label: t('profile.options.serviceAtParish.choir'), value: 'choir' },
+  { label: t('profile.options.serviceAtParish.sunday_school'), value: 'sunday_school' },
+  { label: t('profile.options.serviceAtParish.council'), value: 'council' },
+  { label: t('profile.options.serviceAtParish.chalice_association'), value: 'chalice_association' },
+  { label: t('profile.options.serviceAtParish.parents'), value: 'parents' },
+  { label: t('profile.options.serviceAtParish.childrens_department'), value: 'childrens_department' },
+  { label: t('common.none'), value: 'none' }
 ];
 
 export const MINISTRY_SERVICE_OPTIONS: DropdownOption[] = [
@@ -250,6 +250,7 @@ export default function OnboardingScreen() {
     residencePermit: false,
     hasChildren: false
   });
+  const serviceAtParishOptions = getServiceAtParishOptions(t);
 
   const handleDropdownOpen = (dropdownName: keyof DropdownState) => {
     setOpenDropdowns(prev => {
@@ -863,7 +864,7 @@ export default function OnboardingScreen() {
       case 'christianLife':
         return CHRISTIAN_LIFE_OPTIONS;
       case 'serviceAtParish':
-        return SERVICE_AT_PARISH_OPTIONS;
+        return serviceAtParishOptions;
       case 'ministryService':
         return MINISTRY_SERVICE_OPTIONS;
       case 'hasFatherConfessor':

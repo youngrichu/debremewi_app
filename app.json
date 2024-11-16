@@ -26,7 +26,8 @@
           "calshow"
         ],
         "ExpoLocalization_supportsRTL": true
-      }
+      },
+      "bundleIdentifier": "com.debremewi.church"
     },
     "android": {
       "adaptiveIcon": {

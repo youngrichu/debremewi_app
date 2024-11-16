@@ -274,7 +274,7 @@
       "ministryService": "Select your specific ministry service",
       "hasFatherConfessor": "Do you have a spiritual father for confession?",
       "hasAssociationMembership": "Are you a member of any church association?",
-      "residencePermit": "What is your current residence status in UAE?"
+      "residencePermit": "Do you have a residence permit in UAE?"
     },
     "profileSetup": "Profile Setup",
     "stepIndicator": "Step {{current}} of {{total}}",
