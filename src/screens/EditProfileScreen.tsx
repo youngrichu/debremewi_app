@@ -344,13 +344,7 @@ export default function EditProfileScreen() {
     >
       <LinearGradient colors={['#2196F3', '#1976D2']} style={styles.gradient}>
         <View style={styles.header}>
-          <TouchableOpacity 
-            style={styles.backButton} 
-            onPress={() => navigation.goBack()}
-          >
-            <Ionicons name="arrow-back" size={24} color="#FFF" />
-          </TouchableOpacity>
-          <Text style={styles.headerText}>{t('profile.editProfile')}</Text>
+          <Text style={[styles.headerText, { flex: 1, textAlign: 'center' }]}>{t('profile.editProfile')}</Text>
           <LanguageSelector />
         </View>
 
@@ -460,12 +454,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#FFF',
-  },
-  backButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   content: {
     flex: 1,

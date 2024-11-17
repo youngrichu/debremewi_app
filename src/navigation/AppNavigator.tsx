@@ -176,7 +176,9 @@ function HomeStackScreen() {
         component={EditProfileScreen}
         options={{
           headerShown: true,
-          title: t('navigation.screens.editProfile')
+          title: t('navigation.screens.editProfile'),
+          headerRight: () => <LanguageSelector />,
+          headerRightContainerStyle: { paddingRight: 15 },
         }}
       />
     </Stack.Navigator>

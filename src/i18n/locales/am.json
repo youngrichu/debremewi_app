@@ -174,7 +174,7 @@
       "emergencyContact": "እባክዎ የአደጋ ጊዜ ተጠሪ መረጃ ያስገቡ",
       "serviceAtParish": "በቤተክርስቲያን ያለዎት ዋና የአገልግሎት ዘርፍ ይምረጡ",
       "ministryService": "የንዑስ የአገልግሎት ዘርፍዎን ይምረጡ",
-      "hasFatherConfessor": "ለንስሐ የሚያስተዳድርዎ��� አባት አለዎት?",
+      "hasFatherConfessor": "ለንስሐ የሚያስተዳድርዎት አባት አለዎት?",
       "hasAssociationMembership": "በቤተክርስቲያን የጽዋ ማኅበር አባል ነዎት?",
       "residencePermit": "በዩኤኢ ያለዎት የመኖሪያ ፈቃድ ሁኔታ ምንድን ነው?",
       "photo": "እባክዎ የራስዎን ግልጽ ፎቶ ያስገቡ",
@@ -322,7 +322,7 @@
       "title": "ተጨማሪ",
       "aboutUs": "ስለ እኛ",
       "services": "አገልግሎቶች",
-      "location": "አድራ",
+      "location": "አድራሻ",
       "contactUs": "አግኙን"
     }
   },
