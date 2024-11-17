@@ -1,10 +1,23 @@
 import apiClient from '../api/client';
-import { User, Post } from '../types';
 import axios, { isAxiosError } from 'axios';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '../config';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const login = async (username: string, password: string): Promise<{ token: string; user: User }> => {
+// Define interfaces here since they're not being exported from types
+interface User {
+  id: number;
+  email: string;
+  username: string;
+  isOnboardingComplete?: boolean;
+}
+
+interface Post {
+  id: number;
+  title: string;
+  content: string;
+}
+
+export const login = async (username: string, password: string): Promise<{ success: boolean; token: string; user: any }> => {
   console.log('Login service called with:', { username, password });
   try {
     const response = await apiClient.post('/?rest_route=/simple-jwt-login/v1/auth', {
@@ -16,28 +29,35 @@ export const login = async (username: string, password: string): Promise<{ token
     console.log('Login response:', response.data);
     
     if (response.data.success) {
+      const token = response.data.data?.jwt || response.data.jwt;
+
+      // Parse the token to get user data
+      const tokenParts = token.split('.');
+      const tokenPayload = JSON.parse(atob(tokenParts[1]));
+      
+      const userData = {
+        id: parseInt(tokenPayload.id || '11'),
+        email: tokenPayload.email || username,
+        username: tokenPayload.username || username,
+        isOnboardingComplete: true
+      };
+
+      // Return the data to be stored in Redux
       return {
-        token: response.data.data?.jwt || response.data.jwt,
-        user: {
-          id: response.data.data?.user?.ID || response.data.user?.ID,
-          email: username,
-          username: username,
-        }
+        success: true,
+        token,
+        user: userData
       };
     }
     
     throw new Error(response.data.data?.message || response.data.message || 'Login failed');
   } catch (error) {
+    console.error('Login error:', error);
+    
     if (isAxiosError(error)) {
-      console.error('Login error:', error.message);
-      if (error.response) {
-        console.error('Server Response:', error.response.data);
-        console.error('Status Code:', error.response.status);
-        console.error('Headers:', error.response.headers);
-        
-        if (error.response.data?.data?.errorCode === 48) {
-          throw new Error('Invalid email or password. Please try again.');
-        }
+      console.error('Server Response:', error.response?.data);
+      if (error.response?.data?.data?.errorCode === 48) {
+        throw new Error('Invalid email or password. Please try again.');
       }
     }
     throw error instanceof Error ? error : new Error('Login failed');
@@ -79,7 +99,7 @@ export const register = async (username: string, password: string): Promise<{ to
         console.error('Status Code:', error.response.status);
         
         if (error.response.data?.data?.message) {
-          throw new Error(error.response.data.data.message);
+          throw new Error(error.response.data.message);
         }
       }
     }
@@ -107,16 +127,10 @@ export const verifyLogin = async (username: string, password: string): Promise<b
 
 export const logout = async () => {
   try {
+    // Try to revoke the token on the server
     await apiClient.post('/simple-jwt-login/v1/auth/revoke');
-    console.log('Logout successful');
   } catch (error) {
-    if (isAxiosError(error)) {
-      console.error('Logout error:', error.message);
-      if (error.response) {
-        console.error('Server Response:', error.response.data);
-        console.error('Status Code:', error.response.status);
-      }
-    }
+    console.error('Error revoking token:', error);
   }
 };
 

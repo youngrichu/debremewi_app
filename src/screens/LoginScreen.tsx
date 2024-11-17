@@ -13,12 +13,20 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useDispatch } from 'react-redux';
-import { login } from '../services/auth';
+import { login } from '../services/AuthService';
 import { setUser } from '../store/userSlice';
 import { setAuthState } from '../store/authSlice';
 import { useTranslation } from 'react-i18next';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../types';
 
-const LoginScreen = ({ navigation }) => {
+type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
+
+interface LoginScreenProps {
+  navigation: LoginScreenNavigationProp;
+}
+
+const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const dispatch = useDispatch();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -47,20 +55,17 @@ const LoginScreen = ({ navigation }) => {
 
     try {
       const response = await login(email, password);
-      
+      console.log('Login response userData:', response);
+
       if (response.success) {
-        // Update Redux store with authentication state and token
         dispatch(setAuthState({ 
           isAuthenticated: true, 
           token: response.token 
         }));
         
-        // Update user data if available
-        if (response.user) {
-          dispatch(setUser(response.user));
-        }
+        dispatch(setUser(response.user));
       } else {
-        setErrorMessage(response.message || 'Login failed');
+        setErrorMessage('Login failed');
       }
     } catch (error) {
       console.error('Login error:', error);
@@ -267,6 +272,10 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     marginLeft: 4,
     textAlign: 'center',
+  },
+  loginButtonDisabled: {
+    opacity: 0.7,
+    backgroundColor: '#ccc',
   },
 });
 export default LoginScreen;

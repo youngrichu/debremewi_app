@@ -1,10 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+
 import { createStackNavigator } from '@react-navigation/stack';
+
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
 import { useSelector } from 'react-redux';
+
 import { Ionicons } from '@expo/vector-icons';
+
 import { RootState } from '../store';
+
 import { TouchableOpacity, View } from 'react-native';
+
 import { useTranslation } from 'react-i18next';
 
 // Import screens
@@ -31,22 +38,24 @@ import NewPasswordScreen from '../screens/NewPasswordScreen';
 import { LanguageSelector } from '../components/LanguageSelector';
 
 const Stack = createStackNavigator<RootStackParamList>();
-const Tab = createBottomTabNavigator();
+const EventStack = createStackNavigator<RootStackParamList>();
+const BlogStack = createStackNavigator<RootStackParamList>();
+const Tab = createBottomTabNavigator<RootStackParamList>();
 
 // Add EventStack navigator
 function EventStackScreen() {
   const { t } = useTranslation();
 
   return (
-    <Stack.Navigator>
-      <Stack.Screen 
+    <EventStack.Navigator>
+      <EventStack.Screen 
         name="EventsList" 
         component={EventsScreen}
         options={{ 
           headerShown: false 
         }}
       />
-      <Stack.Screen 
+      <EventStack.Screen 
         name="EventDetails" 
         component={EventDetailsScreen}
         options={{
@@ -54,7 +63,7 @@ function EventStackScreen() {
           title: t('navigation.screens.eventDetails')
         }}
       />
-    </Stack.Navigator>
+    </EventStack.Navigator>
   );
 }
 
@@ -151,7 +160,7 @@ function MainTabs() {
 // Separate stack for Home to handle nested navigation
 function HomeStackScreen() {
   const { t } = useTranslation();
-  
+
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={HomeScreen} />
@@ -236,15 +245,15 @@ function BlogStackScreen() {
   const { t } = useTranslation();
 
   return (
-    <Stack.Navigator>
-      <Stack.Screen 
+    <BlogStack.Navigator>
+      <BlogStack.Screen 
         name="BlogPostsList" 
         component={BlogPostsScreen}
         options={{ 
           headerShown: false 
         }}
       />
-      <Stack.Screen 
+      <BlogStack.Screen 
         name="BlogPostDetail" 
         component={BlogPostDetail}
         options={{
@@ -252,14 +261,17 @@ function BlogStackScreen() {
           title: t('navigation.screens.blogPostDetail')
         }}
       />
-    </Stack.Navigator>
+    </BlogStack.Navigator>
   );
 }
 
 export default function AppNavigator() {
   const { t } = useTranslation();
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
-  const { isOnboardingComplete } = useSelector((state: RootState) => state.user);
+  const user = useSelector((state: RootState) => state.user);
+
+  // Safely access isOnboardingComplete with a default value
+  const isOnboardingComplete = user?.isOnboardingComplete ?? false;
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -342,3 +354,9 @@ export default function AppNavigator() {
     </Stack.Navigator>
   );
 }
+
+
+
+
+
+
