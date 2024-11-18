@@ -1,14 +1,14 @@
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchNotifications } from '../store/notificationsSlice';
-import { RootState } from '../store';
+import { fetchNotifications, markNotificationAsRead } from '../store/slices/notificationsSlice';
+import { RootState, AppDispatch } from '../store';
 import { format } from 'date-fns';
 import { NotificationService } from '../services/NotificationService';
 import { useNavigation } from '@react-navigation/native';
 
 export default function NotificationsScreen() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const navigation = useNavigation();
   const { notifications, loading } = useSelector((state: RootState) => state.notifications);
 
@@ -18,6 +18,7 @@ export default function NotificationsScreen() {
 
   const handleNotificationPress = async (notification: any) => {
     try {
+      await dispatch(markNotificationAsRead(notification.id)).unwrap();
       await NotificationService.handleNotificationPress(notification, navigation);
       dispatch(fetchNotifications());
     } catch (error) {

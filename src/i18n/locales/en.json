@@ -166,7 +166,8 @@
       "accountDeleted": "Account Deleted",
       "accountDeletedSuccess": "Your account has been successfully deleted.",
       "accountDeleteError": "Failed to delete account. Please try again.",
-      "completeProfile": "Complete Your Profile"
+      "completeProfile": "Complete Your Profile",
+      "fetchError": "Failed to fetch profile data. Please try again."
     },
     "helpers": {
       "residenceAddress": "Please provide your complete residential address",

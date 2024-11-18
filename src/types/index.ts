@@ -1,3 +1,5 @@
+import { StackNavigationProp } from '@react-navigation/stack';
+
 export interface User {
   id: number;
   email: string;
@@ -39,3 +41,35 @@ export type RootStackParamList = {
   EventStack: undefined;
   BlogStack: undefined;
 };
+
+export interface UserProfile {
+  id: number;
+  username: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  gender: string;
+  christianName: string;
+  residencyCity: string;
+  isOnboardingComplete: boolean;
+  maritalStatus: string;
+  hasChildren: string;
+  numberOfChildren: string;
+  christianLife: string;
+  serviceAtParish: string;
+  ministryService: string;
+  hasFatherConfessor: string;
+  fatherConfessorName: string;
+  hasAssociationMembership: string;
+  associationName: string;
+  profilePhoto: string;
+  profilePhotoUrl: string;
+  residenceAddress: string;
+  educationLevel: string;
+  occupation: string;
+  emergencyContact: string;
+  residencePermit: string;
+}
+
+export type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Profile'>;

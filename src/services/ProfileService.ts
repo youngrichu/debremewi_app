@@ -72,15 +72,63 @@ export class ProfileService {
 
   static async getProfile(): Promise<UserProfile> {
     try {
-      const response = await apiClient.get('/wp-json/church-mobile/v1/user-profile');
-      
-      if (!response.data.success) {
-        throw new Error('Failed to get profile');
+      const token = await AsyncStorage.getItem('userToken');
+      console.log('Token for profile request:', token ? 'Present' : 'Missing');
+
+      if (!token) {
+        throw new Error('No authentication token found');
       }
 
-      return response.data.user;
+      console.log('Making profile request...');
+      const response = await apiClient.get('/wp-json/church-mobile/v1/user-profile');
+      
+      console.log('Profile API Response:', response.data);
+
+      if (!response.data?.success) {
+        console.error('API Error Response:', response.data);
+        throw new Error(response.data?.message || 'Failed to get profile');
+      }
+
+      // Transform the response data to match your UserProfile interface
+      const userData = {
+        id: response.data.user.id,
+        email: response.data.user.email,
+        username: response.data.user.username,
+        firstName: response.data.user.firstName,
+        lastName: response.data.user.lastName,
+        christianName: response.data.user.christianName,
+        gender: response.data.user.gender,
+        maritalStatus: response.data.user.maritalStatus,
+        hasChildren: response.data.user.hasChildren,
+        numberOfChildren: response.data.user.numberOfChildren,
+        educationLevel: response.data.user.educationLevel,
+        occupation: response.data.user.occupation,
+        phoneNumber: response.data.user.phoneNumber,
+        residencyCity: response.data.user.residencyCity,
+        residenceAddress: response.data.user.residenceAddress,
+        emergencyContact: response.data.user.emergencyContact,
+        christianLife: response.data.user.christianLife,
+        serviceAtParish: response.data.user.serviceAtParish,
+        ministryService: response.data.user.ministryService,
+        hasFatherConfessor: response.data.user.hasFatherConfessor,
+        fatherConfessorName: response.data.user.fatherConfessorName,
+        hasAssociationMembership: response.data.user.hasAssociationMembership,
+        associationName: response.data.user.associationName,
+        residencePermit: response.data.user.residencePermit,
+        isOnboardingComplete: response.data.user.isOnboardingComplete,
+        // Photo fields
+        profilePhoto: response.data.user.profilePhoto,
+        profilePhotoUrl: response.data.user.profilePhotoUrl,
+      };
+
+      console.log('Transformed User Data:', userData);
+      return userData;
     } catch (error) {
-      console.error('Get profile error:', error);
+      console.error('Get profile error:', {
+        message: error.message,
+        response: error.response?.data,
+        status: error.response?.status,
+      });
       throw error;
     }
   }

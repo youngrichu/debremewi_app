@@ -14,11 +14,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useDispatch } from 'react-redux';
 import { login } from '../services/AuthService';
-import { setUser } from '../store/userSlice';
-import { setAuthState } from '../store/authSlice';
+import { setUserData } from '../store/slices/userSlice';
+import { setAuthState } from '../store/slices/authSlice';
 import { useTranslation } from 'react-i18next';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
@@ -55,17 +56,49 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
 
     try {
       const response = await login(email, password);
-      console.log('Login response userData:', response);
+      console.log('Login response:', response);
+      if (response.token) {
+        await AsyncStorage.setItem('userToken', response.token);
+        console.log('Token stored:', response.token);
+      }
 
-      if (response.success) {
+      if (response.success && response.token) {
         dispatch(setAuthState({ 
           isAuthenticated: true, 
           token: response.token 
         }));
         
-        dispatch(setUser(response.user));
+        if (response.user) {
+          dispatch(setUserData({
+            id: response.user.id,
+            email: response.user.email,
+            username: response.user.username,
+            firstName: response.user.firstName,
+            lastName: response.user.lastName,
+            christianName: response.user.christianName,
+            gender: response.user.gender,
+            maritalStatus: response.user.maritalStatus,
+            educationLevel: response.user.educationLevel,
+            occupation: response.user.occupation,
+            phoneNumber: response.user.phoneNumber,
+            residencyCity: response.user.residencyCity,
+            residenceAddress: response.user.residenceAddress,
+            emergencyContact: response.user.emergencyContact,
+            christianLife: response.user.christianLife,
+            serviceAtParish: response.user.serviceAtParish,
+            ministryService: response.user.ministryService,
+            hasFatherConfessor: response.user.hasFatherConfessor,
+            fatherConfessorName: response.user.fatherConfessorName,
+            hasAssociationMembership: response.user.hasAssociationMembership,
+            residencePermit: response.user.residencePermit,
+            profilePhotoUrl: response.user.profilePhotoUrl,
+            avatar_url: response.user.avatar_url,
+            photo: response.user.photo,
+            isOnboardingComplete: true
+          }));
+        }
       } else {
-        setErrorMessage('Login failed');
+        setErrorMessage(response.message || 'Login failed');
       }
     } catch (error) {
       console.error('Login error:', error);

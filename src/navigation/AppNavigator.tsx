@@ -28,7 +28,7 @@ import NotificationsScreen from '../screens/NotificationsScreen';
 import BlogPostsScreen from '../screens/BlogPostsScreen';
 import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
 import { RootStackParamList } from '../types';
-import { NotificationButton } from '../components/NotificationButton';
+import NotificationButton from '../components/NotificationButton';
 import AboutUsScreen from '../screens/AboutUsScreen';
 import ServicesScreen from '../screens/ServicesScreen';
 import ContactUsScreen from '../screens/ContactUsScreen';

@@ -5,6 +5,7 @@ import { combineReducers } from 'redux';
 
 import authReducer from './slices/authSlice';
 import userReducer from './slices/userSlice';
+import notificationsReducer from './slices/notificationsSlice';
 
 const persistConfig = {
   key: 'root',
@@ -15,6 +16,7 @@ const persistConfig = {
 const rootReducer = combineReducers({
   auth: authReducer,
   user: userReducer,
+  notifications: notificationsReducer,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
@@ -23,7 +25,7 @@ export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false, // Disable serializable check for redux-persist
+      serializableCheck: false,
     }),
 });
 

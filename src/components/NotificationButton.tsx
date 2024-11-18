@@ -1,58 +1,72 @@
-import React, { useEffect } from 'react';
-import { TouchableOpacity, View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import React, { useEffect, useCallback, useState } from 'react';
+import { TouchableOpacity, View, Text, StyleSheet, Animated } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch, RootState } from '../store';
-import { setUnreadCount, setLoading, setError } from '../store/notificationsSlice';
+import { fetchNotifications } from '../store/slices/notificationsSlice';
 
-export const NotificationButton = () => {
-  const navigation = useNavigation();
+type RootStackParamList = {
+  Notifications: undefined;
+};
+
+const NotificationButton = () => {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const dispatch = useDispatch<AppDispatch>();
-  const notifications = useSelector((state: RootState) => state.notifications);
-  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+  const [opacity] = useState(new Animated.Value(1));
+  
+  const { unreadCount = 0, loading = false } = useSelector((state: RootState) => ({
+    unreadCount: state.notifications?.unreadCount ?? 0,
+    loading: state.notifications?.loading ?? false
+  }));
 
-  // Safely access notifications state with default values
-  const unreadCount = notifications?.unreadCount ?? 0;
-  const loading = notifications?.loading ?? false;
-  const error = notifications?.error ?? null;
+  const fetchData = useCallback(async () => {
+    // Only fade out if we're showing a badge
+    if (unreadCount > 0) {
+      Animated.timing(opacity, {
+        toValue: 0.7,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    }
+
+    await dispatch(fetchNotifications());
+
+    // Fade back in
+    Animated.timing(opacity, {
+      toValue: 1,
+      duration: 200,
+      useNativeDriver: true,
+    }).start();
+  }, [dispatch, unreadCount, opacity]);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      // Initialize notifications state
-      dispatch(setUnreadCount(0));
-      dispatch(setLoading(false));
-      dispatch(setError(null));
-    }
-  }, [dispatch, isAuthenticated]);
+    fetchData();
+    const intervalId = setInterval(fetchData, 30000);
+    return () => clearInterval(intervalId);
+  }, [fetchData]);
 
-  if (!isAuthenticated || error) {
-    return null;
-  }
+  const handlePress = useCallback(() => {
+    navigation.navigate('Notifications');
+  }, [navigation]);
 
   return (
     <TouchableOpacity 
       style={styles.container}
-      onPress={() => navigation.navigate('Notifications')}
+      onPress={handlePress}
       disabled={loading}
     >
-      {loading ? (
-        <ActivityIndicator size="small" color="#2196F3" />
-      ) : (
-        <>
-          <Ionicons 
-            name={unreadCount > 0 ? "notifications" : "notifications-outline"} 
-            size={24} 
-            color={unreadCount > 0 ? "#2196F3" : "#333"} 
-          />
-          {unreadCount > 0 && (
-            <View style={styles.badge}>
-              <Text style={styles.badgeText}>
-                {unreadCount > 99 ? '99+' : unreadCount}
-              </Text>
-            </View>
-          )}
-        </>
+      <Ionicons 
+        name={unreadCount > 0 ? "notifications" : "notifications-outline"} 
+        size={24} 
+        color={unreadCount > 0 ? "#2196F3" : "#333"} 
+      />
+      {unreadCount > 0 && (
+        <Animated.View style={[styles.badge, { opacity }]}>
+          <Text style={styles.badgeText}>
+            {unreadCount > 99 ? '99+' : unreadCount}
+          </Text>
+        </Animated.View>
       )}
     </TouchableOpacity>
   );
@@ -80,4 +94,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: 'bold',
   },
-}); 
+});
+
+export default NotificationButton; 

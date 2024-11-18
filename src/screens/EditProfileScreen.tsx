@@ -12,7 +12,7 @@ import {
   Image,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
-import { setUser, UserState } from '../store/userSlice';
+import { setUserData } from '../store/slices/userSlice';
 import { ProfileService } from '../services/ProfileService';
 import { CustomPicker } from '../components/CustomPicker';
 import { Ionicons } from '@expo/vector-icons';
@@ -60,6 +60,9 @@ interface DropdownState {
   residencePermit: boolean;
   hasChildren: boolean;
 }
+
+// Add proper typing for form data
+interface FormData extends UserData {}
 
 // Update the formatDisplayValue function
 const formatDisplayValue = (value: string | null | undefined, options?: { [key: string]: string }) => {
@@ -162,17 +165,17 @@ const getPickerTitle = (pickerName: string) => {
 export default function EditProfileScreen() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const currentUser = useSelector((state: RootState) => state.user);
+  const { userData } = useSelector((state: RootState) => state.user);
   const [loading, setLoading] = useState(false);
   const [openPicker, setOpenPicker] = useState<string | null>(null);
-  const [formData, setFormData] = useState(currentUser);
+  const [formData, setFormData] = useState<FormData>(userData || {});
   const [errors, setErrors] = useState<Record<string, string | undefined>>({});
   const { t } = useTranslation();
 
-  const handleChange = (field: keyof UserState, value: string) => {
+  const handleChange = (field: keyof FormData, value: string) => {
     setFormData(prev => ({
       ...prev,
-      [field]: value.trim() === '' ? null : value
+      [field]: value.trim() === '' ? undefined : value
     }));
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
@@ -211,7 +214,7 @@ export default function EditProfileScreen() {
     setLoading(true);
     try {
       const updatedUser = await ProfileService.updateProfile(formData);
-      dispatch(setUser(updatedUser));
+      dispatch(setUserData(updatedUser));
       Alert.alert('Success', 'Profile updated successfully', [
         { text: 'OK', onPress: () => navigation.goBack() }
       ]);
@@ -337,6 +340,11 @@ export default function EditProfileScreen() {
     </View>
   );
 
+  const getProfilePhoto = () => {
+    if (!formData) return null;
+    return formData.profilePhotoUrl || formData.profilePhoto || formData.photo;
+  };
+
   return (
     <KeyboardAvoidingView 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -356,12 +364,18 @@ export default function EditProfileScreen() {
           {/* Photo Upload Section */}
           <View style={styles.photoSection}>
             <TouchableOpacity onPress={pickImage}>
-              {formData.photo ? (
-                <Image source={{ uri: formData.photo }} style={styles.profilePhoto} />
+              {(formData.photo || formData.profile_photo || formData.profile_photo_url || formData.avatar_url) ? (
+                <Image 
+                  source={{ 
+                    uri: formData.photo || formData.profile_photo || formData.profile_photo_url || formData.avatar_url
+                  }} 
+                  style={styles.profilePhoto} 
+                />
               ) : (
                 <View style={styles.photoPlaceholder}>
-                  <Ionicons name="camera" size={40} color="#666" />
-                  <Text style={styles.changePhotoText}>{t('profile.fields.changePhoto')}</Text>
+                  <Text style={styles.avatarText}>
+                    {formData.firstName?.charAt(0)?.toUpperCase() || '?'}
+                  </Text>
                 </View>
               )}
             </TouchableOpacity>
@@ -550,6 +564,11 @@ const styles = StyleSheet.create({
   pickerButtonText: {
     fontSize: 16,
     color: '#333',
+  },
+  avatarText: {
+    color: '#2196F3',
+    fontSize: 40,
+    fontWeight: 'bold',
   },
   // Add more styles as needed...
 }); 

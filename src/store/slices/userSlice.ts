@@ -1,55 +1,35 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-
+import { UserProfile } from '../../types';
 
 interface UserState {
-
-  isOnboardingComplete: boolean;
-
-  [key: string]: any;
-
+  userData: UserProfile | null;
+  loading: boolean;
+  error: string | null;
 }
 
-
-
 const initialState: UserState = {
-
-  isOnboardingComplete: false,
-
-  // other user fields can be added here
-
+  userData: null,
+  loading: false,
+  error: null
 };
 
-
-
 const userSlice = createSlice({
-
   name: 'user',
-
   initialState,
-
   reducers: {
-
-    setUser: (state, action: PayloadAction<UserState>) => {
-
-      return {
-
-        ...state,
-
-        ...action.payload,
-
-      };
-
+    setUserData: (state, action: PayloadAction<UserProfile>) => {
+      state.userData = action.payload;
+      state.error = null;
     },
-
-    clearUser: () => initialState,
-
-  },
-
+    clearUserData: (state) => {
+      state.userData = null;
+      state.error = null;
+    },
+    setError: (state, action: PayloadAction<string>) => {
+      state.error = action.payload;
+    }
+  }
 });
 
-
-
-export const { setUser, clearUser } = userSlice.actions;
-
+export const { setUserData, clearUserData, setError } = userSlice.actions;
 export default userSlice.reducer; 

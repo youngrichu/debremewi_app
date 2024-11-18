@@ -16,7 +16,7 @@ import {
   Image,
 } from 'react-native';
 import { useDispatch } from 'react-redux';
-import { completeOnboarding, setUser } from '../store/userSlice';
+import { setUserData } from '../store/slices/userSlice';
 import { ProfileService } from '../services/ProfileService';
 import { CustomPicker } from '../components/CustomPicker';
 import { Ionicons } from '@expo/vector-icons';
@@ -365,12 +365,10 @@ export default function OnboardingScreen() {
         isOnboardingComplete: true,
       });
 
-      dispatch(setUser({
+      dispatch(setUserData({
         ...updatedUser,
         isOnboardingComplete: true,
       }));
-
-      dispatch(completeOnboarding());
     } catch (error) {
       console.error('Onboarding error:', error);
       Alert.alert('Error', 'Failed to complete profile setup. Please try again.');

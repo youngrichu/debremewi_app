@@ -15,6 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { register } from '../services/AuthService';
 import { useTranslation } from 'react-i18next';
+import { setAuthState } from '../store/slices/authSlice';
 
 interface FormData {
   firstName: string;

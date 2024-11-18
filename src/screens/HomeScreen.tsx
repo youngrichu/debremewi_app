@@ -1,22 +1,30 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, ActivityIndicator } from 'react-native';
+import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { Post, Event } from '../types';
+import { Post, Event, RootStackParamList } from '../types';
 import { API_URL } from '../config';
 import WelcomeCard from '../components/WelcomeCard';
 import { useTranslation } from 'react-i18next';
+import { getUpcomingEvents } from '../services/EventsService';
+
+type HomeScreenNavigationProp = CompositeNavigationProp<
+  BottomTabNavigationProp<RootStackParamList, 'MainTabs'>,
+  StackNavigationProp<RootStackParamList>
+>;
 
 export default function HomeScreen() {
   const { t } = useTranslation();
-  const navigation = useNavigation();
+  const navigation = useNavigation<HomeScreenNavigationProp>();
   const [recentPosts, setRecentPosts] = useState<Post[]>([]);
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  useEffect(() => {
-    fetchRecentPosts();
-    fetchUpcomingEvents();
-  }, []);
+  // Add refresh interval (e.g., every 5 minutes)
+  const REFRESH_INTERVAL = 5 * 60 * 1000; // 5 minutes in milliseconds
 
   const fetchRecentPosts = async () => {
     try {
@@ -28,17 +36,57 @@ export default function HomeScreen() {
     }
   };
 
-  const fetchUpcomingEvents = async () => {
+  const fetchUpcomingEvents = useCallback(async () => {
     try {
-      const response = await fetch(`${API_URL}/wp-json/tribe/v1/events?per_page=3`);
-      const data = await response.json();
-      setUpcomingEvents(data.events || []);
+      setLoading(true);
+      const upcomingEvents = await getUpcomingEvents();
+      setUpcomingEvents(upcomingEvents);
+      setError('');
     } catch (error) {
       console.error('Error fetching events:', error);
+      setError('Failed to load events');
+    } finally {
+      setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    // Initial fetch for both blog posts and events
+    fetchRecentPosts();
+    fetchUpcomingEvents();
+
+    // Set up periodic refresh only for events
+    const intervalId = setInterval(fetchUpcomingEvents, REFRESH_INTERVAL);
+
+    // Cleanup on component unmount
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [fetchUpcomingEvents]);
+
+  // Add refresh on focus for both
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchRecentPosts();
+      fetchUpcomingEvents();
+    });
+
+    return unsubscribe;
+  }, [navigation, fetchUpcomingEvents]);
 
   const renderEvents = () => {
+    if (loading) {
+      return <ActivityIndicator size="large" color="#2196F3" />;
+    }
+
+    if (error) {
+      return (
+        <View style={styles.emptyStateContainer}>
+          <Text style={styles.emptyStateText}>{error}</Text>
+        </View>
+      );
+    }
+
     if (upcomingEvents.length === 0) {
       return (
         <View style={styles.emptyStateContainer}>
@@ -55,7 +103,7 @@ export default function HomeScreen() {
         style={styles.eventCard}
         onPress={() => navigation.navigate('Events', {
           screen: 'EventDetails',
-          params: { eventId: event.id }
+          params: { eventId: Number(event.id) }
         })}
       >
         <View style={styles.eventDateBox}>
@@ -73,8 +121,12 @@ export default function HomeScreen() {
             <Text style={styles.eventTime}>
               {new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </Text>
-            <Ionicons name="location-outline" size={12} color="#666" style={[styles.eventIcon, styles.locationIcon]} />
-            <Text style={styles.eventLocation}>{event.location}</Text>
+            {event.location && (
+              <>
+                <Ionicons name="location-outline" size={12} color="#666" style={[styles.eventIcon, styles.locationIcon]} />
+                <Text style={styles.eventLocation}>{event.location}</Text>
+              </>
+            )}
           </View>
         </View>
       </TouchableOpacity>
