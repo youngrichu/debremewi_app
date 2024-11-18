@@ -23,6 +23,13 @@ export type RootStackParamList = {
   Notifications: undefined;
   NewPassword: { token: string; email: string };
   Home: undefined;
+  HomeStack: {
+    screen: string;
+    params?: {
+      eventId?: string;
+      postId?: string;
+    };
+  };
   EventDetails: { eventId: string };
   BlogPostDetail: { postId: string };
   EditProfile: undefined;
@@ -37,9 +44,18 @@ export type RootStackParamList = {
   Events: undefined;
   Profile: undefined;
   More: undefined;
-  HomeStack: undefined;
-  EventStack: undefined;
-  BlogStack: undefined;
+  EventStack: {
+    screen: string;
+    params?: {
+      eventId?: string;
+    };
+  };
+  BlogStack: {
+    screen: string;
+    params?: {
+      postId?: string;
+    };
+  };
 };
 
 export interface UserProfile {

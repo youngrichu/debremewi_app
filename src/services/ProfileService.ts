@@ -18,13 +18,6 @@ export class ProfileService {
           name: `photo.${fileType}`,
           type: `image/${fileType}`,
         } as any);
-
-        // Log the photo data for debugging
-        console.log('Photo data:', {
-          uri: profileData.photo,
-          name: `photo.${fileType}`,
-          type: `image/${fileType}`,
-        });
       }
 
       // Add other profile data to formData
@@ -35,15 +28,6 @@ export class ProfileService {
         }
       });
 
-      // Log the complete request for debugging
-      console.log('Complete request config:', {
-        data: formData,
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
       const response = await apiClient.post('/wp-json/church-app/v1/update-profile', formData, {
         headers: {
           'Accept': 'application/json',
@@ -52,19 +36,14 @@ export class ProfileService {
         transformRequest: (data) => data, // Prevent axios from trying to transform FormData
       });
 
-      console.log('Profile update response:', response.data);
-
       if (response.data.success) {
         return response.data.user;
       }
 
       throw new Error(response.data.message || 'Failed to update profile');
     } catch (error: any) {
-      console.error('Profile update error:', error);
       if (error.response) {
-        console.error('Error response:', error.response.data);
-        console.error('Error status:', error.response.status);
-        console.error('Error headers:', error.response.headers);
+        throw new Error(error.response.data.message || 'Failed to update profile');
       }
       throw error;
     }
@@ -73,19 +52,14 @@ export class ProfileService {
   static async getProfile(): Promise<UserProfile> {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      console.log('Token for profile request:', token ? 'Present' : 'Missing');
 
       if (!token) {
         throw new Error('No authentication token found');
       }
 
-      console.log('Making profile request...');
       const response = await apiClient.get('/wp-json/church-mobile/v1/user-profile');
       
-      console.log('Profile API Response:', response.data);
-
       if (!response.data?.success) {
-        console.error('API Error Response:', response.data);
         throw new Error(response.data?.message || 'Failed to get profile');
       }
 
@@ -121,7 +95,6 @@ export class ProfileService {
         profilePhotoUrl: response.data.user.profilePhotoUrl,
       };
 
-      console.log('Transformed User Data:', userData);
       return userData;
     } catch (error) {
       console.error('Get profile error:', {

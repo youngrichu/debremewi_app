@@ -4,12 +4,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchNotifications, markNotificationAsRead } from '../store/slices/notificationsSlice';
 import { RootState, AppDispatch } from '../store';
 import { format } from 'date-fns';
-import { NotificationService } from '../services/NotificationService';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { RootStackParamList } from '../types';
+
+type NotificationScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
 export default function NotificationsScreen() {
   const dispatch = useDispatch<AppDispatch>();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NotificationScreenNavigationProp>();
   const { notifications, loading } = useSelector((state: RootState) => state.notifications);
 
   useEffect(() => {
@@ -18,11 +21,27 @@ export default function NotificationsScreen() {
 
   const handleNotificationPress = async (notification: any) => {
     try {
-      await dispatch(markNotificationAsRead(notification.id)).unwrap();
-      await NotificationService.handleNotificationPress(notification, navigation);
-      dispatch(fetchNotifications());
+      await markNotificationAsRead(notification.id);
+      
+      if (notification.type === 'event') {
+        navigation.navigate('MainTabs', {
+          screen: 'Events',
+          params: {
+            screen: 'EventDetails',
+            params: { eventId: notification.reference_id }
+          }
+        });
+      } else if (notification.type === 'blog') {
+        navigation.navigate('MainTabs', {
+          screen: 'BlogPosts',
+          params: {
+            screen: 'BlogPostDetail',
+            params: { postId: notification.reference_id }
+          }
+        });
+      }
     } catch (error) {
-      console.error('Error handling notification press:', error);
+      console.error('Error handling notification:', error);
     }
   };
 
