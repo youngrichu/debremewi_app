@@ -52,15 +52,12 @@ export const login = async (email: string, password: string): Promise<LoginRespo
       AUTH_KEY: 'debremewi'
     });
 
-    console.log('Login response:', response.data);
-
     if (response.data.success) {
       const token = response.data.data?.jwt || response.data.jwt;
       await AsyncStorage.setItem('userToken', token);
 
       // Decode token to get user ID
       const tokenData = JSON.parse(atob(token.split('.')[1])) as TokenData;
-      console.log('Decoded token data:', tokenData);
 
       const headers = {
         'Authorization': `Bearer ${token}`,
@@ -73,8 +70,6 @@ export const login = async (email: string, password: string): Promise<LoginRespo
           `${API_URL}/wp-json/church-mobile/v1/user-profile`,
           { headers }
         );
-
-        console.log('User profile response:', userProfileResponse.data);
 
         if (userProfileResponse.data.success && userProfileResponse.data.user) {
           const profileData = userProfileResponse.data.user;
@@ -106,8 +101,6 @@ export const login = async (email: string, password: string): Promise<LoginRespo
             photo: profileData.profilePhoto || profileData.profilePhotoUrl,
             isOnboardingComplete: profileData.isOnboardingComplete
           };
-
-          console.log('Final user data:', userData);
 
           return {
             success: true,
@@ -146,8 +139,6 @@ export const login = async (email: string, password: string): Promise<LoginRespo
         };
 
       } catch (error) {
-        console.error('Profile fetch error:', error);
-        
         // Return basic user data from token if profile fetch fails
         return {
           success: true,
@@ -185,11 +176,7 @@ export const login = async (email: string, password: string): Promise<LoginRespo
     };
 
   } catch (error) {
-    console.error('Login error:', error);
-    
     if (axios.isAxiosError(error)) {
-      console.error('Server response:', error.response?.data);
-      
       if (error.response?.status === 404) {
         return {
           success: false,
@@ -221,20 +208,23 @@ export const logout = async (): Promise<void> => {
   try {
     await AsyncStorage.removeItem('userToken');
   } catch (error) {
-    console.error('Logout error:', error);
-    throw error;
+    throw new Error('Failed to logout');
   }
 };
 
 export const deleteAccount = async (): Promise<void> => {
   try {
-    const response = await apiClient.delete('/wp-json/church-mobile/v1/delete-account');
-    if (!response.data?.success) {
-      throw new Error(response.data?.message || 'Failed to delete account');
-    }
+    const token = await AsyncStorage.getItem('userToken');
+    if (!token) throw new Error('No authentication token found');
+
+    await axios.delete(`${API_URL}/wp-json/church-mobile/v1/delete-account`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
     await AsyncStorage.removeItem('userToken');
   } catch (error) {
-    console.error('Delete account error:', error);
-    throw error;
+    throw new Error('Failed to delete account');
   }
 };

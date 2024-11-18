@@ -34,7 +34,6 @@ export const fetchNotifications = createAsyncThunk(
       const response = await apiClient.get('/wp-json/church-app/v1/notifications/');
       return response.data;
     } catch (error) {
-      console.error('Error fetching notifications:', error);
       return rejectWithValue('Failed to fetch notifications');
     }
   }
@@ -90,4 +89,4 @@ export const {
   markAsRead 
 } = notificationsSlice.actions;
 
-export default notificationsSlice.reducer; 
+export default notificationsSlice.reducer;

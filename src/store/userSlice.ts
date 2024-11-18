@@ -47,13 +47,13 @@ const initialState: UserState = {
 // Async thunk for updating user profile
 export const updateUserProfile = createAsyncThunk(
   'user/updateProfile',
-  async (profileData: Partial<UserState>, { rejectWithValue }) => {
+  async (_, { rejectWithValue }) => {
     try {
-      const updatedUser = await ProfileService.updateProfile(profileData);
-      return updatedUser;
+      const profileService = new ProfileService();
+      const updatedProfile = await profileService.updateProfile(_);
+      return updatedProfile;
     } catch (error) {
-      console.error('Profile update error:', error);
-      return rejectWithValue(error instanceof Error ? error.message : 'Failed to update profile');
+      return rejectWithValue('Failed to update profile');
     }
   }
 );
@@ -79,7 +79,6 @@ const userSlice = createSlice({
       })
       .addCase(updateUserProfile.rejected, (state, action) => {
         // Handle error state if needed
-        console.error('Profile update failed:', action.payload);
       });
   },
 });

@@ -29,8 +29,7 @@ export class NotificationService {
       
       return true;
     } catch (error) {
-      console.error('Error handling notification:', error);
-      return false;
+      throw new Error('Error handling notification');
     }
   }
 } 

@@ -37,8 +37,7 @@ export class EventService {
 
       return categories;
     } catch (error) {
-      console.error('Error fetching event categories:', error);
-      throw error;
+      throw new Error('Failed to fetch event categories');
     }
   }
 
@@ -56,8 +55,6 @@ export class EventService {
       });
 
       const response = await apiClient.get<EventsResponse>(`/wp-json/church-events/v1/events?${queryParams}`);
-      
-      console.log('API Response:', response.data);
 
       // Extract events array from the response
       if (response.data && Array.isArray(response.data.events)) {
@@ -67,11 +64,9 @@ export class EventService {
         }));
       }
 
-      console.warn('No events found in response');
-      return [];
+      throw new Error('Invalid response format');
     } catch (error) {
-      console.error('Error fetching events:', error);
-      return [];
+      throw new Error('Failed to fetch events');
     }
   }
 
@@ -79,7 +74,6 @@ export class EventService {
     try {
       // First try to find the event in the events list response
       const response = await apiClient.get<EventDetailResponse>(`/wp-json/church-events/v1/events/${id}`);
-      console.log('Event detail response:', response.data);
 
       if (response.data && response.data.event) {
         return {
@@ -100,11 +94,9 @@ export class EventService {
         };
       }
 
-      console.warn('Event not found in response:', response.data);
-      return null;
+      throw new Error('Event not found');
     } catch (error) {
-      console.error('Error fetching event details:', error);
-      return null;
+      throw new Error('Failed to fetch event details');
     }
   }
-} 
+}
