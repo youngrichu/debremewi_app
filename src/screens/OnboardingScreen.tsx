@@ -353,22 +353,15 @@ export default function OnboardingScreen() {
 
     setLoading(true);
     try {
-      const cleanedFormData = Object.entries(formData).reduce((acc, [key, value]) => {
-        if (value !== null && value !== '') {
-          acc[key] = value;
-        }
-        return acc;
-      }, {} as Record<string, string>);
-
-      const updatedUser = await ProfileService.updateProfile({
-        ...cleanedFormData,
-        isOnboardingComplete: true,
+      const updatedProfile = await ProfileService.updateProfile({
+        ...formData,
+        is_onboarding_complete: true
       });
-
-      dispatch(setUserData({
-        ...updatedUser,
-        isOnboardingComplete: true,
-      }));
+      
+      if (updatedProfile) {
+        dispatch(setUserData(updatedProfile));
+        navigation.replace('MainTabs');
+      }
     } catch (error) {
       console.error('Onboarding error:', error);
       Alert.alert('Error', 'Failed to complete profile setup. Please try again.');

@@ -10,6 +10,10 @@ export interface Notification {
   type?: string;
   reference_id?: string;
   reference_url?: string;
+  image_url?: string;
+  featured_image?: string;
+  event_image?: string;
+  post_image?: string;
 }
 
 interface NotificationState {
@@ -95,12 +99,21 @@ const notificationsSlice = createSlice({
         state.loading = false;
         state.error = action.payload as string;
       })
+      .addCase(markNotificationAsRead.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
       .addCase(markNotificationAsRead.fulfilled, (state, action) => {
+        state.loading = false;
         const notification = state.notifications.find(n => n.id === action.payload);
         if (notification?.is_read === '0') {
           notification.is_read = '1';
           state.unreadCount = Math.max(0, state.unreadCount - 1);
         }
+      })
+      .addCase(markNotificationAsRead.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
   }
 });

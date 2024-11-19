@@ -56,7 +56,8 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
 
     try {
       const response = await login(email, password);
-      console.log('Login response:', response);
+      console.log('Raw login response in LoginScreen:', JSON.stringify(response, null, 2));
+      
       if (response.token) {
         await AsyncStorage.setItem('userToken', response.token);
         console.log('Token stored:', response.token);
@@ -69,33 +70,9 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
         }));
         
         if (response.user) {
-          dispatch(setUserData({
-            id: response.user.id,
-            email: response.user.email,
-            username: response.user.username,
-            firstName: response.user.firstName,
-            lastName: response.user.lastName,
-            christianName: response.user.christianName,
-            gender: response.user.gender,
-            maritalStatus: response.user.maritalStatus,
-            educationLevel: response.user.educationLevel,
-            occupation: response.user.occupation,
-            phoneNumber: response.user.phoneNumber,
-            residencyCity: response.user.residencyCity,
-            residenceAddress: response.user.residenceAddress,
-            emergencyContact: response.user.emergencyContact,
-            christianLife: response.user.christianLife,
-            serviceAtParish: response.user.serviceAtParish,
-            ministryService: response.user.ministryService,
-            hasFatherConfessor: response.user.hasFatherConfessor,
-            fatherConfessorName: response.user.fatherConfessorName,
-            hasAssociationMembership: response.user.hasAssociationMembership,
-            residencePermit: response.user.residencePermit,
-            profilePhotoUrl: response.user.profilePhotoUrl,
-            avatar_url: response.user.avatar_url,
-            photo: response.user.photo,
-            isOnboardingComplete: true
-          }));
+          console.log('Raw user data before dispatch:', JSON.stringify(response.user, null, 2));
+          console.log('is_onboarding_complete value:', response.user.is_onboarding_complete);
+          dispatch(setUserData(response.user));
         }
       } else {
         setErrorMessage(response.message || 'Login failed');
@@ -312,4 +289,3 @@ const styles = StyleSheet.create({
   },
 });
 export default LoginScreen;
-

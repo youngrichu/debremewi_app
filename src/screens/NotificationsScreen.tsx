@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import React, { useEffect, useState, useCallback } from 'react';
+import { View, Text, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator, RefreshControl } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchNotifications, markNotificationAsRead } from '../store/slices/notificationsSlice';
 import { RootState, AppDispatch } from '../store';
@@ -7,6 +7,7 @@ import { format } from 'date-fns';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types';
+import { NotificationCard } from '../components/NotificationCard';
 
 type NotificationScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -14,38 +15,152 @@ export default function NotificationsScreen() {
   const dispatch = useDispatch<AppDispatch>();
   const navigation = useNavigation<NotificationScreenNavigationProp>();
   const { notifications, loading } = useSelector((state: RootState) => state.notifications);
+  const [refreshing, setRefreshing] = useState(false);
+  const REFRESH_INTERVAL = 30000; // 30 seconds
+  const [isAutoRefreshing, setIsAutoRefreshing] = useState(false);
+  const [localNotifications, setLocalNotifications] = useState(notifications);
 
   useEffect(() => {
-    dispatch(fetchNotifications());
+    setLocalNotifications(notifications);
+  }, [notifications]);
+
+  useEffect(() => {
+    let intervalId: NodeJS.Timeout;
+    let isMounted = true;
+
+    const autoRefresh = async () => {
+      if (!isAutoRefreshing) {
+        setIsAutoRefreshing(true);
+        try {
+          const result = await dispatch(fetchNotifications()).unwrap();
+          if (isMounted) {
+            setLocalNotifications(prev => {
+              if (JSON.stringify(prev) !== JSON.stringify(result.notifications)) {
+                return result.notifications;
+              }
+              return prev;
+            });
+          }
+        } catch (error) {
+          console.error('Auto-refresh failed:', error);
+        } finally {
+          if (isMounted) {
+            setIsAutoRefreshing(false);
+          }
+        }
+      }
+    };
+
+    if (!localNotifications.length) {
+      dispatch(fetchNotifications());
+    }
+
+    intervalId = setInterval(autoRefresh, REFRESH_INTERVAL);
+
+    return () => {
+      isMounted = false;
+      clearInterval(intervalId);
+    };
   }, [dispatch]);
 
-  const handleNotificationPress = async (notification: any) => {
+  const handleDeepLink = (url: string) => {
     try {
-      await markNotificationAsRead(notification.id);
+      const path = url.replace('dubaidebremewi://', '');
+      const [screen, id] = path.split('/');
       
-      if (notification.type === 'event') {
-        navigation.navigate('MainTabs', {
-          screen: 'Events',
-          params: {
-            screen: 'EventDetails',
-            params: { eventId: notification.reference_id }
-          }
-        });
-      } else if (notification.type === 'blog') {
-        navigation.navigate('MainTabs', {
-          screen: 'BlogPosts',
-          params: {
-            screen: 'BlogPostDetail',
-            params: { postId: notification.reference_id }
-          }
-        });
+      switch (screen) {
+        case 'events':
+          navigation.navigate('MainTabs', {
+            screen: 'Events',
+            params: {
+              screen: 'EventDetails',
+              params: { eventId: id }
+            }
+          });
+          break;
+        case 'blog':
+          navigation.navigate('MainTabs', {
+            screen: 'BlogPosts',
+            params: {
+              screen: 'BlogPostDetail',
+              params: { postId: id }
+            }
+          });
+          break;
+        case 'announcements':
+          navigation.navigate('MainTabs', {
+            screen: 'Announcements',
+            params: {
+              screen: 'AnnouncementDetail',
+              params: { id }
+            }
+          });
+          break;
+        default:
+          console.log('Unknown screen type:', screen);
       }
     } catch (error) {
-      console.error('Error handling notification:', error);
+      console.error('Error handling deep link:', error);
     }
   };
 
-  if (loading) {
+  const handleNotificationPress = async (notification: any) => {
+    try {
+      console.log('Notification pressed:', notification);
+      
+      const navigateToContent = () => {
+        if (notification.type === 'event' && notification.reference_id) {
+          console.log('Navigating to event:', notification.reference_id);
+          navigation.navigate('EventDetails', { 
+            eventId: notification.reference_id 
+          });
+          return true;
+        }
+
+        if (notification.type === 'blog_post' && notification.reference_id) {
+          console.log('Navigating to blog post:', notification.reference_id);
+          navigation.navigate('BlogPostDetail', { 
+            postId: notification.reference_id 
+          });
+          return true;
+        }
+
+        if (notification.reference_url) {
+          console.log('Handling deep link:', notification.reference_url);
+          handleDeepLink(notification.reference_url);
+          return true;
+        }
+
+        console.log('No navigation path found');
+        return false;
+      };
+
+      const navigationSuccessful = navigateToContent();
+
+      await dispatch(markNotificationAsRead(notification.id)).unwrap();
+      console.log('Notification marked as read:', notification.id);
+
+      if (!navigationSuccessful) {
+        console.log('Navigation not handled');
+      }
+    } catch (error) {
+      console.error('Error handling notification press:', error);
+    }
+  };
+
+  const handleRefresh = useCallback(async () => {
+    if (!refreshing && !isAutoRefreshing) {
+      setRefreshing(true);
+      try {
+        const result = await dispatch(fetchNotifications()).unwrap();
+        setLocalNotifications(result.notifications);
+      } finally {
+        setRefreshing(false);
+      }
+    }
+  }, [dispatch, refreshing, isAutoRefreshing]);
+
+  if (loading && !localNotifications.length && !refreshing && !isAutoRefreshing) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#2196F3" />
@@ -56,35 +171,29 @@ export default function NotificationsScreen() {
   return (
     <View style={styles.container}>
       <FlatList
-        data={notifications}
+        data={localNotifications}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[
-              styles.notificationItem,
-              item.is_read === '0' && styles.unreadNotification
-            ]}
+          <NotificationCard
+            notification={item}
             onPress={() => handleNotificationPress(item)}
-          >
-            <View style={styles.notificationContent}>
-              <Text style={[
-                styles.title,
-                item.is_read === '0' && styles.unreadTitle
-              ]}>
-                {item.title}
-              </Text>
-              <Text style={styles.body}>{item.body}</Text>
-              <Text style={styles.date}>
-                {format(new Date(item.created_at), 'dd/MM/yyyy')}
-              </Text>
-            </View>
-          </TouchableOpacity>
+          />
         )}
+        refreshControl={
+          <RefreshControl 
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            colors={["#2196F3"]}
+            tintColor="#2196F3"
+            progressBackgroundColor="#ffffff"
+          />
+        }
         ListEmptyComponent={
           <View style={styles.emptyContainer}>
             <Text style={styles.emptyText}>No notifications</Text>
           </View>
         }
+        contentContainerStyle={!localNotifications.length ? { flex: 1 } : undefined}
       />
     </View>
   );
@@ -100,46 +209,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  notificationItem: {
-    backgroundColor: '#fff',
-    marginHorizontal: 16,
-    marginVertical: 8,
-    borderRadius: 8,
-    overflow: 'hidden',
-    elevation: 2,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-  },
-  unreadNotification: {
-    backgroundColor: '#f0f9ff',
-    borderLeftWidth: 4,
-    borderLeftColor: '#2196F3',
-  },
-  notificationContent: {
-    padding: 16,
-  },
-  title: {
-    fontSize: 16,
-    fontWeight: '500',
-    color: '#333',
-    marginBottom: 8,
-  },
-  unreadTitle: {
-    fontWeight: 'bold',
-    color: '#000',
-  },
-  body: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 8,
-    lineHeight: 20,
-  },
-  date: {
-    fontSize: 12,
-    color: '#999',
-  },
   emptyContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -150,4 +219,4 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
   },
-}); 
+});

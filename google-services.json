@@ -1,0 +1,30 @@
+
+{
+    "project_info": {
+      "project_number": "765460220043",
+      "project_id": "dubai-debremewi-app",
+      "storage_bucket": "dubai-debremewi-app.firebasestorage.app"
+    },
+    "client": [
+      {
+        "client_info": {
+          "mobilesdk_app_id": "1:765460220043:android:c9c38fc21ec978a43eec8e",
+          "android_client_info": {
+            "package_name": "com.debremewi.church"
+          }
+        },
+        "oauth_client": [],
+        "api_key": [
+          {
+            "current_key": "AIzaSyAXVGm0MhdSnhuRXeWIb1ymRrCdJ1_9KxM"
+          }
+        ],
+        "services": {
+          "appinvite_service": {
+            "other_platform_oauth_client": []
+          }
+        }
+      }
+    ],
+    "configuration_version": "1"
+  }

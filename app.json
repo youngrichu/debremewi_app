@@ -25,7 +25,26 @@
         "LSApplicationQueriesSchemes": [
           "calshow"
         ],
-        "ExpoLocalization_supportsRTL": true
+        "ExpoLocalization_supportsRTL": true,
+        "aps": {
+          "alert": {
+            "badge": 1,
+            "sound": true
+          },
+          "categories": {
+            "event": {
+              "actions": [
+                {
+                  "identifier": "view",
+                  "title": "View",
+                  "options": {
+                    "foreground": true
+                  }
+                }
+              ]
+            }
+          }
+        }
       },
       "bundleIdentifier": "com.debremewi.church"
     },
@@ -34,22 +53,36 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.churchapp",
+      "package": "com.debremewi.church",
       "permissions": [
         "READ_CALENDAR",
         "WRITE_CALENDAR",
         "android.permission.READ_CALENDAR",
-        "android.permission.WRITE_CALENDAR"
-      ]
+        "android.permission.WRITE_CALENDAR",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.VIBRATE",
+        "android.permission.WAKE_LOCK"
+      ],
+      "googleServicesFile": "./google-services.json",
+      "useNextNotificationsApi": true
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "scheme": "dubaidebremewi",
     "plugins": [
       [
         "expo-calendar",
         {
           "calendarPermission": "The app needs to access your calendar to add events."
+        }
+      ],
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#ffffff",
+          "sounds": ["./assets/notification-sound.wav"]
         }
       ],
       "expo-localization"
@@ -59,6 +92,7 @@
       "eas": {
         "projectId": "6985e10d-9694-4f7e-a16f-7fb1cfdc8ef1"
       }
-    }
+    },
+    "owner": "habtilo"
   }
 }

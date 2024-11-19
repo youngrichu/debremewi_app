@@ -4,7 +4,7 @@ export interface User {
   id: number;
   email: string;
   username: string;
-  isOnboardingComplete?: boolean;
+  is_onboarding_complete?: boolean;
 }
 
 export interface Post {
@@ -15,77 +15,89 @@ export interface Post {
 }
 
 export type RootStackParamList = {
+  // Auth Stack
   Login: undefined;
   Register: undefined;
   ForgotPassword: undefined;
-  Onboarding: undefined;
-  MainTabs: undefined;
-  Notifications: undefined;
   NewPassword: { token: string; email: string };
-  Home: undefined;
-  HomeStack: {
-    screen: string;
+  
+  // Onboarding
+  Onboarding: undefined;
+  
+  // Main Navigation
+  MainTabs: {
+    screen?: string;
     params?: {
-      eventId?: string;
-      postId?: string;
+      screen?: string;
+      params?: {
+        eventId?: string;
+        postId?: string;
+        id?: string;
+      };
     };
   };
-  EventDetails: { eventId: string };
-  BlogPostDetail: { postId: string };
-  EditProfile: undefined;
+  
+  // Tab Screens
+  HomeStack: undefined;
+  Events: undefined;
+  BlogPosts: undefined;
+  Announcements: undefined;
+  Profile: undefined;
+  More: undefined;
+  
+  // Event Stack
   EventsList: undefined;
-  BlogPostsList: undefined;
+  EventDetails: { eventId: string };
+  
+  // Blog Stack
+  BlogList: undefined;
+  BlogPostDetail: { postId: string };
+  
+  // Announcement Stack
+  AnnouncementsList: undefined;
+  AnnouncementDetail: { id: string };
+  
+  // Profile Related
+  EditProfile: undefined;
+  
+  // More Menu
   MoreMenu: undefined;
   'About Us': undefined;
   Services: undefined;
   'Contact Us': undefined;
   Location: undefined;
-  BlogPosts: undefined;
-  Events: undefined;
-  Profile: undefined;
-  More: undefined;
-  EventStack: {
-    screen: string;
-    params?: {
-      eventId?: string;
-    };
-  };
-  BlogStack: {
-    screen: string;
-    params?: {
-      postId?: string;
-    };
-  };
+  
+  // Notifications
+  Notifications: undefined;
 };
 
 export interface UserProfile {
   id: number;
-  username: string;
   email: string;
+  username: string;
   firstName: string;
   lastName: string;
-  phoneNumber: string;
-  gender: string;
   christianName: string;
-  residencyCity: string;
-  isOnboardingComplete: boolean;
+  gender: string;
   maritalStatus: string;
-  hasChildren: string;
-  numberOfChildren: string;
+  educationLevel: string;
+  occupation: string;
+  phoneNumber: string;
+  residencyCity: string;
+  residenceAddress: string;
+  emergencyContact: string;
   christianLife: string;
   serviceAtParish: string;
   ministryService: string;
   hasFatherConfessor: string;
   fatherConfessorName: string;
   hasAssociationMembership: string;
-  associationName: string;
-  profilePhoto: string;
-  profilePhotoUrl: string;
-  residenceAddress: string;
-  educationLevel: string;
-  occupation: string;
-  emergencyContact: string;
   residencePermit: string;
+  profilePhotoUrl?: string;
+  avatar_url?: string;
+  photo?: string;
+  isOnboardingComplete?: boolean;
+  is_onboarding_complete?: boolean;
 }
 
 export type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Profile'>;

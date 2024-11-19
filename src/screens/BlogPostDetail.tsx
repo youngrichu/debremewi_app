@@ -113,10 +113,12 @@ export default function BlogPostDetail({ route }: BlogPostDetailProps) {
     setIsImageViewVisible(true);
   }, []);
 
+  const renderFigure = useCallback((props: CustomRendererProps<TRenderEngineConfig>) => (
+    <CustomFigureRenderer {...props} onImagePress={handleImagePress} />
+  ), [handleImagePress]);
+
   const renderers = {
-    figure: useCallback((props: CustomRendererProps<TRenderEngineConfig>) => (
-      <CustomFigureRenderer {...props} onImagePress={handleImagePress} />
-    ), [handleImagePress])
+    figure: renderFigure
   };
 
   const customHTMLElementModels = {
@@ -331,4 +333,4 @@ const styles = StyleSheet.create({
   scrollContent: {
     flexGrow: 1,
   },
-}); 
+});

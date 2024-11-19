@@ -1,18 +1,13 @@
 import React, { useEffect } from 'react';
-
 import { createStackNavigator } from '@react-navigation/stack';
-
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
 import { useSelector } from 'react-redux';
-
 import { Ionicons } from '@expo/vector-icons';
-
 import { RootState } from '../store';
-
 import { TouchableOpacity, View } from 'react-native';
-
 import { useTranslation } from 'react-i18next';
+import { registerForPushNotificationsAsync } from '../services/pushNotifications';
+import { StatusBar } from 'react-native';
 
 // Import screens
 import HomeScreen from '../screens/HomeScreen';
@@ -40,7 +35,9 @@ import { LanguageSelector } from '../components/LanguageSelector';
 const Stack = createStackNavigator<RootStackParamList>();
 const EventStack = createStackNavigator<RootStackParamList>();
 const BlogStack = createStackNavigator<RootStackParamList>();
+const AnnouncementStack = createStackNavigator<RootStackParamList>();
 const Tab = createBottomTabNavigator<RootStackParamList>();
+const MoreStack = createStackNavigator();
 
 // Add EventStack navigator
 function EventStackScreen() {
@@ -67,8 +64,72 @@ function EventStackScreen() {
   );
 }
 
+function BlogStackScreen() {
+  const { t } = useTranslation();
+
+  return (
+    <BlogStack.Navigator>
+      <BlogStack.Screen 
+        name="BlogList" 
+        component={BlogPostsScreen}
+        options={{ 
+          headerShown: false 
+        }}
+      />
+      <BlogStack.Screen 
+        name="BlogPostDetail" 
+        component={BlogPostDetail}
+        options={{
+          headerShown: true,
+          title: t('navigation.screens.blogPostDetail')
+        }}
+      />
+    </BlogStack.Navigator>
+  );
+}
+
+function AnnouncementStackScreen() {
+  const { t } = useTranslation();
+
+  return (
+    <AnnouncementStack.Navigator>
+      <AnnouncementStack.Screen 
+        name="AnnouncementsList" 
+        component={CommunityScreen}
+        options={{ 
+          headerShown: false 
+        }}
+      />
+      <AnnouncementStack.Screen 
+        name="AnnouncementDetail" 
+        component={CommunityScreen}
+        options={{
+          headerShown: true,
+          title: t('navigation.screens.announcementDetail')
+        }}
+      />
+    </AnnouncementStack.Navigator>
+  );
+}
+
 function MainTabs() {
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const initNotifications = async () => {
+      try {
+        console.log('Initializing notifications in MainTabs...');
+        const token = await registerForPushNotificationsAsync();
+        if (token) {
+          console.log('Got push token:', token);
+        }
+      } catch (error) {
+        console.error('Error initializing notifications:', error);
+      }
+    };
+
+    initNotifications();
+  }, []);
 
   return (
     <Tab.Navigator
@@ -142,15 +203,8 @@ function MainTabs() {
       <Tab.Screen 
         name="More" 
         component={MoreStackScreen}
-        options={{
-          title: t('navigation.tabs.more'),
-          tabBarIcon: ({ focused, color, size }) => (
-            <Ionicons 
-              name={focused ? 'menu' : 'menu-outline'} 
-              size={size} 
-              color={color} 
-            />
-          ),
+        options={{ 
+          title: t('navigation.tabs.more')
         }}
       />
     </Tab.Navigator>
@@ -193,8 +247,6 @@ function HomeStackScreen() {
     </Stack.Navigator>
   );
 }
-
-const MoreStack = createStackNavigator();
 
 function MoreStackScreen() {
   const { t } = useTranslation();
@@ -240,123 +292,132 @@ function MoreStackScreen() {
   );
 }
 
-// Add a new stack navigator for Blog
-function BlogStackScreen() {
-  const { t } = useTranslation();
-
-  return (
-    <BlogStack.Navigator>
-      <BlogStack.Screen 
-        name="BlogPostsList" 
-        component={BlogPostsScreen}
-        options={{ 
-          headerShown: false 
-        }}
-      />
-      <BlogStack.Screen 
-        name="BlogPostDetail" 
-        component={BlogPostDetail}
-        options={{
-          headerShown: true,
-          title: t('navigation.screens.blogPostDetail')
-        }}
-      />
-    </BlogStack.Navigator>
-  );
-}
-
 export default function AppNavigator() {
   const { t } = useTranslation();
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);
-  const user = useSelector((state: RootState) => state.user);
+  const { userData } = useSelector((state: RootState) => state.user);
 
-  // Safely access isOnboardingComplete with a default value
-  const isOnboardingComplete = user?.isOnboardingComplete ?? false;
+  // Debug logging
+  console.log('Auth state:', { isAuthenticated });
+  console.log('User data:', userData);
+  
+  const isOnboardingComplete = userData?.isOnboardingComplete ?? userData?.is_onboarding_complete ?? false;
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      {!isAuthenticated ? (
-        // Auth Stack
-        <>
+    <>
+      <StatusBar
+        barStyle="dark-content"
+        backgroundColor="transparent"
+        translucent={true}
+      />
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
+        {!isAuthenticated ? (
+          // Auth Stack
+          <>
+            <Stack.Screen 
+              name="Login" 
+              component={LoginScreen}
+              options={{
+                headerShown: true,
+                title: t('navigation.screens.login'),
+                headerRight: () => <LanguageSelector />,
+                headerRightContainerStyle: { paddingRight: 15 },
+              }}
+            />
+            <Stack.Screen 
+              name="Register" 
+              component={RegisterScreen}
+              options={{
+                headerShown: true,
+                title: t('navigation.screens.register'),
+                headerRight: () => <LanguageSelector />,
+                headerRightContainerStyle: { paddingRight: 15 },
+              }}
+            />
+            <Stack.Screen 
+              name="ForgotPassword" 
+              component={ForgotPasswordScreen}
+              options={{
+                headerShown: true,
+                title: t('navigation.screens.forgotPassword'),
+                headerRight: () => <LanguageSelector />,
+                headerRightContainerStyle: { paddingRight: 15 },
+              }}
+            />
+          </>
+        ) : !isOnboardingComplete ? (
+          // Onboarding Stack
           <Stack.Screen 
-            name="Login" 
-            component={LoginScreen}
+            name="Onboarding" 
+            component={OnboardingScreen}
             options={{
               headerShown: true,
-              title: t('navigation.screens.login'),
+              title: t('navigation.screens.onboarding'),
               headerRight: () => <LanguageSelector />,
               headerRightContainerStyle: { paddingRight: 15 },
             }}
           />
-          <Stack.Screen 
-            name="Register" 
-            component={RegisterScreen}
-            options={{
-              headerShown: true,
-              title: t('navigation.screens.register'),
-              headerRight: () => <LanguageSelector />,
-              headerRightContainerStyle: { paddingRight: 15 },
-            }}
-          />
-          <Stack.Screen 
-            name="ForgotPassword" 
-            component={ForgotPasswordScreen}
-            options={{
-              headerShown: true,
-              title: t('navigation.screens.forgotPassword'),
-              headerRight: () => <LanguageSelector />,
-              headerRightContainerStyle: { paddingRight: 15 },
-            }}
-          />
-        </>
-      ) : !isOnboardingComplete ? (
-        // Onboarding Stack
+        ) : (
+          // Main App Stack
+          <>
+            <Stack.Screen 
+              name="MainTabs" 
+              component={MainTabs}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen 
+              name="Notifications" 
+              component={NotificationsScreen}
+              options={{
+                headerShown: true,
+                title: t('navigation.screens.notifications'),
+                headerRight: () => <LanguageSelector />,
+                headerRightContainerStyle: { paddingRight: 15 },
+              }}
+            />
+            <Stack.Screen 
+              name="EventDetails" 
+              component={EventDetailsScreen}
+              options={{
+                headerShown: true,
+                title: t('navigation.screens.eventDetails'),
+                headerRight: () => <LanguageSelector />,
+                headerRightContainerStyle: { paddingRight: 15 },
+              }}
+            />
+            <Stack.Screen 
+              name="BlogPostDetail" 
+              component={BlogPostDetail}
+              options={{
+                headerShown: true,
+                title: t('navigation.screens.blogPostDetail'),
+                headerRight: () => <LanguageSelector />,
+                headerRightContainerStyle: { paddingRight: 15 },
+              }}
+            />
+            <Stack.Screen 
+              name="AnnouncementDetail" 
+              component={CommunityScreen}
+              options={{
+                headerShown: true,
+                title: t('navigation.screens.announcementDetail'),
+                headerRight: () => <LanguageSelector />,
+                headerRightContainerStyle: { paddingRight: 15 },
+              }}
+            />
+          </>
+        )}
         <Stack.Screen 
-          name="Onboarding" 
-          component={OnboardingScreen}
+          name="NewPassword" 
+          component={NewPasswordScreen}
           options={{
             headerShown: true,
-            title: t('navigation.screens.onboarding'),
+            title: t('navigation.screens.newPassword'),
             headerRight: () => <LanguageSelector />,
             headerRightContainerStyle: { paddingRight: 15 },
           }}
         />
-      ) : (
-        // Main App Stack
-        <>
-          <Stack.Screen 
-            name="MainTabs" 
-            component={MainTabs}
-            options={{ headerShown: false }}
-          />
-          <Stack.Screen 
-            name="Notifications" 
-            component={NotificationsScreen}
-            options={{
-              headerShown: true,
-              title: t('navigation.screens.notifications'),
-              headerRight: () => <LanguageSelector />,
-              headerRightContainerStyle: { paddingRight: 15 },
-            }}
-          />
-        </>
-      )}
-      <Stack.Screen 
-        name="NewPassword" 
-        component={NewPasswordScreen}
-        options={{
-          headerShown: true,
-          title: t('navigation.screens.newPassword'),
-          headerRight: () => <LanguageSelector />,
-          headerRightContainerStyle: { paddingRight: 15 },
-        }}
-      />
-    </Stack.Navigator>
+      </Stack.Navigator>
+    </>
   );
 }
-
-
-
-
-
-

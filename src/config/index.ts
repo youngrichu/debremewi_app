@@ -8,7 +8,7 @@ export const EXPO_PROJECT_ID = 'your-project-id';  // Your Expo project ID
 export const ENDPOINTS = {
   notifications: '/wp-json/church-app/v1/notifications/',
   notificationRead: (id: string) => `/wp-json/church-app/v1/notifications/${id}/read/`,
-  registerToken: '/wp-json/simple-jwt-login/v1/notifications/register-token/',
+  registerToken: '/wp-json/church-app/v1/notifications/register-token/',
 };
 
 // API configuration

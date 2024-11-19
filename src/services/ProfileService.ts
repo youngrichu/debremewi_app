@@ -57,44 +57,27 @@ export class ProfileService {
         throw new Error('No authentication token found');
       }
 
+      console.log('Fetching profile with token:', token);
       const response = await apiClient.get('/wp-json/church-mobile/v1/user-profile');
+      
+      console.log('Raw profile response from getProfile:', JSON.stringify(response.data, null, 2));
       
       if (!response.data?.success) {
         throw new Error(response.data?.message || 'Failed to get profile');
       }
 
+      // Log the raw user data
+      console.log('Raw user data from getProfile:', JSON.stringify(response.data.user, null, 2));
+
       // Transform the response data to match your UserProfile interface
       const userData = {
-        id: response.data.user.id,
-        email: response.data.user.email,
-        username: response.data.user.username,
-        firstName: response.data.user.firstName,
-        lastName: response.data.user.lastName,
-        christianName: response.data.user.christianName,
-        gender: response.data.user.gender,
-        maritalStatus: response.data.user.maritalStatus,
-        hasChildren: response.data.user.hasChildren,
-        numberOfChildren: response.data.user.numberOfChildren,
-        educationLevel: response.data.user.educationLevel,
-        occupation: response.data.user.occupation,
-        phoneNumber: response.data.user.phoneNumber,
-        residencyCity: response.data.user.residencyCity,
-        residenceAddress: response.data.user.residenceAddress,
-        emergencyContact: response.data.user.emergencyContact,
-        christianLife: response.data.user.christianLife,
-        serviceAtParish: response.data.user.serviceAtParish,
-        ministryService: response.data.user.ministryService,
-        hasFatherConfessor: response.data.user.hasFatherConfessor,
-        fatherConfessorName: response.data.user.fatherConfessorName,
-        hasAssociationMembership: response.data.user.hasAssociationMembership,
-        associationName: response.data.user.associationName,
-        residencePermit: response.data.user.residencePermit,
+        ...response.data.user,
+        // Ensure both field names are present
         isOnboardingComplete: response.data.user.isOnboardingComplete,
-        // Photo fields
-        profilePhoto: response.data.user.profilePhoto,
-        profilePhotoUrl: response.data.user.profilePhotoUrl,
+        is_onboarding_complete: response.data.user.isOnboardingComplete,
       };
 
+      console.log('Transformed user data:', JSON.stringify(userData, null, 2));
       return userData;
     } catch (error) {
       console.error('Get profile error:', {

@@ -27,7 +27,7 @@ interface UserProfile {
   profilePhotoUrl?: string;
   avatar_url?: string;
   photo?: string;
-  isOnboardingComplete?: boolean;
+  is_onboarding_complete?: boolean;
 }
 
 interface LoginResponse {
@@ -52,13 +52,13 @@ export const login = async (email: string, password: string): Promise<LoginRespo
       AUTH_KEY: 'debremewi'
     });
 
+    console.log('Raw login response:', JSON.stringify(response.data, null, 2));
+
     if (response.data.success) {
       const token = response.data.data?.jwt || response.data.jwt;
       await AsyncStorage.setItem('userToken', token);
 
-      // Decode token to get user ID
-      const tokenData = JSON.parse(atob(token.split('.')[1])) as TokenData;
-
+      // Set headers for subsequent requests
       const headers = {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -66,46 +66,23 @@ export const login = async (email: string, password: string): Promise<LoginRespo
       };
 
       try {
-        const userProfileResponse = await axios.get<{ success: boolean; user: UserProfile }>(
+        console.log('Fetching user profile...');
+        const userProfileResponse = await axios.get(
           `${API_URL}/wp-json/church-mobile/v1/user-profile`,
           { headers }
         );
 
+        console.log('Raw profile API response:', JSON.stringify(userProfileResponse.data, null, 2));
+
         if (userProfileResponse.data.success && userProfileResponse.data.user) {
           const profileData = userProfileResponse.data.user;
+          console.log('Raw profile data from API:', JSON.stringify(profileData, null, 2));
 
-          const userData: UserProfile = {
-            id: Number(profileData.id),
-            email: profileData.email,
-            username: profileData.username,
-            firstName: profileData.firstName || '',
-            lastName: profileData.lastName || '',
-            christianName: profileData.christianName || '',
-            gender: profileData.gender || '',
-            maritalStatus: profileData.maritalStatus || '',
-            educationLevel: profileData.educationLevel || '',
-            occupation: profileData.occupation || '',
-            phoneNumber: profileData.phoneNumber || '',
-            residencyCity: profileData.residencyCity || '',
-            residenceAddress: profileData.residenceAddress || '',
-            emergencyContact: profileData.emergencyContact || '',
-            christianLife: profileData.christianLife || '',
-            serviceAtParish: profileData.serviceAtParish || '',
-            ministryService: profileData.ministryService || '',
-            hasFatherConfessor: profileData.hasFatherConfessor || '',
-            fatherConfessorName: profileData.fatherConfessorName || '',
-            hasAssociationMembership: profileData.hasAssociationMembership || '',
-            residencePermit: profileData.residencePermit || '',
-            profilePhotoUrl: profileData.profilePhoto || profileData.profilePhotoUrl,
-            avatar_url: profileData.profilePhoto || profileData.profilePhotoUrl,
-            photo: profileData.profilePhoto || profileData.profilePhotoUrl,
-            isOnboardingComplete: profileData.isOnboardingComplete
-          };
-
+          // Return the raw profile data without transformation
           return {
             success: true,
             token,
-            user: userData
+            user: profileData
           };
         }
 
@@ -139,6 +116,7 @@ export const login = async (email: string, password: string): Promise<LoginRespo
         };
 
       } catch (error) {
+        console.error('Profile fetch error:', error);
         // Return basic user data from token if profile fetch fails
         return {
           success: true,
@@ -176,6 +154,7 @@ export const login = async (email: string, password: string): Promise<LoginRespo
     };
 
   } catch (error) {
+    console.error('Login error:', error.response?.data || error.message);
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 404) {
         return {
