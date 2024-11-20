@@ -28,8 +28,7 @@
         "ExpoLocalization_supportsRTL": true,
         "aps": {
           "alert": {
-            "badge": 1,
-            "sound": true
+            "badge": 1
           },
           "categories": {
             "event": {
@@ -81,8 +80,7 @@
         "expo-notifications",
         {
           "icon": "./assets/notification-icon.png",
-          "color": "#ffffff",
-          "sounds": ["./assets/notification-sound.wav"]
+          "color": "#ffffff"
         }
       ],
       "expo-localization"
