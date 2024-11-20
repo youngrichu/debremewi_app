@@ -28,11 +28,12 @@ type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'
 
 interface LoginScreenProps {
   navigation: LoginScreenNavigationProp;
+  route: any;
 }
 
-const LoginScreen = ({ navigation }: LoginScreenProps) => {
+const LoginScreen = ({ navigation, route }: LoginScreenProps) => {
   const dispatch = useDispatch();
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(route.params?.email || '');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -42,10 +43,10 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   const validateLogin = (email: string, password: string): string | null => {
-    if (!email.trim()) return 'Email is required';
-    if (!/\S+@\S+\.\S+/.test(email)) return 'Email is invalid';
-    if (!password) return 'Password is required';
-    if (password.length < 6) return 'Password must be at least 6 characters';
+    if (!email.trim()) return t('validation.required.email');
+    if (!/\S+@\S+\.\S+/.test(email)) return t('validation.invalid.email');
+    if (!password) return t('validation.required.password');
+    if (password.length < 6) return t('validation.invalid.password.minLength');
     return null;
   };
 
@@ -80,11 +81,11 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
           dispatch(setUserData(response.user));
         }
       } else {
-        setErrorMessage(response.message || 'Login failed');
+        setErrorMessage(t('auth.login.errors.loginFailed'));
       }
     } catch (error) {
       console.error('Login error:', error);
-      setErrorMessage(error instanceof Error ? error.message : 'Login failed');
+      setErrorMessage(t('auth.login.errors.loginFailed'));
     } finally {
       setLoading(false);
     }
@@ -178,7 +179,7 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
             </View>
 
             {errorMessage ? (
-              <Text style={styles.errorText}>{t(`auth.login.errors.${errorMessage}`)}</Text>
+              <Text style={styles.errorText}>{errorMessage}</Text>
             ) : null}
 
             <TouchableOpacity

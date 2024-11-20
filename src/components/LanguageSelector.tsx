@@ -21,13 +21,50 @@ export function LanguageSelector() {
     }
   };
 
+  const getCurrentLanguageDisplay = () => {
+    const currentLanguage = i18n.language;
+    // Show the opposite language code of what's currently selected
+    return currentLanguage === 'en' ? 'አማ' : 'EN';
+  };
+
+  const getLanguageStyle = (language: string, isButton: boolean = false) => {
+    if (isButton) {
+      // Style for modal buttons
+      return {
+        backgroundColor: i18n.language === language ? '#f0f0f0' : 'transparent',
+        color: '#333333'
+      };
+    }
+    // Style for circular indicator
+    if (language === 'en') {
+      return {
+        backgroundColor: '#2196F3', // Primary blue color
+        color: '#ffffff'
+      };
+    }
+    return {
+      backgroundColor: '#2196F3', // Primary blue color
+      color: '#ffffff'
+    };
+  };
+
   return (
     <>
       <TouchableOpacity 
         onPress={() => setModalVisible(true)}
-        style={styles.iconButton}
+        style={styles.container}
       >
-        <Ionicons name="language" size={24} color="#2196F3" />
+        <View style={[
+          styles.flagButton,
+          getLanguageStyle(i18n.language)
+        ]}>
+          <Text style={[
+            styles.languageText,
+            { color: getLanguageStyle(i18n.language).color }
+          ]}>
+            {getCurrentLanguageDisplay()}
+          </Text>
+        </View>
       </TouchableOpacity>
 
       <Modal
@@ -37,32 +74,45 @@ export function LanguageSelector() {
         onRequestClose={() => setModalVisible(false)}
       >
         <TouchableOpacity 
-          style={styles.modalOverlay}
+          style={styles.modalContainer}
           activeOpacity={1}
           onPress={() => setModalVisible(false)}
         >
           <View style={styles.modalContent}>
             <TouchableOpacity 
-              style={[styles.languageOption, i18n.language === 'en' && styles.selectedOption]}
+              style={[
+                styles.languageOption,
+                getLanguageStyle('en', true),
+                i18n.language === 'en' && styles.selectedOption
+              ]}
               onPress={() => handleLanguageChange('en')}
             >
-              <Text style={[styles.languageText, i18n.language === 'en' && styles.selectedText]}>
-                🇺🇸 English
+              <Text style={[
+                styles.languageOptionText,
+                i18n.language === 'en' && styles.selectedText
+              ]}>
+                English
               </Text>
               {i18n.language === 'en' && (
-                <Ionicons name="checkmark" size={20} color="#2196F3" />
+                <Ionicons name="checkmark" size={20} color="#2196F3" style={styles.checkIcon} />
               )}
             </TouchableOpacity>
-            
             <TouchableOpacity 
-              style={[styles.languageOption, i18n.language === 'am' && styles.selectedOption]}
+              style={[
+                styles.languageOption,
+                getLanguageStyle('am', true),
+                i18n.language === 'am' && styles.selectedOption
+              ]}
               onPress={() => handleLanguageChange('am')}
             >
-              <Text style={[styles.languageText, i18n.language === 'am' && styles.selectedText]}>
-                🇪🇹 አማርኛ
+              <Text style={[
+                styles.languageOptionText,
+                i18n.language === 'am' && styles.selectedText
+              ]}>
+                አማርኛ
               </Text>
               {i18n.language === 'am' && (
-                <Ionicons name="checkmark" size={20} color="#2196F3" />
+                <Ionicons name="checkmark" size={20} color="#2196F3" style={styles.checkIcon} />
               )}
             </TouchableOpacity>
           </View>
@@ -73,14 +123,26 @@ export function LanguageSelector() {
 }
 
 const styles = StyleSheet.create({
-  iconButton: {
-    padding: 8,
+  container: {
+    marginRight: 10,
   },
-  modalOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  flagButton: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'hidden',
+  },
+  languageText: {
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
     backgroundColor: 'white',
@@ -90,22 +152,26 @@ const styles = StyleSheet.create({
     maxWidth: 300,
   },
   languageOption: {
+    padding: 12,
+    marginVertical: 4,
+    borderRadius: 8,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 16,
-    paddingHorizontal: 12,
-    borderRadius: 8,
   },
   selectedOption: {
-    backgroundColor: '#F5F9FF',
+    backgroundColor: '#f0f0f0',
   },
-  languageText: {
+  languageOptionText: {
     fontSize: 16,
-    color: '#333',
+    fontWeight: '500',
+    color: '#333333',
   },
   selectedText: {
     color: '#2196F3',
     fontWeight: '600',
   },
-}); 
+  checkIcon: {
+    marginLeft: 8,
+  }
+});

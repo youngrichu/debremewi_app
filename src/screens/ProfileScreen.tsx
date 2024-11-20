@@ -19,9 +19,22 @@ const formatDisplayValue = (value: string | null | undefined, options?: { [key: 
     return options[value];
   }
 
+  // Special case for "Media and IT"
+  if (value === 'media_and_it') {
+    return 'Media and IT';
+  }
+
+  // Replace underscores with spaces and capitalize each word
   return value
     .split('_')
-    .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
+    .map(word => {
+      // Keep "IT" uppercase
+      if (word.toLowerCase() === 'it') {
+        return 'IT';
+      }
+      // Regular capitalization for other words
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    })
     .join(' ');
 };
 

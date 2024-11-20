@@ -45,6 +45,11 @@ interface TokenData {
   iat: number;
 }
 
+interface RegisterResponse {
+  success: boolean;
+  message?: string;
+}
+
 export const login = async (email: string, password: string): Promise<LoginResponse> => {
   try {
     // Step 1: Get JWT token
@@ -113,6 +118,62 @@ export const login = async (email: string, password: string): Promise<LoginRespo
     console.error('Login error:', error);
     await AsyncStorage.removeItem('userToken');
     throw new Error(error.response?.data?.message || error.message || 'Login failed');
+  }
+};
+
+export const register = async (userData: {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+}): Promise<RegisterResponse> => {
+  try {
+    // Step 1: Register the user using WordPress registration endpoint
+    const response = await axios.post(`${API_URL}/wp-json/simple-jwt-login/v1/users`, {
+      email: userData.email,
+      password: userData.password,
+      username: userData.email,
+      first_name: userData.firstName,
+      last_name: userData.lastName,
+      AUTH_KEY: 'debremewi'
+    });
+
+    if (response.data.success || response.data.data?.id) {
+      return {
+        success: true,
+        message: 'Registration successful'
+      };
+    } else {
+      return {
+        success: false,
+        message: response.data.message || 'Registration failed'
+      };
+    }
+  } catch (error) {
+    console.error('Registration API error:', error);
+    if (axios.isAxiosError(error)) {
+      // Handle WordPress specific error messages
+      const wpError = error.response?.data?.data?.message || 
+                     error.response?.data?.message ||
+                     'Registration failed. Please try again.';
+      
+      // Check for common WordPress registration errors
+      if (wpError.includes('already exists')) {
+        return {
+          success: false,
+          message: 'This email is already registered. Please try logging in.'
+        };
+      }
+      
+      return {
+        success: false,
+        message: wpError
+      };
+    }
+    return {
+      success: false,
+      message: 'Registration failed. Please try again.'
+    };
   }
 };
 

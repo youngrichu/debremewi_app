@@ -87,12 +87,19 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
   const handleShare = async () => {
     if (event) {
       try {
+        // Construct the event URL
+        const eventUrl = `https://dubaidebremewi.com/events/${event.id}`;
+        
+        const shareMessage = t('events.details.share.message', {
+          title: event.title,
+          date: format(new Date(event.date), 'PPP'),
+          location: event.location,
+        });
+
         await Share.share({
-          message: t('events.details.share.message', {
-            title: event.title,
-            date: format(new Date(event.date), 'PPP'),
-            location: event.location
-          }),
+          message: `${shareMessage}\n\n${eventUrl}`,
+          url: eventUrl, // This will be used on iOS when sharing to certain apps
+          title: event.title, // This will be used as the subject on Android
         });
       } catch (error) {
         console.error('Error sharing event:', error);

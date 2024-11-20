@@ -22,7 +22,6 @@ import { RootState } from '../store';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { Text } from '../components/Text';
-import { LanguageSelector } from '../components/LanguageSelector';
 
 // Import the same constants and options from OnboardingScreen
 import {
@@ -349,8 +348,7 @@ export default function EditProfileScreen() {
     <View style={styles.container}>
       <LinearGradient colors={['#2196F3', '#1976D2']} style={styles.gradient}>
         <View style={styles.header}>
-          <Text style={[styles.headerText, { flex: 1, textAlign: 'center' }]}>{t('profile.editProfile')}</Text>
-          <LanguageSelector />
+          <Text style={styles.headerText}>{t('profile.editProfile')}</Text>
         </View>
 
         <KeyboardAvoidingView 
@@ -367,19 +365,23 @@ export default function EditProfileScreen() {
           >
             {/* Photo Upload Section */}
             <View style={styles.photoSection}>
-              <TouchableOpacity onPress={pickImage}>
+              <TouchableOpacity style={styles.photoContainer} onPress={pickImage}>
                 {(formData.photo || formData.profile_photo || formData.profile_photo_url || formData.avatar_url) ? (
-                  <Image 
-                    source={{ 
-                      uri: formData.photo || formData.profile_photo || formData.profile_photo_url || formData.avatar_url
-                    }} 
-                    style={styles.profilePhoto} 
-                  />
+                  <View style={styles.photoContent}>
+                    <Image 
+                      source={{ 
+                        uri: formData.photo || formData.profile_photo || formData.profile_photo_url || formData.avatar_url
+                      }} 
+                      style={styles.profilePhoto} 
+                    />
+                    <Text style={styles.photoHelper}>{t('profile.helpers.changePhoto')}</Text>
+                  </View>
                 ) : (
-                  <View style={styles.photoPlaceholder}>
-                    <Text style={styles.avatarText}>
-                      {formData.firstName?.charAt(0)?.toUpperCase() || '?'}
-                    </Text>
+                  <View style={styles.photoContent}>
+                    <View style={styles.photoPlaceholder}>
+                      <Ionicons name="cloud-upload-outline" size={40} color="#2196F3" />
+                    </View>
+                    <Text style={styles.photoHelper}>{t('profile.helpers.photo')}</Text>
                   </View>
                 )}
               </TouchableOpacity>
@@ -475,21 +477,30 @@ const styles = StyleSheet.create({
     paddingBottom: Platform.OS === 'ios' ? 100 : 120,
   },
   header: {
-    flexDirection: 'row',
+    height: 60,
+    justifyContent: 'center',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 20,
-    paddingTop: Platform.OS === 'ios' ? 60 : 20,
-    backgroundColor: 'transparent',
+    paddingHorizontal: 16,
   },
   headerText: {
     fontSize: 20,
     fontWeight: 'bold',
     color: '#FFF',
+    textAlign: 'center',
   },
   photoSection: {
+    width: '100%',
     alignItems: 'center',
+    justifyContent: 'center',
     marginVertical: 20,
+  },
+  photoContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  photoContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   profilePhoto: {
     width: 120,
@@ -501,15 +512,17 @@ const styles = StyleSheet.create({
     height: 120,
     borderRadius: 60,
     backgroundColor: '#F5F5F5',
-    justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#DDD',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: '#2196F3',
+    borderStyle: 'dashed',
   },
-  changePhotoText: {
-    color: '#2196F3',
-    marginTop: 10,
-    fontSize: 16,
+  photoHelper: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 8,
+    textAlign: 'center',
   },
   formSection: {
     marginTop: 20,

@@ -53,23 +53,25 @@ const RegisterScreen = ({ navigation }) => {
   const validateForm = (data: FormData): FormErrors => {
     const errors: FormErrors = {};
 
-    if (!data.firstName.trim()) errors.firstName = t('auth.register.errors.firstName');
-    if (!data.lastName.trim()) errors.lastName = t('auth.register.errors.lastName');
+    if (!data.firstName.trim()) errors.firstName = t('validation.required.firstName');
+    if (!data.lastName.trim()) errors.lastName = t('validation.required.lastName');
     
     if (!data.email.trim()) {
-      errors.email = t('auth.register.errors.requiredEmail');
+      errors.email = t('validation.required.email');
     } else if (!/\S+@\S+\.\S+/.test(data.email)) {
-      errors.email = t('auth.register.errors.invalidEmail');
+      errors.email = t('validation.invalid.email');
     }
 
     if (!data.password) {
-      errors.password = t('auth.register.errors.requiredPassword');
+      errors.password = t('validation.required.password');
     } else if (data.password.length < 6) {
-      errors.password = t('auth.register.errors.minLengthPassword');
+      errors.password = t('validation.invalid.password.minLength');
     }
 
-    if (data.password !== data.confirmPassword) {
-      errors.confirmPassword = t('auth.register.errors.passwordMismatch');
+    if (!data.confirmPassword) {
+      errors.confirmPassword = t('validation.required.confirmPassword');
+    } else if (data.password !== data.confirmPassword) {
+      errors.confirmPassword = t('validation.invalid.password.mismatch');
     }
 
     return errors;
@@ -84,22 +86,32 @@ const RegisterScreen = ({ navigation }) => {
 
     setLoading(true);
     try {
-      const response = await register(formData.email, formData.password);
+      const response = await register({
+        email: formData.email,
+        password: formData.password,
+        firstName: formData.firstName,
+        lastName: formData.lastName
+      });
       
-      if (response.token) {
+      if (response.success) {
         Alert.alert(
-          'Success',
-          t('auth.register.success'),
+          t('auth.register.success.title'),
+          t('auth.register.success.message'),
           [
             {
-              text: 'OK',
-              onPress: () => navigation.navigate('Login')
+              text: t('auth.register.success.loginButton'),
+              onPress: () => {
+                navigation.navigate('Login', {
+                  email: formData.email // Pre-fill email in login screen
+                });
+              }
             }
-          ]
+          ],
+          { cancelable: false }
         );
       } else {
         setErrors({ 
-          submit: t('auth.register.errors.registrationFailed')
+          submit: response.message || t('auth.register.errors.registrationFailed')
         });
       }
     } catch (error) {
@@ -234,6 +246,8 @@ const RegisterScreen = ({ navigation }) => {
               />
             </View>
             {errors.confirmPassword && <Text style={styles.errorText}>{errors.confirmPassword}</Text>}
+            
+            {errors.submit && <Text style={styles.errorText}>{errors.submit}</Text>}
 
             <TouchableOpacity 
               style={[styles.registerButton, loading && styles.registerButtonDisabled]}

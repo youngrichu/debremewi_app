@@ -46,7 +46,7 @@
       "fatherConfessorName": "Father Confessor Name",
       "hasAssociationMembership": "Church Association Membership",
       "associationName": "Association Name",
-      "residencePermit": "UAE Residence Status",
+      "residencePermit": "Do you have a residence permit in UAE?",
       "hasChildren": "Do you have children?",
       "numberOfChildren": "Number of Children"
     },
@@ -71,7 +71,7 @@
       "selectChristianLife": "Select Christian Life Status",
       "selectServiceType": "Select Service Type",
       "selectMinistryService": "Select Ministry Service",
-      "selectResidencePermit": "Select Residence Status"
+      "selectResidencePermit": "Select having residence permit"
     },
     "options": {
       "gender": {
@@ -176,7 +176,7 @@
       "ministryService": "Select your specific ministry service",
       "hasFatherConfessor": "Do you have a spiritual father for confession?",
       "hasAssociationMembership": "Are you a member of any church association?",
-      "residencePermit": "What is your current residence status in UAE?",
+      "residencePermit": "Do you have a residence permit in UAE?",
       "photo": "Please upload a clear photo of yourself",
       "changePhoto": "Tap to change your profile photo"
     },
@@ -228,7 +228,18 @@
       "lastName": "Last name is required",
       "phoneNumber": "Phone number is required",
       "city": "City is required",
-      "address": "Address is required"
+      "address": "Address is required",
+      "email": "Email is required",
+      "password": "Password is required",
+      "confirmPassword": "Please confirm your password"
+    },
+    "invalid": {
+      "email": "Please enter a valid email address",
+      "password": {
+        "minLength": "Password must be at least 6 characters",
+        "mismatch": "Passwords do not match"
+      },
+      "phoneNumber": "Please enter a valid phone number"
     }
   },
   "onboarding": {
@@ -256,9 +267,27 @@
       "finish": "Finish"
     },
     "welcome": {
-      "title": "Welcome to Dubai Debremewi",
-      "subtitle": "Let's set up your profile",
-      "description": "We need some information to complete your profile. This will help us serve you better."
+      "title": "Welcome to Dubai Debremewi Church",
+      "subtitle": "Your spiritual home in Dubai",
+      "description": "Join our vibrant church community and stay connected with all church activities and services.",
+      "features": {
+        "events": {
+          "title": "Church Events",
+          "description": "Stay updated with all church events, services, and special occasions"
+        },
+        "community": {
+          "title": "Community Connection",
+          "description": "Connect with fellow church members and participate in community activities"
+        },
+        "notifications": {
+          "title": "Important Updates",
+          "description": "Receive timely notifications about church announcements and events"
+        },
+        "resources": {
+          "title": "Spiritual Resources",
+          "description": "Access spiritual materials, teachings, and church resources"
+        }
+      }
     }
   },
   "navigation": {
@@ -516,10 +545,6 @@
       "noAccount": "Don't have an account? ",
       "register": "Sign Up",
       "errors": {
-        "invalidEmail": "Please enter a valid email",
-        "requiredEmail": "Email is required",
-        "requiredPassword": "Password is required",
-        "minLengthPassword": "Password must be at least 6 characters",
         "loginFailed": "Login failed. Please check your credentials and try again."
       },
       "placeholders": {
@@ -533,8 +558,6 @@
       "email": "Email Address",
       "nextButton": "Next",
       "errors": {
-        "invalidEmail": "Please enter a valid email",
-        "requiredEmail": "Email is required",
         "verificationFailed": "Email verification failed",
         "failedToVerify": "Failed to verify email"
       },
@@ -551,9 +574,6 @@
       "cancelButton": "Cancel",
       "success": "Password updated successfully!",
       "errors": {
-        "required": "New password is required",
-        "minLength": "Password must be at least 6 characters",
-        "mismatch": "Passwords do not match",
         "updateFailed": "Failed to update password"
       },
       "placeholders": {
@@ -572,15 +592,12 @@
       "createButton": "Create Account",
       "haveAccount": "Already have an account? ",
       "signIn": "Sign In",
-      "success": "Registration successful! Please login to continue.",
+      "success": {
+        "title": "Welcome to Dubai Debremewi!",
+        "message": "Your account has been created successfully. Please sign in to continue.",
+        "loginButton": "Sign In Now"
+      },
       "errors": {
-        "firstName": "First name is required",
-        "lastName": "Last name is required",
-        "invalidEmail": "Please enter a valid email",
-        "requiredEmail": "Email is required",
-        "requiredPassword": "Password is required",
-        "minLengthPassword": "Password must be at least 6 characters",
-        "passwordMismatch": "Passwords do not match",
         "registrationFailed": "Registration failed. Please try again."
       },
       "placeholders": {

@@ -15,9 +15,7 @@ import {
   Dimensions,
   Animated
 } from 'react-native';
-import {
-  useDispatch
-} from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setUserData } from '../store/slices/userSlice';
 import { ProfileService } from '../services/ProfileService';
 import { CustomPicker } from '../components/CustomPicker';
@@ -25,6 +23,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import * as ImagePicker from 'expo-image-picker';
 import { useTranslation } from 'react-i18next';
+import { PhoneInput } from '../components/PhoneInput';
+import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../contexts/AuthContext';
+import { useToast } from '../contexts/ToastContext';
+import { RootStackParamList } from '../navigation/types';
+
+type OnboardingScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Onboarding'>;
 
 const STEPS = [
   { key: 'welcome' },
@@ -204,11 +209,13 @@ interface DropdownState {
 export default function OnboardingScreen() {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const navigation = useNavigation();
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [keyboardVisible, setKeyboardVisible] = useState(false);
   const scrollViewRef = useRef<ScrollView>(null);
   const { height: windowHeight } = Dimensions.get('window');
   const [showNavigation, setShowNavigation] = useState(false);
+  const [initialStepScroll, setInitialStepScroll] = useState(true);
 
   const isPickerSelectionRef = useRef(false);
 
@@ -217,11 +224,6 @@ export default function OnboardingScreen() {
       Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
       (event) => {
         setKeyboardVisible(true);
-        setTimeout(() => {
-          if (scrollViewRef.current) {
-            scrollViewRef.current.scrollTo({ y: 50, animated: true });
-          }
-        }, 100);
       }
     );
 
@@ -229,9 +231,6 @@ export default function OnboardingScreen() {
       Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
       () => {
         setKeyboardVisible(false);
-        if (scrollViewRef.current && !isPickerSelectionRef.current) {
-          scrollViewRef.current.scrollTo({ y: 0, animated: true });
-        }
       }
     );
 
@@ -239,18 +238,30 @@ export default function OnboardingScreen() {
       keyboardWillShow.remove();
       keyboardWillHide.remove();
     };
-  }, [openPicker]);
+  }, []);
 
   useEffect(() => {
-    if (currentStepIndex === 0) {
-      setShowNavigation(false);
+    if (currentStepIndex > 0 && initialStepScroll) {
+      if (scrollViewRef.current) {
+        scrollViewRef.current.scrollTo({ y: 0, animated: true });
+      }
+      setInitialStepScroll(false);
     }
   }, [currentStepIndex]);
+
+  const handleStepChange = (nextStep: number) => {
+    setCurrentStepIndex(nextStep);
+    setInitialStepScroll(true);
+    if (scrollViewRef.current) {
+      scrollViewRef.current.scrollTo({ y: 0, animated: true });
+    }
+  };
 
   const [formData, setFormData] = useState<{
     firstName: string;
     lastName: string;
     phoneNumber: string;
+    countryCode: string;
     gender: string;
     christianName: string;
     residencyCity: string;
@@ -277,6 +288,7 @@ export default function OnboardingScreen() {
     firstName: '',
     lastName: '',
     phoneNumber: '',
+    countryCode: '+971',
     gender: '',
     christianName: '',
     residencyCity: '',
@@ -329,8 +341,13 @@ export default function OnboardingScreen() {
     if (currentIndex === -1) return;
 
     const nextField = step.fields[currentIndex + 1];
-    if (nextField?.type === 'text') {
+    if (!nextField) return;
+
+    if (nextField.type === 'text') {
       inputRefs.current[nextField.name]?.focus();
+    } else if (nextField.type === 'picker') {
+      Keyboard.dismiss();
+      handleDropdownOpen(nextField.name as keyof DropdownState);
     } else {
       Keyboard.dismiss();
     }
@@ -340,18 +357,14 @@ export default function OnboardingScreen() {
     const step = STEPS[currentStepIndex];
     if (!step?.fields) return 'done';
 
-    const textFields = step.fields.filter(field => field.type === 'text');
-    const currentIndex = textFields.findIndex(field => field.name === fieldName);
-    return currentIndex === textFields.length - 1 ? 'done' : 'next';
+    const currentIndex = step.fields.findIndex(field => field.name === fieldName);
+    if (currentIndex === -1 || currentIndex === step.fields.length - 1) return 'done';
+    
+    return 'next';
   };
 
   const handleInputSubmit = (fieldName: string) => {
-    const returnKeyType = getReturnKeyType(fieldName);
-    if (returnKeyType === 'next') {
-      focusNextInput(fieldName);
-    } else {
-      Keyboard.dismiss();
-    }
+    focusNextInput(fieldName);
   };
 
   const handleDropdownOpen = (dropdownName: keyof DropdownState) => {
@@ -364,10 +377,6 @@ export default function OnboardingScreen() {
       }), {} as DropdownState);
       return allClosed;
     });
-
-    setTimeout(() => {
-      isPickerSelectionRef.current = false;
-    }, 100);
   };
 
   const handleDropdownClose = () => {
@@ -436,7 +445,7 @@ export default function OnboardingScreen() {
 
   const handleNext = () => {
     if (currentStepIndex === 0) {
-      setCurrentStepIndex(prev => prev + 1);
+      handleStepChange(1);
       setTimeout(() => {
         scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
       }, 100);
@@ -444,13 +453,10 @@ export default function OnboardingScreen() {
     }
 
     if (validateStep(currentStepIndex)) {
-      setCurrentStepIndex(prev => {
-        const nextStep = Math.min(prev + 1, STEPS.length - 1);
-        setTimeout(() => {
-          scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
-        }, 100);
-        return nextStep;
-      });
+      handleStepChange(Math.min(currentStepIndex + 1, STEPS.length - 1));
+      setTimeout(() => {
+        scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
+      }, 100);
     } else {
       Alert.alert(
         'Required Fields',
@@ -461,13 +467,33 @@ export default function OnboardingScreen() {
   };
 
   const handlePrevious = () => {
-    setCurrentStepIndex(prev => {
-      const newStep = Math.max(prev - 1, 0);
-      setTimeout(() => {
-        scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
-      }, 100);
-      return newStep;
-    });
+    handleStepChange(Math.max(currentStepIndex - 1, 0));
+    setTimeout(() => {
+      scrollViewRef.current?.scrollTo({ x: 0, y: 0, animated: true });
+    }, 100);
+  };
+
+  const handleComplete = async () => {
+    try {
+      setLoading(true);
+      const updatedFormData = {
+        ...formData,
+        isOnboardingComplete: true,
+      };
+      
+      await ProfileService.updateProfile(updatedFormData);
+      
+      // Update local state
+      dispatch(setUserData(updatedFormData));
+      
+      // Navigate to main screen
+      navigation.replace('Main');
+    } catch (error) {
+      console.error('Error completing onboarding:', error);
+      Alert.alert('Error', 'Failed to complete profile setup. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSubmit = async () => {
@@ -502,6 +528,17 @@ export default function OnboardingScreen() {
     });
     if (errors[field as keyof FormErrors]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
+  };
+
+  const handlePhoneChange = (phoneNumber: string, countryCode: string) => {
+    setFormData(prev => ({
+      ...prev,
+      phoneNumber: phoneNumber,
+      countryCode: countryCode
+    }));
+    if (errors.phoneNumber) {
+      setErrors(prev => ({ ...prev, phoneNumber: undefined }));
     }
   };
 
@@ -639,7 +676,22 @@ export default function OnboardingScreen() {
             <Text style={styles.sectionTitle}>{t('onboarding.sections.contactInfo')}</Text>
             <Text style={styles.helperText}>{t('onboarding.helpers.contactInfo')}</Text>
             
-            {renderInput('phoneNumber', t('profile.placeholders.enterPhoneNumber'), true)}
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>{t('profile.fields.phoneNumber')}</Text>
+              <PhoneInput
+                value={formData.phoneNumber}
+                countryCode={formData.countryCode}
+                onChangePhoneNumber={handlePhoneChange}
+                error={errors.phoneNumber}
+                onSubmitEditing={() => focusNextInput('phoneNumber')}
+                returnKeyType={getReturnKeyType('phoneNumber')}
+                ref={ref => inputRefs.current['phoneNumber'] = ref}
+              />
+              {errors.phoneNumber && (
+                <Text style={styles.errorText}>{errors.phoneNumber}</Text>
+              )}
+            </View>
+
             <View style={styles.inputGroup}>
               <Text style={styles.label}>{t('profile.fields.residencyCity')}</Text>
               <TouchableOpacity 
@@ -668,7 +720,6 @@ export default function OnboardingScreen() {
 
             <View style={styles.inputGroup}>
               <Text style={styles.label}>{t('profile.fields.serviceAtParish')}</Text>
-              <Text style={styles.helperText}>{t('profile.helpers.serviceAtParish')}</Text>
               <TouchableOpacity 
                 style={styles.pickerButton}
                 onPress={() => setOpenPicker('serviceAtParish')}
@@ -686,7 +737,6 @@ export default function OnboardingScreen() {
             {formData.serviceAtParish && formData.serviceAtParish !== 'none' && (
               <View style={styles.inputGroup}>
                 <Text style={styles.label}>{t('profile.fields.ministryService')}</Text>
-                <Text style={styles.helperText}>{t('profile.helpers.ministryService')}</Text>
                 <TouchableOpacity 
                   style={styles.pickerButton}
                   onPress={() => setOpenPicker('ministryService')}
@@ -701,7 +751,6 @@ export default function OnboardingScreen() {
 
             <View style={styles.inputGroup}>
               <Text style={styles.label}>{t('profile.fields.hasFatherConfessor')}</Text>
-              <Text style={styles.helperText}>{t('profile.helpers.hasFatherConfessor')}</Text>
               <TouchableOpacity 
                 style={styles.pickerButton}
                 onPress={() => setOpenPicker('hasFatherConfessor')}
@@ -735,7 +784,6 @@ export default function OnboardingScreen() {
 
             <View style={styles.inputGroup}>
               <Text style={styles.label}>{t('profile.fields.hasAssociationMembership')}</Text>
-              <Text style={styles.helperText}>{t('profile.helpers.hasAssociationMembership')}</Text>
               <TouchableOpacity 
                 style={styles.pickerButton}
                 onPress={() => setOpenPicker('hasAssociationMembership')}
@@ -776,7 +824,7 @@ export default function OnboardingScreen() {
 
             <View style={styles.inputGroup}>
               <Text style={styles.label}>{t('profile.fields.photo')}</Text>
-              <Text style={styles.helperText}>{t('profile.helpers.photo')}</Text>
+              <Text style={styles.inputGroupHelperText}>{t('profile.helpers.photo')}</Text>
               <TouchableOpacity 
                 style={styles.photoUploadButton}
                 onPress={pickImage}
@@ -805,7 +853,7 @@ export default function OnboardingScreen() {
 
             <View style={styles.inputGroup}>
               <Text style={styles.label}>{t('profile.fields.residencePermit')}</Text>
-              <Text style={styles.helperText}>{t('profile.helpers.residencePermit')}</Text>
+              <Text style={styles.inputGroupHelperText}>{t('profile.helpers.residencePermit')}</Text>
               <TouchableOpacity 
                 style={styles.pickerButton}
                 onPress={() => setOpenPicker('residencePermit')}
@@ -1122,7 +1170,7 @@ export default function OnboardingScreen() {
                 )}
 
                 <TouchableOpacity
-                  onPress={currentStepIndex === STEPS.length - 1 ? handleSubmit : handleNext}
+                  onPress={currentStepIndex === STEPS.length - 1 ? handleComplete : handleNext}
                   style={[styles.navigationButton, styles.nextButton, loading && styles.buttonDisabled]}
                   disabled={loading}
                   activeOpacity={0.7}
@@ -1386,9 +1434,12 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   inputGroup: {
-    marginBottom: 20,
-    position: 'relative',
-    zIndex: 1000,
+    marginBottom: 16,
+  },
+  inputGroupHelperText: {
+    fontSize: 12,
+    color: '#666',
+    marginTop: 4,
   },
   label: {
     fontSize: 15,
@@ -1493,18 +1544,25 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   helperText: {
-    fontSize: 12,
+    fontSize: 14,
     color: '#666',
-    marginTop: 4,
-    marginLeft: 4,
+    marginBottom: 24,
   },
-  confessionFatherContainer: {
-    marginTop: 10,
+  sectionTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 8,
   },
-  buttonWrapper: {
-    backgroundColor: '#FFF',
-    borderTopWidth: 1,
-    borderTopColor: '#EEE',
+  fieldLabel: {
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 4,
+  },
+  stepContent: {
+    flex: 1,
+    paddingHorizontal: 20,
+    paddingTop: 24,
   },
   pickerButton: {
     borderWidth: 1,
@@ -1596,14 +1654,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
-  },
-  stepContent: {
-    padding: 20,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 10,
   },
   required: {
     color: '#FF3B30',

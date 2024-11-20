@@ -44,7 +44,14 @@ function EventStackScreen() {
   const { t } = useTranslation();
 
   return (
-    <EventStack.Navigator>
+    <EventStack.Navigator
+      screenOptions={{
+        headerTitleAlign: 'left',
+        headerTitleStyle: {
+          marginLeft: 16,
+        },
+      }}
+    >
       <EventStack.Screen 
         name="EventsList" 
         component={EventsScreen}
@@ -68,7 +75,14 @@ function BlogStackScreen() {
   const { t } = useTranslation();
 
   return (
-    <BlogStack.Navigator>
+    <BlogStack.Navigator
+      screenOptions={{
+        headerTitleAlign: 'left',
+        headerTitleStyle: {
+          marginLeft: 16,
+        },
+      }}
+    >
       <BlogStack.Screen 
         name="BlogList" 
         component={BlogPostsScreen}
@@ -92,7 +106,14 @@ function AnnouncementStackScreen() {
   const { t } = useTranslation();
 
   return (
-    <AnnouncementStack.Navigator>
+    <AnnouncementStack.Navigator
+      screenOptions={{
+        headerTitleAlign: 'left',
+        headerTitleStyle: {
+          marginLeft: 16,
+        },
+      }}
+    >
       <AnnouncementStack.Screen 
         name="AnnouncementsList" 
         component={CommunityScreen}
@@ -168,7 +189,10 @@ function MainTabs() {
           </View>
         ),
         headerRightContainerStyle: { paddingRight: 15 },
-        headerTitleAlign: 'center',
+        headerTitleAlign: 'left',
+        headerTitleStyle: {
+          marginLeft: 16,
+        },
       })}
     >
       <Tab.Screen 
@@ -216,7 +240,14 @@ function HomeStackScreen() {
   const { t } = useTranslation();
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator
+      screenOptions={{
+        headerTitleAlign: 'left',
+        headerTitleStyle: {
+          marginLeft: 16,
+        },
+      }}
+    >
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen 
         name="EventDetails" 
@@ -239,9 +270,7 @@ function HomeStackScreen() {
         component={EditProfileScreen}
         options={{
           headerShown: true,
-          title: t('navigation.screens.editProfile'),
-          headerRight: () => <LanguageSelector />,
-          headerRightContainerStyle: { paddingRight: 15 },
+          title: t('navigation.screens.editProfile')
         }}
       />
     </Stack.Navigator>
@@ -252,7 +281,14 @@ function MoreStackScreen() {
   const { t } = useTranslation();
 
   return (
-    <MoreStack.Navigator>
+    <MoreStack.Navigator
+      screenOptions={{
+        headerTitleAlign: 'left',
+        headerTitleStyle: {
+          marginLeft: 16,
+        },
+      }}
+    >
       <MoreStack.Screen 
         name="MoreMenu" 
         component={MoreMenuScreen} 
@@ -310,7 +346,14 @@ export default function AppNavigator() {
         backgroundColor="transparent"
         translucent={true}
       />
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Navigator
+        screenOptions={{
+          headerTitleAlign: 'left',
+          headerTitleStyle: {
+            marginLeft: 16,
+          },
+        }}
+      >
         {!isAuthenticated ? (
           // Auth Stack
           <>
