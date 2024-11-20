@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  KeyboardAvoidingView,
   Platform,
-  ScrollView,
   ActivityIndicator,
+  Alert,
+  KeyboardAvoidingView,
+  ScrollView,
+  Keyboard,
+  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -35,6 +38,8 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const { t } = useTranslation();
+  const scrollViewRef = useRef(null);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
 
   const validateLogin = (email: string, password: string): string | null => {
     if (!email.trim()) return 'Email is required';
@@ -89,14 +94,41 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
     <KeyboardAvoidingView 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
     >
       <LinearGradient
         colors={['#2196F3', '#1976D2']}
         style={styles.gradient}
       >
         <ScrollView 
-          contentContainerStyle={styles.scrollContent}
+          ref={scrollViewRef}
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingBottom: keyboardHeight > 0 ? keyboardHeight + 20 : 20 }
+          ]}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          onLayout={() => {
+            if (Platform.OS === 'android') {
+              const keyboardDidShowListener = Keyboard.addListener(
+                'keyboardDidShow',
+                (e) => {
+                  setKeyboardHeight(e.endCoordinates.height);
+                }
+              );
+              const keyboardDidHideListener = Keyboard.addListener(
+                'keyboardDidHide',
+                () => {
+                  setKeyboardHeight(0);
+                }
+              );
+
+              return () => {
+                keyboardDidShowListener.remove();
+                keyboardDidHideListener.remove();
+              };
+            }
+          }}
         >
           <View style={styles.headerSection}>
             <Text style={styles.welcomeText}>{t('auth.login.title')}</Text>
@@ -149,27 +181,27 @@ const LoginScreen = ({ navigation }: LoginScreenProps) => {
               <Text style={styles.errorText}>{t(`auth.login.errors.${errorMessage}`)}</Text>
             ) : null}
 
-            <TouchableOpacity 
+            <TouchableOpacity
+              style={styles.forgotPasswordButton}
               onPress={() => navigation.navigate('ForgotPassword')}
-              style={styles.forgotPassword}
             >
               <Text style={styles.forgotPasswordText}>{t('auth.login.forgotPassword')}</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
+            <TouchableOpacity 
               style={[styles.loginButton, loading && styles.loginButtonDisabled]}
               onPress={handleLogin}
               disabled={loading}
             >
               {loading ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color="#FFF" />
               ) : (
                 <Text style={styles.loginButtonText}>{t('auth.login.loginButton')}</Text>
               )}
             </TouchableOpacity>
 
             <View style={styles.registerContainer}>
-              <Text style={styles.registerText}>{t('auth.login.noAccount')}</Text>
+              <Text style={styles.registerText}>{t('auth.login.noAccount')} </Text>
               <TouchableOpacity onPress={() => navigation.navigate('Register')}>
                 <Text style={styles.registerLink}>{t('auth.login.register')}</Text>
               </TouchableOpacity>
@@ -236,7 +268,7 @@ const styles = StyleSheet.create({
   eyeIcon: {
     padding: 8,
   },
-  forgotPassword: {
+  forgotPasswordButton: {
     alignSelf: 'flex-end',
     marginBottom: 20,
   },

@@ -1,15 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  KeyboardAvoidingView,
   Platform,
-  ScrollView,
   ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
+  ScrollView,
+  Keyboard,
+  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -36,6 +38,8 @@ interface FormErrors {
 
 const RegisterScreen = ({ navigation }) => {
   const { t } = useTranslation();
+  const scrollViewRef = useRef(null);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
@@ -120,14 +124,41 @@ const RegisterScreen = ({ navigation }) => {
     <KeyboardAvoidingView 
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
     >
       <LinearGradient
         colors={['#2196F3', '#1976D2']}
         style={styles.gradient}
       >
         <ScrollView 
-          contentContainerStyle={styles.scrollContent}
+          ref={scrollViewRef}
+          contentContainerStyle={[
+            styles.scrollContent,
+            { paddingBottom: keyboardHeight > 0 ? keyboardHeight + 20 : 20 }
+          ]}
           showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled"
+          onLayout={() => {
+            if (Platform.OS === 'android') {
+              const keyboardDidShowListener = Keyboard.addListener(
+                'keyboardDidShow',
+                (e) => {
+                  setKeyboardHeight(e.endCoordinates.height);
+                }
+              );
+              const keyboardDidHideListener = Keyboard.addListener(
+                'keyboardDidHide',
+                () => {
+                  setKeyboardHeight(0);
+                }
+              );
+
+              return () => {
+                keyboardDidShowListener.remove();
+                keyboardDidHideListener.remove();
+              };
+            }
+          }}
         >
           <View style={styles.headerSection}>
             <Text style={styles.welcomeText}>{t('auth.register.title')}</Text>
@@ -135,30 +166,34 @@ const RegisterScreen = ({ navigation }) => {
           </View>
 
           <View style={styles.formContainer}>
-            <View style={styles.nameRow}>
-              <View style={[styles.inputContainer, styles.halfInput]}>
-                <Ionicons name="person-outline" size={20} color="#666" style={styles.inputIcon} />
-                <TextInput
-                  style={styles.input}
-                  placeholder={t('auth.register.placeholders.firstName')}
-                  placeholderTextColor="#666"
-                  value={formData.firstName}
-                  onChangeText={(text) => handleChange('firstName', text)}
-                />
-              </View>
-              <View style={[styles.inputContainer, styles.halfInput]}>
-                <TextInput
-                  style={styles.input}
-                  placeholder={t('auth.register.placeholders.lastName')}
-                  placeholderTextColor="#666"
-                  value={formData.lastName}
-                  onChangeText={(text) => handleChange('lastName', text)}
-                />
-              </View>
+            <View style={styles.inputContainer}>
+              <Ionicons name="person-outline" size={20} color="#666" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder={t('auth.register.placeholders.firstName')}
+                placeholderTextColor="#666"
+                value={formData.firstName}
+                onChangeText={(text) => handleChange('firstName', text)}
+                onFocus={() => {
+                  setTimeout(() => {
+                    scrollViewRef.current?.scrollTo({ y: 0, animated: true });
+                  }, 100);
+                }}
+              />
             </View>
-            {(errors.firstName || errors.lastName) && (
-              <Text style={styles.errorText}>{errors.firstName || errors.lastName}</Text>
-            )}
+            {errors.firstName && <Text style={styles.errorText}>{errors.firstName}</Text>}
+
+            <View style={styles.inputContainer}>
+              <Ionicons name="person-outline" size={20} color="#666" style={styles.inputIcon} />
+              <TextInput
+                style={styles.input}
+                placeholder={t('auth.register.placeholders.lastName')}
+                placeholderTextColor="#666"
+                value={formData.lastName}
+                onChangeText={(text) => handleChange('lastName', text)}
+              />
+            </View>
+            {errors.lastName && <Text style={styles.errorText}>{errors.lastName}</Text>}
 
             <View style={styles.inputContainer}>
               <Ionicons name="mail-outline" size={20} color="#666" style={styles.inputIcon} />
@@ -198,23 +233,19 @@ const RegisterScreen = ({ navigation }) => {
                 onChangeText={(text) => handleChange('confirmPassword', text)}
               />
             </View>
-            {errors.confirmPassword && (
-              <Text style={styles.errorText}>{errors.confirmPassword}</Text>
-            )}
+            {errors.confirmPassword && <Text style={styles.errorText}>{errors.confirmPassword}</Text>}
 
-            <TouchableOpacity
+            <TouchableOpacity 
               style={[styles.registerButton, loading && styles.registerButtonDisabled]}
               onPress={handleRegister}
               disabled={loading}
             >
               {loading ? (
-                <ActivityIndicator color="#fff" />
+                <ActivityIndicator color="#FFF" />
               ) : (
                 <Text style={styles.registerButtonText}>{t('auth.register.createButton')}</Text>
               )}
             </TouchableOpacity>
-
-            {errors.submit && <Text style={styles.errorText}>{errors.submit}</Text>}
 
             <View style={styles.loginContainer}>
               <Text style={styles.loginText}>{t('auth.register.haveAccount')}</Text>
@@ -263,13 +294,6 @@ const styles = StyleSheet.create({
     paddingTop: 30,
     paddingBottom: 20,
     marginTop: 20,
-  },
-  nameRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  halfInput: {
-    flex: 0.48,
   },
   inputContainer: {
     flexDirection: 'row',

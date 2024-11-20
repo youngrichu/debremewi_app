@@ -7,9 +7,9 @@ import {
   Alert,
   ActivityIndicator,
   Platform,
+  Image,
   KeyboardAvoidingView,
   ScrollView,
-  Image,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUserData } from '../store/slices/userSlice';
@@ -346,90 +346,95 @@ export default function EditProfileScreen() {
   };
 
   return (
-    <KeyboardAvoidingView 
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
-    >
+    <View style={styles.container}>
       <LinearGradient colors={['#2196F3', '#1976D2']} style={styles.gradient}>
         <View style={styles.header}>
           <Text style={[styles.headerText, { flex: 1, textAlign: 'center' }]}>{t('profile.editProfile')}</Text>
           <LanguageSelector />
         </View>
 
-        <ScrollView 
-          style={styles.content}
-          contentContainerStyle={styles.scrollContent}
-          keyboardShouldPersistTaps="handled"
+        <KeyboardAvoidingView 
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.keyboardView}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
         >
-          {/* Photo Upload Section */}
-          <View style={styles.photoSection}>
-            <TouchableOpacity onPress={pickImage}>
-              {(formData.photo || formData.profile_photo || formData.profile_photo_url || formData.avatar_url) ? (
-                <Image 
-                  source={{ 
-                    uri: formData.photo || formData.profile_photo || formData.profile_photo_url || formData.avatar_url
-                  }} 
-                  style={styles.profilePhoto} 
-                />
-              ) : (
-                <View style={styles.photoPlaceholder}>
-                  <Text style={styles.avatarText}>
-                    {formData.firstName?.charAt(0)?.toUpperCase() || '?'}
-                  </Text>
-                </View>
+          <ScrollView 
+            style={styles.content}
+            contentContainerStyle={styles.scrollContent}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+            bounces={false}
+          >
+            {/* Photo Upload Section */}
+            <View style={styles.photoSection}>
+              <TouchableOpacity onPress={pickImage}>
+                {(formData.photo || formData.profile_photo || formData.profile_photo_url || formData.avatar_url) ? (
+                  <Image 
+                    source={{ 
+                      uri: formData.photo || formData.profile_photo || formData.profile_photo_url || formData.avatar_url
+                    }} 
+                    style={styles.profilePhoto} 
+                  />
+                ) : (
+                  <View style={styles.photoPlaceholder}>
+                    <Text style={styles.avatarText}>
+                      {formData.firstName?.charAt(0)?.toUpperCase() || '?'}
+                    </Text>
+                  </View>
+                )}
+              </TouchableOpacity>
+            </View>
+
+            {/* Form Fields */}
+            <View style={styles.formSection}>
+              {/* Personal Information */}
+              {renderSectionTitle('personalInfo')}
+              {renderFormField('firstName', true)}
+              {renderFormField('lastName', true)}
+              {renderFormField('christianName')}
+              {renderPickerButton('gender', true)}
+              {renderPickerButton('maritalStatus')}
+              {renderPickerButton('educationLevel')}
+              {renderFormField('occupation')}
+
+              {/* Contact Information */}
+              {renderSectionTitle('contactInfo')}
+              {renderFormField('phoneNumber', true, 'phone-pad')}
+              {renderPickerButton('residencyCity', true)}
+              {renderFormField('residenceAddress', true)}
+              {renderFormField('emergencyContact')}
+
+              {/* Church Information */}
+              {renderSectionTitle('churchInfo')}
+              {renderPickerButton('christianLife')}
+              {renderPickerButton('serviceAtParish')}
+              {formData.serviceAtParish && formData.serviceAtParish !== 'none' && (
+                renderPickerButton('ministryService')
               )}
-            </TouchableOpacity>
-          </View>
+              {renderPickerButton('hasFatherConfessor')}
+              {formData.hasFatherConfessor === 'yes' && renderFormField('fatherConfessorName')}
+              {renderPickerButton('hasAssociationMembership')}
+              {formData.hasAssociationMembership === 'yes' && renderFormField('associationName')}
 
-          {/* Form Fields */}
-          <View style={styles.formSection}>
-            {/* Personal Information */}
-            {renderSectionTitle('personalInfo')}
-            {renderFormField('firstName', true)}
-            {renderFormField('lastName', true)}
-            {renderFormField('christianName')}
-            {renderPickerButton('gender', true)}
-            {renderPickerButton('maritalStatus')}
-            {renderPickerButton('educationLevel')}
-            {renderFormField('occupation')}
+              {/* Additional Information */}
+              {renderSectionTitle('additionalInfo')}
+              {renderPickerButton('residencePermit')}
 
-            {/* Contact Information */}
-            {renderSectionTitle('contactInfo')}
-            {renderFormField('phoneNumber', true, 'phone-pad')}
-            {renderPickerButton('residencyCity', true)}
-            {renderFormField('residenceAddress', true)}
-            {renderFormField('emergencyContact')}
-
-            {/* Church Information */}
-            {renderSectionTitle('churchInfo')}
-            {renderPickerButton('christianLife')}
-            {renderPickerButton('serviceAtParish')}
-            {formData.serviceAtParish && formData.serviceAtParish !== 'none' && (
-              renderPickerButton('ministryService')
-            )}
-            {renderPickerButton('hasFatherConfessor')}
-            {formData.hasFatherConfessor === 'yes' && renderFormField('fatherConfessorName')}
-            {renderPickerButton('hasAssociationMembership')}
-            {formData.hasAssociationMembership === 'yes' && renderFormField('associationName')}
-
-            {/* Additional Information */}
-            {renderSectionTitle('additionalInfo')}
-            {renderPickerButton('residencePermit')}
-
-            {/* Submit Button */}
-            <TouchableOpacity
-              style={[styles.submitButton, loading && styles.buttonDisabled]}
-              onPress={handleSubmit}
-              disabled={loading}
-            >
-              {loading ? (
-                <ActivityIndicator color="#FFF" />
-              ) : (
-                <Text style={styles.submitButtonText}>{t('profile.messages.saveChanges')}</Text>
-              )}
-            </TouchableOpacity>
-          </View>
-        </ScrollView>
+              {/* Submit Button */}
+              <TouchableOpacity
+                style={[styles.submitButton, loading && styles.buttonDisabled]}
+                onPress={handleSubmit}
+                disabled={loading}
+              >
+                {loading ? (
+                  <ActivityIndicator color="#FFF" />
+                ) : (
+                  <Text style={styles.submitButtonText}>{t('profile.messages.saveChanges')}</Text>
+                )}
+              </TouchableOpacity>
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
 
         {/* Picker Modal */}
         {openPicker && (
@@ -438,14 +443,14 @@ export default function EditProfileScreen() {
             onClose={() => setOpenPicker(null)}
             pickerName={openPicker}
             onSelect={(value) => {
-              handleChange(openPicker as keyof UserState, value);
+              handleChange(openPicker as keyof typeof formData, value);
               setOpenPicker(null);
             }}
             selectedValue={formData[openPicker as keyof typeof formData]?.toString()}
           />
         )}
       </LinearGradient>
-    </KeyboardAvoidingView>
+    </View>
   );
 }
 
@@ -455,6 +460,19 @@ const styles = StyleSheet.create({
   },
   gradient: {
     flex: 1,
+  },
+  keyboardView: {
+    flex: 1,
+  },
+  content: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  scrollContent: {
+    flexGrow: 1,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: Platform.OS === 'ios' ? 100 : 120,
   },
   header: {
     flexDirection: 'row',
@@ -468,15 +486,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     color: '#FFF',
-  },
-  content: {
-    flex: 1,
-    backgroundColor: '#FFF',
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-  },
-  scrollContent: {
-    padding: 20,
   },
   photoSection: {
     alignItems: 'center',

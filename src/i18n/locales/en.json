@@ -232,78 +232,33 @@
     }
   },
   "onboarding": {
-    "welcome": {
-      "title": "Welcome to\nDubai Debre Mewi \nSt. Michael \nand\n St. Hripsime\nEthiopian Orthodox Tewahedo Church",
-      "subtitle": "St. Michael and St. Hripsime\nEthiopian Orthodox Tewahedo Church",
-      "description": "Join our vibrant church community and stay connected with these features:",
-      "features": {
-        "events": {
-          "title": "Church Events",
-          "description": "Stay updated with church services and events"
-        },
-        "community": {
-          "title": "Community",
-          "description": "Connect with fellow church members"
-        },
-        "notifications": {
-          "title": "Notifications",
-          "description": "Receive important church announcements"
-        },
-        "resources": {
-          "title": "Spiritual Resources",
-          "description": "Access prayers and religious content"
-        }
-      }
-    },
+    "profileSetup": "Profile Setup",
+    "stepIndicator": "Step {{current}} of {{total}}",
     "sections": {
       "personalInfo": "Personal Information",
       "contactInfo": "Contact Information",
-      "churchInfo": "Church Information",
-      "additionalInfo": "Additional Information"
+      "churchInfo": "Church Information"
     },
     "helpers": {
-      "personalInfo": "Please provide your basic personal information",
-      "contactInfo": "How can we reach you?",
-      "churchInfo": "Tell us about your church involvement",
-      "additionalInfo": "Just a few more details to complete your profile",
-      "hasChildren": "Please indicate if you have children",
-      "numberOfChildren": "How many children do you have?",
-      "residenceAddress": "Please provide your complete residential address",
-      "emergencyContact": "Please provide contact details for emergency situations",
-      "photo": "Upload a clear photo of yourself",
-      "serviceAtParish": "Select your main service area in the church",
-      "ministryService": "Select your specific ministry service",
-      "hasFatherConfessor": "Do you have a spiritual father for confession?",
-      "hasAssociationMembership": "Are you a member of any church association?",
-      "residencePermit": "Do you have a residence permit in UAE?"
-    },
-    "profileSetup": "Profile Setup",
-    "stepIndicator": "Step {{current}} of {{total}}",
-    "navigation": {
-      "next": "Next",
-      "previous": "Previous",
-      "complete": "Complete"
+      "personalInfo": "Please provide your personal information",
+      "contactInfo": "Please provide your contact information",
+      "churchInfo": "Please provide your church-related information"
     },
     "steps": {
       "welcome": "Welcome",
       "personal": "Personal",
       "contact": "Contact",
-      "church": "Church",
-      "additional": "Additional"
+      "church": "Church"
     },
-    "validation": {
-      "required": {
-        "gender": "Please select your gender",
-        "maritalStatus": "Please select your marital status",
-        "educationLevel": "Please select your education level",
-        "christianLife": "Please select your Christian life status",
-        "serviceAtParish": "Please select your service at parish",
-        "ministryService": "Please select your ministry service",
-        "residencePermit": "Please select your residence permit status",
-        "numberOfChildren": "Please enter number of children",
-        "fatherConfessorName": "Please enter father confessor name",
-        "associationName": "Please enter association name"
-      }
+    "navigation": {
+      "previous": "Previous",
+      "next": "Next",
+      "finish": "Finish"
+    },
+    "welcome": {
+      "title": "Welcome to Dubai Debremewi",
+      "subtitle": "Let's set up your profile",
+      "description": "We need some information to complete your profile. This will help us serve you better."
     }
   },
   "navigation": {
@@ -667,4 +622,4 @@
       }
     }
   }
-} 
+}
