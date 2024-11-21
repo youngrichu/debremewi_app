@@ -3,8 +3,12 @@ import { TouchableOpacity, View, Text, StyleSheet, Animated } from 'react-native
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
-import { AppDispatch, RootState } from '../store';
-import { fetchNotifications } from '../store/slices/notificationsSlice';
+import { AppDispatch } from '../store';
+import { 
+  fetchNotifications, 
+  selectUnreadCount,
+  selectNotificationsLoading 
+} from '../store/slices/notificationsSlice';
 
 type RootStackParamList = {
   Notifications: undefined;
@@ -15,32 +19,37 @@ const NotificationButton = () => {
   const dispatch = useDispatch<AppDispatch>();
   const [opacity] = useState(new Animated.Value(1));
   
-  const { unreadCount = 0, loading = false } = useSelector((state: RootState) => ({
-    unreadCount: state.notifications?.unreadCount ?? 0,
-    loading: state.notifications?.loading ?? false
-  }));
+  const unreadCount = useSelector(selectUnreadCount);
+  const loading = useSelector(selectNotificationsLoading);
+
+  console.log('NotificationButton render:', { unreadCount, loading });
 
   const fetchData = useCallback(async () => {
-    // Only fade out if we're showing a badge
-    if (unreadCount > 0) {
+    try {
+      // Only fade out if we're showing a badge
+      if (unreadCount > 0) {
+        Animated.timing(opacity, {
+          toValue: 0.7,
+          duration: 200,
+          useNativeDriver: true,
+        }).start();
+      }
+
+      await dispatch(fetchNotifications());
+
+      // Fade back in
       Animated.timing(opacity, {
-        toValue: 0.7,
+        toValue: 1,
         duration: 200,
         useNativeDriver: true,
       }).start();
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
     }
-
-    await dispatch(fetchNotifications());
-
-    // Fade back in
-    Animated.timing(opacity, {
-      toValue: 1,
-      duration: 200,
-      useNativeDriver: true,
-    }).start();
   }, [dispatch, unreadCount, opacity]);
 
   useEffect(() => {
+    console.log('NotificationButton mounted, fetching data...');
     fetchData();
     const intervalId = setInterval(fetchData, 30000);
     return () => clearInterval(intervalId);

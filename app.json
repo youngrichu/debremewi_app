@@ -12,7 +12,8 @@
       "backgroundColor": "#ffffff"
     },
     "updates": {
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/6985e10d-9694-4f7e-a16f-7fb1cfdc8ef1"
     },
     "assetBundlePatterns": [
       "**/*"
@@ -91,6 +92,9 @@
         "projectId": "6985e10d-9694-4f7e-a16f-7fb1cfdc8ef1"
       }
     },
-    "owner": "habtilo"
+    "owner": "habtilo",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    }
   }
 }

@@ -137,24 +137,44 @@ export const registerForPushNotificationsAsync = async () => {
     token = (await Notifications.getExpoPushTokenAsync({ 
       projectId: EXPO_PROJECT_ID 
     })).data;
-    console.log('Push token:', token);
+    console.log('Got push token:', token);
 
-    const authToken = await AsyncStorage.getItem('authToken');
-    if (authToken) {
+    const userToken = await AsyncStorage.getItem('userToken');
+    if (userToken) {
+      console.log('Attempting to register push token with userToken');
       const response = await axios.post(
-        `${API_URL}${ENDPOINTS.REGISTER_NOTIFICATION_TOKEN}`,
-        { token },
+        `${API_URL}${ENDPOINTS.registerToken}`,
+        { 
+          token,
+          device_type: Platform.OS
+        },
         {
           headers: {
-            'Authorization': `Bearer ${authToken}`,
+            'Authorization': `Bearer ${userToken}`,
             'Content-Type': 'application/json',
           },
         }
       );
       console.log('Token registration response:', response.data);
+      if (!response.data.success) {
+        console.error('Token registration failed:', response.data.message || 'Unknown error');
+      }
+    } else {
+      console.log('No userToken found in AsyncStorage, skipping push token registration');
     }
   } catch (error) {
     console.error('Error in registerForPushNotificationsAsync:', error);
+    if (axios.isAxiosError(error)) {
+      console.error('API Error details:', {
+        status: error.response?.status,
+        data: error.response?.data,
+        config: {
+          url: error.config?.url,
+          method: error.config?.method,
+          headers: error.config?.headers
+        }
+      });
+    }
   }
 
   return token;

@@ -1,30 +1,60 @@
-import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
+import React, { useEffect } from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import AuthScreen from '../screens/AuthScreen';
-import HomeScreen from '../screens/HomeScreen';
-import EventsScreen from '../screens/EventsScreen';
-import LandingScreen from '../screens/LandingScreen';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store';
+import { NavigationContainer } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export type RootStackParamList = {
-  Auth: undefined;
-  Landing: undefined; // Ensure Landing is part of the stack
-  Main: undefined;
-  Events: undefined;
-  Register: undefined;
-};
+// Auth Screens
+import LoginScreen from '../screens/auth/LoginScreen';
+import RegisterScreen from '../screens/auth/RegisterScreen';
+import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen';
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+// Main Screens
+import MainTabs from './MainTabs';
+import { store } from '../store';
+import { logout } from '../store/authSlice';
+
+const Stack = createNativeStackNavigator();
 
 const AppNavigator = () => {
+  const { isAuthenticated } = useSelector((state: RootState) => state.auth);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+        if (!token && isAuthenticated) {
+          // Token is missing but state shows authenticated - force logout
+          store.dispatch(logout());
+        }
+      } catch (error) {
+        console.error('Auth check error:', error);
+        store.dispatch(logout());
+      }
+    };
+
+    checkAuth();
+  }, [isAuthenticated]);
+
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Auth">
-        <Stack.Screen name="Auth" component={AuthScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Landing" component={LandingScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Main" component={HomeScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Events" component={EventsScreen} options={{ headerShown: true, title: 'Events' }} />
-        <Stack.Screen name="Register" component={AuthScreen} options={{ headerShown: false }} />
+      <Stack.Navigator
+        screenOptions={{
+          headerShown: false,
+        }}
+      >
+        {!isAuthenticated ? (
+          // Auth Stack
+          <>
+            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen name="Register" component={RegisterScreen} />
+            <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
+          </>
+        ) : (
+          // Main App Stack
+          <Stack.Screen name="MainTabs" component={MainTabs} />
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,11 +1,28 @@
-import apiClient from '../api/client';
+import axios from 'axios';
 import { UserProfile } from '../types';
+import { API_URL } from '../config';
+import { store } from '../store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export class ProfileService {
-  static async updateProfile(profileData: Partial<UserProfile>): Promise<UserProfile> {
+class ProfileServiceClass {
+  private getAuthHeaders() {
+    const state = store.getState();
+    const token = state.auth.token;
+    
+    return token ? {
+      'Authorization': `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    } : {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json'
+    };
+  }
+
+  async updateProfile(profileData: Partial<UserProfile>): Promise<UserProfile> {
     try {
       const formData = new FormData();
+      const headers = this.getAuthHeaders();
 
       // Handle photo upload if it exists and is a file URI
       if (profileData.photo && profileData.photo.startsWith('file://')) {
@@ -28,13 +45,17 @@ export class ProfileService {
         }
       });
 
-      const response = await apiClient.post('/wp-json/church-app/v1/update-profile', formData, {
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'multipart/form-data',
-        },
-        transformRequest: (data) => data,
-      });
+      const response = await axios.post(
+        `${API_URL}/wp-json/church-mobile/v1/update-profile`,
+        formData,
+        {
+          headers: {
+            ...headers,
+            'Content-Type': 'multipart/form-data',
+          },
+          transformRequest: (data) => data,
+        }
+      );
 
       if (response.data.success) {
         return response.data.user;
@@ -49,35 +70,31 @@ export class ProfileService {
       });
       
       if (error.response?.status === 401) {
-        throw new Error('Your session has expired. Please log in again.');
+        await AsyncStorage.multiRemove(['userToken', 'userData']);
+        throw new Error('Session expired. Please login again.');
       }
-      
-      throw new Error(error.response?.data?.message || error.message || 'Failed to update profile');
+
+      throw new Error(
+        error.response?.data?.message || 
+        error.message || 
+        'Failed to update profile'
+      );
     }
   }
 
-  static async getProfile(): Promise<UserProfile> {
+  async getProfile(): Promise<UserProfile> {
     try {
-      const token = await AsyncStorage.getItem('userToken');
-      if (!token) {
-        throw new Error('No authentication token found');
+      const headers = this.getAuthHeaders();
+      const response = await axios.get(
+        `${API_URL}/wp-json/church-mobile/v1/user-profile`,
+        { headers }
+      );
+
+      if (response.data.success) {
+        return response.data.user;
       }
 
-      console.log('Fetching profile with token:', token);
-      const response = await apiClient.get('/wp-json/church-mobile/v1/user-profile');
-      
-      if (!response.data?.success) {
-        throw new Error(response.data?.message || 'Failed to get profile');
-      }
-
-      // Transform the response data to match your UserProfile interface
-      const userData = {
-        ...response.data.user,
-        isOnboardingComplete: response.data.user.isOnboardingComplete || response.data.user.is_onboarding_complete,
-        is_onboarding_complete: response.data.user.isOnboardingComplete || response.data.user.is_onboarding_complete,
-      };
-
-      return userData;
+      throw new Error(response.data.message || 'Failed to fetch profile');
     } catch (error: any) {
       console.error('Get profile error:', {
         message: error.message,
@@ -86,10 +103,18 @@ export class ProfileService {
       });
 
       if (error.response?.status === 401) {
-        throw new Error('Your session has expired. Please log in again.');
+        await AsyncStorage.multiRemove(['userToken', 'userData']);
+        throw new Error('Session expired. Please login again.');
       }
 
-      throw new Error(error.response?.data?.message || error.message || 'Failed to fetch profile data');
+      throw new Error(
+        error.response?.data?.message || 
+        error.message || 
+        'Failed to fetch profile'
+      );
     }
   }
 }
+
+export const ProfileService = new ProfileServiceClass();
+export default ProfileService;

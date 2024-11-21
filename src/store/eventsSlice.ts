@@ -1,35 +1,65 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import apiClient from '../api/client';
 import { Event } from '../types';
+import { getUpcomingEvents } from '../services/EventsService';
 
-export const getEvents = createAsyncThunk('events/getEvents', async () => {
-  const response = await apiClient.get<ApiResponse<Event[]>>('/wp-json/wp/v2/events');
-  return response.data.data;
-});
+interface EventsState {
+  events: Event[];
+  loading: boolean;
+  error: string | null;
+}
+
+const initialState: EventsState = {
+  events: [],
+  loading: false,
+  error: null,
+};
+
+export const fetchEvents = createAsyncThunk(
+  'events/fetchEvents',
+  async (_, { rejectWithValue }) => {
+    try {
+      return await getUpcomingEvents();
+    } catch (error) {
+      console.error('Error fetching events:', error);
+      if (error instanceof Error) {
+        return rejectWithValue(error.message);
+      }
+      return rejectWithValue('Failed to fetch events');
+    }
+  }
+);
 
 const eventsSlice = createSlice({
   name: 'events',
-  initialState: {
-    events: [] as Event[],
-    loading: false,
-    error: null as string | null,
+  initialState,
+  reducers: {
+    clearEvents: (state) => {
+      state.events = [];
+      state.error = null;
+    },
   },
-  reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(getEvents.pending, (state) => {
+      .addCase(fetchEvents.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(getEvents.fulfilled, (state, action) => {
+      .addCase(fetchEvents.fulfilled, (state, action) => {
         state.loading = false;
         state.events = action.payload;
+        state.error = null;
       })
-      .addCase(getEvents.rejected, (state, action) => {
+      .addCase(fetchEvents.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.error.message || 'Failed to load events';
-      });
+        state.error = action.payload as string;
+      })
+      // Handle app reset
+      .addMatcher(
+        action => action.type === 'RESET_APP_STATE',
+        () => initialState
+      );
   },
 });
 
+export const { clearEvents } = eventsSlice.actions;
 export default eventsSlice.reducer;

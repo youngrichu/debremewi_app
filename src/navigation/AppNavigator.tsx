@@ -248,7 +248,13 @@ function HomeStackScreen() {
         },
       }}
     >
-      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen 
+        name="Home" 
+        component={HomeScreen}
+        options={{
+          headerShown: false
+        }}
+      />
       <Stack.Screen 
         name="EventDetails" 
         component={EventDetailsScreen}

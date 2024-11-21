@@ -14,6 +14,51 @@ export interface Post {
   // Add other post properties as needed
 }
 
+// API Response Types
+interface ApiResponse<T> {
+  success?: boolean;
+  data?: T;
+  events?: T;
+  message?: string;
+}
+
+// Event Types
+export interface Event {
+  id: number;
+  title: string;
+  date: string;
+  end_date?: string;
+  location?: string;
+  description: string;
+  thumbnail?: string;
+  permalink?: string;
+  categories?: string[];
+  content?: string;
+}
+
+// Event Category Type
+export interface EventCategory {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string;
+  count?: number;
+}
+
+// Events Response Type
+export interface EventsResponse {
+  events?: Event[];
+  success?: boolean;
+  message?: string;
+}
+
+// Event Detail Response Type
+export interface EventDetailResponse {
+  event?: Event;
+  success?: boolean;
+  message?: string;
+}
+
 export type RootStackParamList = {
   // Auth Stack
   Login: undefined;

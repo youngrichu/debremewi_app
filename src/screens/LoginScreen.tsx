@@ -16,7 +16,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useDispatch } from 'react-redux';
-import { login } from '../services/AuthService';
+import { AuthService } from '../services/AuthService';
 import { setUserData } from '../store/slices/userSlice';
 import { setAuthState } from '../store/slices/authSlice';
 import { useTranslation } from 'react-i18next';
@@ -61,7 +61,7 @@ const LoginScreen = ({ navigation, route }: LoginScreenProps) => {
     setErrorMessage('');
 
     try {
-      const response = await login(email, password);
+      const response = await AuthService.login(email, password);
       console.log('Raw login response in LoginScreen:', JSON.stringify(response, null, 2));
       
       if (response.token) {
@@ -101,10 +101,10 @@ const LoginScreen = ({ navigation, route }: LoginScreenProps) => {
         colors={['#2196F3', '#1976D2']}
         style={styles.gradient}
       >
-        <ScrollView 
+        <ScrollView
           ref={scrollViewRef}
           contentContainerStyle={[
-            styles.scrollContent,
+            styles.scrollViewContent,
             { paddingBottom: keyboardHeight > 0 ? keyboardHeight + 20 : 20 }
           ]}
           showsVerticalScrollIndicator={false}
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
   gradient: {
     flex: 1,
   },
-  scrollContent: {
+  scrollViewContent: {
     flexGrow: 1,
     justifyContent: 'center',
   },
