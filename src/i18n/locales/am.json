@@ -35,26 +35,30 @@
       "educationLevel": "የትምህርት ደረጃ",
       "occupation": "ሥራ",
       "residencyCity": "የመኖሪያ ከተማ",
-      "residenceAddress": "የመኖሪያ አድራሻ",
+      "residenceAddress": "የመኖሪያ አድራሻ በኤምሬት",
       "emergencyContact": "የአደጋ ጊዜ ተጠሪ",
       "photo": "ፎቶ",
       "changePhoto": "ፎቶ ለውጥ",
       "christianLife": "የክርስትና ሕይወት",
       "serviceAtParish": "በደብሩ ላይ የሚሳተፉበት አገልግሎት",
       "ministryService": "የንዑስ ክፍል አገልግሎት",
-      "hasFatherConfessor": "የንስሐ አባት አለዎት?",
-      "fatherConfessorName": "የንስሐ አባት ስም",
+      "hasFatherConfessor": "የንስሓ አባት አለዎት?",
+      "fatherConfessorName": "የንስሓ አባት ስም",
       "hasAssociationMembership": "የጽዋ አባል ኖት?",
       "associationName": "የጽዋ የማኅበሩ ስም",
       "residencePermit": "የመኖሪያ ፈቃድ",
       "hasChildren": "ልጆች አሉዎት?",
-      "numberOfChildren": "የልጆች ብዛት"
+      "numberOfChildren": "የልጆች ብዛት",
+      "child": "ልጅ {{number}}",
+      "childFullName": "የልጅ ሙሉ ስም",
+      "childChristianityName": "የልጅ የክርስትና ስም",
+      "childGender": "የልጅ ጾታ"
     },
     "placeholders": {
       "enterOccupation": "ሥራዎን ያስገቡ",
       "enterAddress": "አድራሻዎን ያስገቡ",
       "enterEmergencyContact": "የአደጋ ጊዜ ተጠሪ ያስገቡ",
-      "enterFatherConfessorName": "የንስሐ አባት ስም ያስገቡ",
+      "enterFatherConfessorName": "የንስሓ አባት ስም ያስገቡ",
       "enterAssociationName": "የማኅበሩን ስም ያስገቡ",
       "enterNumberOfChildren": "የልጆችዎን ብዛት ያስገቡ",
       "enterFirstName": "መጠሪያ ስምዎን ያስገቡ",
@@ -62,7 +66,9 @@
       "enterChristianName": "የክርስትና ስምዎን ያስገቡ",
       "enterPhoneNumber": "ስልክ ቁጥርዎን ያስገቡ",
       "enterResidenceAddress": "የመኖሪያ አድራሻዎን ያስገቡ",
-      "enterEmergencyContact": "የአደጋ ጊዜ ተጠሪ መረጃ ያስገቡ"
+      "enterEmergencyContact": "የአደጋ ጊዜ ተጠሪ መረጃ ያስገቡ",
+      "enterChildFullName": "የልጅ ሙሉ ስም ያስገቡ",
+      "enterChildChristianityName": "የልጅ የክርስትና ስም ያስገቡ"
     },
     "selects": {
       "selectGender": "ጾታ ይምረጡ",
@@ -82,13 +88,13 @@
       "maritalStatus": {
         "single": "ያላገባ",
         "married": "ያገባ",
-        "divorced": "የፈታ",
+        "divorced": "አግብቶ የፈታ",
         "widowed": "መበለት"
       },
       "educationLevel": {
         "student": "ተማሪ",
-        "grade_10": "ክፍል 10",
-        "grade_12": "ክፍል 12",
+        "grade_10": "10 ያጠናቀቀ",
+        "grade_12": "12 ያጠናቀቀ",
         "diploma": "ዲፕሎማ",
         "degree": "ዲግሪ",
         "masters": "ማስተርስ",
@@ -110,23 +116,23 @@
         "childrens_department": "የህፃናት ክፍል አገልግሎት"
       },
       "ministryService": {
-        "gospel": "ወንጌል",
-        "accounting": "የሂሳብና በጀት",
+        "gospel": "ስብከተ ወንጌል",
+        "accounting": "ሒሳብ እና በጀት",
         "finance": "ፋይናንስ",
         "treasurer": "ገንዘብ ያዥ",
         "education": "ትምህርትና ስልጠና",
-        "public_relation": "የህዝብ ግንኙነት",
+        "public_relation": "መገናኛ ብዙኃን",
         "development": "ልማት",
         "construction": "ግንባታና እድሳት",
         "law_order": "ሕግና ስርዓት",
         "charity": "የበጎ አድራጎት",
-        "religious_education": "የሃይማኖት ትምህርት",
+        "religious_education": "የአብነት ትምህርት",
         "property": "የንብረት አስተዳደር",
         "offering": "መባ ሰብሳቢ",
-        "statistician": "ስታትስቲክስ",
+        "statistician": "አኃዛዊ መረጃ",
         "media": "ሚዲያ",
         "it": "አይቲ",
-        "council": "የቤተክርስቲያን ምክር ቤት አስተባባሪ"
+        "council": "ሰበካ ጉባዔ ማስተባበሪያ"
       },
       "cities": {
         "dubai": "ዱባይ",
@@ -208,18 +214,20 @@
         "christianLife": "የክርስትና ሕይወት",
         "serviceAtParish": "በደብሩ ላይ የሚሳተፉበት አገልግሎት",
         "ministryService": "የንዑስ ክፍል አገልግሎት",
-        "hasFatherConfessor": "የንስሐ አባት",
+        "hasFatherConfessor": "የንስሓ አባት",
         "hasAssociationMembership": "የጽዋ አባልነት",
         "residencePermit": "የመኖሪያ ፈቃድ",
         "hasChildren": "ልጆች",
-        "numberOfChildren": "የልጆች ብዛት"
+        "numberOfChildren": "የልጆች ብዛት",
+        "children": "ልጆች"
       },
       "deleteAccount": {
         "title": "መለያ ሰርዝ",
         "message": "መለያዎን መሰረዝ እርግጠኛ ነዎት? ይህ እርምጃ ሊቀለበስ አይችልም።",
         "confirm": "መለያ ሰርዝ",
         "button": "መለያ ሰርዝ"
-      }
+      },
+      "childrenInfo": "የልጆች መረጃ"
     }
   },
   "validation": {
@@ -228,7 +236,17 @@
       "lastName": "የአባት ስም አስፈላጊ ነው",
       "phoneNumber": "ስልክ ቁጥር አስፈላጊ ነው",
       "city": "ከተማ አስፈላጊ ነው",
-      "address": "አድራሻ አስፈላጊ ነው"
+      "address": "አድራሻ አስፈላጊ ነው",
+      "childFullName": "የልጅ ሙሉ ስም አስፈላጊ ነው",
+      "childChristianityName": "የልጅ የክርስትና ስም አስፈላጊ ነው",
+      "childGender": "የልጅ ጾታ አስፈላጊ ነው",
+      "numberOfChildren": "የልጆች ብዛት አስፈላጊ ነው"
+    },
+    "children": {
+      "invalidArray": "የልጆች መረጃ ትክክል አይደለም",
+      "numberMismatch": "የልጆች ብዛት ከቀረበው መረጃ ጋር አይጣጣምም",
+      "missingFields": "እባክዎ ለእያንዳንዱ ልጅ አስፈላጊ መረጃዎችን ሁሉ ያሟሉ",
+      "required": "እባክዎ የልጆችን መረጃ ያቅርቡ"
     }
   },
   "onboarding": {
@@ -273,7 +291,7 @@
       "photo": "የእርስዎን ግልጽ ፎቶ ያስገቡ",
       "serviceAtParish": "በቤተክርስቲያን ያለዎትን ዋና የአገልግሎት ዘርፍ ይምረጡ",
       "ministryService": "የንዑስ የአገልግሎት ዘርፍዎን ይምረጡ",
-      "hasFatherConfessor": "የንስሐ አባት አለዎት?",
+      "hasFatherConfessor": "በዱባይ የንስሓ አባት አለዎት?",
       "hasAssociationMembership": "በቤተክርስቲያን የጽዋ ማኅበር አባል ኖት?",
       "residencePermit": "በዩኤኢ ያለዎት የመኖሪያ ፈቃድ አለዎት?"
     },
@@ -290,6 +308,10 @@
       "contact": "አድራሻ",
       "church": "ክርስትና",
       "additional": "ተጨማሪ"
+    },
+    "errors": {
+      "submission": "መገለጫዎን ማስገባት አልተሳካም። እባክዎ እንደገና ይሞክሩ።",
+      "sessionExpired": "የመለያ ጊዜዎ አልቋል። እባክዎ እንደገና ይግቡ።"
     }
   },
   "navigation": {
@@ -551,7 +573,7 @@
         "requiredEmail": "ኢሜይል አስፈላጊ ነው",
         "requiredPassword": "የይለፍ ቃል አስፈላጊ ነው",
         "minLengthPassword": "የይለፍ ቃል ቢያንስ 6 ቁምፊዎች ሊኖሩት ይገባል",
-        "loginFailed": "መግባት አልተሳካም። እባክዎ መረጃዎችዎን ያረጋግጡና እንደገና ይሞክሩ።"
+        "loginFailed": "መግባት አልተሳካም። እባክዎ መረጃዎችዎን ያረጋግጡና እንደ���ና ይሞክሩ።"
       },
       "placeholders": {
         "email": "ኢሜይልዎን ያስገቡ",

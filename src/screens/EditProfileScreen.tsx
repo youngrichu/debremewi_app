@@ -56,7 +56,6 @@ interface DropdownState {
   ministryService: boolean;
   hasFatherConfessor: boolean;
   hasAssociationMembership: boolean;
-  residencePermit: boolean;
   hasChildren: boolean;
 }
 
@@ -119,7 +118,6 @@ const getPickerOptions = (pickerName: string): string[] => {
       options = MINISTRY_SERVICE_OPTIONS;
       break;
     case 'hasFatherConfessor':
-    case 'residencePermit':
     case 'hasChildren':
     case 'hasAssociationMembership':
       options = YES_NO_OPTIONS;
@@ -150,8 +148,6 @@ const getPickerTitle = (pickerName: string) => {
       return 'Select Sub-department Service';
     case 'hasFatherConfessor':
       return 'Do you have a Father Confessor?';
-    case 'residencePermit':
-      return 'Select Residence Permit Status';
     case 'hasChildren':
       return 'Do you have children?';
     case 'hasAssociationMembership':
@@ -160,6 +156,79 @@ const getPickerTitle = (pickerName: string) => {
       return 'Select an Option';
   }
 };
+
+const ChildFields = React.memo(({ 
+  index, 
+  child,
+  handleChildFieldChange,
+  errors,
+  t,
+  setShowPicker 
+}: {
+  index: number;
+  child: any;
+  handleChildFieldChange: (index: number, field: string, value: string) => void;
+  errors: any;
+  t: any;
+  setShowPicker: (field: string | null) => void;
+}) => {
+  return (
+    <View key={`child-${index}`} style={styles.childContainer}>
+      <Text style={styles.childTitle}>{t('profile.fields.child', { number: index + 1 })}</Text>
+      
+      {/* Child's Full Name */}
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>
+          {t('profile.fields.childFullName')} <Text style={styles.required}>*</Text>
+        </Text>
+        <TextInput
+          style={[styles.input, errors[`child${index}FullName`] && styles.inputError]}
+          value={child?.fullName || ''}
+          onChangeText={(value) => handleChildFieldChange(index, 'fullName', value)}
+          placeholder={t('profile.placeholders.enterChildFullName')}
+        />
+        {errors[`child${index}FullName`] && (
+          <Text style={styles.errorText}>{errors[`child${index}FullName`]}</Text>
+        )}
+      </View>
+
+      {/* Child's Christianity Name */}
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>
+          {t('profile.fields.childChristianityName')} <Text style={styles.required}>*</Text>
+        </Text>
+        <TextInput
+          style={[styles.input, errors[`child${index}ChristianityName`] && styles.inputError]}
+          value={child?.christianityName || ''}
+          onChangeText={(value) => handleChildFieldChange(index, 'christianityName', value)}
+          placeholder={t('profile.placeholders.enterChildChristianityName')}
+        />
+        {errors[`child${index}ChristianityName`] && (
+          <Text style={styles.errorText}>{errors[`child${index}ChristianityName`]}</Text>
+        )}
+      </View>
+
+      {/* Child's Gender */}
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>
+          {t('profile.fields.childGender')} <Text style={styles.required}>*</Text>
+        </Text>
+        <TouchableOpacity 
+          style={styles.pickerButton}
+          onPress={() => setShowPicker(`child${index}Gender`)}
+        >
+          <Text style={[styles.pickerButtonText, !child?.gender && { color: '#666' }]}>
+            {child?.gender ? t(`profile.options.gender.${child.gender}`) : t('common.select')}
+          </Text>
+          <Ionicons name="chevron-down" size={20} color="#666" />
+        </TouchableOpacity>
+        {errors[`child${index}Gender`] && (
+          <Text style={styles.errorText}>{errors[`child${index}Gender`]}</Text>
+        )}
+      </View>
+    </View>
+  );
+});
 
 export default function EditProfileScreen() {
   const navigation = useNavigation();
@@ -171,11 +240,22 @@ export default function EditProfileScreen() {
   const [errors, setErrors] = useState<Record<string, string | undefined>>({});
   const { t } = useTranslation();
 
-  const handleChange = (field: keyof FormData, value: string) => {
+  const handleChange = (field: keyof FormData, value: any) => {
+    // Special handling for children array
+    if (field === 'children') {
+      setFormData(prev => ({
+        ...prev,
+        [field]: value
+      }));
+      return;
+    }
+
+    // Handle other fields
     setFormData(prev => ({
       ...prev,
-      [field]: value.trim() === '' ? undefined : value
+      [field]: value?.trim?.() === '' ? undefined : value
     }));
+
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
     }
@@ -200,26 +280,62 @@ export default function EditProfileScreen() {
       newErrors.residenceAddress = 'Address is required';
     }
 
+    if (formData.hasChildren === 'yes') {
+      if (!formData.numberOfChildren) {
+        newErrors.numberOfChildren = t('validation.required.numberOfChildren');
+      } else {
+        const childCount = parseInt(formData.numberOfChildren);
+        for (let i = 0; i < childCount; i++) {
+          const child = formData.children?.[i];
+          if (!child?.fullName?.trim()) {
+            newErrors[`child${i}FullName`] = t('validation.required.childFullName');
+          }
+          if (!child?.christianityName?.trim()) {
+            newErrors[`child${i}ChristianityName`] = t('validation.required.childChristianityName');
+          }
+          if (!child?.gender) {
+            newErrors[`child${i}Gender`] = t('validation.required.childGender');
+          }
+        }
+      }
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const handleSubmit = async () => {
     if (!validateForm()) {
-      Alert.alert('Error', 'Please fill in all required fields.');
+      Alert.alert(
+        t('common.error'),
+        t('profile.messages.fillRequiredFields')
+      );
       return;
     }
 
     setLoading(true);
     try {
-      const updatedUser = await ProfileService.updateProfile(formData);
-      dispatch(setUserData(updatedUser));
-      Alert.alert('Success', 'Profile updated successfully', [
-        { text: 'OK', onPress: () => navigation.goBack() }
-      ]);
+      const updatedProfile = {
+        ...formData,
+        children: formData.hasChildren === 'yes' ? formData.children : [],
+      };
+      
+      console.log('Profile data being sent:', JSON.stringify(updatedProfile, null, 2));
+
+      const response = await ProfileService.updateProfile(updatedProfile);
+      dispatch(setUserData(response.data));
+      
+      Alert.alert(
+        t('common.success'),
+        t('profile.messages.updateSuccess')
+      );
+      navigation.goBack();
     } catch (error) {
       console.error('Profile update error:', error);
-      Alert.alert('Error', 'Failed to update profile. Please try again.');
+      Alert.alert(
+        t('common.error'),
+        t('profile.messages.updateError')
+      );
     } finally {
       setLoading(false);
     }
@@ -253,7 +369,7 @@ export default function EditProfileScreen() {
     if (!value) return t('common.select');
 
     // For yes/no fields
-    if (['hasFatherConfessor', 'hasAssociationMembership', 'residencePermit'].includes(field)) {
+    if (['hasFatherConfessor', 'hasAssociationMembership'].includes(field)) {
       return t(`common.${value.toLowerCase()}`);
     }
 
@@ -308,7 +424,7 @@ export default function EditProfileScreen() {
     if (!value) return t('common.select');
 
     // For yes/no fields
-    if (['hasFatherConfessor', 'hasAssociationMembership', 'residencePermit', 'hasChildren'].includes(field)) {
+    if (['hasFatherConfessor', 'hasAssociationMembership'].includes(field)) {
       return t(`common.${value.toLowerCase()}`);
     }
 
@@ -342,6 +458,75 @@ export default function EditProfileScreen() {
   const getProfilePhoto = () => {
     if (!formData) return null;
     return formData.profilePhotoUrl || formData.profilePhoto || formData.photo;
+  };
+
+  // Add this section for children inputs
+  const renderChildrenSection = () => {
+    if (formData.hasChildren !== 'yes') return null;
+
+    return (
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>
+          {t('profile.sections.childrenInfo')}
+        </Text>
+        {formData.children?.map((child, index) => (
+          <View key={index} style={styles.childContainer}>
+            <Text style={styles.childTitle}>
+              {t('profile.fields.child')} {index + 1}
+            </Text>
+            
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>
+                {t('profile.fields.fullName')} <Text style={styles.required}>*</Text>
+              </Text>
+              <TextInput
+                style={[styles.input, errors[`child${index}FullName`] && styles.inputError]}
+                value={child.fullName}
+                onChangeText={(value) => handleChildFieldChange(index, 'fullName', value)}
+                placeholder={t('profile.placeholders.enterFullName')}
+              />
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>
+                {t('profile.fields.christianityName')} <Text style={styles.required}>*</Text>
+              </Text>
+              <TextInput
+                style={[styles.input, errors[`child${index}ChristianityName`] && styles.inputError]}
+                value={child.christianityName}
+                onChangeText={(value) => handleChildFieldChange(index, 'christianityName', value)}
+                placeholder={t('profile.placeholders.enterChristianityName')}
+              />
+            </View>
+
+            <View style={styles.inputGroup}>
+              <Text style={styles.label}>
+                {t('profile.fields.gender')} <Text style={styles.required}>*</Text>
+              </Text>
+              <CustomPicker
+                visible={showPicker === `child${index}Gender`}
+                onClose={() => setShowPicker(null)}
+                pickerName="gender"
+                selectedValue={child.gender}
+                onSelect={(value) => handleChildFieldChange(index, 'gender', value)}
+              />
+            </View>
+          </View>
+        ))}
+      </View>
+    );
+  };
+
+  const handleChildFieldChange = (index: number, field: string, value: string) => {
+    const updatedChildren = [...(formData.children || [])];
+    if (!updatedChildren[index]) {
+      updatedChildren[index] = {};
+    }
+    updatedChildren[index] = {
+      ...updatedChildren[index],
+      [field]: value
+    };
+    handleChange('children', updatedChildren);
   };
 
   return (
@@ -420,7 +605,41 @@ export default function EditProfileScreen() {
 
               {/* Additional Information */}
               {renderSectionTitle('additionalInfo')}
-              {renderPickerButton('residencePermit')}
+              {renderPickerButton('hasChildren')}
+
+              {formData.hasChildren === 'yes' && (
+                <>
+                  <View style={styles.inputGroup}>
+                    <Text style={styles.label}>
+                      {t('profile.fields.numberOfChildren')} <Text style={styles.required}>*</Text>
+                    </Text>
+                    <TextInput
+                      style={[styles.input, errors.numberOfChildren && styles.inputError]}
+                      value={formData.numberOfChildren}
+                      onChangeText={(value) => handleChange('numberOfChildren', value)}
+                      keyboardType="numeric"
+                      placeholder={t('profile.placeholders.enterNumberOfChildren')}
+                    />
+                    {errors.numberOfChildren && (
+                      <Text style={styles.errorText}>{errors.numberOfChildren}</Text>
+                    )}
+                  </View>
+
+                  {formData.numberOfChildren && parseInt(formData.numberOfChildren) > 0 && (
+                    Array.from({ length: parseInt(formData.numberOfChildren) }).map((_, index) => (
+                      <ChildFields
+                        key={index}
+                        index={index}
+                        child={formData.children?.[index]}
+                        handleChildFieldChange={handleChildFieldChange}
+                        errors={errors}
+                        t={t}
+                        setShowPicker={setOpenPicker}
+                      />
+                    ))
+                  )}
+                </>
+              )}
 
               {/* Submit Button */}
               <TouchableOpacity
@@ -443,12 +662,21 @@ export default function EditProfileScreen() {
           <CustomPicker
             visible={true}
             onClose={() => setOpenPicker(null)}
-            pickerName={openPicker}
+            pickerName={openPicker.includes('Gender') ? 'gender' : openPicker}
             onSelect={(value) => {
-              handleChange(openPicker as keyof typeof formData, value);
+              if (openPicker.includes('child')) {
+                const childIndex = parseInt(openPicker.match(/\d+/)?.[0] || '0');
+                handleChildFieldChange(childIndex, 'gender', value);
+              } else {
+                handleChange(openPicker as keyof typeof formData, value);
+              }
               setOpenPicker(null);
             }}
-            selectedValue={formData[openPicker as keyof typeof formData]?.toString()}
+            selectedValue={
+              openPicker.includes('child') 
+                ? formData.children?.[parseInt(openPicker.match(/\d+/)?.[0] || '0')]?.gender
+                : formData[openPicker as keyof typeof formData]?.toString()
+            }
           />
         )}
       </LinearGradient>
@@ -591,6 +819,18 @@ const styles = StyleSheet.create({
     color: '#2196F3',
     fontSize: 40,
     fontWeight: 'bold',
+  },
+  childContainer: {
+    marginTop: 20,
+    padding: 15,
+    backgroundColor: '#f8f9fa',
+    borderRadius: 8,
+  },
+  childTitle: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 15,
   },
   // Add more styles as needed...
 }); 

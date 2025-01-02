@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   View,
   Text,
@@ -42,6 +42,16 @@ const LoginScreen = ({ navigation, route }: LoginScreenProps) => {
   const scrollViewRef = useRef(null);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 
+  useEffect(() => {
+    if (route.params?.sessionExpired) {
+      Alert.alert(
+        t('auth.login.sessionExpired.title'),
+        t('auth.login.sessionExpired.message'),
+        [{ text: t('common.ok') }]
+      );
+    }
+  }, [route.params?.sessionExpired]);
+
   const validateLogin = (email: string, password: string): string | null => {
     if (!email.trim()) return t('validation.required.email');
     if (!/\S+@\S+\.\S+/.test(email)) return t('validation.invalid.email');
@@ -63,7 +73,7 @@ const LoginScreen = ({ navigation, route }: LoginScreenProps) => {
     try {
       const response = await AuthService.login(email, password);
       console.log('Raw login response in LoginScreen:', JSON.stringify(response, null, 2));
-      
+      console.log('Raw login response in LoginScreen:', JSON.stringify(response, null, 2));
       if (response.token) {
         await AsyncStorage.setItem('userToken', response.token);
         console.log('Token stored:', response.token);
@@ -82,6 +92,7 @@ const LoginScreen = ({ navigation, route }: LoginScreenProps) => {
         }
       } else {
         setErrorMessage(t('auth.login.errors.loginFailed'));
+        setErrorMessage(response.message || t('auth.login.errors.loginFailed'));
       }
     } catch (error) {
       console.error('Login error:', error);

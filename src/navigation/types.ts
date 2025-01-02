@@ -8,5 +8,6 @@ export type RootStackParamList = {
   Settings: undefined;
   About: undefined;
   Help: undefined;
+  HomeStack: undefined;
   // Add other screen names and their params here
 };

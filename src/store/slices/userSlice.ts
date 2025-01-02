@@ -1,16 +1,18 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { UserProfile } from '../../types';
+import { UserProfile, ChildInfo } from '../types';
 
 interface UserState {
   userData: UserProfile | null;
+  children: ChildInfo[];
   loading: boolean;
   error: string | null;
 }
 
 const initialState: UserState = {
   userData: null,
+  children: [],
   loading: false,
-  error: null
+  error: null,
 };
 
 const userSlice = createSlice({
@@ -19,17 +21,21 @@ const userSlice = createSlice({
   reducers: {
     setUserData: (state, action: PayloadAction<UserProfile>) => {
       state.userData = action.payload;
-      state.error = null;
+      state.children = action.payload.children || [];
     },
-    clearUserData: (state) => {
+    updateChildren: (state, action: PayloadAction<ChildInfo[]>) => {
+      state.children = action.payload;
+      if (state.userData) {
+        state.userData.children = action.payload;
+      }
+    },
+    clearUser: (state) => {
       state.userData = null;
+      state.children = [];
       state.error = null;
     },
-    setError: (state, action: PayloadAction<string>) => {
-      state.error = action.payload;
-    }
-  }
+  },
 });
 
-export const { setUserData, clearUserData, setError } = userSlice.actions;
+export const { setUserData, updateChildren, clearUser } = userSlice.actions;
 export default userSlice.reducer; 

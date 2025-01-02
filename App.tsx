@@ -5,6 +5,7 @@ import AppNavigator from './src/navigation/AppNavigator';
 import { store } from './src/store';
 import { i18nInit } from './src/i18n';
 import { ActivityIndicator, View, StatusBar } from 'react-native';
+import { AuthProvider } from './src/contexts/AuthContext';
 
 export default function App() {
   const [isI18nInitialized, setIsI18nInitialized] = useState(false);
@@ -25,14 +26,16 @@ export default function App() {
 
   return (
     <Provider store={store}>
-      <NavigationContainer>
-        <StatusBar
-          barStyle="dark-content"
-          backgroundColor="transparent"
-          translucent={true}
-        />
-        <AppNavigator />
-      </NavigationContainer>
+      <AuthProvider>
+        <NavigationContainer>
+          <StatusBar
+            barStyle="dark-content"
+            backgroundColor="transparent"
+            translucent={true}
+          />
+          <AppNavigator />
+        </NavigationContainer>
+      </AuthProvider>
     </Provider>
   );
 }

@@ -1,26 +1,23 @@
 export const validatePhone = (phone: string): boolean => {
-  // Phone validation - allows international format with + and spaces
-  const phoneRegex = /^\+?[\d\s-]{10,}$/;
-  return phoneRegex.test(phone);
+  // Just check if it has at least 10 digits
+  const digitsOnly = phone.replace(/\D/g, '');
+  return digitsOnly.length >= 10;
 };
 
 export const validateName = (name: string): boolean => {
-  // Name validation - at least 2 characters, letters, spaces, and hyphens only
-  const nameRegex = /^[a-zA-Z\s-]{2,}$/;
-  return nameRegex.test(name.trim());
+  // Just check if it's not empty and has minimum length
+  return name.trim().length >= 2;
 };
 
 export const validateCity = (city: string): boolean => {
-  // City validation - at least 2 characters, letters, spaces, and commas only
-  const cityRegex = /^[a-zA-Z\s,]{2,}$/;
-  return cityRegex.test(city.trim());
+  // Just check if it's not empty
+  return city.trim().length > 0;
 };
 
 export const validateChristianName = (name: string | undefined): boolean => {
-  // Optional field - if provided, must be at least 2 characters
+  // Optional field - if provided, just check minimum length
   if (!name || name.trim() === '') return true;
-  const nameRegex = /^[a-zA-Z\s-]{2,}$/;
-  return nameRegex.test(name.trim());
+  return name.trim().length >= 2;
 };
 
 export const getValidationError = (field: string, value: string): string | null => {
@@ -31,20 +28,56 @@ export const getValidationError = (field: string, value: string): string | null 
       
     case 'firstName':
       if (!value) return 'First name is required';
-      return validateName(value) ? null : 'First name must contain only letters and be at least 2 characters';
+      return validateName(value) ? null : 'First name must be at least 2 characters';
       
     case 'lastName':
       if (!value) return 'Last name is required';
-      return validateName(value) ? null : 'Last name must contain only letters and be at least 2 characters';
+      return validateName(value) ? null : 'Last name must be at least 2 characters';
       
     case 'residencyCity':
       if (!value) return 'City is required';
-      return validateCity(value) ? null : 'Please enter a valid city name';
+      return validateCity(value) ? null : 'Please enter a city name';
       
     case 'christianName':
-      return validateChristianName(value) ? null : 'Christian name must contain only letters and be at least 2 characters';
+      return validateChristianName(value) ? null : 'Christian name must be at least 2 characters';
       
     default:
       return null;
   }
+};
+
+import { ChildInfo } from '../types';
+
+export const validateChildrenData = (
+  hasChildren: string,
+  numberOfChildren: string | undefined,
+  children: ChildInfo[] | undefined
+): { isValid: boolean; errorKey?: string } => {
+  if (hasChildren === 'yes') {
+    if (!children || !Array.isArray(children)) {
+      return { isValid: false, errorKey: 'validation.children.invalidArray' };
+    }
+
+    if (!numberOfChildren || children.length !== parseInt(numberOfChildren)) {
+      return { 
+        isValid: false, 
+        errorKey: 'validation.children.numberMismatch' 
+      };
+    }
+
+    const invalidChild = children.find(child => 
+      !child.fullName || 
+      !child.christianityName || 
+      !child.gender
+    );
+
+    if (invalidChild) {
+      return { 
+        isValid: false, 
+        errorKey: 'validation.children.missingFields' 
+      };
+    }
+  }
+
+  return { isValid: true };
 }; 

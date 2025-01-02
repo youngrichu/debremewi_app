@@ -116,6 +116,12 @@ export type RootStackParamList = {
   Notifications: undefined;
 };
 
+export interface ChildInfo {
+  fullName: string;
+  christianityName: string;
+  gender: string;
+}
+
 export interface UserProfile {
   id: number;
   email: string;
@@ -143,6 +149,17 @@ export interface UserProfile {
   photo?: string;
   isOnboardingComplete?: boolean;
   is_onboarding_complete?: boolean;
+  hasChildren: string;
+  numberOfChildren?: string;
+  children?: ChildInfo[];
 }
 
 export type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Profile'>;
+
+export interface OnboardingData {
+  firstName: string;
+  lastName: string;
+  christianName?: string;
+  // ... other fields ...
+  children?: ChildInfo[];
+}

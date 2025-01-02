@@ -35,20 +35,24 @@
       "educationLevel": "Education Level",
       "occupation": "Occupation",
       "residencyCity": "City of Residence",
-      "residenceAddress": "Residence Address",
+      "residenceAddress": "Residence Address in the UAE",
       "emergencyContact": "Emergency Contact",
       "photo": "Photo",
       "changePhoto": "Change Photo",
       "christianLife": "Christian Life",
       "serviceAtParish": "Service at Parish",
       "ministryService": "Ministry Service",
-      "hasFatherConfessor": "Do you have a Father Confessor?",
+      "hasFatherConfessor": "Do you have a Father Confessor in Dubai?",
       "fatherConfessorName": "Father Confessor Name",
       "hasAssociationMembership": "Church Association Membership",
       "associationName": "Association Name",
       "residencePermit": "Do you have a residence permit in UAE?",
       "hasChildren": "Do you have children?",
-      "numberOfChildren": "Number of Children"
+      "numberOfChildren": "Number of Children",
+      "child": "Child {{number}}",
+      "childFullName": "Child's Full Name",
+      "childChristianityName": "Child's Christianity Name",
+      "childGender": "Child's Gender"
     },
     "placeholders": {
       "enterFirstName": "Enter your first name",
@@ -61,7 +65,9 @@
       "enterAssociationName": "Enter association name",
       "enterNumberOfChildren": "Enter number of children",
       "enterPhoneNumber": "Enter your phone number",
-      "enterResidenceAddress": "Enter your residence address"
+      "enterResidenceAddress": "Enter your residence address",
+      "enterChildFullName": "Enter child's full name",
+      "enterChildChristianityName": "Enter child's Christianity name"
     },
     "selects": {
       "selectGender": "Select Gender",
@@ -86,12 +92,12 @@
       },
       "educationLevel": {
         "student": "Student",
-        "grade_10": "Grade 10",
-        "grade_12": "Grade 12",
+        "grade_10": "Completed 10th grade",
+        "grade_12": "Completed 12th grade",
         "diploma": "Diploma",
-        "degree": "Degree",
+        "degree": "Degree (Bachelor's)",
         "masters": "Masters",
-        "doctorate": "Doctorate"
+        "doctorate": "Doctor (Ph.D.)"
       },
       "christianLife": {
         "not_repent": "Not Repented",
@@ -157,7 +163,7 @@
     "messages": {
       "saveChanges": "Save Changes",
       "updateSuccess": "Profile updated successfully",
-      "updateError": "Failed to update profile",
+      "updateError": "Failed to update profile. Please try again.",
       "permissionRequired": "Permission Required",
       "photoPermissionMessage": "Sorry, we need camera roll permissions to upload photos",
       "errorPickingImage": "Failed to pick image",
@@ -186,6 +192,7 @@
       "contactInfo": "Contact Information",
       "churchInfo": "Church Information",
       "additionalInfo": "Additional Information",
+      "childrenInfo": "Children Information",
       "editProfile": "Edit Profile",
       "logOut": "Log Out",
       "confirmLogout": {
@@ -212,7 +219,8 @@
         "hasAssociationMembership": "Association Membership",
         "residencePermit": "Residence Permit",
         "hasChildren": "Children",
-        "numberOfChildren": "Number of Children"
+        "numberOfChildren": "Number of Children",
+        "children": "Children"
       },
       "deleteAccount": {
         "title": "Delete Account",
@@ -231,7 +239,12 @@
       "address": "Address is required",
       "email": "Email is required",
       "password": "Password is required",
-      "confirmPassword": "Please confirm your password"
+      "confirmPassword": "Please confirm your password",
+      "children": "Please add children's information",
+      "childFullName": "Child's full name is required",
+      "childChristianityName": "Child's Christianity name is required",
+      "childGender": "Child's gender is required",
+      "numberOfChildren": "Number of children is required"
     },
     "invalid": {
       "email": "Please enter a valid email address",
@@ -240,6 +253,12 @@
         "mismatch": "Passwords do not match"
       },
       "phoneNumber": "Please enter a valid phone number"
+    },
+    "children": {
+      "invalidArray": "Children data is invalid",
+      "numberMismatch": "Number of children does not match the provided information",
+      "missingFields": "Please complete all required fields for each child",
+      "required": "Please provide children's information"
     }
   },
   "onboarding": {
@@ -288,6 +307,10 @@
           "description": "Access spiritual materials, teachings, and church resources"
         }
       }
+    },
+    "errors": {
+      "submission": "Failed to submit your profile. Please try again.",
+      "sessionExpired": "Your session has expired. Please sign in again."
     }
   },
   "navigation": {
@@ -550,6 +573,10 @@
       "placeholders": {
         "email": "Enter your email",
         "password": "Enter your password"
+      },
+      "sessionExpired": {
+        "title": "Session Expired",
+        "message": "Your session has expired. Please sign in again."
       }
     },
     "forgotPassword": {

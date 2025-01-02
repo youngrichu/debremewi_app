@@ -352,14 +352,7 @@ export default function AppNavigator() {
         backgroundColor="transparent"
         translucent={true}
       />
-      <Stack.Navigator
-        screenOptions={{
-          headerTitleAlign: 'left',
-          headerTitleStyle: {
-            marginLeft: 16,
-          },
-        }}
-      >
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
         {!isAuthenticated ? (
           // Auth Stack
           <>
@@ -394,26 +387,23 @@ export default function AppNavigator() {
               }}
             />
           </>
-        ) : !isOnboardingComplete ? (
-          // Onboarding Stack
-          <Stack.Screen 
-            name="Onboarding" 
-            component={OnboardingScreen}
-            options={{
-              headerShown: true,
-              title: t('navigation.screens.onboarding'),
-              headerRight: () => <LanguageSelector />,
-              headerRightContainerStyle: { paddingRight: 15 },
-            }}
-          />
         ) : (
-          // Main App Stack
+          // App Stack
           <>
-            <Stack.Screen 
-              name="MainTabs" 
-              component={MainTabs}
-              options={{ headerShown: false }}
-            />
+            {!userData?.isOnboardingComplete ? (
+              <Stack.Screen 
+                name="Onboarding" 
+                component={OnboardingScreen}
+                options={{
+                  headerShown: true,
+                  title: t('navigation.screens.onboarding'),
+                  headerRight: () => <LanguageSelector />,
+                  headerRightContainerStyle: { paddingRight: 15 },
+                }}
+              />
+            ) : (
+              <Stack.Screen name="MainTabs" component={MainTabs} />
+            )}
             <Stack.Screen 
               name="Notifications" 
               component={NotificationsScreen}

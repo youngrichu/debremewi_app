@@ -4,19 +4,39 @@ import { Text } from './Text';
 import { useTranslation } from 'react-i18next';
 import { getPickerConfig } from '../constants/options';
 
+interface PickerOption {
+  label: string;
+  value: string;
+  disabled?: boolean;
+}
+
 interface CustomPickerProps {
   visible: boolean;
   onClose: () => void;
   pickerName: string;
   onSelect: (value: string) => void;
   selectedValue?: string;
+  options?: PickerOption[];
+  title?: string;
 }
 
-export function CustomPicker({ visible, onClose, pickerName, onSelect, selectedValue }: CustomPickerProps) {
+export function CustomPicker({ 
+  visible, 
+  onClose, 
+  pickerName, 
+  onSelect, 
+  selectedValue,
+  options: customOptions,
+  title: customTitle 
+}: CustomPickerProps) {
   const { t } = useTranslation();
-  const { options } = getPickerConfig(pickerName as any);
+  
+  const defaultOptions = getPickerConfig(pickerName as any)?.options || [];
+  const options = customOptions || defaultOptions;
 
   const getPickerTitle = () => {
+    if (customTitle) return customTitle;
+    
     switch (pickerName) {
       case 'serviceAtParish':
         return t('profile.selects.selectServiceType');
@@ -45,17 +65,21 @@ export function CustomPicker({ visible, onClose, pickerName, onSelect, selectedV
     }
   };
 
-  const getTranslatedOption = (value: string) => {
-    if (['hasFatherConfessor', 'hasAssociationMembership', 'residencePermit'].includes(pickerName)) {
-      return t(`common.${value.toLowerCase()}`);
+  const getTranslatedOption = (option: string | PickerOption) => {
+    if (typeof option === 'object') {
+      return option.label;
     }
-    if (value === 'none') {
+
+    if (['hasFatherConfessor', 'hasAssociationMembership', 'residencePermit'].includes(pickerName)) {
+      return t(`common.${option.toLowerCase()}`);
+    }
+    if (option === 'none') {
       return t('common.none');
     }
     if (pickerName === 'residencyCity') {
-      return t(`profile.options.cities.${value}`);
+      return t(`profile.options.cities.${option}`);
     }
-    return t(`profile.options.${pickerName}.${value}`);
+    return t(`profile.options.${pickerName}.${option}`);
   };
 
   return (
@@ -75,31 +99,39 @@ export function CustomPicker({ visible, onClose, pickerName, onSelect, selectedV
           </View>
           
           <ScrollView style={styles.optionsList}>
-            {options.map((option) => (
-              <TouchableOpacity
-                key={option}
-                style={[
-                  styles.option,
-                  selectedValue === option && styles.selectedOption
-                ]}
-                onPress={() => {
-                  onSelect(option);
-                  onClose();
-                }}
-              >
-                <Text
+            {options.map((option) => {
+              const isObject = typeof option === 'object';
+              if (isObject && option.disabled) return null;
+              
+              const value = isObject ? option.value : option;
+              const isSelected = selectedValue === value;
+
+              return (
+                <TouchableOpacity
+                  key={value}
                   style={[
-                    styles.optionText,
-                    selectedValue === option && styles.selectedOptionText
+                    styles.option,
+                    isSelected && styles.selectedOption
                   ]}
+                  onPress={() => {
+                    onSelect(value);
+                    onClose();
+                  }}
                 >
-                  {getTranslatedOption(option)}
-                </Text>
-                {selectedValue === option && (
-                  <Text style={styles.checkmark}>✓</Text>
-                )}
-              </TouchableOpacity>
-            ))}
+                  <Text
+                    style={[
+                      styles.optionText,
+                      isSelected && styles.selectedOptionText
+                    ]}
+                  >
+                    {getTranslatedOption(option)}
+                  </Text>
+                  {isSelected && (
+                    <Text style={styles.checkmark}>✓</Text>
+                  )}
+                </TouchableOpacity>
+              );
+            })}
           </ScrollView>
         </View>
       </View>

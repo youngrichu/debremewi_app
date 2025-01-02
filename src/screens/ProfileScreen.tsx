@@ -11,6 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { deleteAccount } from '../services/AuthService';
 import { useTranslation } from 'react-i18next';
 import { ProfileService } from '../services/ProfileService';
+import * as ImagePicker from 'expo-image-picker';
 
 const formatDisplayValue = (value: string | null | undefined, options?: { [key: string]: string }) => {
   if (!value) return 'Not provided';
@@ -36,6 +37,21 @@ const formatDisplayValue = (value: string | null | undefined, options?: { [key: 
       return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
     })
     .join(' ');
+};
+
+const renderChildrenList = (children?: Array<{ fullName: string; christianityName: string; gender: string }>) => {
+  if (!children || children.length === 0) return null;
+  
+  return children.map((child, index) => (
+    <View key={index} style={styles.childItem}>
+      <Text style={styles.childName}>
+        {`${index + 1}. ${child.fullName} (${child.christianityName})`}
+      </Text>
+      <Text style={styles.childGender}>
+        {child.gender === 'male' ? '👦' : '👧'}
+      </Text>
+    </View>
+  ));
 };
 
 export default function ProfileScreen() {
@@ -168,6 +184,47 @@ export default function ProfileScreen() {
     avatar_url: user?.avatar_url
   });
 
+  const handleChangePhoto = async () => {
+    try {
+      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      
+      if (!permissionResult.granted) {
+        Alert.alert(t('common.error'), t('profile.messages.permissionDenied'));
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaType.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 0.5,
+      });
+
+      if (!result.canceled && result.assets[0].uri) {
+        setIsLoading(true);
+        try {
+          const updatedProfile = await ProfileService.updateProfile({
+            ...user,
+            photo: result.assets[0].uri
+          });
+          
+          if (updatedProfile.success) {
+            dispatch(setUserData(updatedProfile.data));
+            Alert.alert(t('common.success'), t('profile.messages.photoUpdated'));
+          }
+        } catch (error) {
+          console.error('Error updating photo:', error);
+          Alert.alert(t('common.error'), t('profile.messages.photoUpdateError'));
+        } finally {
+          setIsLoading(false);
+        }
+      }
+    } catch (error) {
+      console.error('Error picking image:', error);
+      Alert.alert(t('common.error'), t('profile.messages.errorPickingImage'));
+    }
+  };
+
   return (
     <ScrollView style={styles.container}>
       {isLoading ? (
@@ -230,6 +287,22 @@ export default function ProfileScreen() {
               user?.occupation, 'briefcase-outline')}
           </View>
 
+          {/* Children Information Section */}
+          {user?.hasChildren === 'yes' && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>{t('profile.view.childrenInfo')}</Text>
+              <View style={styles.detailItem}>
+                <View style={styles.labelContainer}>
+                  <MaterialCommunityIcons name="account-child" size={20} color="#666" style={styles.icon} />
+                  <Text style={styles.detailLabel}>{t('profile.view.labels.children')}:</Text>
+                </View>
+                <View style={styles.childrenContainer}>
+                  {renderChildrenList(user.children)}
+                </View>
+              </View>
+            </View>
+          )}
+
           {/* Contact Information Section */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>{t('profile.view.contactInfo')}</Text>
@@ -263,11 +336,10 @@ export default function ProfileScreen() {
                 t('common.no'), 
               'account-tie', 'MaterialCommunity')}
             {renderDetailItem(t('profile.view.labels.hasAssociationMembership'), 
-              user?.hasAssociationMembership === 'yes' ? t('common.yes') : t('common.no'), 
+              user?.hasAssociationMembership === 'yes' ? 
+                `${t('common.yes')}${user.associationName ? ` (${user.associationName})` : ''}` : 
+                t('common.no'), 
               'people-outline')}
-            {renderDetailItem(t('profile.view.labels.residencePermit'), 
-              user?.residencePermit === 'yes' ? t('common.yes') : t('common.no'), 
-              'card-outline')}
           </View>
 
           {/* Logout and Delete Account Buttons */}
@@ -455,5 +527,25 @@ const styles = StyleSheet.create({
   retryButtonText: {
     color: '#FFF',
     fontSize: 16,
+  },
+  childrenContainer: {
+    marginLeft: 28,
+  },
+  childItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+  },
+  childName: {
+    fontSize: 16,
+    color: '#333',
+    flex: 1,
+  },
+  childGender: {
+    fontSize: 16,
+    marginLeft: 10,
   },
 });

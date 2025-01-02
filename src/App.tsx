@@ -6,6 +6,7 @@ import Navigation from './navigation';
 import { initializeApiClient } from './api/client';
 import { initializeI18n } from './i18n';
 import { StatusBar } from 'react-native';
+import { AuthProvider } from './contexts/AuthContext';
 
 const App = () => {
   useEffect(() => {
@@ -23,10 +24,12 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      <NavigationContainer>
-        <StatusBar barStyle="dark-content" />
-        <Navigation />
-      </NavigationContainer>
+      <AuthProvider>
+        <NavigationContainer>
+          <StatusBar barStyle="dark-content" />
+          <Navigation />
+        </NavigationContainer>
+      </AuthProvider>
     </Provider>
   );
 };
