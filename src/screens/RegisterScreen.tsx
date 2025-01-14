@@ -15,9 +15,11 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
-import { register } from '../services/AuthService';
+import { AuthService } from '../services/AuthService';
 import { useTranslation } from 'react-i18next';
 import { setAuthState } from '../store/slices/authSlice';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../types';
 
 interface FormData {
   firstName: string;
@@ -36,9 +38,13 @@ interface FormErrors {
   submit?: string;
 }
 
-const RegisterScreen = ({ navigation }) => {
+interface RegisterScreenProps {
+  navigation: NativeStackNavigationProp<RootStackParamList, 'Register'>;
+}
+
+const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
   const { t } = useTranslation();
-  const scrollViewRef = useRef(null);
+  const scrollViewRef = useRef<ScrollView>(null);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
@@ -86,7 +92,7 @@ const RegisterScreen = ({ navigation }) => {
 
     setLoading(true);
     try {
-      const response = await register({
+      const response = await AuthService.register({
         email: formData.email,
         password: formData.password,
         firstName: formData.firstName,

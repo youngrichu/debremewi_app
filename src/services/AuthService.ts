@@ -155,7 +155,14 @@ class AuthServiceClass {
     lastName: string;
   }): Promise<RegisterResponse> {
     try {
-      const response = await axios.post(`${API_URL}/wp-json/wp/v2/users/register`, userData);
+      const response = await axios.post(`${API_URL}/?rest_route=/simple-jwt-login/v1/users`, {
+        email: userData.email,
+        password: userData.password,
+        first_name: userData.firstName,
+        last_name: userData.lastName,
+        AUTH_KEY: 'debremewi'
+      });
+
       return {
         success: true,
         message: 'Registration successful'
