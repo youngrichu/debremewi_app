@@ -64,9 +64,7 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
     try {
       setLoading(true);
       setError(null);
-      console.log('Loading event with ID:', route.params.eventId);
       const eventData = await EventService.getEventById(route.params.eventId);
-      console.log('Loaded event data:', eventData);
       
       if (eventData) {
         setEvent({
@@ -332,10 +330,15 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
             </Text>
           </View>
 
-          <View style={styles.metaItem}>
-            <Ionicons name="time-outline" size={24} color="#666" />
-            <Text style={styles.metaText}>
-              {formatTime(event.date)}
+          <View style={styles.eventMetaItem}>
+            <Ionicons name="time-outline" size={20} color="#666" />
+            <Text style={styles.eventMetaText}>
+              {format(new Date(event.date), 'EEEE, MMMM d, yyyy')}
+              {'\n'}
+              {format(new Date(event.date), 'h:mm a')}
+              {event.end_date && (
+                <> - {format(new Date(event.end_date), 'h:mm a')}</>
+              )}
             </Text>
           </View>
 
@@ -499,5 +502,15 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 12,
     color: '#333',
+  },
+  eventMetaItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  eventMetaText: {
+    marginLeft: 8,
+    color: '#666',
+    fontSize: 15,
   },
 });

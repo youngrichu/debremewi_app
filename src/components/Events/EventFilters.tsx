@@ -69,28 +69,33 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
         style={styles.categoriesContainer}
       >
         <TouchableOpacity
-          style={[styles.categoryButton, !selectedCategory && styles.activeCategory]}
+          style={[
+            styles.categoryButton,
+            selectedCategory === null && styles.selectedCategory,
+          ]}
           onPress={() => onCategorySelect(null)}
         >
-          <Text style={[styles.categoryText, !selectedCategory && styles.activeCategoryText]}>
+          <Text style={[
+            styles.categoryText,
+            selectedCategory === null && styles.selectedCategoryText,
+          ]}>
             {labels.all}
           </Text>
         </TouchableOpacity>
+
         {categories.map((category) => (
           <TouchableOpacity
-            key={category.id}
+            key={category.slug}
             style={[
               styles.categoryButton,
-              selectedCategory === category.id.toString() && styles.activeCategory,
+              selectedCategory === category.slug && styles.selectedCategory,
             ]}
-            onPress={() => onCategorySelect(category.id.toString())}
+            onPress={() => onCategorySelect(category.slug)}
           >
-            <Text
-              style={[
-                styles.categoryText,
-                selectedCategory === category.id.toString() && styles.activeCategoryText,
-              ]}
-            >
+            <Text style={[
+              styles.categoryText,
+              selectedCategory === category.slug && styles.selectedCategoryText,
+            ]}>
               {category.name}
             </Text>
           </TouchableOpacity>
@@ -148,6 +153,12 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   activeCategoryText: {
+    color: '#fff',
+  },
+  selectedCategory: {
+    backgroundColor: '#2196F3',
+  },
+  selectedCategoryText: {
     color: '#fff',
   },
 }); 

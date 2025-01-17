@@ -45,23 +45,30 @@ export class EventService {
     category?: string;
     page?: number;
     per_page?: number;
+    orderby?: 'date' | 'title';
+    order?: 'ASC' | 'DESC';
     start_date?: string;
     end_date?: string;
-  }): Promise<Event[]> {
+  }): Promise<{ events: Event[]; hasMore: boolean; total: number }> {
     try {
       const queryParams = new URLSearchParams();
       Object.entries(params).forEach(([key, value]) => {
         if (value) queryParams.append(key, value.toString());
       });
 
-      const response = await apiClient.get<EventsResponse>(`/wp-json/church-events/v1/events?${queryParams}`);
+      const response = await apiClient.get<EventsResponse>(
+        `/wp-json/church-events/v1/events?${queryParams}`
+      );
 
-      // Extract events array from the response
       if (response.data && Array.isArray(response.data.events)) {
-        return response.data.events.map(event => ({
-          ...event,
-          id: parseInt(event.id as string, 10) // Convert string ID to number if needed
-        }));
+        return {
+          events: response.data.events.map(event => ({
+            ...event,
+            id: parseInt(event.id as string, 10)
+          })),
+          hasMore: (params.page || 1) < response.data.pages,
+          total: response.data.total
+        };
       }
 
       throw new Error('Invalid response format');

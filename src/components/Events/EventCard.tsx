@@ -47,10 +47,13 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onPress }) => {
             </Text>
           </View>
 
-          <View style={styles.metaItem}>
+          <View style={styles.eventMeta}>
             <Ionicons name="time" size={16} color="#666" />
             <Text style={styles.metaText}>
-              {formatTime(event.date)}
+              {format(new Date(event.date), 'h:mm a')}
+              {event.end_date && (
+                <> - {format(new Date(event.end_date), 'h:mm a')}</>
+              )}
             </Text>
           </View>
 
@@ -104,5 +107,10 @@ const styles = StyleSheet.create({
   metaText: {
     color: '#666',
     fontSize: 14,
+  },
+  eventMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
 }); 

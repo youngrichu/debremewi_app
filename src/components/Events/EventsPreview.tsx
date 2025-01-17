@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Event } from '../../types';
-import { format, isAfter, isSameDay, startOfDay } from 'date-fns';
+import { format, isAfter, isSameDay, startOfDay, isBefore } from 'date-fns';
 import { Ionicons } from '@expo/vector-icons';
 
 interface EventsPreviewProps {
@@ -18,23 +18,26 @@ export const EventsPreview: React.FC<EventsPreviewProps> = ({
 
   // Filter out events with invalid dates and sort by date
   const validEvents = safeEvents
-    .filter(event => 
-      event?.id && 
-      event?.date && 
-      event?.title && 
-      new Date(event.date).toString() !== 'Invalid Date' &&
-      (isAfter(new Date(event.date), today) || isSameDay(new Date(event.date), today)) // Include today's events
-    )
+    .filter(event => {
+      if (!event?.date) return false;
+      try {
+        const eventDate = new Date(event.date);
+        return isAfter(eventDate, today) || isSameDay(eventDate, today);
+      } catch (error) {
+        console.warn('Invalid date format:', event.date);
+        return false;
+      }
+    })
     .sort((a, b) => {
       const dateA = new Date(a.date);
       const dateB = new Date(b.date);
-      return dateA.getTime() - dateB.getTime(); // Sort by date ascending (earliest first)
+      return dateA.getTime() - dateB.getTime();
     });
 
   if (validEvents.length === 0) {
     return (
       <View style={styles.emptyContainer}>
-        <Text style={styles.emptyText}>No upcoming events</Text>
+        <Text style={styles.emptyText}>No upcoming events at the moment</Text>
       </View>
     );
   }
@@ -66,6 +69,9 @@ export const EventsPreview: React.FC<EventsPreviewProps> = ({
               <Ionicons name="time-outline" size={14} color="#666" />
               <Text style={styles.eventTime}>
                 {format(new Date(event.date), 'h:mm a')}
+                {event.end_date && (
+                  <> - {format(new Date(event.end_date), 'h:mm a')}</>
+                )}
               </Text>
               <Ionicons name="location-outline" size={14} color="#666" />
               <Text style={styles.eventLocation} numberOfLines={1}>

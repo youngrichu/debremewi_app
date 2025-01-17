@@ -485,69 +485,217 @@ const formatMonthHeader = (date: any) => {
   }
 };
 
+// Add this helper function at the top of the file
+const getCategoryIdentifier = (category: any): string => {
+  if (typeof category === 'string') return category.toLowerCase();
+  if (typeof category === 'object') {
+    return (category.slug || category.name || '').toLowerCase();
+  }
+  return '';
+};
+
 export default function EventsScreen() {
   const { t, i18n } = useTranslation();
   const [viewMode, setViewMode] = useState<'month' | 'week' | 'day'>('month');
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [events, setEvents] = useState<Event[]>([]);
+  const [allEvents, setAllEvents] = useState<Event[]>([]); // Store all events
+  const [events, setEvents] = useState<Event[]>([]); // Store filtered events
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [categories, setCategories] = useState<EventCategory[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
+  const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   // Add state for calendar display type
   const isAmharic = i18n.language === 'am';
 
-  const loadEvents = useCallback(async () => {
+  const loadEvents = async (pageNum: number, refresh = false) => {
     try {
-      setLoading(true);
-      const [eventsData, categoriesData] = await Promise.all([
-        EventService.getEvents({
-          category: selectedCategory || undefined,
-        }),
-        EventService.getCategories(),
-      ]);
+      const isFirstPage = pageNum === 1;
+      if (isFirstPage) {
+        setLoading(true);
+      } else {
+        setLoadingMore(true);
+      }
 
-      setEvents(eventsData);
-      setCategories(categoriesData);
-      
-      // Filter events based on selected date if any
-      filterEventsByDate(eventsData, selectedDate);
+      // Load both events and categories in parallel on first load
+      if (isFirstPage) {
+        const [eventsResult, categoriesData] = await Promise.all([
+          EventService.getEvents({
+            page: pageNum,
+            per_page: 10,
+            orderby: 'date',
+            order: 'DESC',
+          }),
+          EventService.getCategories(),
+        ]);
+
+        console.log('Loaded events:', {
+          count: eventsResult.events.length,
+          categories: eventsResult.events.map(e => e.categories)
+        });
+
+        setAllEvents(eventsResult.events);
+        setCategories(categoriesData);
+        setHasMore(eventsResult.hasMore);
+        
+        applyFilters(eventsResult.events);
+      } else {
+        // For subsequent pages, just load events
+        const eventsResult = await EventService.getEvents({
+          page: pageNum,
+          per_page: 10,
+          orderby: 'date',
+          order: 'DESC',
+        });
+
+        setAllEvents(prev => [...prev, ...eventsResult.events]); // Store all new events
+        setHasMore(eventsResult.hasMore);
+        
+        // Apply category and date filters to all events
+        applyFilters([...allEvents, ...eventsResult.events]);
+      }
+
+      setError(null);
     } catch (error) {
       console.error('Error loading events:', error);
+      setError('Failed to load events');
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
-  }, [selectedCategory, selectedDate]);
+  };
 
-  const filterEventsByDate = (eventsList: Event[], date: string | null) => {
-    if (!date) {
-      setFilteredEvents(eventsList);
-      return;
+  // New function to apply both category and date filters
+  const applyFilters = (eventsList: Event[]) => {
+    console.log('Applying filters with category:', selectedCategory);
+
+    let filtered = eventsList;
+    
+    if (selectedCategory) {
+      filtered = eventsList.filter(event => {
+        return event.categories?.some(category => 
+          category.slug === selectedCategory
+        );
+      });
     }
 
-    // Filter events for the selected date
-    const filtered = eventsList.filter(event => {
-      if (!event.date) return false;
-      const eventDate = format(new Date(event.date), 'yyyy-MM-dd');
-      return eventDate === date;
-    });
+    // Then apply date filter if needed
+    if (selectedDate) {
+      filtered = filtered.filter(event => {
+        if (!event.date) return false;
+        const eventDate = format(new Date(event.date), 'yyyy-MM-dd');
+        return eventDate === selectedDate;
+      });
+    }
 
+    console.log('Filtered events count:', filtered.length);
+    setEvents(filtered);
     setFilteredEvents(filtered);
   };
 
+  const handleRefresh = () => {
+    setPage(1);
+    loadEvents(1, true);
+  };
+
+  const handleLoadMore = () => {
+    if (!loadingMore && hasMore) {
+      const nextPage = page + 1;
+      setPage(nextPage);
+      loadEvents(nextPage);
+    }
+  };
+
   useEffect(() => {
-    loadEvents();
-  }, [loadEvents]);
+    loadEvents(1);
+  }, []);
 
   const handleDateSelect = (date: DateData) => {
+    // If clicking the same date again, clear the date filter
+    if (selectedDate === date.dateString) {
+      setSelectedDate(null);
+      // Reapply only category filter if exists
+      if (selectedCategory) {
+        const filtered = allEvents.filter(event => {
+          return event.categories?.some(cat => 
+            cat.slug === selectedCategory
+          );
+        });
+        setEvents(filtered);
+        setFilteredEvents(filtered);
+      } else {
+        setEvents(allEvents);
+        setFilteredEvents(allEvents);
+      }
+      return;
+    }
+
+    // Apply filters with the new date value directly
+    let filtered = allEvents;
+    
+    // First apply category filter if any
+    if (selectedCategory) {
+      filtered = filtered.filter(event => {
+        return event.categories?.some(cat => 
+          cat.slug === selectedCategory
+        );
+      });
+    }
+
+    // Then apply the new date filter
+    filtered = filtered.filter(event => {
+      if (!event.date) return false;
+      const eventDate = format(new Date(event.date), 'yyyy-MM-dd');
+      return eventDate === date.dateString;
+    });
+
+    // Update all states at once
     setSelectedDate(date.dateString);
-    filterEventsByDate(events, date.dateString);
+    setEvents(filtered);
+    setFilteredEvents(filtered);
   };
 
   const handleCategorySelect = (category: string | null) => {
+    console.log('Category selected:', category);
+    
+    // If selecting "All", clear both category and date filters
+    if (category === null) {
+      setSelectedCategory(null);
+      setSelectedDate(null);
+      setEvents(allEvents);
+      setFilteredEvents(allEvents);
+      setPage(1);
+      return;
+    }
+    
+    // Apply filters with the new category value directly
+    let filtered = allEvents;
+    
+    filtered = allEvents.filter(event => {
+      return event.categories?.some(cat => 
+        cat.slug === category
+      );
+    });
+
+    // Apply date filter if needed
+    if (selectedDate) {
+      filtered = filtered.filter(event => {
+        if (!event.date) return false;
+        const eventDate = format(new Date(event.date), 'yyyy-MM-dd');
+        return eventDate === selectedDate;
+      });
+    }
+
+    // Update all states at once
     setSelectedCategory(category);
+    setEvents(filtered);
+    setFilteredEvents(filtered);
+    setPage(1);
   };
 
   const handleEventPress = (eventId: number) => {
@@ -558,7 +706,7 @@ export default function EventsScreen() {
     setViewMode(mode);
     // Reset filters when changing view mode
     setSelectedDate(null);
-    filterEventsByDate(events, null);
+    applyFilters(allEvents); // Apply filters to all events
   };
 
   const handleDayPress = (date: Date) => {
@@ -657,8 +805,11 @@ export default function EventsScreen() {
           <EventList
             events={selectedDate ? filteredEvents : events}
             onEventPress={handleEventPress}
-            onRefresh={loadEvents}
+            onRefresh={handleRefresh}
+            onLoadMore={handleLoadMore}
             loading={loading}
+            loadingMore={loadingMore}
+            hasMore={hasMore}
             labels={{
               noEvents: isAmharic ? 'ምንም መርሃግብር የለም' : 'No events',
               loading: isAmharic ? 'በመጫን ላይ...' : 'Loading...',

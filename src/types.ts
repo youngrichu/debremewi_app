@@ -14,6 +14,11 @@ export interface Post {
   };
 }
 
+interface EventCategory {
+  name: string;
+  slug: string;
+}
+
 export interface Event {
   id: number;
   title: string;
@@ -24,7 +29,7 @@ export interface Event {
   content?: string;
   thumbnail?: string;
   permalink?: string;
-  categories?: string[];
+  categories: EventCategory[];
 }
 
 export type RootStackParamList = {
@@ -55,6 +60,7 @@ export type RootStackParamList = {
   ForgotPassword: undefined;
   Onboarding: undefined;
   NewPassword: { email: string };
+  EventDetails: { eventId: number };
 };
 
 export type MoreStackParamList = {

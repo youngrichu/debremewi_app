@@ -9,6 +9,8 @@ import { API_URL } from '../config';
 import WelcomeCard from '../components/WelcomeCard';
 import { useTranslation } from 'react-i18next';
 import { getUpcomingEvents } from '../services/EventsService';
+import { EventService } from '../services/EventService';
+import { isAfter, isSameDay } from 'date-fns';
 
 type HomeScreenNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<RootStackParamList, 'MainTabs'>,
@@ -39,7 +41,50 @@ export default function HomeScreen() {
   const fetchUpcomingEvents = useCallback(async () => {
     try {
       setLoading(true);
-      const upcomingEvents = await getUpcomingEvents();
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      let allEvents: Event[] = [];
+      let currentPage = 1;
+      let hasMore = true;
+
+      // Fetch all pages until we find upcoming events or run out of pages
+      while (hasMore) {
+        const eventsResult = await EventService.getEvents({
+          page: currentPage,
+          per_page: 10,
+          orderby: 'date',
+          order: 'ASC'
+        });
+
+        allEvents = [...allEvents, ...eventsResult.events];
+        
+        // Check if we have any upcoming events in this batch
+        const hasUpcomingEvents = eventsResult.events.some(event => {
+          const eventDate = new Date(event.date);
+          return isAfter(eventDate, today) || isSameDay(eventDate, today);
+        });
+
+        // Stop if we found upcoming events or there are no more pages
+        if (hasUpcomingEvents || !eventsResult.hasMore) {
+          hasMore = false;
+        } else {
+          currentPage++;
+        }
+      }
+
+      // Filter and sort all collected events
+      const upcomingEvents = allEvents
+        .filter(event => {
+          const eventDate = new Date(event.date);
+          return isAfter(eventDate, today) || isSameDay(eventDate, today);
+        })
+        .sort((a, b) => {
+          const dateA = new Date(a.date);
+          const dateB = new Date(b.date);
+          return dateA.getTime() - dateB.getTime();
+        });
+
       setUpcomingEvents(upcomingEvents);
       setError('');
     } catch (error) {
@@ -119,7 +164,16 @@ export default function HomeScreen() {
           <View style={styles.eventDetails}>
             <Ionicons name="time-outline" size={12} color="#666" style={styles.eventIcon} />
             <Text style={styles.eventTime}>
-              {new Date(event.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              {new Date(event.date).toLocaleTimeString([], { 
+                hour: '2-digit', 
+                minute: '2-digit' 
+              })}
+              {event.end_date && (
+                <> - {new Date(event.end_date).toLocaleTimeString([], { 
+                  hour: '2-digit', 
+                  minute: '2-digit' 
+                })}</>
+              )}
             </Text>
             {event.location && (
               <>

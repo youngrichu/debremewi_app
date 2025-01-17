@@ -14,7 +14,10 @@ interface EventListProps {
   events: Event[];
   onEventPress: (eventId: number) => void;
   onRefresh: () => void;
+  onLoadMore: () => void;
   loading: boolean;
+  loadingMore: boolean;
+  hasMore: boolean;
   labels: {
     noEvents: string;
     loading: string;
@@ -27,7 +30,10 @@ export const EventList: React.FC<EventListProps> = ({
   events,
   onEventPress,
   onRefresh,
+  onLoadMore,
   loading,
+  loadingMore,
+  hasMore,
   labels
 }) => {
   if (loading) {
@@ -56,6 +62,12 @@ export const EventList: React.FC<EventListProps> = ({
     <EventCard event={item} onPress={() => onEventPress(item.id)} />
   );
 
+  const handleEndReached = () => {
+    if (!loading && !loadingMore && hasMore) {
+      onLoadMore();
+    }
+  };
+
   return (
     <FlatList
       data={sortedEvents}
@@ -64,6 +76,8 @@ export const EventList: React.FC<EventListProps> = ({
       refreshControl={
         <RefreshControl refreshing={loading} onRefresh={onRefresh} />
       }
+      onEndReached={handleEndReached}
+      onEndReachedThreshold={0.5}
       contentContainerStyle={styles.listContainer}
       ListEmptyComponent={
         !loading ? (
@@ -73,7 +87,7 @@ export const EventList: React.FC<EventListProps> = ({
         ) : null
       }
       ListFooterComponent={
-        loading ? (
+        loadingMore ? (
           <View style={styles.loadingContainer}>
             <ActivityIndicator size="small" />
           </View>
