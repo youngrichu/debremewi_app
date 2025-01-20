@@ -39,21 +39,6 @@ const formatDisplayValue = (value: string | null | undefined, options?: { [key: 
     .join(' ');
 };
 
-const renderChildrenList = (children?: Array<{ fullName: string; christianityName: string; gender: string }>) => {
-  if (!children || children.length === 0) return null;
-  
-  return children.map((child, index) => (
-    <View key={index} style={styles.childItem}>
-      <Text style={styles.childName}>
-        {`${index + 1}. ${child.fullName} (${child.christianityName})`}
-      </Text>
-      <Text style={styles.childGender}>
-        {child.gender === 'male' ? '👦' : '👧'}
-      </Text>
-    </View>
-  ));
-};
-
 export default function ProfileScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<ProfileScreenNavigationProp>();
@@ -61,6 +46,27 @@ export default function ProfileScreen() {
   const dispatch = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const renderChildrenList = (children?: ChildInfo[]) => {
+    if (!children || children.length === 0) return null;
+    
+    return children.map((child, index) => (
+      <View key={index} style={styles.childItem}>
+        <Text style={styles.childName}>{child.fullName}</Text>
+        <View style={styles.childDetailsContainer}>
+          <Text style={styles.childDetail}>
+            {t('profile.view.labels.christianName')}: {child.christianityName}
+          </Text>
+          <Text style={styles.childDetail}>
+            {t('profile.view.labels.gender')}: {t(`profile.options.gender.${child.gender}`)}
+          </Text>
+          <Text style={styles.childDetail}>
+            {t('profile.view.labels.age')}: {child.age}
+          </Text>
+        </View>
+      </View>
+    ));
+  };
 
   useEffect(() => {
     const fetchProfileData = async () => {
@@ -325,11 +331,6 @@ export default function ProfileScreen() {
               user?.serviceAtParish ? t(`profile.options.serviceAtParish.${user.serviceAtParish}`) : '', 'people-outline')}
             {renderDetailItem(t('profile.view.labels.ministryService'), 
               user?.ministryService ? t(`profile.options.ministryService.${user.ministryService}`) : '', 'business-outline')}
-          </View>
-
-          {/* Additional Information Section */}
-          <View style={styles.section}>
-            <Text style={styles.sectionTitle}>{t('profile.view.additionalInfo')}</Text>
             {renderDetailItem(t('profile.view.labels.hasFatherConfessor'), 
               user?.hasFatherConfessor === 'yes' ? 
                 `${t('common.yes')} (${user.fatherConfessorName || t('common.notProvided')})` : 
@@ -544,8 +545,29 @@ const styles = StyleSheet.create({
     color: '#333',
     flex: 1,
   },
-  childGender: {
-    fontSize: 16,
+  childDetail: {
+    fontSize: 14,
+    color: '#666',
     marginLeft: 10,
+  },
+  childDetailsContainer: {
+    flex: 1,
+    marginLeft: 10,
+  },
+  childItem: {
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#E0E0E0',
+  },
+  childName: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#333',
+    marginBottom: 4,
+  },
+  childDetail: {
+    fontSize: 14,
+    color: '#666',
+    marginTop: 2,
   },
 });

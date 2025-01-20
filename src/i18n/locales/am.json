@@ -52,7 +52,8 @@
       "child": "ልጅ {{number}}",
       "childFullName": "የልጅ ሙሉ ስም",
       "childChristianityName": "የልጅ የክርስትና ስም",
-      "childGender": "የልጅ ጾታ"
+      "childGender": "የልጅ ጾታ",
+      "childAge": "የልጅ እድሜ"
     },
     "placeholders": {
       "enterOccupation": "ሥራዎን ያስገቡ",
@@ -68,7 +69,8 @@
       "enterResidenceAddress": "የመኖሪያ አድራሻዎን ያስገቡ",
       "enterEmergencyContact": "የአደጋ ጊዜ ተጠሪ መረጃ ያስገቡ",
       "enterChildFullName": "የልጅ ሙሉ ስም ያስገቡ",
-      "enterChildChristianityName": "የልጅ የክርስትና ስም ያስገቡ"
+      "enterChildChristianityName": "የልጅ የክርስትና ስም ያስገቡ",
+      "enterChildAge": "የልጅ እድሜ ያስገቡ"
     },
     "selects": {
       "selectGender": "ጾታ ይምረጡ",
@@ -219,7 +221,8 @@
         "residencePermit": "የመኖሪያ ፈቃድ",
         "hasChildren": "ልጆች",
         "numberOfChildren": "የልጆች ብዛት",
-        "children": "ልጆች"
+        "children": "ልጆች",
+        "age": "እድሜ"
       },
       "deleteAccount": {
         "title": "መለያ ሰርዝ",
@@ -240,7 +243,8 @@
       "childFullName": "የልጅ ሙሉ ስም አስፈላጊ ነው",
       "childChristianityName": "የልጅ የክርስትና ስም አስፈላጊ ነው",
       "childGender": "የልጅ ጾታ አስፈላጊ ነው",
-      "numberOfChildren": "የልጆች ብዛት አስፈላጊ ነው"
+      "numberOfChildren": "የልጆች ብዛት አስፈላጊ ነው",
+      "childAge": "የልጅ እድሜ አስፈላጊ ነው"
     },
     "children": {
       "invalidArray": "የልጆች መረጃ ትክክል አይደለም",

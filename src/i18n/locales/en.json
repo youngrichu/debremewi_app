@@ -44,7 +44,7 @@
       "ministryService": "Ministry Service",
       "hasFatherConfessor": "Do you have a Father Confessor in Dubai?",
       "fatherConfessorName": "Father Confessor Name",
-      "hasAssociationMembership": "Church Association Membership",
+      "hasAssociationMembership": "Church Chalice Association Membership",
       "associationName": "Association Name",
       "residencePermit": "Do you have a residence permit in UAE?",
       "hasChildren": "Do you have children?",
@@ -52,7 +52,8 @@
       "child": "Child {{number}}",
       "childFullName": "Child's Full Name",
       "childChristianityName": "Child's Christianity Name",
-      "childGender": "Child's Gender"
+      "childGender": "Child's Gender",
+      "childAge": "Child's Age"
     },
     "placeholders": {
       "enterFirstName": "Enter your first name",
@@ -67,7 +68,8 @@
       "enterPhoneNumber": "Enter your phone number",
       "enterResidenceAddress": "Enter your residence address",
       "enterChildFullName": "Enter child's full name",
-      "enterChildChristianityName": "Enter child's Christianity name"
+      "enterChildChristianityName": "Enter child's Christianity name",
+      "enterChildAge": "Enter child's age"
     },
     "selects": {
       "selectGender": "Select Gender",
@@ -216,11 +218,12 @@
         "serviceAtParish": "Service at Parish",
         "ministryService": "Ministry Service",
         "hasFatherConfessor": "Father Confessor",
-        "hasAssociationMembership": "Association Membership",
+        "hasAssociationMembership": "Chalice Association Membership",
         "residencePermit": "Residence Permit",
         "hasChildren": "Children",
         "numberOfChildren": "Number of Children",
-        "children": "Children"
+        "children": "Children",
+        "age": "Age"
       },
       "deleteAccount": {
         "title": "Delete Account",
@@ -244,7 +247,8 @@
       "childFullName": "Child's full name is required",
       "childChristianityName": "Child's Christianity name is required",
       "childGender": "Child's gender is required",
-      "numberOfChildren": "Number of children is required"
+      "numberOfChildren": "Number of children is required",
+      "childAge": "Child's age is required"
     },
     "invalid": {
       "email": "Please enter a valid email address",

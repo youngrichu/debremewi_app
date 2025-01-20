@@ -120,6 +120,7 @@ export interface ChildInfo {
   fullName: string;
   christianityName: string;
   gender: string;
+  age: string;
 }
 
 export interface UserProfile {

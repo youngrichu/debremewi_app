@@ -308,6 +308,33 @@ const ChildFields = React.memo(({
           <Text style={styles.errorText}>{errors[`child${index}Gender`]}</Text>
         )}
       </View>
+
+      {/* Child's Age */}
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>
+          {t('profile.fields.childAge')} <Text style={styles.required}>*</Text>
+        </Text>
+        <TextInput
+          style={[styles.input, errors[`child${index}Age`] && styles.inputError]}
+          value={formData.children?.[index]?.age || ''}
+          onChangeText={(value) => {
+            const updatedChildren = [...(formData.children || [])];
+            if (!updatedChildren[index]) {
+              updatedChildren[index] = {};
+            }
+            updatedChildren[index] = {
+              ...updatedChildren[index],
+              age: value
+            };
+            handleChange('children', updatedChildren);
+          }}
+          placeholder={t('profile.placeholders.enterChildAge')}
+          keyboardType="numeric"
+        />
+        {errors[`child${index}Age`] && (
+          <Text style={styles.errorText}>{errors[`child${index}Age`]}</Text>
+        )}
+      </View>
     </View>
   );
 });
