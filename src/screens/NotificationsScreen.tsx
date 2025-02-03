@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types';
 import { NotificationCard } from '../components/NotificationCard';
+import { API_URL } from '../config';
 
 type NotificationScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -18,10 +19,19 @@ export default function NotificationsScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const REFRESH_INTERVAL = 30000; // 30 seconds
   const [isAutoRefreshing, setIsAutoRefreshing] = useState(false);
-  const [localNotifications, setLocalNotifications] = useState(notifications);
+  
+  // Remove duplicates based on reference_id and type
+  const uniqueNotifications = notifications.filter((notification, index, self) =>
+    index === self.findIndex((n) => (
+      n.reference_id === notification.reference_id && 
+      n.type === notification.type
+    ))
+  );
+
+  const [localNotifications, setLocalNotifications] = useState(uniqueNotifications);
 
   useEffect(() => {
-    setLocalNotifications(notifications);
+    setLocalNotifications(uniqueNotifications);
   }, [notifications]);
 
   useEffect(() => {
@@ -108,7 +118,11 @@ export default function NotificationsScreen() {
     try {
       console.log('Notification pressed:', notification);
       
-      const navigateToContent = () => {
+      // Mark as read first to prevent double-clicking
+      await dispatch(markNotificationAsRead(notification.id)).unwrap();
+      console.log('Notification marked as read:', notification.id);
+      
+      const navigateToContent = async () => {
         if (notification.type === 'event' && notification.reference_id) {
           console.log('Navigating to event:', notification.reference_id);
           navigation.navigate('EventDetails', { 
@@ -119,9 +133,7 @@ export default function NotificationsScreen() {
 
         if (notification.type === 'blog_post' && notification.reference_id) {
           console.log('Navigating to blog post:', notification.reference_id);
-          navigation.navigate('BlogPostDetail', { 
-            postId: notification.reference_id 
-          });
+          navigation.navigate('BlogPostDetail', { postId: notification.reference_id });
           return true;
         }
 
@@ -135,10 +147,7 @@ export default function NotificationsScreen() {
         return false;
       };
 
-      const navigationSuccessful = navigateToContent();
-
-      await dispatch(markNotificationAsRead(notification.id)).unwrap();
-      console.log('Notification marked as read:', notification.id);
+      const navigationSuccessful = await navigateToContent();
 
       if (!navigationSuccessful) {
         console.log('Navigation not handled');

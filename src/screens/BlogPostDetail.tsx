@@ -1,27 +1,30 @@
-import React, { useState, useCallback, memo } from 'react';
+import React, { useState, useCallback, memo, useEffect } from 'react';
 import { View, ScrollView, Text, Image, StyleSheet, Dimensions, ActivityIndicator, Linking, Share, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { Post } from '../types';
 import RenderHTML, { 
   HTMLElementModel,
   HTMLContentModel,
   CustomRendererProps,
-  TRenderEngineConfig,
-  TNode
+  TBlock,
+  MixedStyleDeclaration,
+  Element
 } from 'react-native-render-html';
 import ImageView from 'react-native-image-viewing';
 import { Ionicons } from '@expo/vector-icons';
 import { decode } from 'html-entities';
 import { useTranslation } from 'react-i18next';
+import { API_URL } from '../config';
 
 interface BlogPostDetailProps {
   route: {
     params: {
-      post: Post;
+      post?: Post;
+      postId?: string;
     };
   };
 }
 
-interface CustomFigureProps extends CustomRendererProps<TRenderEngineConfig> {
+interface CustomFigureProps extends CustomRendererProps<TBlock> {
   onImagePress: (url: string) => void;
 }
 
@@ -31,16 +34,16 @@ const CustomFigureRenderer = memo(({ TDefaultRenderer, tnode, onImagePress, ...p
   const [isLoading, setIsLoading] = useState(true);
 
   const imgElement = tnode.children?.find(
-    (child: TNode) => child.tagName === 'img'
-  );
+    child => child.tagName === 'img'
+  ) as Element | undefined;
   
   if (!imgElement) return null;
 
   const imgSrc = imgElement.attributes.src;
   const imgAlt = imgElement.attributes.alt || '';
   const caption = tnode.children?.find(
-    (child: TNode) => child.tagName === 'figcaption'
-  );
+    child => child.tagName === 'figcaption'
+  ) as Element | undefined;
   
   const imgWidth = parseInt(imgElement.attributes.width) || width - 32;
   const imgHeight = parseInt(imgElement.attributes.height) || imgWidth * 0.75;
@@ -68,7 +71,7 @@ const CustomFigureRenderer = memo(({ TDefaultRenderer, tnode, onImagePress, ...p
         />
         {isLoading && (
           <ActivityIndicator 
-            style={styles.imageLoader}
+            style={[styles.contentImage, styles.imageLoader]}
             size="large"
             color="#2196F3"
           />
@@ -86,34 +89,18 @@ const CustomFigureRenderer = memo(({ TDefaultRenderer, tnode, onImagePress, ...p
 export default function BlogPostDetail({ route }: BlogPostDetailProps) {
   const { t } = useTranslation();
   const { width } = useWindowDimensions();
-  const { post } = route.params;
+  const [post, setPost] = useState<Post | null>(route.params.post || null);
+  const [loading, setLoading] = useState(!route.params.post);
+  const [error, setError] = useState<string | null>(null);
   const [isImageViewVisible, setIsImageViewVisible] = useState(false);
   const [selectedImageUrl, setSelectedImageUrl] = useState<string>('');
-
-  const stripHtmlAndDecode = (html: string): string => {
-    if (!html) return '';
-    return decode(html.replace(/<[^>]*>/g, ''));
-  };
-
-  const handleShare = async () => {
-    try {
-      const title = stripHtmlAndDecode(post.title.rendered);
-      await Share.share({
-        message: t('blog.detail.share.message', { title }) + '\n\n' + post.link,
-        title: title,
-        url: post.link,
-      });
-    } catch (error) {
-      console.error('Error sharing:', error);
-    }
-  };
 
   const handleImagePress = useCallback((imageUrl: string) => {
     setSelectedImageUrl(imageUrl);
     setIsImageViewVisible(true);
   }, []);
 
-  const renderFigure = useCallback((props: CustomRendererProps<TRenderEngineConfig>) => (
+  const renderFigure = useCallback((props: CustomRendererProps<TBlock>) => (
     <CustomFigureRenderer {...props} onImagePress={handleImagePress} />
   ), [handleImagePress]);
 
@@ -125,8 +112,7 @@ export default function BlogPostDetail({ route }: BlogPostDetailProps) {
     figure: HTMLElementModel.fromCustomModel({
       tagName: 'figure',
       contentModel: HTMLContentModel.block,
-      isVoid: false,
-      renderDirection: 'ltr',
+      isVoid: false
     })
   };
 
@@ -143,8 +129,8 @@ export default function BlogPostDetail({ route }: BlogPostDetailProps) {
     figcaption: {
       fontSize: 14,
       color: '#666',
-      fontStyle: 'italic',
-      textAlign: 'center',
+      fontStyle: 'italic' as const,
+      textAlign: 'center' as const,
       padding: 8,
       backgroundColor: '#f9f9f9',
     },
@@ -158,7 +144,66 @@ export default function BlogPostDetail({ route }: BlogPostDetailProps) {
     img: {
       marginVertical: 8,
     },
+  } as const;
+
+  useEffect(() => {
+    const fetchPost = async () => {
+      if (route.params.postId && !post) {
+        try {
+          setLoading(true);
+          setError(null);
+          const response = await fetch(`${API_URL}/wp-json/wp/v2/posts/${route.params.postId}?_embed`);
+          if (!response.ok) {
+            throw new Error('Failed to fetch blog post');
+          }
+          const postData = await response.json();
+          setPost(postData);
+        } catch (error) {
+          console.error('Error fetching blog post:', error);
+          setError(t('errors.failedToLoadPost'));
+        } finally {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchPost();
+  }, [route.params.postId, t]);
+
+  const stripHtmlAndDecode = (html: string): string => {
+    if (!html) return '';
+    return decode(html.replace(/<[^>]*>/g, ''));
   };
+
+  const handleShare = async () => {
+    if (!post) return;
+    try {
+      const title = stripHtmlAndDecode(post.title.rendered);
+      await Share.share({
+        message: t('blog.detail.share.message', { title }) + '\n\n' + post.link,
+        title: title,
+        url: post.link,
+      });
+    } catch (error) {
+      console.error('Error sharing:', error);
+    }
+  };
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#2196F3" />
+      </View>
+    );
+  }
+
+  if (error || !post) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>{error || t('errors.postNotFound')}</Text>
+      </View>
+    );
+  }
 
   return (
     <>
@@ -285,6 +330,15 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#f5f5f5',
   },
+  imageLoader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   figcaption: {
     padding: 12,
     backgroundColor: '#fff',
@@ -332,5 +386,20 @@ const styles = StyleSheet.create({
   },
   scrollContent: {
     flexGrow: 1,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    color: '#f00',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });

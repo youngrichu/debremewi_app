@@ -31,6 +31,7 @@ import MoreMenuScreen from '../screens/MoreMenuScreen';
 import CommunityScreen from '../screens/CommunityScreen';
 import NewPasswordScreen from '../screens/NewPasswordScreen';
 import { LanguageSelector } from '../components/LanguageSelector';
+import YouTubeFeedScreen from '../screens/YouTubeFeedScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 const EventStack = createStackNavigator<RootStackParamList>();
@@ -168,6 +169,9 @@ function MainTabs() {
             case 'BlogPosts':
               iconName = focused ? 'newspaper' : 'newspaper-outline';
               break;
+            case 'YouTube':
+              iconName = focused ? 'logo-youtube' : 'logo-youtube';
+              break;
             case 'Profile':
               iconName = focused ? 'person' : 'person-outline';
               break;
@@ -215,6 +219,13 @@ function MainTabs() {
         component={BlogStackScreen}
         options={{ 
           title: t('navigation.tabs.blog')
+        }}
+      />
+      <Tab.Screen 
+        name="YouTube" 
+        component={YouTubeFeedScreen}
+        options={{ 
+          title: t('navigation.tabs.youtube')
         }}
       />
       <Tab.Screen 
@@ -299,7 +310,7 @@ function MoreStackScreen() {
         name="MoreMenu" 
         component={MoreMenuScreen} 
         options={{ 
-          title: t('more.menu.title')  // "More" in English, "ተጨማሪ" in Amharic
+          headerShown: false  // Hide the header for the main More menu screen
         }}
       />
       <MoreStack.Screen 

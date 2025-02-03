@@ -6,10 +6,17 @@ export interface Post {
   excerpt: {
     rendered: string;
   };
+  content: {
+    rendered: string;
+  };
   date: string;
+  link: string;
   _embedded?: {
     'wp:featuredmedia'?: Array<{
       source_url: string;
+    }>;
+    author?: Array<{
+      name: string;
     }>;
   };
 }
@@ -41,15 +48,19 @@ export type RootStackParamList = {
     screen: string;
     params?: object;
   };
+  Home: undefined;
   Events: {
     screen?: string;
     params?: {
       eventId?: number;
     };
   };
+  EventsList: undefined;
   BlogPosts: undefined;
+  BlogList: undefined;
   BlogPostDetail: {
-    post: Post;
+    post?: Post;
+    postId?: string;
   };
   More: {
     screen: string;
@@ -61,6 +72,9 @@ export type RootStackParamList = {
   Onboarding: undefined;
   NewPassword: { email: string };
   EventDetails: { eventId: number };
+  YouTube: undefined;
+  AnnouncementsList: undefined;
+  AnnouncementDetail: undefined;
 };
 
 export type MoreStackParamList = {

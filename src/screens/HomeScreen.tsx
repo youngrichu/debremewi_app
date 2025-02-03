@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView, ActivityIndicator, Linking } from 'react-native';
 import { CompositeNavigationProp, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
@@ -10,7 +10,9 @@ import WelcomeCard from '../components/WelcomeCard';
 import { useTranslation } from 'react-i18next';
 import { getUpcomingEvents } from '../services/EventsService';
 import { EventService } from '../services/EventService';
+import SocialMediaService, { SocialMediaPost } from '../services/SocialMediaService';
 import { isAfter, isSameDay } from 'date-fns';
+import { decode } from 'html-entities';
 
 type HomeScreenNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<RootStackParamList, 'MainTabs'>,
@@ -22,6 +24,7 @@ export default function HomeScreen() {
   const navigation = useNavigation<HomeScreenNavigationProp>();
   const [recentPosts, setRecentPosts] = useState<Post[]>([]);
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
+  const [latestVideos, setLatestVideos] = useState<SocialMediaPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -95,13 +98,35 @@ export default function HomeScreen() {
     }
   }, []);
 
+  const fetchLatestVideos = async () => {
+    try {
+      const response = await SocialMediaService.getFeed({
+        platform: 'youtube',
+        type: 'video',
+        page: 1,
+        per_page: 3,
+        sort: 'date',
+        order: 'desc',
+      });
+      if (response?.data?.items) {
+        setLatestVideos(response.data.items);
+      }
+    } catch (error) {
+      console.error('Error fetching latest videos:', error);
+    }
+  };
+
   useEffect(() => {
-    // Initial fetch for both blog posts and events
+    // Initial fetch for blog posts, events, and videos
     fetchRecentPosts();
     fetchUpcomingEvents();
+    fetchLatestVideos();
 
-    // Set up periodic refresh only for events
-    const intervalId = setInterval(fetchUpcomingEvents, REFRESH_INTERVAL);
+    // Set up periodic refresh
+    const intervalId = setInterval(() => {
+      fetchUpcomingEvents();
+      fetchLatestVideos();
+    }, REFRESH_INTERVAL);
 
     // Cleanup on component unmount
     return () => {
@@ -109,11 +134,12 @@ export default function HomeScreen() {
     };
   }, [fetchUpcomingEvents]);
 
-  // Add refresh on focus for both
+  // Add refresh on focus for all sections
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       fetchRecentPosts();
       fetchUpcomingEvents();
+      fetchLatestVideos();
     });
 
     return unsubscribe;
@@ -191,6 +217,14 @@ export default function HomeScreen() {
     navigation.navigate('BlogPostDetail', { post });
   };
 
+  const handleVideoPress = async (video: SocialMediaPost) => {
+    try {
+      await Linking.openURL(video.content.media_url);
+    } catch (error) {
+      console.error('Error opening video:', error);
+    }
+  };
+
   return (
     <ScrollView 
       style={styles.container}
@@ -233,6 +267,56 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
 
+      {/* Latest YouTube Videos Section */}
+      <View style={styles.section}>
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>{t('home.sections.latestVideos.title', 'Latest Videos')}</Text>
+          <TouchableOpacity onPress={() => navigation.navigate('MainTabs', { screen: 'YouTube' })}>
+            <Text style={styles.seeAllText}>{t('home.sections.latestVideos.seeAll', 'See All')}</Text>
+          </TouchableOpacity>
+        </View>
+        {latestVideos.length === 0 ? (
+          <View style={styles.emptyStateContainer}>
+            <Text style={styles.emptyStateText}>
+              {t('home.sections.latestVideos.empty', 'No videos available')}
+            </Text>
+          </View>
+        ) : (
+          latestVideos.map((video) => (
+            <TouchableOpacity
+              key={video.id}
+              style={styles.videoCard}
+              onPress={() => handleVideoPress(video)}
+            >
+              <Image
+                source={{ uri: video.content.thumbnail_url }}
+                style={styles.videoThumbnail}
+              />
+              <View style={styles.videoInfo}>
+                <Text style={styles.videoTitle} numberOfLines={2}>
+                  {video.content.title}
+                </Text>
+                <View style={styles.videoStats}>
+                  <View style={styles.authorInfo}>
+                    {video.author.avatar && (
+                      <Image 
+                        source={{ uri: video.author.avatar }} 
+                        style={styles.authorAvatar}
+                      />
+                    )}
+                    <Text style={styles.authorName}>{video.author.name}</Text>
+                  </View>
+                  <View style={styles.stat}>
+                    <Ionicons name="thumbs-up-outline" size={12} color="#666" />
+                    <Text style={styles.statText}>{video.content.engagement.likes}</Text>
+                  </View>
+                </View>
+              </View>
+            </TouchableOpacity>
+          ))
+        )}
+      </View>
+
       {/* Recent Blog Posts Section */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
@@ -260,7 +344,7 @@ export default function HomeScreen() {
                   />
                 )}
                 <View style={styles.blogTextContent}>
-                  <Text style={styles.blogTitle}>{post.title.rendered}</Text>
+                  <Text style={styles.blogTitle}>{decode(post.title.rendered)}</Text>
                   <Text style={styles.blogExcerpt} numberOfLines={2}>
                     {post.excerpt.rendered.replace(/<[^>]*>/g, '')}
                   </Text>
@@ -446,5 +530,59 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     textAlign: 'center',
+  },
+  videoCard: {
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    marginBottom: 12,
+    overflow: 'hidden',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  videoThumbnail: {
+    width: '100%',
+    height: 180,
+    backgroundColor: '#f0f0f0',
+  },
+  videoInfo: {
+    padding: 12,
+  },
+  videoTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#000',
+    marginBottom: 8,
+  },
+  videoStats: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  authorInfo: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  authorAvatar: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    marginRight: 8,
+  },
+  authorName: {
+    fontSize: 12,
+    color: '#666',
+  },
+  stat: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 12,
+  },
+  statText: {
+    fontSize: 12,
+    color: '#666',
+    marginLeft: 4,
   },
 });

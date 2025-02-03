@@ -11,14 +11,19 @@ import {
   RefreshControl
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import { API_URL } from '../config';
 import { useTranslation } from 'react-i18next';
+import { decode } from 'html-entities';
+import { Post, RootStackParamList } from '../types';
+
+type BlogPostsScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
 const BlogPostsScreen = () => {
   const { t } = useTranslation();
-  const navigation = useNavigation();
-  const [posts, setPosts] = useState([]);
+  const navigation = useNavigation<BlogPostsScreenNavigationProp>();
+  const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -48,7 +53,7 @@ const BlogPostsScreen = () => {
     fetchPosts();
   };
 
-  const renderPost = ({ item }) => (
+  const renderPost = ({ item }: { item: Post }) => (
     <TouchableOpacity
       style={styles.postCard}
       onPress={() => navigation.navigate('BlogPostDetail', { post: item })}
@@ -60,7 +65,7 @@ const BlogPostsScreen = () => {
         />
       )}
       <View style={styles.postContent}>
-        <Text style={styles.postTitle}>{item.title.rendered}</Text>
+        <Text style={styles.postTitle}>{decode(item.title.rendered)}</Text>
         <Text style={styles.postExcerpt} numberOfLines={2}>
           {item.excerpt.rendered.replace(/<[^>]*>/g, '')}
         </Text>

@@ -322,6 +322,7 @@
       "home": "Home",
       "events": "Events",
       "blog": "Blog",
+      "youtube": "YouTube",
       "profile": "Profile",
       "more": "More"
     },
@@ -669,5 +670,13 @@
         "message": "Check out this event: {{title}} at {{location}}"
       }
     }
+  },
+  "youtube": {
+    "noVideos": "No videos available",
+    "error": "Error loading videos",
+    "retry": "Retry",
+    "loading": "Loading videos...",
+    "pullToRefresh": "Pull to refresh",
+    "loadingMore": "Loading more videos..."
   }
 }
