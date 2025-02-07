@@ -17,6 +17,7 @@ import { API_URL } from '../config';
 import { useTranslation } from 'react-i18next';
 import { decode } from 'html-entities';
 import { Post, RootStackParamList } from '../types';
+import { BlogPostsShimmer } from '../components/BlogPostsShimmer';
 
 type BlogPostsScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -82,12 +83,7 @@ const BlogPostsScreen = () => {
   );
 
   if (loading) {
-    return (
-      <View style={styles.centerContainer}>
-        <ActivityIndicator size="large" color="#2196F3" />
-        <Text style={styles.loadingText}>{t('blog.loading')}</Text>
-      </View>
-    );
+    return <BlogPostsShimmer />;
   }
 
   if (error) {

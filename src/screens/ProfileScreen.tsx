@@ -12,6 +12,7 @@ import { deleteAccount } from '../services/AuthService';
 import { useTranslation } from 'react-i18next';
 import { ProfileService } from '../services/ProfileService';
 import * as ImagePicker from 'expo-image-picker';
+import { ProfileShimmer } from '../components/ProfileShimmer';
 
 const formatDisplayValue = (value: string | null | undefined, options?: { [key: string]: string }) => {
   if (!value) return 'Not provided';
@@ -231,14 +232,13 @@ export default function ProfileScreen() {
     }
   };
 
+  if (isLoading) {
+    return <ProfileShimmer />;
+  }
+
   return (
     <ScrollView style={styles.container}>
-      {isLoading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#2196F3" />
-          <Text style={styles.loadingText}>{t('common.loading')}</Text>
-        </View>
-      ) : error ? (
+      {error ? (
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>{error}</Text>
           <TouchableOpacity style={styles.retryButton} onPress={handleRetry}>
@@ -495,17 +495,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginLeft: 8,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-  },
-  loadingText: {
-    marginTop: 10,
-    color: '#666',
-    fontSize: 16,
   },
   errorContainer: {
     flex: 1,

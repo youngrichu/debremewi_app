@@ -13,6 +13,7 @@ import { EventService } from '../services/EventService';
 import SocialMediaService, { SocialMediaPost } from '../services/SocialMediaService';
 import { isAfter, isSameDay } from 'date-fns';
 import { decode } from 'html-entities';
+import { HomeScreenShimmer } from '../components/ShimmerPlaceholder';
 
 type HomeScreenNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<RootStackParamList, 'MainTabs'>,
@@ -231,143 +232,153 @@ export default function HomeScreen() {
       contentContainerStyle={styles.contentContainer}
       showsVerticalScrollIndicator={false}
     >
-      <WelcomeCard />
-
-      <View style={styles.quickActionsGrid}>
-        <TouchableOpacity 
-          style={styles.quickActionItem}
-          onPress={() => navigation.navigate('Events')}
-        >
-          <View style={[styles.iconContainer, { backgroundColor: '#FF9800' }]}>
-            <Ionicons name="calendar" size={32} color="#FFF" />
-          </View>
-          <Text style={styles.quickActionText}>{t('home.quickActions.events')}</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={styles.quickActionItem}
-          onPress={() => navigation.navigate('BlogPosts')}
-        >
-          <View style={[styles.iconContainer, { backgroundColor: '#4CAF50' }]}>
-            <Ionicons name="newspaper" size={32} color="#FFF" />
-          </View>
-          <Text style={styles.quickActionText}>{t('home.quickActions.blog')}</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity 
-          style={styles.quickActionItem}
-          onPress={() => navigation.navigate('More', {
-            screen: 'Location'
-          })}
-        >
-          <View style={[styles.iconContainer, { backgroundColor: '#2196F3' }]}>
-            <Ionicons name="location" size={32} color="#FFF" />
-          </View>
-          <Text style={styles.quickActionText}>{t('home.quickActions.location')}</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Latest YouTube Videos Section */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>{t('home.sections.latestVideos.title', 'Latest Videos')}</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('MainTabs', { screen: 'YouTube' })}>
-            <Text style={styles.seeAllText}>{t('home.sections.latestVideos.seeAll', 'See All')}</Text>
-          </TouchableOpacity>
+      {loading ? (
+        <HomeScreenShimmer />
+      ) : error ? (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>{error}</Text>
         </View>
-        {latestVideos.length === 0 ? (
-          <View style={styles.emptyStateContainer}>
-            <Text style={styles.emptyStateText}>
-              {t('home.sections.latestVideos.empty', 'No videos available')}
-            </Text>
-          </View>
-        ) : (
-          latestVideos.map((video) => (
-            <TouchableOpacity
-              key={video.id}
-              style={styles.videoCard}
-              onPress={() => handleVideoPress(video)}
+      ) : (
+        <>
+          <WelcomeCard />
+
+          <View style={styles.quickActionsGrid}>
+            <TouchableOpacity 
+              style={styles.quickActionItem}
+              onPress={() => navigation.navigate('Events')}
             >
-              <Image
-                source={{ uri: video.content.thumbnail_url }}
-                style={styles.videoThumbnail}
-              />
-              <View style={styles.videoInfo}>
-                <Text style={styles.videoTitle} numberOfLines={2}>
-                  {video.content.title}
+              <View style={[styles.iconContainer, { backgroundColor: '#FF9800' }]}>
+                <Ionicons name="calendar" size={32} color="#FFF" />
+              </View>
+              <Text style={styles.quickActionText}>{t('home.quickActions.events')}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={styles.quickActionItem}
+              onPress={() => navigation.navigate('BlogPosts')}
+            >
+              <View style={[styles.iconContainer, { backgroundColor: '#4CAF50' }]}>
+                <Ionicons name="newspaper" size={32} color="#FFF" />
+              </View>
+              <Text style={styles.quickActionText}>{t('home.quickActions.blog')}</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity 
+              style={styles.quickActionItem}
+              onPress={() => navigation.navigate('More', {
+                screen: 'Location'
+              })}
+            >
+              <View style={[styles.iconContainer, { backgroundColor: '#2196F3' }]}>
+                <Ionicons name="location" size={32} color="#FFF" />
+              </View>
+              <Text style={styles.quickActionText}>{t('home.quickActions.location')}</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Latest YouTube Videos Section */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>{t('home.sections.latestVideos.title', 'Latest Videos')}</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('MainTabs', { screen: 'YouTube' })}>
+                <Text style={styles.seeAllText}>{t('home.sections.latestVideos.seeAll', 'See All')}</Text>
+              </TouchableOpacity>
+            </View>
+            {latestVideos.length === 0 ? (
+              <View style={styles.emptyStateContainer}>
+                <Text style={styles.emptyStateText}>
+                  {t('home.sections.latestVideos.empty', 'No videos available')}
                 </Text>
-                <View style={styles.videoStats}>
-                  <View style={styles.authorInfo}>
-                    {video.author.avatar && (
-                      <Image 
-                        source={{ uri: video.author.avatar }} 
-                        style={styles.authorAvatar}
+              </View>
+            ) : (
+              latestVideos.map((video) => (
+                <TouchableOpacity
+                  key={video.id}
+                  style={styles.videoCard}
+                  onPress={() => handleVideoPress(video)}
+                >
+                  <Image
+                    source={{ uri: video.content.thumbnail_url }}
+                    style={styles.videoThumbnail}
+                  />
+                  <View style={styles.videoInfo}>
+                    <Text style={styles.videoTitle} numberOfLines={2}>
+                      {video.content.title}
+                    </Text>
+                    <View style={styles.videoStats}>
+                      <View style={styles.authorInfo}>
+                        {video.author.avatar && (
+                          <Image 
+                            source={{ uri: video.author.avatar }} 
+                            style={styles.authorAvatar}
+                          />
+                        )}
+                        <Text style={styles.authorName}>{video.author.name}</Text>
+                      </View>
+                      <View style={styles.stat}>
+                        <Ionicons name="thumbs-up-outline" size={12} color="#666" />
+                        <Text style={styles.statText}>{video.content.engagement.likes}</Text>
+                      </View>
+                    </View>
+                  </View>
+                </TouchableOpacity>
+              ))
+            )}
+          </View>
+
+          {/* Recent Blog Posts Section */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>{t('home.sections.recentPosts.title')}</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('BlogPosts')}>
+                <Text style={styles.seeAllText}>{t('home.sections.recentPosts.seeAll')}</Text>
+              </TouchableOpacity>
+            </View>
+            {recentPosts.length === 0 ? (
+              <View style={styles.emptyStateContainer}>
+                <Text style={styles.emptyStateText}>{t('home.sections.recentPosts.empty')}</Text>
+              </View>
+            ) : (
+              recentPosts.map((post) => (
+                <TouchableOpacity
+                  key={post.id}
+                  style={styles.blogCard}
+                  onPress={() => handleBlogPostPress(post)}
+                >
+                  <View style={styles.blogCardContent}>
+                    {post._embedded?.['wp:featuredmedia']?.[0]?.source_url && (
+                      <Image
+                        source={{ uri: post._embedded['wp:featuredmedia'][0].source_url }}
+                        style={styles.blogThumbnail}
                       />
                     )}
-                    <Text style={styles.authorName}>{video.author.name}</Text>
+                    <View style={styles.blogTextContent}>
+                      <Text style={styles.blogTitle}>{decode(post.title.rendered)}</Text>
+                      <Text style={styles.blogExcerpt} numberOfLines={2}>
+                        {post.excerpt.rendered.replace(/<[^>]*>/g, '')}
+                      </Text>
+                      <Text style={styles.blogDate}>
+                        {new Date(post.date || '').toLocaleDateString()}
+                      </Text>
+                    </View>
                   </View>
-                  <View style={styles.stat}>
-                    <Ionicons name="thumbs-up-outline" size={12} color="#666" />
-                    <Text style={styles.statText}>{video.content.engagement.likes}</Text>
-                  </View>
-                </View>
-              </View>
-            </TouchableOpacity>
-          ))
-        )}
-      </View>
-
-      {/* Recent Blog Posts Section */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>{t('home.sections.recentPosts.title')}</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('BlogPosts')}>
-            <Text style={styles.seeAllText}>{t('home.sections.recentPosts.seeAll')}</Text>
-          </TouchableOpacity>
-        </View>
-        {recentPosts.length === 0 ? (
-          <View style={styles.emptyStateContainer}>
-            <Text style={styles.emptyStateText}>{t('home.sections.recentPosts.empty')}</Text>
+                </TouchableOpacity>
+              ))
+            )}
           </View>
-        ) : (
-          recentPosts.map((post) => (
-            <TouchableOpacity
-              key={post.id}
-              style={styles.blogCard}
-              onPress={() => handleBlogPostPress(post)}
-            >
-              <View style={styles.blogCardContent}>
-                {post._embedded?.['wp:featuredmedia']?.[0]?.source_url && (
-                  <Image
-                    source={{ uri: post._embedded['wp:featuredmedia'][0].source_url }}
-                    style={styles.blogThumbnail}
-                  />
-                )}
-                <View style={styles.blogTextContent}>
-                  <Text style={styles.blogTitle}>{decode(post.title.rendered)}</Text>
-                  <Text style={styles.blogExcerpt} numberOfLines={2}>
-                    {post.excerpt.rendered.replace(/<[^>]*>/g, '')}
-                  </Text>
-                  <Text style={styles.blogDate}>
-                    {new Date(post.date || '').toLocaleDateString()}
-                  </Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          ))
-        )}
-      </View>
 
-      {/* Upcoming Events Section */}
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>{t('home.sections.upcomingEvents.title')}</Text>
-          <TouchableOpacity onPress={() => navigation.navigate('Events')}>
-            <Text style={styles.seeAllText}>{t('home.sections.upcomingEvents.seeAll')}</Text>
-          </TouchableOpacity>
-        </View>
-        {renderEvents()}
-      </View>
+          {/* Upcoming Events Section */}
+          <View style={styles.section}>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>{t('home.sections.upcomingEvents.title')}</Text>
+              <TouchableOpacity onPress={() => navigation.navigate('Events')}>
+                <Text style={styles.seeAllText}>{t('home.sections.upcomingEvents.seeAll')}</Text>
+              </TouchableOpacity>
+            </View>
+            {renderEvents()}
+          </View>
+        </>
+      )}
     </ScrollView>
   );
 }
@@ -584,5 +595,17 @@ const styles = StyleSheet.create({
     fontSize: 12,
     color: '#666',
     marginLeft: 4,
+  },
+  errorContainer: {
+    padding: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#f8f8f8',
+    borderRadius: 8,
+  },
+  errorText: {
+    fontSize: 16,
+    color: '#666',
+    textAlign: 'center',
   },
 });

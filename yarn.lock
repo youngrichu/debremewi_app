@@ -5799,6 +5799,11 @@ react-native-keyboard-controller@^1.14.5:
   dependencies:
     react-native-is-edge-to-edge "^1.1.6"
 
+react-native-linear-gradient@2.8.3:
+  version "2.8.3"
+  resolved "https://registry.yarnpkg.com/react-native-linear-gradient/-/react-native-linear-gradient-2.8.3.tgz#9a116649f86d74747304ee13db325e20b21e564f"
+  integrity sha512-KflAXZcEg54PXkLyflaSZQ3PJp4uC4whM7nT/Uot9m0e/qxFV3p6uor1983D1YOBJbJN7rrWdqIjq0T42jOJyA==
+
 react-native-reanimated@^3.16.1:
   version "3.16.1"
   resolved "https://registry.npmjs.org/react-native-reanimated/-/react-native-reanimated-3.16.1.tgz"
@@ -5843,6 +5848,11 @@ react-native-screens@~4.1.0:
   dependencies:
     react-freeze "^1.0.0"
     warn-once "^0.1.0"
+
+react-native-shimmer-placeholder@2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-shimmer-placeholder/-/react-native-shimmer-placeholder-2.0.0.tgz#e9fd9fc1926b5ea36200bd0a902d9f05ef2ffb98"
+  integrity sha512-8gNfCCm+wBWcDnWiDmfbOPbf7UWbcGhZ/lNiKaOGbuZL6JcIes2rrtm3p7jpKjOvASOW2DreWrTPokgRpFch2Q==
 
 react-native-swipe-gestures@^1.0.5:
   version "1.0.5"

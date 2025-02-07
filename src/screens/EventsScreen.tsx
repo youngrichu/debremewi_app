@@ -11,6 +11,7 @@ import { format, addHours, startOfDay, startOfWeek, addDays, isSameDay } from 'd
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { toEthiopian, getEthiopianMonthName, getEthiopianDayName, ETHIOPIAN_MONTHS } from '../utils/ethiopianCalendar';
+import { EventsShimmer } from '../components/EventsShimmer';
 
 const TIME_LABELS = [
   '12 AM', '1 AM', '2 AM', '3 AM', '4 AM', '5 AM', '6 AM', '7 AM', '8 AM', '9 AM', '10 AM', '11 AM',
@@ -745,11 +746,7 @@ export default function EventsScreen() {
   };
 
   if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <EventsShimmer />;
   }
 
   return (

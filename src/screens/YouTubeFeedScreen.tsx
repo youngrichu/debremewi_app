@@ -8,14 +8,17 @@ import {
   TouchableOpacity,
   Image,
   Linking,
+  RefreshControl,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import SocialMediaService, { SocialMediaPost } from '../services/SocialMediaService';
 import { Ionicons } from '@expo/vector-icons';
+import { YouTubeFeedShimmer } from '../components/YouTubeFeedShimmer';
 
 const YouTubeFeedScreen = () => {
   const { t } = useTranslation();
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [videos, setVideos] = useState<SocialMediaPost[]>([]);
 
@@ -59,13 +62,17 @@ const YouTubeFeedScreen = () => {
     }
   };
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await loadVideos();
+    } finally {
+      setRefreshing(false);
+    }
+  };
+
   if (loading) {
-    return (
-      <View style={styles.centerContainer}>
-        <ActivityIndicator size="large" color="#2196F3" />
-        <Text style={styles.loadingText}>{t('youtube.loading')}</Text>
-      </View>
-    );
+    return <YouTubeFeedShimmer />;
   }
 
   if (error) {
@@ -81,14 +88,26 @@ const YouTubeFeedScreen = () => {
 
   if (!videos.length) {
     return (
-      <View style={styles.centerContainer}>
-        <Text style={styles.noVideosText}>{t('youtube.noVideos')}</Text>
-      </View>
+      <ScrollView 
+        style={styles.container}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        <View style={styles.centerContainer}>
+          <Text style={styles.noVideosText}>{t('youtube.noVideos')}</Text>
+        </View>
+      </ScrollView>
     );
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView 
+      style={styles.container}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
+    >
       {videos.map((video) => (
         <TouchableOpacity 
           key={video.id} 

@@ -22,6 +22,7 @@ import RenderHTML from 'react-native-render-html';
 import { useWindowDimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { formatEthiopianDate } from '../utils/ethiopianCalendar';
+import { EventDetailsShimmer } from '../components/EventDetailsShimmer';
 
 interface EventDetailsScreenProps {
   route: {
@@ -279,12 +280,7 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
   };
 
   if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#2196F3" />
-        <Text style={styles.loadingText}>{t('events.details.loading')}</Text>
-      </View>
-    );
+    return <EventDetailsShimmer />;
   }
 
   if (error || !event) {
