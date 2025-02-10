@@ -85,6 +85,14 @@ export type MoreStackParamList = {
   Location: undefined;
 };
 
+export type MainTabParamList = {
+  Home: undefined;
+  Events: undefined;
+  YouTube: undefined;
+  BlogPosts: undefined;
+  More: undefined;
+};
+
 // Authentication Types
 interface ValidationErrors {
   firstName?: string;

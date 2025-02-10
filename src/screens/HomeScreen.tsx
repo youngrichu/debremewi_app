@@ -4,7 +4,7 @@ import { CompositeNavigationProp, useNavigation } from '@react-navigation/native
 import { StackNavigationProp } from '@react-navigation/stack';
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-import { Post, Event, RootStackParamList } from '../types';
+import { Post, Event, RootStackParamList, MainTabParamList } from '../types';
 import { API_URL } from '../config';
 import WelcomeCard from '../components/WelcomeCard';
 import { useTranslation } from 'react-i18next';
@@ -14,15 +14,22 @@ import SocialMediaService, { SocialMediaPost } from '../services/SocialMediaServ
 import { isAfter, isSameDay } from 'date-fns';
 import { decode } from 'html-entities';
 import { HomeScreenShimmer } from '../components/ShimmerPlaceholder';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { CompositeScreenProps } from '@react-navigation/native';
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 
 type HomeScreenNavigationProp = CompositeNavigationProp<
-  BottomTabNavigationProp<RootStackParamList, 'MainTabs'>,
+  BottomTabNavigationProp<MainTabParamList, 'Home'>,
   StackNavigationProp<RootStackParamList>
 >;
 
-export default function HomeScreen() {
+type Props = CompositeScreenProps<
+  BottomTabScreenProps<MainTabParamList, 'Home'>,
+  NativeStackScreenProps<any>
+>;
+
+const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const { t } = useTranslation();
-  const navigation = useNavigation<HomeScreenNavigationProp>();
   const [recentPosts, setRecentPosts] = useState<Post[]>([]);
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
   const [latestVideos, setLatestVideos] = useState<SocialMediaPost[]>([]);
@@ -105,12 +112,16 @@ export default function HomeScreen() {
         platform: 'youtube',
         type: 'video',
         page: 1,
-        per_page: 3,
+        per_page: 6, // Request more videos to ensure we have enough after filtering
         sort: 'date',
         order: 'desc',
       });
-      if (response?.data?.items) {
-        setLatestVideos(response.data.items);
+      if (response?.status === 'success' && response.data?.items) {
+        // Filter out duplicates and ensure we get exactly 3 videos
+        const uniqueVideos = Array.from(
+          new Map(response.data.items.map((item: SocialMediaPost) => [item.id, item])).values()
+        ) as SocialMediaPost[];
+        setLatestVideos(uniqueVideos.slice(0, 3));
       }
     } catch (error) {
       console.error('Error fetching latest videos:', error);
@@ -173,10 +184,7 @@ export default function HomeScreen() {
       <TouchableOpacity
         key={event.id}
         style={styles.eventCard}
-        onPress={() => navigation.navigate('Events', {
-          screen: 'EventDetails',
-          params: { eventId: Number(event.id) }
-        })}
+        onPress={() => handleEventPress(Number(event.id))}
       >
         <View style={styles.eventDateBox}>
           <Text style={styles.eventDateDay}>
@@ -214,8 +222,33 @@ export default function HomeScreen() {
     ));
   };
 
+  const handleEventPress = (eventId: number) => {
+    navigation.navigate('Events', {
+      screen: 'EventDetails',
+      params: { eventId },
+    });
+  };
+
   const handleBlogPostPress = (post: Post) => {
-    navigation.navigate('BlogPostDetail', { post });
+    navigation.navigate('BlogPosts', {
+      post,
+    });
+  };
+
+  const handleViewAllEventsPress = () => {
+    navigation.navigate('Events');
+  };
+
+  const handleViewAllBlogPostsPress = () => {
+    navigation.navigate('BlogPosts');
+  };
+
+  const handleViewAllYouTubePress = () => {
+    navigation.navigate('YouTube');
+  };
+
+  const handleMorePress = (screen: string) => {
+    navigation.navigate('More', { screen });
   };
 
   const handleVideoPress = async (video: SocialMediaPost) => {
@@ -245,7 +278,7 @@ export default function HomeScreen() {
           <View style={styles.quickActionsGrid}>
             <TouchableOpacity 
               style={styles.quickActionItem}
-              onPress={() => navigation.navigate('Events')}
+              onPress={() => handleViewAllEventsPress()}
             >
               <View style={[styles.iconContainer, { backgroundColor: '#FF9800' }]}>
                 <Ionicons name="calendar" size={32} color="#FFF" />
@@ -255,7 +288,7 @@ export default function HomeScreen() {
 
             <TouchableOpacity 
               style={styles.quickActionItem}
-              onPress={() => navigation.navigate('BlogPosts')}
+              onPress={() => handleViewAllBlogPostsPress()}
             >
               <View style={[styles.iconContainer, { backgroundColor: '#4CAF50' }]}>
                 <Ionicons name="newspaper" size={32} color="#FFF" />
@@ -265,9 +298,7 @@ export default function HomeScreen() {
 
             <TouchableOpacity 
               style={styles.quickActionItem}
-              onPress={() => navigation.navigate('More', {
-                screen: 'Location'
-              })}
+              onPress={() => handleMorePress('Location')}
             >
               <View style={[styles.iconContainer, { backgroundColor: '#2196F3' }]}>
                 <Ionicons name="location" size={32} color="#FFF" />
@@ -280,7 +311,7 @@ export default function HomeScreen() {
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>{t('home.sections.latestVideos.title', 'Latest Videos')}</Text>
-              <TouchableOpacity onPress={() => navigation.navigate('MainTabs', { screen: 'YouTube' })}>
+              <TouchableOpacity onPress={() => handleViewAllYouTubePress()}>
                 <Text style={styles.seeAllText}>{t('home.sections.latestVideos.seeAll', 'See All')}</Text>
               </TouchableOpacity>
             </View>
@@ -291,9 +322,9 @@ export default function HomeScreen() {
                 </Text>
               </View>
             ) : (
-              latestVideos.map((video) => (
+              latestVideos.map((video, index) => (
                 <TouchableOpacity
-                  key={video.id}
+                  key={`${video.id}-${index}`}
                   style={styles.videoCard}
                   onPress={() => handleVideoPress(video)}
                 >
@@ -306,18 +337,13 @@ export default function HomeScreen() {
                       {video.content.title}
                     </Text>
                     <View style={styles.videoStats}>
-                      <View style={styles.authorInfo}>
-                        {video.author.avatar && (
-                          <Image 
-                            source={{ uri: video.author.avatar }} 
-                            style={styles.authorAvatar}
-                          />
-                        )}
-                        <Text style={styles.authorName}>{video.author.name}</Text>
-                      </View>
                       <View style={styles.stat}>
                         <Ionicons name="thumbs-up-outline" size={12} color="#666" />
                         <Text style={styles.statText}>{video.content.engagement.likes}</Text>
+                      </View>
+                      <View style={styles.stat}>
+                        <Ionicons name="chatbubble-outline" size={12} color="#666" />
+                        <Text style={styles.statText}>{video.content.engagement.comments}</Text>
                       </View>
                     </View>
                   </View>
@@ -330,7 +356,7 @@ export default function HomeScreen() {
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>{t('home.sections.recentPosts.title')}</Text>
-              <TouchableOpacity onPress={() => navigation.navigate('BlogPosts')}>
+              <TouchableOpacity onPress={() => handleViewAllBlogPostsPress()}>
                 <Text style={styles.seeAllText}>{t('home.sections.recentPosts.seeAll')}</Text>
               </TouchableOpacity>
             </View>
@@ -371,7 +397,7 @@ export default function HomeScreen() {
           <View style={styles.section}>
             <View style={styles.sectionHeader}>
               <Text style={styles.sectionTitle}>{t('home.sections.upcomingEvents.title')}</Text>
-              <TouchableOpacity onPress={() => navigation.navigate('Events')}>
+              <TouchableOpacity onPress={() => handleViewAllEventsPress()}>
                 <Text style={styles.seeAllText}>{t('home.sections.upcomingEvents.seeAll')}</Text>
               </TouchableOpacity>
             </View>
@@ -557,44 +583,36 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 180,
     backgroundColor: '#f0f0f0',
+    resizeMode: 'cover',
   },
   videoInfo: {
-    padding: 12,
+    padding: 16,
   },
   videoTitle: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: '600',
     color: '#000',
-    marginBottom: 8,
+    marginBottom: 12,
+    lineHeight: 22,
   },
   videoStats: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  authorInfo: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  authorAvatar: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    marginRight: 8,
-  },
-  authorName: {
-    fontSize: 12,
-    color: '#666',
+    justifyContent: 'flex-end',
+    borderTopWidth: 1,
+    borderTopColor: '#f0f0f0',
+    paddingTop: 12,
+    marginTop: 4,
   },
   stat: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: 12,
+    marginLeft: 16,
+    gap: 4,
   },
   statText: {
-    fontSize: 12,
+    fontSize: 14,
     color: '#666',
-    marginLeft: 4,
   },
   errorContainer: {
     padding: 20,
@@ -609,3 +627,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+
+export default HomeScreen;

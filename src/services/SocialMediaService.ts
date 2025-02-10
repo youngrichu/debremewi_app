@@ -16,7 +16,7 @@ export interface SocialMediaPost {
     created_at: string;
     engagement: {
       likes: string;
-      comments: number;
+      comments: string;
       shares: number;
     };
   };
@@ -66,17 +66,32 @@ class SocialMediaService {
     order?: 'asc' | 'desc';
   }) {
     const token = await AsyncStorage.getItem('userToken');
-    const response = await axios.get<FeedResponse>(
-      `${API_URL}/wp-json/social-feed/v1/feeds`,
+    const queryParams = new URLSearchParams();
+    
+    // Add all params to query string
+    if (params.platform) queryParams.append('platform', params.platform);
+    if (params.type) queryParams.append('type', params.type);
+    if (params.page) queryParams.append('page', params.page.toString());
+    if (params.per_page) queryParams.append('per_page', params.per_page.toString());
+    if (params.sort) queryParams.append('sort', params.sort);
+    if (params.order) queryParams.append('order', params.order);
+
+    const response = await fetch(
+      `${API_URL}/wp-json/social-feed/v1/feeds?${queryParams.toString()}`,
       {
-        params,
         headers: {
           'Content-Type': 'application/json',
           Authorization: token ? `Bearer ${token}` : '',
         },
       }
     );
-    return response.data;
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch social media feed');
+    }
+
+    const data = await response.json();
+    return data;
   }
 
   async getLiveStreams(params: {
