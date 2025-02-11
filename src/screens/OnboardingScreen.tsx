@@ -657,7 +657,8 @@ export default function OnboardingScreen() {
           formData.children?.map(child => ({
             fullName: child.fullName,
             christianityName: child.christianityName,
-            gender: child.gender
+            gender: child.gender,
+            age: child.age
           })) : 
           [],
         is_onboarding_complete: true,
@@ -720,7 +721,8 @@ export default function OnboardingScreen() {
           formData.children?.map(child => ({
             fullName: child.fullName,
             christianityName: child.christianityName,
-            gender: child.gender
+            gender: child.gender,
+            age: child.age
           })) : 
           []
       };

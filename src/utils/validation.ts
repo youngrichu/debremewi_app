@@ -68,7 +68,8 @@ export const validateChildrenData = (
     const invalidChild = children.find(child => 
       !child.fullName || 
       !child.christianityName || 
-      !child.gender
+      !child.gender ||
+      !child.age
     );
 
     if (invalidChild) {

@@ -23,7 +23,7 @@
       "personalInfo": "Personal Information",
       "contactInfo": "Contact Information",
       "churchInfo": "Church Information",
-      "additionalInfo": "Additional Information"
+      "childrenInfo": "Children Information"
     },
     "fields": {
       "firstName": "First Name",

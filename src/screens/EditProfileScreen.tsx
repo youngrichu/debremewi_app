@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   TextInput,
@@ -10,6 +10,9 @@ import {
   Image,
   KeyboardAvoidingView,
   ScrollView,
+  Keyboard,
+  Dimensions,
+  InputAccessoryView,
 } from 'react-native';
 import { useDispatch, useSelector } from 'react-redux';
 import { setUserData } from '../store/slices/userSlice';
@@ -22,6 +25,7 @@ import { RootState } from '../store';
 import { useNavigation } from '@react-navigation/native';
 import { useTranslation } from 'react-i18next';
 import { Text } from '../components/Text';
+import { PhoneInput } from '../components/PhoneInput';
 
 // Import the same constants and options from OnboardingScreen
 import {
@@ -59,8 +63,33 @@ interface DropdownState {
   hasChildren: boolean;
 }
 
-// Add proper typing for form data
-interface FormData extends UserData {}
+interface UserData {
+  firstName?: string;
+  lastName?: string;
+  phoneNumber?: string;
+  residencyCity?: string;
+  residenceAddress?: string;
+  christianName?: string;
+  emergencyContact?: string;
+  occupation?: string;
+  hasChildren?: string;
+  numberOfChildren?: string;
+  children?: Array<{
+    fullName: string;
+    christianityName: string;
+    gender: string;
+    age: string;
+  }>;
+  photo?: string;
+  profile_photo?: string;
+  profile_photo_url?: string;
+  avatar_url?: string;
+  [key: string]: any;
+}
+
+interface FormData extends UserData {
+  countryCode: string;
+}
 
 // Update the formatDisplayValue function
 const formatDisplayValue = (value: string | null | undefined, options?: { [key: string]: string }) => {
@@ -253,9 +282,58 @@ export default function EditProfileScreen() {
   const { userData } = useSelector((state: RootState) => state.user);
   const [loading, setLoading] = useState(false);
   const [openPicker, setOpenPicker] = useState<string | null>(null);
-  const [formData, setFormData] = useState<FormData>(userData || {});
+  const [formData, setFormData] = useState<FormData>({
+    firstName: '',
+    lastName: '',
+    phoneNumber: '',
+    countryCode: '+971',
+    residencyCity: '',
+    residenceAddress: '',
+    christianName: '',
+    emergencyContact: '',
+    occupation: '',
+    hasChildren: 'no',
+    numberOfChildren: '',
+    children: [],
+    ...userData,
+  });
   const [errors, setErrors] = useState<Record<string, string | undefined>>({});
   const { t } = useTranslation();
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
+  const scrollViewRef = useRef<ScrollView>(null);
+  const { height: windowHeight } = Dimensions.get('window');
+  const [showNavigation, setShowNavigation] = useState(false);
+  const [initialStepScroll, setInitialStepScroll] = useState(true);
+  const isPickerSelectionRef = useRef(false);
+
+  useEffect(() => {
+    const keyboardWillShow = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      (event) => {
+        setKeyboardVisible(true);
+        // Remove automatic scrolling when keyboard shows
+        setInitialStepScroll(false);
+      }
+    );
+
+    const keyboardWillHide = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false);
+        setInitialStepScroll(false);
+      }
+    );
+
+    return () => {
+      keyboardWillShow.remove();
+      keyboardWillHide.remove();
+    };
+  }, []);
+
+  const handleContentSizeChange = (contentWidth: number, contentHeight: number) => {
+    // Remove all automatic scrolling behavior
+    return;
+  };
 
   const handleChange = (field: keyof FormData, value: any) => {
     // Special handling for children array
@@ -400,33 +478,93 @@ export default function EditProfileScreen() {
   };
 
   // Update renderFormField to use proper translation paths
-  const renderFormField = (
-    field: keyof UserState,
-    isRequired: boolean = false,
-    keyboardType: 'default' | 'email-address' | 'numeric' | 'phone-pad' = 'default'
-  ) => (
-    <View style={styles.inputGroup}>
-      <Text style={styles.label}>
-        {t(`profile.fields.${field}`)} {isRequired && <Text style={styles.required}>*</Text>}
-      </Text>
-      <TextInput
-        style={[styles.input, errors[field] ? styles.inputError : undefined]}
-        value={formData[field]?.toString() || ''}
-        onChangeText={(text) => handleChange(field, text)}
-        placeholder={t(`profile.placeholders.enter${field.charAt(0).toUpperCase() + field.slice(1)}`)}
-        keyboardType={keyboardType}
-      />
-      {errors[field] && (
-        <Text style={styles.errorText}>{t(`validation.required.${field}`)}</Text>
-      )}
-    </View>
-  );
+  const renderFormField = (field: keyof FormData, isRequired: boolean = false) => {
+    if (field === 'phoneNumber') {
+      return (
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>
+            {t(`profile.fields.${field}`)} {isRequired && <Text style={styles.required}>*</Text>}
+          </Text>
+          <PhoneInput
+            value={formData.phoneNumber || ''}
+            countryCode={formData.countryCode || '+971'}
+            onChangePhoneNumber={(phoneNumber, countryCode) => {
+              setFormData(prev => ({
+                ...prev,
+                phoneNumber,
+                countryCode
+              }));
+            }}
+            error={errors.phoneNumber}
+            returnKeyType="next"
+          />
+          {errors.phoneNumber && (
+            <Text style={styles.errorText}>{errors.phoneNumber}</Text>
+          )}
+        </View>
+      );
+    }
+
+    // Special handling for multiline text inputs
+    if (field === 'residenceAddress' || field === 'emergencyContact') {
+      return (
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>
+            {t(`profile.fields.${field}`)} {isRequired && <Text style={styles.required}>*</Text>}
+          </Text>
+          <TextInput
+            style={[
+              styles.input, 
+              styles.multilineInput,
+              errors[field] && styles.inputError
+            ]}
+            value={formData[field]?.toString() || ''}
+            onChangeText={(value) => handleChange(field, value)}
+            placeholder={t(`profile.placeholders.enter${field.charAt(0).toUpperCase() + field.slice(1)}`)}
+            multiline
+            numberOfLines={3}
+            textAlignVertical="top"
+            returnKeyType="done"
+            onSubmitEditing={Keyboard.dismiss}
+            blurOnSubmit={true}
+            {...(Platform.OS === 'ios' ? {
+              inputAccessoryViewID: 'doneButton'
+            } : {})}
+          />
+          {errors[field] && <Text style={styles.errorText}>{errors[field]}</Text>}
+          {field === 'emergencyContact' && (
+            <Text style={styles.helperText}>
+              {t('profile.helpers.emergencyContact')}
+            </Text>
+          )}
+        </View>
+      );
+    }
+
+    return (
+      <View style={styles.inputGroup}>
+        <Text style={styles.label}>
+          {t(`profile.fields.${field}`)} {isRequired && <Text style={styles.required}>*</Text>}
+        </Text>
+        <TextInput
+          style={[styles.input, errors[field] && styles.inputError]}
+          value={formData[field]?.toString() || ''}
+          onChangeText={(value) => handleChange(field, value)}
+          placeholder={t(`profile.placeholders.enter${field.charAt(0).toUpperCase() + field.slice(1)}`)}
+        />
+        {errors[field] && <Text style={styles.errorText}>{errors[field]}</Text>}
+      </View>
+    );
+  };
 
   // Fix section titles
   const renderSectionTitle = (section: string) => (
-    <Text style={styles.sectionTitle}>
-      {t(`profile.sections.${section}`)}
-    </Text>
+    <>
+      {section !== 'personalInfo' && <View style={styles.sectionSeparator} />}
+      <Text style={styles.sectionTitle}>
+        {t(`profile.sections.${section}`)}
+      </Text>
+    </>
   );
 
   // Fix field labels
@@ -537,7 +675,12 @@ export default function EditProfileScreen() {
   const handleChildFieldChange = (index: number, field: string, value: string) => {
     const updatedChildren = [...(formData.children || [])];
     if (!updatedChildren[index]) {
-      updatedChildren[index] = {};
+      updatedChildren[index] = {
+        fullName: '',
+        christianityName: '',
+        gender: '',
+        age: ''
+      };
     }
     updatedChildren[index] = {
       ...updatedChildren[index],
@@ -548,24 +691,26 @@ export default function EditProfileScreen() {
 
   return (
     <View style={styles.container}>
-      <LinearGradient colors={['#2196F3', '#1976D2']} style={styles.gradient}>
-        <View style={styles.header}>
-          <Text style={styles.headerText}>{t('profile.editProfile')}</Text>
-        </View>
-
-        <KeyboardAvoidingView 
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          style={styles.keyboardView}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={[styles.keyboardView]}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+      >
+        <ScrollView 
+          ref={scrollViewRef}
+          style={styles.content}
+          contentContainerStyle={[
+            styles.scrollContent,
+            keyboardVisible && styles.scrollContentWithKeyboard
+          ]}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={true}
+          onContentSizeChange={handleContentSizeChange}
+          bounces={false}
+          keyboardDismissMode="interactive"
         >
-          <ScrollView 
-            style={styles.content}
-            contentContainerStyle={styles.scrollContent}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-            bounces={false}
-          >
-            {/* Photo Upload Section */}
+          {/* Photo Upload Section */}
+          {!keyboardVisible && (
             <View style={styles.photoSection}>
               <TouchableOpacity style={styles.photoContainer} onPress={pickImage}>
                 {(formData.photo || formData.profile_photo || formData.profile_photo_url || formData.avatar_url) ? (
@@ -588,115 +733,138 @@ export default function EditProfileScreen() {
                 )}
               </TouchableOpacity>
             </View>
+          )}
 
-            {/* Form Fields */}
-            <View style={styles.formSection}>
-              {/* Personal Information */}
-              {renderSectionTitle('personalInfo')}
-              {renderFormField('firstName', true)}
-              {renderFormField('lastName', true)}
-              {renderFormField('christianName')}
-              {renderPickerButton('gender', true)}
-              {renderPickerButton('maritalStatus')}
-              {renderPickerButton('educationLevel')}
-              {renderFormField('occupation')}
+          {/* Form Fields */}
+          <View style={[
+            styles.formSection, 
+            keyboardVisible && styles.formSectionWithKeyboard
+          ]}>
+            {/* Personal Information */}
+            {renderSectionTitle('personalInfo')}
+            {renderFormField('firstName', true)}
+            {renderFormField('lastName', true)}
+            {renderFormField('christianName')}
+            {renderPickerButton('gender', true)}
+            {renderPickerButton('maritalStatus')}
+            {renderPickerButton('educationLevel')}
+            {renderFormField('occupation')}
 
-              {/* Contact Information */}
-              {renderSectionTitle('contactInfo')}
-              {renderFormField('phoneNumber', true, 'phone-pad')}
-              {renderPickerButton('residencyCity', true)}
-              {renderFormField('residenceAddress', true)}
-              {renderFormField('emergencyContact')}
+            {/* Children Information */}
+            {renderSectionTitle('childrenInfo')}
+            {renderPickerButton('hasChildren')}
 
-              {/* Church Information */}
-              {renderSectionTitle('churchInfo')}
-              {renderPickerButton('christianLife')}
-              {renderPickerButton('serviceAtParish')}
-              {formData.serviceAtParish && formData.serviceAtParish !== 'none' && (
-                renderPickerButton('ministryService')
-              )}
-              {renderPickerButton('hasFatherConfessor')}
-              {formData.hasFatherConfessor === 'yes' && renderFormField('fatherConfessorName')}
-              {renderPickerButton('hasAssociationMembership')}
-              {formData.hasAssociationMembership === 'yes' && renderFormField('associationName')}
-
-              {/* Additional Information */}
-              {renderSectionTitle('additionalInfo')}
-              {renderPickerButton('hasChildren')}
-
-              {formData.hasChildren === 'yes' && (
-                <>
-                  <View style={styles.inputGroup}>
-                    <Text style={styles.label}>
-                      {t('profile.fields.numberOfChildren')} <Text style={styles.required}>*</Text>
-                    </Text>
-                    <TextInput
-                      style={[styles.input, errors.numberOfChildren && styles.inputError]}
-                      value={formData.numberOfChildren}
-                      onChangeText={(value) => handleChange('numberOfChildren', value)}
-                      keyboardType="numeric"
-                      placeholder={t('profile.placeholders.enterNumberOfChildren')}
-                    />
-                    {errors.numberOfChildren && (
-                      <Text style={styles.errorText}>{errors.numberOfChildren}</Text>
-                    )}
-                  </View>
-
-                  {formData.numberOfChildren && parseInt(formData.numberOfChildren) > 0 && (
-                    Array.from({ length: parseInt(formData.numberOfChildren) }).map((_, index) => (
-                      <ChildFields
-                        key={index}
-                        index={index}
-                        child={formData.children?.[index]}
-                        handleChildFieldChange={handleChildFieldChange}
-                        errors={errors}
-                        t={t}
-                        setShowPicker={setOpenPicker}
-                      />
-                    ))
+            {formData.hasChildren === 'yes' && (
+              <>
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>
+                    {t('profile.fields.numberOfChildren')} <Text style={styles.required}>*</Text>
+                  </Text>
+                  <TextInput
+                    style={[styles.input, errors.numberOfChildren && styles.inputError]}
+                    value={formData.numberOfChildren}
+                    onChangeText={(value) => handleChange('numberOfChildren', value)}
+                    keyboardType="numeric"
+                    placeholder={t('profile.placeholders.enterNumberOfChildren')}
+                  />
+                  {errors.numberOfChildren && (
+                    <Text style={styles.errorText}>{errors.numberOfChildren}</Text>
                   )}
-                </>
-              )}
+                </View>
 
-              {/* Submit Button */}
-              <TouchableOpacity
-                style={[styles.submitButton, loading && styles.buttonDisabled]}
-                onPress={handleSubmit}
-                disabled={loading}
-              >
-                {loading ? (
-                  <ActivityIndicator color="#FFF" />
-                ) : (
-                  <Text style={styles.submitButtonText}>{t('profile.messages.saveChanges')}</Text>
+                {formData.numberOfChildren && parseInt(formData.numberOfChildren) > 0 && (
+                  Array.from({ length: parseInt(formData.numberOfChildren) }).map((_, index) => (
+                    <ChildFields
+                      key={index}
+                      index={index}
+                      child={formData.children?.[index]}
+                      handleChildFieldChange={handleChildFieldChange}
+                      errors={errors}
+                      t={t}
+                      setShowPicker={setOpenPicker}
+                    />
+                  ))
                 )}
-              </TouchableOpacity>
-            </View>
-          </ScrollView>
-        </KeyboardAvoidingView>
+              </>
+            )}
 
-        {/* Picker Modal */}
-        {openPicker && (
-          <CustomPicker
-            visible={true}
-            onClose={() => setOpenPicker(null)}
-            pickerName={openPicker.includes('Gender') ? 'gender' : openPicker}
-            onSelect={(value) => {
-              if (openPicker.includes('child')) {
-                const childIndex = parseInt(openPicker.match(/\d+/)?.[0] || '0');
-                handleChildFieldChange(childIndex, 'gender', value);
-              } else {
-                handleChange(openPicker as keyof typeof formData, value);
-              }
-              setOpenPicker(null);
-            }}
-            selectedValue={
-              openPicker.includes('child') 
-                ? formData.children?.[parseInt(openPicker.match(/\d+/)?.[0] || '0')]?.gender
-                : formData[openPicker as keyof typeof formData]?.toString()
+            {/* Contact Information */}
+            {renderSectionTitle('contactInfo')}
+            {renderFormField('phoneNumber', true)}
+            {renderPickerButton('residencyCity', true)}
+            {renderFormField('residenceAddress', true)}
+            {renderFormField('emergencyContact')}
+
+            {/* Church Information */}
+            {renderSectionTitle('churchInfo')}
+            {renderPickerButton('christianLife')}
+            {renderPickerButton('serviceAtParish')}
+            {formData.serviceAtParish && formData.serviceAtParish !== 'none' && (
+              renderPickerButton('ministryService')
+            )}
+            {renderPickerButton('hasFatherConfessor')}
+            {formData.hasFatherConfessor === 'yes' && renderFormField('fatherConfessorName')}
+            {renderPickerButton('hasAssociationMembership')}
+            {formData.hasAssociationMembership === 'yes' && renderFormField('associationName')}
+
+            {/* Submit Button */}
+            <TouchableOpacity
+              style={[styles.submitButton, loading && styles.buttonDisabled]}
+              onPress={handleSubmit}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#FFF" />
+              ) : (
+                <Text style={styles.submitButtonText}>{t('profile.messages.saveChanges')}</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+
+      {Platform.OS === 'ios' && (
+        <InputAccessoryView nativeID="doneButton">
+          <View style={styles.inputAccessoryContainer}>
+            <TouchableOpacity
+              onPress={() => {
+                Keyboard.dismiss();
+                isPickerSelectionRef.current = false;
+              }}
+              style={styles.doneButton}
+            >
+              <Text style={styles.doneButtonText}>{t('common.done')}</Text>
+            </TouchableOpacity>
+          </View>
+        </InputAccessoryView>
+      )}
+
+      {/* Picker Modal */}
+      {openPicker && (
+        <CustomPicker
+          visible={true}
+          onClose={() => {
+            setOpenPicker(null);
+            isPickerSelectionRef.current = false;
+          }}
+          pickerName={openPicker.includes('Gender') ? 'gender' : openPicker}
+          onSelect={(value) => {
+            if (openPicker.includes('child')) {
+              const childIndex = parseInt(openPicker.match(/\d+/)?.[0] || '0');
+              handleChildFieldChange(childIndex, 'gender', value);
+            } else {
+              handleChange(openPicker as keyof typeof formData, value);
             }
-          />
-        )}
-      </LinearGradient>
+            setOpenPicker(null);
+            isPickerSelectionRef.current = false;
+          }}
+          selectedValue={
+            openPicker.includes('child') 
+              ? formData.children?.[parseInt(openPicker.match(/\d+/)?.[0] || '0')]?.gender
+              : formData[openPicker as keyof typeof formData]?.toString()
+          }
+        />
+      )}
     </View>
   );
 }
@@ -704,40 +872,30 @@ export default function EditProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  gradient: {
-    flex: 1,
+    backgroundColor: '#fff',
   },
   keyboardView: {
     flex: 1,
   },
   content: {
     flex: 1,
-    backgroundColor: '#fff',
   },
   scrollContent: {
     flexGrow: 1,
     paddingHorizontal: 16,
-    paddingTop: 16,
-    paddingBottom: Platform.OS === 'ios' ? 100 : 120,
+    paddingTop: Platform.OS === 'ios' ? 16 : 24,
+    paddingBottom: 20,
   },
-  header: {
-    height: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-  },
-  headerText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#FFF',
-    textAlign: 'center',
+  scrollContentWithKeyboard: {
+    paddingTop: 0,
+    paddingBottom: Platform.OS === 'ios' ? 200 : 120,
   },
   photoSection: {
     width: '100%',
     alignItems: 'center',
     justifyContent: 'center',
     marginVertical: 20,
+    backgroundColor: '#fff',
   },
   photoContainer: {
     alignItems: 'center',
@@ -771,12 +929,16 @@ const styles = StyleSheet.create({
   },
   formSection: {
     marginTop: 20,
+    paddingBottom: Platform.OS === 'ios' ? 100 : 60,
+  },
+  formSectionWithKeyboard: {
+    marginTop: 0,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     color: '#333',
-    marginBottom: 15,
+    marginBottom: 20,
   },
   inputGroup: {
     marginBottom: 20,
@@ -849,5 +1011,41 @@ const styles = StyleSheet.create({
     color: '#333',
     marginBottom: 15,
   },
-  // Add more styles as needed...
+  inputAccessoryContainer: {
+    backgroundColor: '#f8f8f8',
+    paddingHorizontal: 8,
+    paddingVertical: 8,
+    borderTopWidth: 1,
+    borderTopColor: '#dadada',
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  doneButton: {
+    padding: 8,
+    marginRight: 8,
+  },
+  doneButtonText: {
+    color: '#2196F3',
+    fontSize: 16,
+    fontWeight: '600',
+  },
+  multilineInput: {
+    height: 100,
+    textAlignVertical: 'top',
+    paddingTop: 12,
+  },
+  helperText: {
+    fontSize: 12,
+    color: '#666',
+    marginTop: 4,
+  },
+  sectionSeparator: {
+    height: 12,
+    backgroundColor: '#f5f5f5',
+    marginHorizontal: -16,
+    marginVertical: 24,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderColor: '#e0e0e0',
+  },
 }); 
