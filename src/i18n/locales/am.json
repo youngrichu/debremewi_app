@@ -95,12 +95,13 @@
       },
       "educationLevel": {
         "student": "ተማሪ",
-        "grade_10": "10 ያጠናቀቀ",
-        "grade_12": "12 ያጠናቀቀ",
+        "no_education": "መደበኛ ትምህርት የለም",
+        "grade_10": "10ኛ ክፍል ያጠናቀቀ",
+        "grade_12": "12ኛ ክፍል ያጠናቀቀ",
         "diploma": "ዲፕሎማ",
-        "degree": "ዲግሪ",
+        "degree": "ዲግሪ (የመጀመሪያ ዲግሪ)",
         "masters": "ማስተርስ",
-        "doctorate": "ዶክትሬት"
+        "doctorate": "ዶክተሬት (ፒ.ኤች.ዲ)"
       },
       "christianLife": {
         "not_repent": "ንስሐ ያልገባ",

@@ -18,7 +18,7 @@ router.post('/wp-json/church-mobile/v1/onboarding', async (req, res) => {
     } = req.body;
 
     // Validate required fields
-    if (!firstName || !lastName || !phoneNumber || !residencyCity || !residenceAddress) {
+    if (!firstName || !lastName || !phoneNumber || !residencyCity) {
       return res.status(400).json({ 
         success: false, 
         message: 'Required fields are missing' 

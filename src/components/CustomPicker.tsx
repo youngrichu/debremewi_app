@@ -67,6 +67,9 @@ export function CustomPicker({
 
   const getTranslatedOption = (option: string | PickerOption) => {
     if (typeof option === 'object') {
+      if (pickerName === 'educationLevel') {
+        return t(`profile.options.educationLevel.${option.value}`);
+      }
       return option.label;
     }
 

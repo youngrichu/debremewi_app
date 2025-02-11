@@ -3,13 +3,15 @@ export const GENDER_OPTIONS = ['male', 'female'];
 export const MARITAL_STATUS_OPTIONS = ['single', 'married', 'divorced', 'widowed'];
 
 export const EDUCATION_LEVEL_OPTIONS = [
-  'student',
-  'grade_10',
-  'grade_12',
-  'diploma',
-  'degree',
-  'masters',
-  'doctorate'
+  { label: 'Select Education Level', value: '', disabled: true },
+  { label: 'No formal education', value: 'no_education' },
+  { label: 'Student', value: 'student' },
+  { label: 'Completed Grade 10', value: 'grade_10' },
+  { label: 'Completed Grade 12', value: 'grade_12' },
+  { label: 'Diploma', value: 'diploma' },
+  { label: 'Degree', value: 'degree' },
+  { label: "Master's", value: 'masters' },
+  { label: 'Doctorate', value: 'doctorate' }
 ];
 
 export const CHRISTIAN_LIFE_OPTIONS = [

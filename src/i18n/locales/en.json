@@ -94,11 +94,12 @@
       },
       "educationLevel": {
         "student": "Student",
-        "grade_10": "Completed 10th grade",
-        "grade_12": "Completed 12th grade",
+        "no_education": "No formal education",
+        "grade_10": "Completed Grade 10",
+        "grade_12": "Completed Grade 12",
         "diploma": "Diploma",
+        "masters": "Master's",
         "degree": "Degree (Bachelor's)",
-        "masters": "Masters",
         "doctorate": "Doctor (Ph.D.)"
       },
       "christianLife": {
