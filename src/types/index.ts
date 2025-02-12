@@ -42,7 +42,6 @@ export interface EventCategory {
   name: string;
   slug: string;
   description?: string;
-  count?: number;
 }
 
 // Events Response Type

@@ -1,6 +1,6 @@
-import React, { useState, useCallback, useEffect, useMemo } from 'react';
-import { View, StyleSheet, ActivityIndicator, ScrollView, Text, Dimensions, TouchableOpacity } from 'react-native';
-import { Calendar, DateData } from 'react-native-calendars';
+import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import { View, StyleSheet, ActivityIndicator, ScrollView, Text, Dimensions, TouchableOpacity, Animated } from 'react-native';
+import { Calendar, DateData, LocaleConfig } from 'react-native-calendars';
 import { EventList } from '../components/Events/EventList';
 import { EventFilters } from '../components/Events/EventFilters';
 import { EventService } from '../services/EventService';
@@ -12,6 +12,26 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { toEthiopian, getEthiopianMonthName, getEthiopianDayName, ETHIOPIAN_MONTHS } from '../utils/ethiopianCalendar';
 import { EventsShimmer } from '../components/EventsShimmer';
+
+// Initialize LocaleConfig at the top level
+LocaleConfig.locales['am'] = {
+  monthNames: ['መስከረም', 'ጥቅምት', 'ህዳር', 'ታህሳስ', 'ጥር', 'የካቲት', 'መጋቢት', 'ሚያዚያ', 'ግንቦት', 'ሰኔ', 'ሐምሌ', 'ነሐሴ'],
+  monthNamesShort: ['መስከ', 'ጥቅም', 'ህዳር', 'ታህሳ', 'ጥር', 'የካቲ', 'መጋቢ', 'ሚያዚ', 'ግንቦ', 'ሰኔ', 'ሐምሌ', 'ነሐሴ'],
+  dayNames: ['ሰኞ', 'ማክሰኞ', 'ረቡዕ', 'ሐሙስ', 'ዓርብ', 'ቅዳሜ', 'እሑድ'],
+  dayNamesShort: ['ሰኞ', 'ማክሰ', 'ረቡዕ', 'ሐሙስ', 'ዓርብ', 'ቅዳሜ', 'እሑድ'],
+  today: 'ዛሬ'
+};
+
+LocaleConfig.locales['en'] = {
+  monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+  monthNamesShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  dayNames: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+  dayNamesShort: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+  today: 'Today'
+};
+
+// Set default locale
+LocaleConfig.defaultLocale = 'en';
 
 const TIME_LABELS = [
   '12 AM', '1 AM', '2 AM', '3 AM', '4 AM', '5 AM', '6 AM', '7 AM', '8 AM', '9 AM', '10 AM', '11 AM',
@@ -41,6 +61,11 @@ const convertDateToEthiopian = (date: Date) => {
   );
 };
 
+// Add this constant after the imports
+const AMHARIC_WEEKDAYS = ['ሰኞ', 'ማክሰኞ', 'ረቡዕ', 'ሐሙስ', 'ዓርብ', 'ቅዳሜ', 'እሑድ'];
+const ENGLISH_WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const ENGLISH_WEEKDAYS_FULL = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
 const WeekView = ({ 
   events, 
   onEventPress, 
@@ -53,7 +78,7 @@ const WeekView = ({
   onDayPress: (date: Date) => void,
 }) => {
   const { i18n } = useTranslation();
-  const isAmharic = i18n.language === 'am';
+  const isAmharic = i18n.language.startsWith('am');
 
   const [currentWeekStart, setCurrentWeekStart] = useState<Date>(() => {
     try {
@@ -176,10 +201,7 @@ const WeekView = ({
             onPress={() => onDayPress(day)}
           >
             <Text style={styles.dayHeaderText}>
-              {isAmharic ? 
-                getEthiopianDayName(day.getDay()) :
-                format(day, 'EEE')
-              }
+              {isAmharic ? AMHARIC_WEEKDAYS[index] : ENGLISH_WEEKDAYS[index]}
             </Text>
             <Text style={[
               styles.dayHeaderDate,
@@ -198,10 +220,10 @@ const WeekView = ({
       <ScrollView style={styles.timeGridContainer}>
         <View style={styles.timeGridWrapper}>
           {/* Time labels */}
-          <View style={styles.timeLabelsColumn}>
+          <View style={styles.weekTimeLabels}>
             {TIME_LABELS.map((label, index) => (
-              <View key={index} style={styles.timeLabel}>
-                <Text style={styles.timeLabelText}>{label}</Text>
+              <View key={index} style={styles.weekTimeLabel}>
+                <Text style={styles.weekTimeLabelText}>{label}</Text>
               </View>
             ))}
           </View>
@@ -234,7 +256,7 @@ const WeekView = ({
                         <TouchableOpacity
                           key={event.id}
                           style={[
-                            styles.eventBlock,
+                            styles.weekEventBlock,
                             {
                               top: topPosition,
                               height: Math.max(duration * HOUR_HEIGHT, 30),
@@ -243,10 +265,10 @@ const WeekView = ({
                           ]}
                           onPress={() => onEventPress(event.id)}
                         >
-                          <Text style={styles.eventTitle} numberOfLines={1}>
+                          <Text style={styles.weekEventTitle} numberOfLines={1}>
                             {event.title}
                           </Text>
-                          <Text style={styles.eventTime}>
+                          <Text style={styles.weekEventTime}>
                             {format(startTime, 'h:mm a')}
                           </Text>
                         </TouchableOpacity>
@@ -268,7 +290,7 @@ const DayView = ({ events, onEventPress, selectedDate }: {
   selectedDate: Date
 }) => {
   const { i18n } = useTranslation();
-  const isAmharic = i18n.language === 'am';
+  const isAmharic = i18n.language.startsWith('am');
 
   const [currentDate, setCurrentDate] = useState(() => {
     try {
@@ -310,7 +332,8 @@ const DayView = ({ events, onEventPress, selectedDate }: {
           {isAmharic ? (
             (() => {
               const ethDate = convertDateToEthiopian(currentDate);
-              return `${getEthiopianDayName(currentDate.getDay())}፣ ${getEthiopianMonthName(ethDate.month)} ${ethDate.day}፣ ${ethDate.year}`;
+              const dayName = currentDate.getDay() === 0 ? AMHARIC_WEEKDAYS[6] : AMHARIC_WEEKDAYS[currentDate.getDay()-1];
+              return `${dayName}፣ ${getEthiopianMonthName(ethDate.month)} ${ethDate.day}፣ ${ethDate.year}`;
             })()
           ) : (
             format(currentDate, 'EEEE, MMMM d, yyyy')
@@ -325,10 +348,10 @@ const DayView = ({ events, onEventPress, selectedDate }: {
       <ScrollView style={styles.timeGridContainer}>
         <View style={styles.timeGridWrapper}>
           {/* Time labels */}
-          <View style={styles.timeLabelsColumn}>
+          <View style={styles.dayTimeLabels}>
             {timeSlots.map((time, index) => (
-              <View key={index} style={styles.timeLabel}>
-                <Text style={styles.timeLabelText}>
+              <View key={index} style={styles.dayTimeLabel}>
+                <Text style={styles.dayTimeLabelText}>
                   {format(time, 'h:mm a')}
                 </Text>
               </View>
@@ -354,7 +377,7 @@ const DayView = ({ events, onEventPress, selectedDate }: {
                   <TouchableOpacity
                     key={event.id}
                     style={[
-                      styles.eventBlock,
+                      styles.dayEventBlock,
                       {
                         top: startHour * HOUR_HEIGHT,
                         height: Math.max(duration * HOUR_HEIGHT, 30),
@@ -364,10 +387,10 @@ const DayView = ({ events, onEventPress, selectedDate }: {
                     ]}
                     onPress={() => onEventPress(event.id)}
                   >
-                    <Text style={styles.eventTitle} numberOfLines={1}>
+                    <Text style={styles.dayEventTitle} numberOfLines={1}>
                       {event.title}
                     </Text>
-                    <Text style={styles.eventTime}>
+                    <Text style={styles.dayEventTime}>
                       {format(startTime, 'h:mm a')} - {format(endTime, 'h:mm a')}
                     </Text>
                   </TouchableOpacity>
@@ -509,10 +532,73 @@ export default function EventsScreen() {
   const [page, setPage] = useState(1);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [forceRender, setForceRender] = useState(0); // Add this state
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   // Add state for calendar display type
-  const isAmharic = i18n.language === 'am';
+  const isAmharic = i18n.language.startsWith('am');
+
+  // Animation values
+  const scrollY = useRef(new Animated.Value(0)).current;
+  const calendarHeight = 350;
+  const SCROLL_THRESHOLD = 50; // Reduced threshold for faster transition
+  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false);
+
+  // Sticky header animation values
+  const headerOpacity = useRef(new Animated.Value(0)).current;
+  const headerTranslateY = useRef(new Animated.Value(-50)).current;
+  const calendarTranslateY = scrollY.interpolate({
+    inputRange: [0, calendarHeight],
+    outputRange: [0, -calendarHeight],
+    extrapolate: 'clamp'
+  });
+
+  // Add state for current day
+  const currentDay = useMemo(() => {
+    if (selectedDate) {
+      return new Date(selectedDate);
+    }
+    return new Date();
+  }, [selectedDate]);
+
+  // Get current week days
+  const currentWeekDays = useMemo(() => {
+    const date = new Date(currentDay);
+    const day = date.getDay();
+    // Convert Sunday (0) to 7 to make Monday (1) the first day
+    const adjustedDay = day === 0 ? 7 : day;
+    const monday = new Date(date);
+    monday.setDate(date.getDate() - adjustedDay + 1);
+    
+    return Array.from({ length: 7 }, (_, i) => {
+      const day = new Date(monday);
+      day.setDate(monday.getDate() + i);
+      return day;
+    });
+  }, [currentDay]);
+
+  // Add new state for card height
+  const CARD_HEIGHT = 200; // Adjust based on your event card height
+
+  // Update the locale configuration effect
+  useEffect(() => {
+    LocaleConfig.locales['am'] = {
+      monthNames: ['መስከረም', 'ጥቅምት', 'ህዳር', 'ታህሳስ', 'ጥር', 'የካቲት', 'መጋቢት', 'ሚያዚያ', 'ግንቦት', 'ሰኔ', 'ሐምሌ', 'ነሐሴ'],
+      monthNamesShort: ['መስከ', 'ጥቅም', 'ህዳር', 'ታህሳ', 'ጥር', 'የካቲ', 'መጋቢ', 'ሚያዚ', 'ግንቦ', 'ሰኔ', 'ሐምሌ', 'ነሐሴ'],
+      dayNames: AMHARIC_WEEKDAYS,
+      dayNamesShort: AMHARIC_WEEKDAYS,
+      today: 'ዛሬ'
+    };
+    LocaleConfig.locales['en'] = {
+      monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+      monthNamesShort: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+      dayNames: ENGLISH_WEEKDAYS_FULL,
+      dayNamesShort: ENGLISH_WEEKDAYS,
+      today: 'Today'
+    };
+    LocaleConfig.defaultLocale = i18n.language.startsWith('am') ? 'am' : 'en';
+    setForceRender(prev => prev + 1); // Force re-render when language changes
+  }, [i18n.language]);
 
   const loadEvents = async (pageNum: number, refresh = false) => {
     try {
@@ -745,6 +831,9 @@ export default function EventsScreen() {
     return markedDates;
   };
 
+  console.log('Current language:', i18n.language);
+  console.log('Using dayNames:', isAmharic ? AMHARIC_WEEKDAYS : ENGLISH_WEEKDAYS);
+
   if (loading) {
     return <EventsShimmer />;
   }
@@ -768,53 +857,212 @@ export default function EventsScreen() {
       />
       
       {viewMode === 'month' && (
-        <>
-          <Calendar
-            current={selectedDate || undefined}
-            onDayPress={handleDateSelect}
-            markedDates={getMarkedDates()}
-            theme={{
-              selectedDayBackgroundColor: '#2196F3',
-              todayTextColor: '#2196F3',
-              dotColor: '#2196F3',
-              textDayFontFamily: isAmharic ? 'YourEthiopianFont' : undefined,
-              monthTextColor: '#000',
-              textMonthFontSize: 16,
-              textMonthFontWeight: 'bold',
-            }}
-            dayComponent={isAmharic ? renderEthiopianDay : undefined}
-            renderHeader={(date) => (
-              <View style={styles.monthHeaderContainer}>
-                <Text style={styles.monthHeaderText}>
-                  {isAmharic ? formatMonthHeader(date) : format(new Date(date), 'MMMM yyyy')}
-                </Text>
-              </View>
+        <View style={styles.calendarWrapper}>
+          {/* Event List */}
+          <Animated.FlatList
+            onScroll={Animated.event(
+              [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+              { 
+                useNativeDriver: true,
+                listener: (event: any) => {
+                  const offsetY = event.nativeEvent.contentOffset.y;
+                  setIsHeaderCollapsed(offsetY > SCROLL_THRESHOLD / 2);
+                }
+              }
             )}
-            hideArrows={false}
-            renderArrow={(direction) => (
-              <Text style={styles.arrowText}>
-                {direction === 'left' ? '◀' : '▶'}
-              </Text>
+            scrollEventThrottle={1}
+            contentContainerStyle={styles.listContentContainer}
+            style={styles.scrollView}
+            data={selectedDate ? filteredEvents : events}
+            renderItem={({ item }) => (
+              <EventList
+                events={[item]}
+                onEventPress={handleEventPress}
+                onRefresh={handleRefresh}
+                onLoadMore={handleLoadMore}
+                loading={loading}
+                loadingMore={loadingMore}
+                hasMore={hasMore}
+                labels={{
+                  noEvents: isAmharic ? 'ምንም መርሃግብር የለም' : 'No events',
+                  loading: isAmharic ? 'በመጫን ላይ...' : 'Loading...',
+                  error: isAmharic ? 'ስህተት ተከስቷል' : 'Error loading events',
+                  retry: isAmharic ? 'እንደገና ሞክር' : 'Retry'
+                }}
+              />
             )}
-            hideExtraDays={true}
-            hideDayNames={true}
+            showsVerticalScrollIndicator={false}
           />
-          <EventList
-            events={selectedDate ? filteredEvents : events}
-            onEventPress={handleEventPress}
-            onRefresh={handleRefresh}
-            onLoadMore={handleLoadMore}
-            loading={loading}
-            loadingMore={loadingMore}
-            hasMore={hasMore}
-            labels={{
-              noEvents: isAmharic ? 'ምንም መርሃግብር የለም' : 'No events',
-              loading: isAmharic ? 'በመጫን ላይ...' : 'Loading...',
-              error: isAmharic ? 'ስህተት ተከስቷል' : 'Error loading events',
-              retry: isAmharic ? 'እንደገና ሞክር' : 'Retry'
-            }}
-          />
-        </>
+
+          {/* Main Calendar */}
+          <Animated.View 
+            style={[
+              styles.calendarContainer,
+              {
+                transform: [{
+                  translateY: scrollY.interpolate({
+                    inputRange: [0, SCROLL_THRESHOLD],
+                    outputRange: [0, -calendarHeight],
+                    extrapolate: 'clamp'
+                  })
+                }],
+                opacity: scrollY.interpolate({
+                  inputRange: [0, SCROLL_THRESHOLD],
+                  outputRange: [1, 0],
+                  extrapolate: 'clamp'
+                }),
+                pointerEvents: isHeaderCollapsed ? 'none' : 'auto'
+              }
+            ]}
+          >
+            <Calendar
+              key={`calendar-${i18n.language}-${forceRender}`}
+              current={selectedDate || undefined}
+              onDayPress={handleDateSelect}
+              markedDates={getMarkedDates()}
+              firstDay={1}
+              theme={{
+                selectedDayBackgroundColor: '#2196F3',
+                todayTextColor: '#2196F3',
+                dotColor: '#2196F3',
+                textDayFontFamily: isAmharic ? 'YourEthiopianFont' : undefined,
+                monthTextColor: '#000',
+                textMonthFontSize: 16,
+                textMonthFontWeight: 'bold',
+                'stylesheet.calendar.header': {
+                  dayTextAtIndex0: { 
+                    color: '#666',
+                    fontSize: 14,
+                    fontWeight: '500',
+                    width: 40,
+                    textAlign: 'center',
+                  },
+                  dayTextAtIndex1: { 
+                    color: '#666',
+                    fontSize: 14,
+                    fontWeight: '500',
+                    width: 40,
+                    textAlign: 'center',
+                  },
+                  dayTextAtIndex2: { 
+                    color: '#666',
+                    fontSize: 14,
+                    fontWeight: '500',
+                    width: 40,
+                    textAlign: 'center',
+                  },
+                  dayTextAtIndex3: { 
+                    color: '#666',
+                    fontSize: 14,
+                    fontWeight: '500',
+                    width: 40,
+                    textAlign: 'center',
+                  },
+                  dayTextAtIndex4: { 
+                    color: '#666',
+                    fontSize: 14,
+                    fontWeight: '500',
+                    width: 40,
+                    textAlign: 'center',
+                  },
+                  dayTextAtIndex5: { 
+                    color: '#666',
+                    fontSize: 14,
+                    fontWeight: '500',
+                    width: 40,
+                    textAlign: 'center',
+                  },
+                  dayTextAtIndex6: { 
+                    color: '#666',
+                    fontSize: 14,
+                    fontWeight: '500',
+                    width: 40,
+                    textAlign: 'center',
+                  },
+                  week: {
+                    marginTop: 7,
+                    marginBottom: 7,
+                    flexDirection: 'row',
+                    justifyContent: 'space-around',
+                    paddingVertical: 10,
+                    borderBottomWidth: 1,
+                    borderBottomColor: '#eee',
+                  }
+                },
+              }}
+              dayComponent={isAmharic ? renderEthiopianDay : undefined}
+              hideArrows={true}
+              hideExtraDays={true}
+              hideDayNames={false}
+              renderHeader={() => (
+                <View style={styles.monthHeaderContainer}>
+                  <TouchableOpacity style={styles.arrowButton}>
+                    <Text style={styles.arrowText}>◀</Text>
+                  </TouchableOpacity>
+                  <View style={styles.monthYearContainer}>
+                    <Text style={styles.monthHeaderText}>
+                      {isAmharic ? formatMonthHeader(currentDay) : format(currentDay, 'MMMM yyyy')}
+                    </Text>
+                  </View>
+                  <TouchableOpacity style={styles.arrowButton}>
+                    <Text style={styles.arrowText}>▶</Text>
+                  </TouchableOpacity>
+                </View>
+              )}
+              customHeaderTitle={() => null}
+              locale={i18n.language.startsWith('am') ? 'am' : 'en'}
+              dayNames={isAmharic ? AMHARIC_WEEKDAYS : ENGLISH_WEEKDAYS}
+              dayNamesShort={isAmharic ? AMHARIC_WEEKDAYS : ENGLISH_WEEKDAYS}
+            />
+          </Animated.View>
+
+          {/* Sticky Header */}
+          <Animated.View 
+            key={`sticky-header-${i18n.language}-${forceRender}`}
+            style={[
+              styles.stickyHeader,
+              {
+                opacity: scrollY.interpolate({
+                  inputRange: [0, SCROLL_THRESHOLD],
+                  outputRange: [0, 1],
+                  extrapolate: 'clamp'
+                }),
+                transform: [{
+                  translateY: scrollY.interpolate({
+                    inputRange: [0, SCROLL_THRESHOLD],
+                    outputRange: [-50, 0],
+                    extrapolate: 'clamp'
+                  })
+                }],
+                pointerEvents: isHeaderCollapsed ? 'auto' : 'none'
+              }
+            ]}
+          >
+            <View style={styles.weekDaysHeader}>
+              {currentWeekDays.map((day: Date, index: number) => (
+                <View key={`${index}-${i18n.language}`} style={styles.weekDayColumn}>
+                  <Text style={styles.weekDayText}>
+                    {isAmharic ? AMHARIC_WEEKDAYS[index] : ENGLISH_WEEKDAYS[index]}
+                  </Text>
+                  <View style={[
+                    styles.dayNumberContainer,
+                    isSameDay(day, currentDay) && styles.selectedDayCircle
+                  ]}>
+                    <Text style={[
+                      styles.dayNumberText,
+                      isSameDay(day, currentDay) && styles.selectedDayText
+                    ]}>
+                      {isAmharic ? 
+                        convertDateToEthiopian(day).day :
+                        format(day, 'd')
+                      }
+                    </Text>
+                  </View>
+                </View>
+              ))}
+            </View>
+          </Animated.View>
+        </View>
       )}
       {viewMode === 'week' && (
         <WeekView 
@@ -849,66 +1097,50 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   weekViewCalendar: {
-    height: 100, // Reduced height for week view
+    height: 100,
   },
   dayViewCalendar: {
-    height: 70, // Minimal height for day view
+    height: 70,
   },
   timeGridContainer: {
     flexDirection: 'row',
     flex: 1,
   },
-  timeLabels: {
-    width: 60,
+  timeGridWrapper: {
+    flexDirection: 'row',
+    height: HOUR_HEIGHT * 24,
+  },
+  daysGridContainer: {
+    flex: 1,
+  },
+  daysGrid: {
+    flexDirection: 'row',
+    height: '100%',
+  },
+  dayColumn: {
+    width: DAY_COLUMN_WIDTH,
     borderRightWidth: 1,
-    borderColor: '#eee',
+    borderRightColor: '#eee',
+    height: '100%',
   },
-  timeLabel: {
+  hourCell: {
     height: HOUR_HEIGHT,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderTopWidth: 1,
-    borderColor: '#eee',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
   },
-  timeLabelText: {
-    fontSize: 12,
-    color: '#666',
-  },
-  eventsGrid: {
-    flex: 1,
-    position: 'relative',
-  },
-  eventBlock: {
-    position: 'absolute',
-    left: 5,
-    backgroundColor: '#2196F3',
-    borderRadius: 4,
-    padding: 4,
-    opacity: 0.9,
-  },
-  eventTitle: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: 'bold',
-  },
-  eventTime: {
-    color: '#fff',
-    fontSize: 10,
-  },
-  timeViewContainer: {
-    flex: 1,
-  },
+
+  // Week view styles
   weekContainer: {
     flex: 1,
     backgroundColor: '#fff',
-  },
-  timeHeaderSpacer: {
-    width: TIME_COLUMN_WIDTH,
   },
   weekHeader: {
     flexDirection: 'row',
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
+  },
+  timeHeaderSpacer: {
+    width: TIME_COLUMN_WIDTH,
   },
   dayHeader: {
     width: DAY_COLUMN_WIDTH,
@@ -930,63 +1162,48 @@ const styles = StyleSheet.create({
     color: '#2196F3',
     fontWeight: 'bold',
   },
-  timeGridWrapper: {
-    flexDirection: 'row',
-    height: HOUR_HEIGHT * 24, // Full 24 hours
-  },
-  timeLabelsColumn: {
-    width: TIME_COLUMN_WIDTH,
-    backgroundColor: '#fff',
-    borderRightWidth: 1,
-    borderRightColor: '#eee',
-  },
-  timeLabel: {
+  weekTimeLabel: {
     height: HOUR_HEIGHT,
     justifyContent: 'center',
-    paddingLeft: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderColor: '#eee',
   },
-  timeLabelText: {
+  weekTimeLabelText: {
     fontSize: 12,
     color: '#666',
   },
-  daysGridContainer: {
-    flex: 1,
-  },
-  daysGrid: {
-    flexDirection: 'row',
-    height: '100%',
-  },
-  dayColumn: {
-    width: DAY_COLUMN_WIDTH,
-    borderRightWidth: 1,
-    borderRightColor: '#eee',
-    height: '100%',
-  },
-  hourCell: {
-    height: HOUR_HEIGHT,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-  },
-  eventBlock: {
+  weekEventBlock: {
     position: 'absolute',
+    left: 5,
     backgroundColor: '#2196F3',
     borderRadius: 4,
     padding: 4,
-    margin: 2,
     opacity: 0.9,
-    zIndex: 1,
   },
-  eventTitle: {
+  weekEventTitle: {
     color: '#fff',
     fontSize: 12,
     fontWeight: 'bold',
   },
-  eventTime: {
+  weekEventTime: {
     color: '#fff',
     fontSize: 10,
   },
+  weekTimeGridContainer: {
+    flex: 1,
+  },
+  weekTimeLabels: {
+    position: 'absolute',
+    left: 0,
+    width: 60,
+    borderRightWidth: 1,
+    borderRightColor: '#eee',
+    backgroundColor: '#fff',
+    zIndex: 1,
+  },
+
+  // Day view styles
   dayContainer: {
     flex: 1,
   },
@@ -1005,10 +1222,28 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'relative',
   },
-  timeGridContainer: {
+  dayEventBlock: {
+    position: 'absolute',
+    backgroundColor: '#2196F3',
+    borderRadius: 4,
+    padding: 4,
+    margin: 2,
+    opacity: 0.9,
+    zIndex: 1,
+  },
+  dayEventTitle: {
+    color: '#fff',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  dayEventTime: {
+    color: '#fff',
+    fontSize: 10,
+  },
+  dayTimeGridContainer: {
     flex: 1,
   },
-  timeLabels: {
+  dayTimeLabels: {
     position: 'absolute',
     left: 0,
     width: 60,
@@ -1017,36 +1252,57 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     zIndex: 1,
   },
-  timeLabel: {
+  dayTimeLabel: {
     height: HOUR_HEIGHT,
     justifyContent: 'center',
     alignItems: 'center',
     borderTopWidth: 1,
     borderTopColor: '#eee',
   },
-  timeLabelText: {
+  dayTimeLabelText: {
     fontSize: 12,
     color: '#666',
   },
-  eventsGrid: {
+  dayEventsGrid: {
     flexDirection: 'row',
     paddingLeft: 60,
   },
-  eventBlock: {
+
+  // Calendar styles
+  calendarWrapper: {
+    flex: 1,
+    backgroundColor: '#fff',
+    overflow: 'hidden',
+  },
+  scrollView: {
     position: 'absolute',
-    backgroundColor: '#2196F3',
-    borderRadius: 4,
-    padding: 4,
-    opacity: 0.9,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 0,
   },
-  eventTitle: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: 'bold',
+  listContentContainer: {
+    flexGrow: 1,
+    backgroundColor: '#fff',
+    marginTop: 350, // Match calendar height
+    paddingBottom: 20,
   },
-  eventTime: {
-    color: '#fff',
-    fontSize: 10,
+  calendarContainer: {
+    height: 350,
+    backgroundColor: '#fff',
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 0,
+    zIndex: 1,
+    backfaceVisibility: 'hidden',
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
   },
   weekNavigation: {
     flexDirection: 'row',
@@ -1075,17 +1331,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '500',
     color: '#333',
-  },
-  dayEventsGrid: {
-    flex: 1,
-    position: 'relative',
-    marginLeft: 60, // Width of time labels
-  },
-  errorContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
   },
   ethiopianDayContainer: {
     width: 32,
@@ -1120,19 +1365,107 @@ const styles = StyleSheet.create({
     borderRadius: 2,
     backgroundColor: '#2196F3',
   },
-  monthHeaderContainer: {
-    padding: 10,
+  monthYearContainer: {
     alignItems: 'center',
+  },
+  yearText: {
+    fontSize: 14,
+    color: '#666',
+  },
+  weekDayColumn: {
+    alignItems: 'center',
+    width: 40,
+  },
+  selectedDayCircle: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    backgroundColor: '#2196F3',
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  selectedDayText: {
+    color: '#fff',
+    fontWeight: '600',
+  },
+  dayNumberContainer: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  dayNumberText: {
+    fontSize: 12,
+    color: '#000',
+  },
+  monthHeaderContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+    zIndex: 1,
   },
   monthHeaderText: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '600',
     color: '#000',
   },
-  arrowText: {
-    fontSize: 20,
-    color: '#2196F3',
+  arrowButton: {
     padding: 10,
+  },
+  arrowText: {
+    fontSize: 18,
+    color: '#666',
+  },
+  weekDaysHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    paddingVertical: 10,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+    zIndex: 1,
+  },
+  weekDayText: {
+    fontSize: 14,
+    color: '#666',
+    width: 40,
+    textAlign: 'center',
+  },
+  stickyHeader: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#fff',
+    zIndex: 2,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+    paddingVertical: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+    elevation: 3,
+    backfaceVisibility: 'hidden',
+  },
+  cardContainer: {
+    backgroundColor: '#fff',
+    marginHorizontal: 16,
+    marginVertical: 8,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
 });
