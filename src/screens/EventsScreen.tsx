@@ -17,8 +17,8 @@ import { EventsShimmer } from '../components/EventsShimmer';
 LocaleConfig.locales['am'] = {
   monthNames: ['መስከረም', 'ጥቅምት', 'ህዳር', 'ታህሳስ', 'ጥር', 'የካቲት', 'መጋቢት', 'ሚያዚያ', 'ግንቦት', 'ሰኔ', 'ሐምሌ', 'ነሐሴ'],
   monthNamesShort: ['መስከ', 'ጥቅም', 'ህዳር', 'ታህሳ', 'ጥር', 'የካቲ', 'መጋቢ', 'ሚያዚ', 'ግንቦ', 'ሰኔ', 'ሐምሌ', 'ነሐሴ'],
-  dayNames: ['ሰኞ', 'ማክሰኞ', 'ረቡዕ', 'ሐሙስ', 'ዓርብ', 'ቅዳሜ', 'እሑድ'],
-  dayNamesShort: ['ሰኞ', 'ማክሰ', 'ረቡዕ', 'ሐሙስ', 'ዓርብ', 'ቅዳሜ', 'እሑድ'],
+  dayNames: ['እሑድ', 'ሰኞ', 'ማክሰኞ', 'ረቡዕ', 'ሐሙስ', 'ዓርብ', 'ቅዳሜ'],
+  dayNamesShort: ['እሑድ', 'ሰኞ', 'ማክሰ', 'ረቡዕ', 'ሐሙስ', 'ዓርብ', 'ቅዳሜ'],
   today: 'ዛሬ'
 };
 
@@ -61,10 +61,10 @@ const convertDateToEthiopian = (date: Date) => {
   );
 };
 
-// Add this constant after the imports
-const AMHARIC_WEEKDAYS = ['ሰኞ', 'ማክሰኞ', 'ረቡዕ', 'ሐሙስ', 'ዓርብ', 'ቅዳሜ', 'እሑድ'];
-const ENGLISH_WEEKDAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-const ENGLISH_WEEKDAYS_FULL = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+// Update the constants for weekdays
+const AMHARIC_WEEKDAYS = ['እሑድ', 'ሰኞ', 'ማክሰኞ', 'ረቡዕ', 'ሐሙስ', 'ዓርብ', 'ቅዳሜ'];
+const ENGLISH_WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const ENGLISH_WEEKDAYS_FULL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 const WeekView = ({ 
   events, 
@@ -430,7 +430,6 @@ const getEthiopianMonthDates = (date: Date) => {
 // Custom day component for Ethiopian calendar
 const renderEthiopianDay = (dateData: any) => {
   try {
-    // Extract date information from the date object
     const { date } = dateData;
     if (!date) {
       return <Text>{dateData.children}</Text>;
@@ -444,11 +443,13 @@ const renderEthiopianDay = (dateData: any) => {
       gregorianDate.getDate()
     );
 
-    // Create the day component
+    const isToday = isSameDay(gregorianDate, new Date());
+
     return (
       <TouchableOpacity
         style={[
           styles.ethiopianDayContainer,
+          isToday && { backgroundColor: '#E3F2FD' },
           dateData.marking?.selected && styles.selectedContainer,
           dateData.state === 'disabled' && styles.disabledContainer,
         ]}
@@ -466,9 +467,9 @@ const renderEthiopianDay = (dateData: any) => {
       >
         <Text style={[
           styles.ethiopianDayText,
-          dateData.state === 'today' && { color: '#2196F3' }, // Match English calendar today color
-          dateData.state === 'disabled' && styles.disabledText,
+          isToday && { color: '#2196F3', fontWeight: 'bold' },
           dateData.marking?.selected && styles.selectedText,
+          dateData.state === 'disabled' && styles.disabledText,
         ]}>
           {ethiopianDate.day}
         </Text>
@@ -579,6 +580,12 @@ export default function EventsScreen() {
 
   // Add new state for card height
   const CARD_HEIGHT = 200; // Adjust based on your event card height
+
+  // Add new state for current month
+  const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
+
+  // Add new state for showing all events
+  const [showAllEvents, setShowAllEvents] = useState(false);
 
   // Update the locale configuration effect
   useEffect(() => {
@@ -703,8 +710,12 @@ export default function EventsScreen() {
   }, []);
 
   const handleDateSelect = (date: DateData) => {
-    // If clicking the same date again, clear the date filter
-    if (selectedDate === date.dateString) {
+    // Reset showAllEvents when selecting a date
+    setShowAllEvents(false);
+
+    // If clicking the same date again or clicking today's date
+    const today = format(new Date(), 'yyyy-MM-dd');
+    if (selectedDate === date.dateString || date.dateString === today) {
       setSelectedDate(null);
       // Reapply only category filter if exists
       if (selectedCategory) {
@@ -801,18 +812,29 @@ export default function EventsScreen() {
     setViewMode('day');
   };
 
-  // Modify the getMarkedDates function to handle both calendar types
+  // Update the getMarkedDates function
   const getMarkedDates = (): MarkedDates => {
     const markedDates: MarkedDates = {};
+    const today = format(new Date(), 'yyyy-MM-dd');
 
+    // Mark today's date with light blue background
+    markedDates[today] = {
+      marked: false,
+      selected: selectedDate === today,
+      selectedColor: selectedDate === today ? '#2196F3' : '#E3F2FD',
+    };
+
+    // Mark dates that have events with dots
     events.forEach(event => {
       if (event.date) {
         try {
           const dateStr = format(new Date(event.date), 'yyyy-MM-dd');
+          const isToday = dateStr === today;
           markedDates[dateStr] = {
-            marked: true,
-            selected: dateStr === selectedDate,
-            selectedColor: '#2196F3',
+            ...markedDates[dateStr],
+            marked: true, // Show dot for events
+            selected: dateStr === selectedDate || isToday,
+            selectedColor: dateStr === selectedDate ? '#2196F3' : (isToday ? '#E3F2FD' : undefined),
           };
         } catch (error) {
           console.warn('Invalid date format:', event.date);
@@ -820,9 +842,10 @@ export default function EventsScreen() {
       }
     });
 
-    // If a date is selected but not marked, add it
+    // If a date is selected but not marked with events, add it
     if (selectedDate && !markedDates[selectedDate]) {
       markedDates[selectedDate] = {
+        marked: false,
         selected: true,
         selectedColor: '#2196F3',
       };
@@ -831,8 +854,25 @@ export default function EventsScreen() {
     return markedDates;
   };
 
+  const handleMonthChange = (direction: 'prev' | 'next') => {
+    const newDate = new Date(currentMonth);
+    newDate.setMonth(newDate.getMonth() + (direction === 'prev' ? -1 : 1));
+    setCurrentMonth(newDate);
+    setForceRender(prev => prev + 1); // Force calendar re-render
+  };
+
   console.log('Current language:', i18n.language);
   console.log('Using dayNames:', isAmharic ? AMHARIC_WEEKDAYS : ENGLISH_WEEKDAYS);
+
+  // Add helper function to get today's events
+  const getTodayEvents = (eventsList: Event[]) => {
+    const today = format(new Date(), 'yyyy-MM-dd');
+    return eventsList.filter(event => {
+      if (!event.date) return false;
+      const eventDate = format(new Date(event.date), 'yyyy-MM-dd');
+      return eventDate === today;
+    });
+  };
 
   if (loading) {
     return <EventsShimmer />;
@@ -870,10 +910,66 @@ export default function EventsScreen() {
                 }
               }
             )}
-            scrollEventThrottle={1}
+            scrollEventThrottle={16}
             contentContainerStyle={styles.listContentContainer}
             style={styles.scrollView}
-            data={selectedDate ? filteredEvents : events}
+            showsVerticalScrollIndicator={true}
+            bounces={true}
+            overScrollMode="always"
+            removeClippedSubviews={false}
+            ListHeaderComponent={() => {
+              const todayEvents = getTodayEvents(events);
+              const hasEventsToday = todayEvents.length > 0;
+              const isViewingDifferentDate = selectedDate && selectedDate !== format(new Date(), 'yyyy-MM-dd');
+              const today = format(new Date(), 'yyyy-MM-dd');
+
+              return (
+                <>
+                  <View style={styles.eventsHeaderContainer}>
+                    <Text style={styles.eventsHeaderText}>
+                      {isViewingDifferentDate ? 
+                        (isAmharic ? "መርሃግብሮች" : "Events") :
+                        (showAllEvents ? 
+                          (isAmharic ? "ሁሉም መርሃግብሮች" : "All Events") :
+                          (isAmharic ? "የዛሬ መርሃግብሮች" : "Today's Events")
+                        )
+                      }
+                    </Text>
+                    {!hasEventsToday && !isViewingDifferentDate && !showAllEvents && (
+                      <View style={styles.noEventsContainer}>
+                        <Text style={styles.noEventsText}>
+                          {isAmharic ? "ዛሬ ምንም መርሃግብር የለም" : "No events today"}
+                        </Text>
+                        {events.length > 0 && (
+                          <TouchableOpacity
+                            style={styles.viewAllButton}
+                            onPress={() => setShowAllEvents(true)}
+                          >
+                            <Text style={styles.viewAllButtonText}>
+                              {isAmharic ? "ሁሉንም መርሃግብሮች አሳይ" : "View all events"}
+                            </Text>
+                          </TouchableOpacity>
+                        )}
+                      </View>
+                    )}
+                  </View>
+                  {showAllEvents && !isViewingDifferentDate && (
+                    <TouchableOpacity
+                      style={styles.todayButton}
+                      onPress={() => setShowAllEvents(false)}
+                    >
+                      <Text style={styles.todayButtonText}>
+                        {isAmharic ? "የዛሬ መርሃግብሮች አሳይ" : "Show today's events"}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                </>
+              );
+            }}
+            data={selectedDate ? 
+              filteredEvents : 
+              (showAllEvents ? events : getTodayEvents(events))
+            }
             renderItem={({ item }) => (
               <EventList
                 events={[item]}
@@ -891,7 +987,6 @@ export default function EventsScreen() {
                 }}
               />
             )}
-            showsVerticalScrollIndicator={false}
           />
 
           {/* Main Calendar */}
@@ -916,14 +1011,22 @@ export default function EventsScreen() {
             ]}
           >
             <Calendar
-              key={`calendar-${i18n.language}-${forceRender}`}
-              current={selectedDate || undefined}
+              key={`calendar-${i18n.language}-${forceRender}-${currentMonth.getTime()}`}
+              current={format(currentMonth, 'yyyy-MM-dd')}
+              minDate={'2020-01-01'}
+              maxDate={'2025-12-31'}
+              onMonthChange={(date) => {
+                const newDate = new Date(date.timestamp);
+                setCurrentMonth(newDate);
+              }}
+              enableSwipeMonths={true}
               onDayPress={handleDateSelect}
               markedDates={getMarkedDates()}
-              firstDay={1}
+              firstDay={0}
               theme={{
                 selectedDayBackgroundColor: '#2196F3',
                 todayTextColor: '#2196F3',
+                todayBackgroundColor: '#E3F2FD',
                 dotColor: '#2196F3',
                 textDayFontFamily: isAmharic ? 'YourEthiopianFont' : undefined,
                 monthTextColor: '#000',
@@ -989,22 +1092,52 @@ export default function EventsScreen() {
                     borderBottomColor: '#eee',
                   }
                 },
+                'stylesheet.day.basic': {
+                  base: {
+                    width: 32,
+                    height: 32,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  },
+                  today: {
+                    backgroundColor: '#E3F2FD',
+                    borderRadius: 16,
+                  },
+                  todayText: {
+                    color: '#2196F3',
+                    fontWeight: 'bold',
+                  },
+                  selected: {
+                    backgroundColor: '#2196F3',
+                    borderRadius: 16,
+                  },
+                  selectedText: {
+                    color: '#fff',
+                    fontWeight: 'bold',
+                  }
+                }
               }}
               dayComponent={isAmharic ? renderEthiopianDay : undefined}
               hideArrows={true}
-              hideExtraDays={true}
+              hideExtraDays={false}
               hideDayNames={false}
               renderHeader={() => (
                 <View style={styles.monthHeaderContainer}>
-                  <TouchableOpacity style={styles.arrowButton}>
+                  <TouchableOpacity 
+                    style={styles.arrowButton}
+                    onPress={() => handleMonthChange('prev')}
+                  >
                     <Text style={styles.arrowText}>◀</Text>
                   </TouchableOpacity>
                   <View style={styles.monthYearContainer}>
                     <Text style={styles.monthHeaderText}>
-                      {isAmharic ? formatMonthHeader(currentDay) : format(currentDay, 'MMMM yyyy')}
+                      {isAmharic ? formatMonthHeader(currentMonth) : format(currentMonth, 'MMMM yyyy')}
                     </Text>
                   </View>
-                  <TouchableOpacity style={styles.arrowButton}>
+                  <TouchableOpacity 
+                    style={styles.arrowButton}
+                    onPress={() => handleMonthChange('next')}
+                  >
                     <Text style={styles.arrowText}>▶</Text>
                   </TouchableOpacity>
                 </View>
@@ -1272,31 +1405,32 @@ const styles = StyleSheet.create({
   calendarWrapper: {
     flex: 1,
     backgroundColor: '#fff',
-    overflow: 'hidden',
   },
   scrollView: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 0,
+    flex: 1,
   },
   listContentContainer: {
-    flexGrow: 1,
+    paddingTop: 370,
+    paddingBottom: 120,
+    minHeight: '100%',
     backgroundColor: '#fff',
-    marginTop: 350, // Match calendar height
-    paddingBottom: 20,
   },
   calendarContainer: {
-    height: 350,
-    backgroundColor: '#fff',
     position: 'absolute',
     left: 0,
     right: 0,
     top: 0,
+    height: 370,
+    backgroundColor: '#fff',
     zIndex: 1,
-    backfaceVisibility: 'hidden',
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   errorContainer: {
     flex: 1,
@@ -1342,12 +1476,18 @@ const styles = StyleSheet.create({
   ethiopianDayText: {
     fontSize: 16,
     color: '#000',
+    width: 32,
+    height: 32,
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    borderRadius: 16,
   },
   selectedContainer: {
     backgroundColor: '#2196F3',
   },
   selectedText: {
     color: '#fff',
+    fontWeight: 'bold',
   },
   disabledContainer: {
     opacity: 0.4,
@@ -1467,5 +1607,87 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+  },
+  eventsHeaderContainer: {
+    padding: 16,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+    marginBottom: 8,
+    width: '100%',
+  },
+  eventsHeaderText: {
+    fontSize: 20,
+    fontWeight: '600',
+    color: '#000',
+    marginBottom: 8,
+  },
+  noEventsContainer: {
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    padding: 16,
+    marginHorizontal: 0,
+    marginBottom: 16,
+    width: '100%',
+    alignItems: 'center',
+    borderTopWidth: 1,
+    borderTopColor: '#eee',
+  },
+  noEventsText: {
+    fontSize: 16,
+    color: '#666',
+    marginBottom: 12,
+    textAlign: 'center',
+  },
+  viewAllButton: {
+    backgroundColor: '#2196F3',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 25,
+    marginTop: 12,
+    minWidth: 160,
+    maxWidth: '80%',
+    alignItems: 'center',
+    alignSelf: 'center',
+    elevation: 2,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  viewAllButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  todayButton: {
+    backgroundColor: '#E3F2FD',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 25,
+    marginHorizontal: 16,
+    marginBottom: 16,
+    minWidth: 160,
+    maxWidth: '80%',
+    alignItems: 'center',
+    alignSelf: 'center',
+    elevation: 1,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 1,
+  },
+  todayButtonText: {
+    color: '#2196F3',
+    fontSize: 16,
+    fontWeight: '600',
+    textAlign: 'center',
   },
 });
