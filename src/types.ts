@@ -21,7 +21,7 @@ export interface Post {
   };
 }
 
-interface EventCategory {
+export interface EventCategory {
   name: string;
   slug: string;
 }

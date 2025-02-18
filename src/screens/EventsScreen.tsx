@@ -10,8 +10,19 @@ import { RootStackParamList } from '../types';
 import { format, addHours, startOfDay, startOfWeek, addDays, isSameDay } from 'date-fns';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { toEthiopian, getEthiopianMonthName, getEthiopianDayName, ETHIOPIAN_MONTHS } from '../utils/ethiopianCalendar';
+import { 
+  toEthiopian, 
+  getEthiopianMonthName, 
+  getEthiopianDayName, 
+  ETHIOPIAN_MONTHS, 
+  getDaysInEthiopianMonth,
+  getEthiopianMonthRange,
+  getVisibleDatesForEthiopianMonth,
+  ethiopianToGregorian,
+  isGregorianLeap
+} from '../utils/ethiopianCalendar';
 import { EventsShimmer } from '../components/EventsShimmer';
+import { EthiopianCalendar } from '../components/EthiopianCalendar';
 
 // Initialize LocaleConfig at the top level
 LocaleConfig.locales['am'] = {
@@ -54,11 +65,18 @@ interface MarkedDates {
 
 // Helper function to convert Date to Ethiopian date
 const convertDateToEthiopian = (date: Date) => {
-  return toEthiopian(
-    date.getFullYear(),
-    date.getMonth() + 1,
-    date.getDate()
-  );
+  try {
+    if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+      console.error('Invalid date passed to convertDateToEthiopian:', date);
+      // Return fallback date
+      return { year: 2016, month: 1, day: 1 };
+    }
+    return toEthiopian(date);
+  } catch (error) {
+    console.error('Error converting date to Ethiopian:', error);
+    // Return fallback date
+    return { year: 2016, month: 1, day: 1 };
+  }
 };
 
 // Update the constants for weekdays
@@ -409,95 +427,67 @@ const DayView = ({ events, onEventPress, selectedDate }: {
 
 // Add helper function for Ethiopian month view
 const getEthiopianMonthDates = (date: Date) => {
-  const ethiopianDate = convertDateToEthiopian(date);
-  const daysInMonth = 30; // Ethiopian months have 30 days except Pagume
-  
-  const days = Array.from({ length: daysInMonth }, (_, i) => {
-    const day = i + 1;
-    return {
-      gregorian: new Date(date), // You'll need to calculate corresponding Gregorian date
-      ethiopian: {
-        year: ethiopianDate.year,
-        month: ethiopianDate.month,
-        day
-      }
-    };
-  });
-
-  return days;
-};
-
-// Custom day component for Ethiopian calendar
-const renderEthiopianDay = (dateData: any) => {
   try {
-    const { date } = dateData;
-    if (!date) {
-      return <Text>{dateData.children}</Text>;
+    if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
+      throw new Error('Invalid date');
     }
+    
+    const ethiopianDate = convertDateToEthiopian(date);
+    const daysInMonth = getDaysInEthiopianMonth(ethiopianDate.month, ethiopianDate.year);
+    
+    // Get the first day of the Ethiopian month in Gregorian calendar
+    const firstDayGregorian = new Date(date);
+    firstDayGregorian.setDate(1); // Start from first day of Gregorian month
+    
+    // Find the Gregorian date that corresponds to Ethiopian month's first day
+    while (true) {
+      const ethDate = toEthiopian(firstDayGregorian);
+      if (ethDate.month === ethiopianDate.month && ethDate.year === ethiopianDate.year && ethDate.day === 1) {
+        break;
+      }
+      firstDayGregorian.setDate(firstDayGregorian.getDate() + 1);
+    }
+    
+    const days = Array.from({ length: daysInMonth }, (_, i) => {
+      const gregorianDate = new Date(firstDayGregorian);
+      gregorianDate.setDate(firstDayGregorian.getDate() + i);
+      
+      if (isNaN(gregorianDate.getTime())) {
+        throw new Error('Invalid date generated');
+      }
+      
+      return {
+        gregorian: gregorianDate,
+        ethiopian: {
+          year: ethiopianDate.year,
+          month: ethiopianDate.month,
+          day: i + 1
+        }
+      };
+    });
 
-    // Convert to Ethiopian date using the timestamp
-    const gregorianDate = new Date(date.timestamp);
-    const ethiopianDate = toEthiopian(
-      gregorianDate.getFullYear(),
-      gregorianDate.getMonth() + 1,
-      gregorianDate.getDate()
-    );
-
-    const isToday = isSameDay(gregorianDate, new Date());
-
-    return (
-      <TouchableOpacity
-        style={[
-          styles.ethiopianDayContainer,
-          isToday && { backgroundColor: '#E3F2FD' },
-          dateData.marking?.selected && styles.selectedContainer,
-          dateData.state === 'disabled' && styles.disabledContainer,
-        ]}
-        onPress={() => {
-          const formattedDate = format(gregorianDate, 'yyyy-MM-dd');
-          dateData.onPress({ 
-            dateString: formattedDate,
-            day: gregorianDate.getDate(),
-            month: gregorianDate.getMonth() + 1,
-            year: gregorianDate.getFullYear(),
-            timestamp: date.timestamp
-          });
-        }}
-        disabled={dateData.state === 'disabled'}
-      >
-        <Text style={[
-          styles.ethiopianDayText,
-          isToday && { color: '#2196F3', fontWeight: 'bold' },
-          dateData.marking?.selected && styles.selectedText,
-          dateData.state === 'disabled' && styles.disabledText,
-        ]}>
-          {ethiopianDate.day}
-        </Text>
-        {dateData.marking?.marked && (
-          <View style={styles.dotContainer}>
-            <View style={styles.dot} />
-          </View>
-        )}
-      </TouchableOpacity>
-    );
+    return days;
   } catch (error) {
-    console.error('Error rendering Ethiopian day:', error);
-    return <Text>{dateData.children}</Text>;
+    console.error('Error in getEthiopianMonthDates:', error);
+    throw error;
   }
 };
 
 // Update the formatMonthHeader function to use the same conversion as week and day views
 const formatMonthHeader = (date: any) => {
   try {
+    if (!date) {
+      throw new Error('No date provided');
+    }
+    
     // Convert the date to a proper Date object
     const gregorianDate = new Date(date);
+    if (isNaN(gregorianDate.getTime())) {
+      throw new Error('Invalid date');
+    }
     
     // Use the same conversion method as week/day views
-    const ethiopianDate = toEthiopian(
-      gregorianDate.getFullYear(),
-      gregorianDate.getMonth() + 1,
-      gregorianDate.getDate()
-    );
+    const ethiopianDate = toEthiopian(gregorianDate);
     
     // Return formatted Ethiopian month and year
     return `${getEthiopianMonthName(ethiopianDate.month)} ${ethiopianDate.year}`;
@@ -506,7 +496,7 @@ const formatMonthHeader = (date: any) => {
       input: date,
       type: typeof date
     });
-    return format(new Date(date), 'MMMM yyyy'); // Fallback to Gregorian
+    return format(new Date(), 'MMMM yyyy'); // Fallback to current Gregorian date
   }
 };
 
@@ -523,8 +513,8 @@ export default function EventsScreen() {
   const { t, i18n } = useTranslation();
   const [viewMode, setViewMode] = useState<'month' | 'week' | 'day'>('month');
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [allEvents, setAllEvents] = useState<Event[]>([]); // Store all events
-  const [events, setEvents] = useState<Event[]>([]); // Store filtered events
+  const [allEvents, setAllEvents] = useState<Event[]>([]);
+  const [events, setEvents] = useState<Event[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [categories, setCategories] = useState<EventCategory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -533,7 +523,56 @@ export default function EventsScreen() {
   const [page, setPage] = useState(1);
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [forceRender, setForceRender] = useState(0); // Add this state
+  const [forceRender, setForceRender] = useState(0);
+  
+  // Update the initial Ethiopian month state
+  const [currentEthiopianMonth, setCurrentEthiopianMonth] = useState(() => {
+    try {
+      const today = new Date();
+      const ethiopianDate = toEthiopian(today);
+      return {
+        year: ethiopianDate.year,
+        month: ethiopianDate.month,
+        day: ethiopianDate.day
+      };
+    } catch (error) {
+      console.error('Error setting initial Ethiopian month:', error);
+      // Return current Ethiopian date as fallback
+      return {
+        year: 2016,
+        month: 6, // የካቲት
+        day: 1
+      };
+    }
+  });
+  
+  // Function to handle Ethiopian month navigation
+  const handleEthiopianMonthChange = (direction: 'prev' | 'next') => {
+    setCurrentEthiopianMonth(prev => {
+      let newMonth = prev.month + (direction === 'next' ? 1 : -1);
+      let newYear = prev.year;
+      
+      if (newMonth > 13) {
+        newMonth = 1;
+        newYear += 1;
+      } else if (newMonth < 1) {
+        newMonth = 13;
+        newYear -= 1;
+      }
+      
+      return {
+        year: newYear,
+        month: newMonth,
+        day: 1
+      };
+    });
+  };
+
+  // Get Gregorian date range for current Ethiopian month
+  const currentMonthRange = useMemo(() => {
+    return getEthiopianMonthRange(currentEthiopianMonth.year, currentEthiopianMonth.month);
+  }, [currentEthiopianMonth.year, currentEthiopianMonth.month]);
+
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
 
   // Add state for calendar display type
@@ -581,8 +620,8 @@ export default function EventsScreen() {
   // Add new state for card height
   const CARD_HEIGHT = 200; // Adjust based on your event card height
 
-  // Add new state for current month
-  const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
+  // Add new state for Gregorian calendar
+  const [currentMonth, setCurrentMonth] = useState(new Date());
 
   // Add new state for showing all events
   const [showAllEvents, setShowAllEvents] = useState(false);
@@ -874,6 +913,46 @@ export default function EventsScreen() {
     });
   };
 
+  // Update calendar month header render
+  const renderMonthHeader = () => (
+    <View style={styles.monthHeaderContainer}>
+      <TouchableOpacity 
+        style={styles.arrowButton}
+        onPress={() => handleEthiopianMonthChange('prev')}
+      >
+        <Text style={styles.arrowText}>◀</Text>
+      </TouchableOpacity>
+      <View style={styles.monthYearContainer}>
+        <Text style={styles.monthHeaderText}>
+          {isAmharic ? 
+            `${getEthiopianMonthName(currentEthiopianMonth.month)} ${currentEthiopianMonth.year}` :
+            format(currentMonthRange.start, 'MMMM yyyy')
+          }
+        </Text>
+      </View>
+      <TouchableOpacity 
+        style={styles.arrowButton}
+        onPress={() => handleEthiopianMonthChange('next')}
+      >
+        <Text style={styles.arrowText}>▶</Text>
+      </TouchableOpacity>
+    </View>
+  );
+
+  // Get marked dates for Ethiopian calendar
+  const getEthiopianMarkedDates = () => {
+    const marked: { [key: string]: boolean } = {};
+    
+    events.forEach(event => {
+      if (event.date) {
+        const dateStr = format(new Date(event.date), 'yyyy-MM-dd');
+        marked[dateStr] = true;
+      }
+    });
+    
+    return marked;
+  };
+
   if (loading) {
     return <EventsShimmer />;
   }
@@ -902,14 +981,14 @@ export default function EventsScreen() {
           <Animated.FlatList
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-              { 
-                useNativeDriver: true,
-                listener: (event: any) => {
-                  const offsetY = event.nativeEvent.contentOffset.y;
-                  setIsHeaderCollapsed(offsetY > SCROLL_THRESHOLD / 2);
+                { 
+                  useNativeDriver: true,
+                  listener: (event: any) => {
+                    const offsetY = event.nativeEvent.contentOffset.y;
+                    setIsHeaderCollapsed(offsetY > SCROLL_THRESHOLD / 2);
+                  }
                 }
-              }
-            )}
+              )}
             scrollEventThrottle={16}
             contentContainerStyle={styles.listContentContainer}
             style={styles.scrollView}
@@ -1010,143 +1089,127 @@ export default function EventsScreen() {
               }
             ]}
           >
-            <Calendar
-              key={`calendar-${i18n.language}-${forceRender}-${currentMonth.getTime()}`}
-              current={format(currentMonth, 'yyyy-MM-dd')}
-              minDate={'2020-01-01'}
-              maxDate={'2025-12-31'}
-              onMonthChange={(date) => {
-                const newDate = new Date(date.timestamp);
-                setCurrentMonth(newDate);
-              }}
-              enableSwipeMonths={true}
-              onDayPress={handleDateSelect}
-              markedDates={getMarkedDates()}
-              firstDay={0}
-              theme={{
-                selectedDayBackgroundColor: '#2196F3',
-                todayTextColor: '#2196F3',
-                todayBackgroundColor: '#E3F2FD',
-                dotColor: '#2196F3',
-                textDayFontFamily: isAmharic ? 'YourEthiopianFont' : undefined,
-                monthTextColor: '#000',
-                textMonthFontSize: 16,
-                textMonthFontWeight: 'bold',
-                'stylesheet.calendar.header': {
-                  dayTextAtIndex0: { 
-                    color: '#666',
-                    fontSize: 14,
-                    fontWeight: '500',
-                    width: 40,
-                    textAlign: 'center',
+            {isAmharic ? (
+              <EthiopianCalendar
+                year={currentEthiopianMonth.year}
+                month={currentEthiopianMonth.month}
+                onDayPress={(date) => {
+                  handleDateSelect({
+                    dateString: format(date.gregorianDate, 'yyyy-MM-dd'),
+                    day: date.gregorianDate.getDate(),
+                    month: date.gregorianDate.getMonth() + 1,
+                    year: date.gregorianDate.getFullYear(),
+                    timestamp: date.gregorianDate.getTime()
+                  });
+                }}
+                markedDates={getEthiopianMarkedDates()}
+                selectedDate={selectedDate ? (() => {
+                  const date = new Date(selectedDate);
+                  const ethDate = toEthiopian(date);
+                  return {
+                    year: ethDate.year,
+                    month: ethDate.month,
+                    day: ethDate.day
+                  };
+                })() : null}
+                onMonthChange={handleEthiopianMonthChange}
+              />
+            ) : (
+              <Calendar
+                key={`calendar-${i18n.language}-${forceRender}`}
+                current={format(currentMonth, 'yyyy-MM-dd')}
+                minDate={'2020-01-01'}
+                maxDate={'2025-12-31'}
+                onDayPress={handleDateSelect}
+                markedDates={getMarkedDates()}
+                firstDay={0}
+                hideArrows={false}
+                renderArrow={(direction) => (
+                  <Ionicons 
+                    name={direction === 'left' ? 'chevron-back' : 'chevron-forward'} 
+                    size={24} 
+                    color="#2196F3" 
+                  />
+                )}
+                enableSwipeMonths={true}
+                style={styles.calendar}
+                theme={{
+                  selectedDayBackgroundColor: '#2196F3',
+                  todayTextColor: '#2196F3',
+                  todayBackgroundColor: '#E3F2FD',
+                  dotColor: '#2196F3',
+                  textMonthFontSize: 18,
+                  textMonthFontWeight: 'bold',
+                  textDayFontSize: 16,
+                  textDayHeaderFontSize: 14,
+                  'stylesheet.calendar.main': {
+                    week: {
+                      marginTop: 0,
+                      marginBottom: 0,
+                      flexDirection: 'row',
+                      justifyContent: 'space-around',
+                      height: 48,
+                      borderBottomWidth: 1,
+                      borderBottomColor: '#eee',
+                    },
+                    dayContainer: {
+                      borderRightWidth: 1,
+                      borderRightColor: '#eee',
+                      flex: 1,
+                    }
                   },
-                  dayTextAtIndex1: { 
-                    color: '#666',
-                    fontSize: 14,
-                    fontWeight: '500',
-                    width: 40,
-                    textAlign: 'center',
+                  'stylesheet.day.basic': {
+                    base: {
+                      width: 48,
+                      height: 48,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    },
+                    today: {
+                      backgroundColor: '#E3F2FD',
+                      borderRadius: 0,
+                    },
+                    selected: {
+                      backgroundColor: '#2196F3',
+                      borderRadius: 0,
+                    }
                   },
-                  dayTextAtIndex2: { 
-                    color: '#666',
-                    fontSize: 14,
-                    fontWeight: '500',
-                    width: 40,
-                    textAlign: 'center',
-                  },
-                  dayTextAtIndex3: { 
-                    color: '#666',
-                    fontSize: 14,
-                    fontWeight: '500',
-                    width: 40,
-                    textAlign: 'center',
-                  },
-                  dayTextAtIndex4: { 
-                    color: '#666',
-                    fontSize: 14,
-                    fontWeight: '500',
-                    width: 40,
-                    textAlign: 'center',
-                  },
-                  dayTextAtIndex5: { 
-                    color: '#666',
-                    fontSize: 14,
-                    fontWeight: '500',
-                    width: 40,
-                    textAlign: 'center',
-                  },
-                  dayTextAtIndex6: { 
-                    color: '#666',
-                    fontSize: 14,
-                    fontWeight: '500',
-                    width: 40,
-                    textAlign: 'center',
-                  },
-                  week: {
-                    marginTop: 7,
-                    marginBottom: 7,
-                    flexDirection: 'row',
-                    justifyContent: 'space-around',
-                    paddingVertical: 10,
-                    borderBottomWidth: 1,
-                    borderBottomColor: '#eee',
+                  'stylesheet.calendar.header': {
+                    header: {
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      paddingVertical: 12,
+                      paddingHorizontal: 8,
+                      marginBottom: 8,
+                    },
+                    monthText: {
+                      fontSize: 20,
+                      fontWeight: '600',
+                      color: '#000',
+                      marginBottom: 4,
+                    },
+                    dayHeader: {
+                      marginTop: 2,
+                      marginBottom: 8,
+                      width: 48,
+                      textAlign: 'center',
+                      fontSize: 14,
+                      color: '#666',
+                      fontWeight: '500',
+                    },
+                    week: {
+                      marginTop: 0,
+                      flexDirection: 'row',
+                      justifyContent: 'space-around',
+                      borderBottomWidth: 1,
+                      borderBottomColor: '#eee',
+                      paddingBottom: 8,
+                    }
                   }
-                },
-                'stylesheet.day.basic': {
-                  base: {
-                    width: 32,
-                    height: 32,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  },
-                  today: {
-                    backgroundColor: '#E3F2FD',
-                    borderRadius: 16,
-                  },
-                  todayText: {
-                    color: '#2196F3',
-                    fontWeight: 'bold',
-                  },
-                  selected: {
-                    backgroundColor: '#2196F3',
-                    borderRadius: 16,
-                  },
-                  selectedText: {
-                    color: '#fff',
-                    fontWeight: 'bold',
-                  }
-                }
-              }}
-              dayComponent={isAmharic ? renderEthiopianDay : undefined}
-              hideArrows={true}
-              hideExtraDays={false}
-              hideDayNames={false}
-              renderHeader={() => (
-                <View style={styles.monthHeaderContainer}>
-                  <TouchableOpacity 
-                    style={styles.arrowButton}
-                    onPress={() => handleMonthChange('prev')}
-                  >
-                    <Text style={styles.arrowText}>◀</Text>
-                  </TouchableOpacity>
-                  <View style={styles.monthYearContainer}>
-                    <Text style={styles.monthHeaderText}>
-                      {isAmharic ? formatMonthHeader(currentMonth) : format(currentMonth, 'MMMM yyyy')}
-                    </Text>
-                  </View>
-                  <TouchableOpacity 
-                    style={styles.arrowButton}
-                    onPress={() => handleMonthChange('next')}
-                  >
-                    <Text style={styles.arrowText}>▶</Text>
-                  </TouchableOpacity>
-                </View>
-              )}
-              customHeaderTitle={() => null}
-              locale={i18n.language.startsWith('am') ? 'am' : 'en'}
-              dayNames={isAmharic ? AMHARIC_WEEKDAYS : ENGLISH_WEEKDAYS}
-              dayNamesShort={isAmharic ? AMHARIC_WEEKDAYS : ENGLISH_WEEKDAYS}
-            />
+                }}
+              />
+            )}
           </Animated.View>
 
           {/* Sticky Header */}
@@ -1228,6 +1291,10 @@ const styles = StyleSheet.create({
   },
   calendar: {
     marginBottom: 10,
+    backgroundColor: '#fff',
+    borderLeftWidth: 1,
+    borderTopWidth: 1,
+    borderColor: '#eee',
   },
   weekViewCalendar: {
     height: 100,
@@ -1466,38 +1533,51 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: '#333',
   },
+  ethiopianCalendar: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#eee',
+    backgroundColor: '#fff',
+  },
   ethiopianDayContainer: {
-    width: 32,
-    height: 32,
+    width: 36,
+    height: 36,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 16,
+    backgroundColor: '#fff',
+    margin: 2,
+  },
+  emptyDay: {
+    backgroundColor: '#f5f5f5',
+    borderRadius: 4,
   },
   ethiopianDayText: {
     fontSize: 16,
     color: '#000',
-    width: 32,
-    height: 32,
     textAlign: 'center',
-    textAlignVertical: 'center',
-    borderRadius: 16,
+    includeFontPadding: false,
+  },
+  todayContainer: {
+    backgroundColor: '#E3F2FD',
+    borderRadius: 4,
+  },
+  todayText: {
+    color: '#2196F3',
+    fontWeight: 'bold',
   },
   selectedContainer: {
     backgroundColor: '#2196F3',
+    borderRadius: 4,
   },
   selectedText: {
     color: '#fff',
     fontWeight: 'bold',
   },
-  disabledContainer: {
-    opacity: 0.4,
-  },
-  disabledText: {
-    color: '#666',
-  },
   dotContainer: {
+    position: 'absolute',
+    bottom: 4,
     alignItems: 'center',
-    marginTop: 1,
+    width: '100%',
   },
   dot: {
     width: 4,
@@ -1514,7 +1594,7 @@ const styles = StyleSheet.create({
   },
   weekDayColumn: {
     alignItems: 'center',
-    width: 40,
+    width: 48,
   },
   selectedDayCircle: {
     width: 24,
@@ -1543,8 +1623,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 15,
-    paddingHorizontal: 20,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
     backgroundColor: '#fff',
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
@@ -1554,9 +1634,13 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: '#000',
+    textAlign: 'center',
+    minWidth: 200,
   },
   arrowButton: {
-    padding: 10,
+    padding: 8,
+    width: 40,
+    alignItems: 'center',
   },
   arrowText: {
     fontSize: 18,
@@ -1574,8 +1658,10 @@ const styles = StyleSheet.create({
   weekDayText: {
     fontSize: 14,
     color: '#666',
-    width: 40,
+    width: 48,
     textAlign: 'center',
+    paddingVertical: 8,
+    fontWeight: '500',
   },
   stickyHeader: {
     position: 'absolute',
