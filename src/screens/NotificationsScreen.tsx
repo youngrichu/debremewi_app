@@ -9,6 +9,7 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types';
 import { NotificationCard } from '../components/NotificationCard';
 import { API_URL } from '../config';
+import { Linking } from 'react-native';
 
 type NotificationScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -106,6 +107,10 @@ export default function NotificationsScreen() {
             }
           });
           break;
+        case 'watch':
+          console.log('Opening YouTube video:', id);
+          Linking.openURL(`https://www.youtube.com/watch?v=${id}`);
+          break;
         default:
           console.log('Unknown screen type:', screen);
       }
@@ -135,6 +140,37 @@ export default function NotificationsScreen() {
           console.log('Navigating to blog post:', notification.reference_id);
           navigation.navigate('BlogPostDetail', { postId: notification.reference_id });
           return true;
+        }
+
+        if (notification.type === 'video') {
+          console.log('Handling video notification:', {
+            youtube_url: notification.youtube_url,
+            reference_url: notification.reference_url
+          });
+          
+          // First try youtube_url from notification_data
+          if (notification.youtube_url) {
+            console.log('Opening direct YouTube URL:', notification.youtube_url);
+            await Linking.openURL(notification.youtube_url);
+            return true;
+          }
+          
+          // Then try reference_url for deep link
+          if (notification.reference_url) {
+            console.log('Handling video deep link:', notification.reference_url);
+            handleDeepLink(notification.reference_url);
+            return true;
+          }
+          
+          // Finally try to construct URL from reference_id
+          if (notification.reference_id) {
+            console.log('Opening video using reference_id:', notification.reference_id);
+            await Linking.openURL(`https://www.youtube.com/watch?v=${notification.reference_id}`);
+            return true;
+          }
+          
+          console.log('No valid video URL found');
+          return false;
         }
 
         if (notification.reference_url) {

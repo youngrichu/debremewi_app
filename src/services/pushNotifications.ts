@@ -99,6 +99,10 @@ const handleDeepLink = (url: string) => {
           console.log('Navigating to announcement:', id);
           navigationRef.navigate('AnnouncementDetail', { id });
           break;
+        case 'watch':
+          console.log('Opening YouTube video:', id);
+          Linking.openURL(`https://www.youtube.com/watch?v=${id}`);
+          break;
         default:
           console.log('Unknown screen type:', screen);
           navigationRef.navigate('Notifications');
@@ -230,6 +234,19 @@ export const addNotificationResponseListener = () => {
               ],
             });
             return true;
+          }
+
+          if (data.type === 'video') {
+            console.log('🎥 Handling video notification');
+            if (data.youtube_url) {
+              console.log('Opening direct YouTube URL:', data.youtube_url);
+              await Linking.openURL(data.youtube_url);
+              return true;
+            } else if (data.reference_url) {
+              console.log('Handling video deep link:', data.reference_url);
+              handleDeepLink(data.reference_url);
+              return true;
+            }
           }
 
           if (data.reference_url) {

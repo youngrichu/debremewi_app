@@ -14,6 +14,7 @@ interface NotificationCardProps {
     reference_id?: string;
     reference_type?: string;
     reference_url?: string;
+    youtube_url?: string;
     image_url?: string | null;
   };
   onPress: () => void;
@@ -148,19 +149,12 @@ export const NotificationCard = ({ notification, onPress }: NotificationCardProp
         notification.is_read === '0' && styles.unread
       ]}
       onPress={() => {
-        // If there's a reference URL, use it directly
-        if (notification.reference_url) {
-          console.log('Using provided reference URL:', notification.reference_url);
-          onPress();
-        } else if (notification.reference_type === 'blog' && notification.reference_id) {
-          // For blog posts without reference URL, construct the URL
-          const blogUrl = `https://staging.dubaidebremewi.com/?p=${notification.reference_id}`;
-          console.log('Navigating to blog post:', blogUrl);
-          onPress();
-        } else {
-          // For other types or when no reference info is available
-          onPress();
-        }
+        console.log('NotificationCard pressed:', {
+          type: notification.type,
+          youtube_url: notification.youtube_url,
+          reference_url: notification.reference_url
+        });
+        onPress();
       }}
     >
       {imageUrl && (

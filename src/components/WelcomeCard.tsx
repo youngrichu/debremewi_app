@@ -1,88 +1,110 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import { View, Text, StyleSheet, ImageBackground, Dimensions, Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
+
+const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
+const CARD_HEIGHT = SCREEN_HEIGHT * 0.35; // 35% of screen height
+const FONT_SCALE = SCREEN_WIDTH / 400; // Base scale factor
 
 const WelcomeCard = () => {
   const { t } = useTranslation();
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={['#2196F3', '#1976D2']}
-        style={styles.gradient}
+      <ImageBackground
+        source={require('../../assets/church-background.jpg')}
+        style={styles.backgroundImage}
+        imageStyle={styles.backgroundImageStyle}
+        resizeMode="cover"
       >
-        <View style={styles.content}>
-          <Text style={styles.welcomeTitle}>{t('home.welcome.title')}</Text>
-          <Text style={styles.churchSubtitle}>
-            {t('home.welcome.subtitle')}
-          </Text>
-          <Text style={styles.verseText}>
-            {t('home.welcome.verse.text')}
-          </Text>
-          <Text style={styles.verseReference}>
-            {t('home.welcome.verse.reference')}
-          </Text>
+        <View style={styles.overlay}>
+          <View style={styles.content}>
+            <Text style={styles.welcomeTitle}>{t('home.welcome.title')}</Text>
+            <Text style={styles.churchSubtitle}>
+              {t('home.welcome.subtitle')}
+            </Text>
+            <Text style={styles.verseText}>
+              {t('home.welcome.verse.text')}
+            </Text>
+            <Text style={styles.verseReference}>
+              {t('home.welcome.verse.reference')}
+            </Text>
+          </View>
         </View>
-      </LinearGradient>
+      </ImageBackground>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    height: 340,
-    marginBottom: 20,
+    height: CARD_HEIGHT,
+    marginBottom: SCREEN_HEIGHT * 0.02, // 2% of screen height
+    width: '100%',
   },
-  gradient: {
+  backgroundImage: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    margin: SCREEN_WIDTH * 0.04, // 4% of screen width
+  },
+  backgroundImageStyle: {
     borderRadius: 15,
-    margin: 16,
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    borderRadius: 15,
+    justifyContent: 'center',
   },
   content: {
     alignItems: 'center',
-    padding: 20,
+    padding: SCREEN_WIDTH * 0.05, // 5% of screen width
   },
   welcomeTitle: {
-    fontSize: 32,
+    fontSize: Math.min(32 * FONT_SCALE, 40), // Scaled but capped at 40
     fontWeight: 'bold',
     color: '#FFF',
-    marginBottom: 12,
+    marginBottom: SCREEN_HEIGHT * 0.01,
     textAlign: 'center',
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
     textShadowOffset: { width: -1, height: 1 },
     textShadowRadius: 10,
+    ...Platform.select({
+      ios: {
+        padding: 4, // Helps with text rendering on iOS
+      },
+    }),
   },
   churchSubtitle: {
-    fontSize: 14,
+    fontSize: Math.min(14 * FONT_SCALE, 18),
     color: '#FFF',
     opacity: 0.9,
     textAlign: 'center',
-    marginBottom: 20,
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    marginBottom: SCREEN_HEIGHT * 0.02,
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
     textShadowOffset: { width: -1, height: 1 },
     textShadowRadius: 10,
+    paddingHorizontal: SCREEN_WIDTH * 0.02,
   },
   verseText: {
-    fontSize: 16,
+    fontSize: Math.min(16 * FONT_SCALE, 20),
     fontStyle: 'italic',
     color: '#FFF',
     textAlign: 'center',
-    marginTop: 10,
+    marginTop: SCREEN_HEIGHT * 0.01,
     opacity: 0.9,
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
     textShadowOffset: { width: -1, height: 1 },
     textShadowRadius: 10,
+    paddingHorizontal: SCREEN_WIDTH * 0.03,
   },
   verseReference: {
-    fontSize: 14,
+    fontSize: Math.min(14 * FONT_SCALE, 16),
     color: '#FFF',
     textAlign: 'center',
-    marginTop: 5,
+    marginTop: SCREEN_HEIGHT * 0.01,
     opacity: 0.8,
-    textShadowColor: 'rgba(0, 0, 0, 0.3)',
+    textShadowColor: 'rgba(0, 0, 0, 0.75)',
     textShadowOffset: { width: -1, height: 1 },
     textShadowRadius: 10,
   },
