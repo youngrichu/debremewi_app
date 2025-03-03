@@ -604,18 +604,38 @@ export default function EventsScreen() {
   // Get current week days
   const currentWeekDays = useMemo(() => {
     const date = new Date(currentDay);
-    const day = date.getDay();
-    // Convert Sunday (0) to 7 to make Monday (1) the first day
-    const adjustedDay = day === 0 ? 7 : day;
-    const monday = new Date(date);
-    monday.setDate(date.getDate() - adjustedDay + 1);
-    
-    return Array.from({ length: 7 }, (_, i) => {
-      const day = new Date(monday);
-      day.setDate(monday.getDate() + i);
-      return day;
-    });
-  }, [currentDay]);
+    // If using Amharic, ensure we're showing the correct Ethiopian day of week
+    if (isAmharic) {
+      // First, let's get the current Gregorian date as an Ethiopian date
+      const ethDate = toEthiopian(date);
+      
+      // Get the current day of the week (0-6, where 0 is Sunday)
+      const currentDayOfWeek = date.getDay();
+      
+      // Calculate the dates for the entire week
+      return Array.from({ length: 7 }, (_, i) => {
+        // Calculate day offset from Sunday (0)
+        const dayOffset = i - currentDayOfWeek;
+        
+        // Create a new date by adding/subtracting days
+        const dayDate = new Date(date);
+        dayDate.setDate(date.getDate() + dayOffset);
+        
+        return dayDate;
+      });
+    } else {
+      // For English calendar, use Sunday as the first day of the week
+      const day = date.getDay(); // 0 is Sunday, 1 is Monday, etc.
+      const sunday = new Date(date);
+      sunday.setDate(date.getDate() - day); // Go back to the Sunday of this week
+      
+      return Array.from({ length: 7 }, (_, i) => {
+        const day = new Date(sunday);
+        day.setDate(sunday.getDate() + i);
+        return day;
+      });
+    }
+  }, [currentDay, isAmharic]);
 
   // Add new state for card height
   const CARD_HEIGHT = 200; // Adjust based on your event card height
@@ -1124,7 +1144,7 @@ export default function EventsScreen() {
                 markedDates={getMarkedDates()}
                 firstDay={0}
                 hideArrows={false}
-                renderArrow={(direction) => (
+                renderArrow={(direction: 'left' | 'right') => (
                   <Ionicons 
                     name={direction === 'left' ? 'chevron-back' : 'chevron-forward'} 
                     size={24} 
@@ -1238,7 +1258,7 @@ export default function EventsScreen() {
               {currentWeekDays.map((day: Date, index: number) => (
                 <View key={`${index}-${i18n.language}`} style={styles.weekDayColumn}>
                   <Text style={styles.weekDayText}>
-                    {isAmharic ? AMHARIC_WEEKDAYS[index] : ENGLISH_WEEKDAYS[index]}
+                    {isAmharic ? AMHARIC_WEEKDAYS[day.getDay()] : ENGLISH_WEEKDAYS[day.getDay()]}
                   </Text>
                   <View style={[
                     styles.dayNumberContainer,

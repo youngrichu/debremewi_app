@@ -37,36 +37,114 @@ export function toEthiopian(date: Date): { year: number; month: number; day: num
   const gregorianYear = date.getFullYear();
   const gregorianMonth = date.getMonth() + 1;
   const gregorianDay = date.getDate();
+  
+  // Define Ethiopian calendar start reference points
+  const monthStarts = [
+    { ethMonth: 1, ethDay: 1, gregMonth: 9, gregDay: 11 },  // Meskerem 1
+    { ethMonth: 2, ethDay: 1, gregMonth: 10, gregDay: 11 }, // Tikimt 1
+    { ethMonth: 3, ethDay: 1, gregMonth: 11, gregDay: 10 }, // Hidar 1
+    { ethMonth: 4, ethDay: 1, gregMonth: 12, gregDay: 10 }, // Tahsas 1
+    { ethMonth: 5, ethDay: 1, gregMonth: 1, gregDay: 9 },   // Tir 1
+    { ethMonth: 6, ethDay: 1, gregMonth: 2, gregDay: 8 },   // Yekatit 1
+    { ethMonth: 7, ethDay: 1, gregMonth: 3, gregDay: 10 },  // Megabit 1
+    { ethMonth: 8, ethDay: 1, gregMonth: 4, gregDay: 9 },   // Miyazia 1
+    { ethMonth: 9, ethDay: 1, gregMonth: 5, gregDay: 9 },   // Ginbot 1
+    { ethMonth: 10, ethDay: 1, gregMonth: 6, gregDay: 8 },  // Sene 1
+    { ethMonth: 11, ethDay: 1, gregMonth: 7, gregDay: 8 },  // Hamle 1
+    { ethMonth: 12, ethDay: 1, gregMonth: 8, gregDay: 7 },  // Nehase 1
+    { ethMonth: 13, ethDay: 1, gregMonth: 9, gregDay: 6 },  // Pagume 1
+  ];
 
-  // Find the matching Ethiopian month
-  const monthMapping = GREGORIAN_TO_ETHIOPIAN.find(m => {
-    const [month, day] = m.from;
-    return gregorianMonth === month && gregorianDay >= day;
-  });
+  // Find the correct month segment
+  let currentMonthStart = null;
+  let nextMonthStart = null;
 
-  if (!monthMapping) {
-    // If no direct mapping found, it's in the previous Ethiopian month
-    const prevMonthMapping = GREGORIAN_TO_ETHIOPIAN.find(m => 
-      gregorianMonth === m.from[0]
-    );
-    if (!prevMonthMapping) {
-      throw new Error('Invalid date mapping');
-    }
-
-    const ethiopianYear = gregorianMonth >= 9 ? gregorianYear - 7 : gregorianYear - 8;
-    const ethiopianMonth = prevMonthMapping.to[0] - 1 || 13;
-    const prevMonthDays = ethiopianMonth === 13 ? (isGregorianLeap(ethiopianYear) ? 6 : 5) : 30;
+  for (let i = 0; i < monthStarts.length; i++) {
+    const current = monthStarts[i];
+    const next = monthStarts[(i + 1) % monthStarts.length];
     
-    // Calculate the Ethiopian day by adding the days from the start of the Gregorian month
-    const ethiopianDay = prevMonthDays - (prevMonthMapping.from[1] - gregorianDay);
-
-    return { year: ethiopianYear, month: ethiopianMonth, day: ethiopianDay };
+    // Check if we're in special case - between end of year and start of year
+    if (i === monthStarts.length - 1) {
+      // Handle Pagume to Meskerem transition
+      if ((gregorianMonth === 9 && gregorianDay >= current.gregDay && gregorianDay < monthStarts[0].gregDay)) {
+        currentMonthStart = current;
+        nextMonthStart = monthStarts[0];
+        break;
+      }
+    } else if (
+      // Normal case - current month
+      (gregorianMonth === current.gregMonth && gregorianDay >= current.gregDay) ||
+      // Or previous month but before next month starts
+      (gregorianMonth === next.gregMonth && gregorianDay < next.gregDay)
+    ) {
+      currentMonthStart = current;
+      nextMonthStart = next;
+      break;
+    }
   }
 
-  const ethiopianYear = gregorianMonth >= 9 ? gregorianYear - 7 : gregorianYear - 8;
-  const ethiopianMonth = monthMapping.to[0];
-  const ethiopianDay = gregorianDay - monthMapping.from[1] + monthMapping.to[1];
+  // If we didn't find a match (shouldn't happen if mapping is complete)
+  if (!currentMonthStart) {
+    throw new Error(`Could not determine Ethiopian date for ${gregorianYear}-${gregorianMonth}-${gregorianDay}`);
+  }
 
+  // Calculate days since Ethiopian month started
+  let daysSinceMonthStart = 0;
+  
+  if (gregorianMonth === currentMonthStart.gregMonth) {
+    // Same Gregorian month
+    daysSinceMonthStart = gregorianDay - currentMonthStart.gregDay;
+  } else {
+    // Different Gregorian month - need to count days in between
+    const daysInStartMonth = new Date(
+      gregorianMonth === 1 ? gregorianYear - 1 : gregorianYear, 
+      currentMonthStart.gregMonth, 
+      0
+    ).getDate();
+    
+    // Days remaining in the start month
+    daysSinceMonthStart = daysInStartMonth - currentMonthStart.gregDay + 1;
+    
+    // Add days of any months in between (rarely needed but complete)
+    for (let m = currentMonthStart.gregMonth + 1; m < gregorianMonth; m++) {
+      const daysInMonth = new Date(gregorianYear, m, 0).getDate();
+      daysSinceMonthStart += daysInMonth;
+    }
+    
+    // Add days in the current month
+    daysSinceMonthStart += gregorianDay - 1;
+  }
+  
+  // Calculate Ethiopian date components
+  const ethiopianDay = currentMonthStart.ethDay + daysSinceMonthStart;
+  
+  // Handle day overflow
+  let ethiopianMonth = currentMonthStart.ethMonth;
+  let ethiopianYear = currentMonthStart.ethMonth >= 1 && currentMonthStart.ethMonth <= 4 ? 
+    gregorianYear - 7 : gregorianYear - 8;
+  
+  // Handle special case for end of Ethiopian year
+  if (currentMonthStart.ethMonth === 13) {
+    const pagumeDays = isGregorianLeap(ethiopianYear) ? 6 : 5;
+    
+    // If we exceed Pagume days, we're in the next year
+    if (ethiopianDay > pagumeDays) {
+      ethiopianMonth = 1; // Meskerem
+      ethiopianYear += 1;
+      return { year: ethiopianYear, month: ethiopianMonth, day: ethiopianDay - pagumeDays };
+    }
+  } else {
+    // Handle month overflow (for months with 30 days)
+    if (ethiopianDay > 30) {
+      ethiopianMonth += 1;
+      if (ethiopianMonth > 13) {
+        ethiopianMonth = 1;
+        ethiopianYear += 1;
+      }
+      return { year: ethiopianYear, month: ethiopianMonth, day: ethiopianDay - 30 };
+    }
+  }
+  
   return { year: ethiopianYear, month: ethiopianMonth, day: ethiopianDay };
 }
 
