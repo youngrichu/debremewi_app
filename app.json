@@ -24,6 +24,7 @@
         "NSCalendarsUsageDescription": "This app needs access to your calendar to add events you're interested in.",
         "NSRemindersUsageDescription": "This app needs access to your reminders to set event reminders.",
         "LSApplicationQueriesSchemes": [
+          "calshow",
           "calshow"
         ],
         "ExpoLocalization_supportsRTL": true,
@@ -40,11 +41,19 @@
                   "options": {
                     "foreground": true
                   }
+                },
+                {
+                  "identifier": "view",
+                  "title": "View",
+                  "options": {
+                    "foreground": true
+                  }
                 }
               ]
             }
           }
-        }
+        },
+        "ITSAppUsesNonExemptEncryption": false
       },
       "bundleIdentifier": "com.debremewi.church"
     },
