@@ -450,41 +450,11 @@
         "location": "8 19dStreet - Umm Hurair 2 - Dubai",
         "venue": "Holy Trinity Church"
       },
-      "abuDhabi": {
-        "name": "አቡዳቢ መስቀየ ህዙናን መድኃኔዓለም ወአቡነ ተክለሃይማኖት ኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተክርስቲያን",
-        "city": "አቡዳቢ",
-        "location": "Al Sharia",
-        "venue": "አቡዳቢ መስቀየ ህዙናን መድኃኔዓለም ወአቡነ ተክለሃይማኖት ኢትዮጵያ ኦርቶዶክስ ተዋሕዶ ቤተክርስቲያን"
-      },
-      "sharjah": {
-        "name": "ጽዓሊተ ምሕረት ቅድስት ማርያም ኦርቶዶክስ ቤተክርስቲያን",
-        "city": "ሻርጃ",
-        "location": "",
-        "venue": ""
-      },
-      "alAin": {
-        "name": "አል አይን ደብረ ብስራት ቅዱስ ገብርኤል ወቅድስት ልደታ ማርያም ቤተ ክርስቲያን",
-        "city": "አል ዐይን",
-        "location": "",
-        "venue": ""
-      },
-      "fujairah": {
-        "name": "ፉጄራ ሐመረ ብርሃን ቅድስት ኪዳነ ምሕረት ወአቡነ አረጋዊ ቤተ ክርስቲያን",
-        "city": "ፉጀይራ",
-        "location": "",
-        "venue": ""
-      },
       "jebelAli": {
         "name": "ሥላሴ ወቅዱስ ሩፋኤል ቤተክርስቲያን",
         "city": "ጀበል አሊ",
         "location": "Jebel Ali Village - Jebel Ali Freezone - Dubai",
         "venue": "Christ Church Jebel Ali"
-      },
-      "rak": {
-        "name": "ራስ አልኬማ ደብረ ይድራስ ቅዱስ ጊዮርጊስ ወአቡነ ገብረ መንፈስ ቅዱስ ቤተ ክርስቲያን",
-        "city": "ራስ አል ካይማ",
-        "location": "",
-        "venue": ""
       }
     }
   },
@@ -716,4 +686,4 @@
     "pullToRefresh": "ለማደስ ይጎትቱ",
     "loadingMore": "ተጨማሪ ቪዲዮዎችን በመጫን ላይ..."
   }
-} 
+}

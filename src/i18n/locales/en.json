@@ -449,41 +449,11 @@
         "location": "8 19dStreet - Umm Hurair 2 - Dubai",
         "venue": "Holy Trinity Church"
       },
-      "abuDhabi": {
-        "name": "Abu Dhabi Meskaye Hizunan Medhanialem & Abune TekleHaymanot Ethiopian Orthodox Church",
-        "city": "Abu Dhabi",
-        "location": "Al Sharia",
-        "venue": "Abu Dhabi Meskaye Hizunan Medhanialem & Abune TekleHaymanot Ethiopian Orthodox Church"
-      },
-      "sharjah": {
-        "name": "Sealite Mihret Kidist Mariam Orthodox Church",
-        "city": "Sharjah",
-        "location": "",
-        "venue": ""
-      },
-      "alAin": {
-        "name": "St. Gabriel Ethiopian Orthodox Church",
-        "city": "Al Ain",
-        "location": "",
-        "venue": ""
-      },
-      "fujairah": {
-        "name": "Hamere Birhan Kidane Mihiret & Abune Aregawi",
-        "city": "Fujairah",
-        "location": "",
-        "venue": ""
-      },
       "jebelAli": {
         "name": "Selassie & St. Rufael Church",
         "city": "Jebel Ali",
         "location": "Jebel Ali Village - Jebel Ali Freezone - Dubai",
         "venue": "Christ Church Jebel Ali"
-      },
-      "rak": {
-        "name": "St. Gregorios Ethiopian Orthodox Church",
-        "city": "Ras Al Khaimah",
-        "location": "",
-        "venue": ""
       }
     }
   },
