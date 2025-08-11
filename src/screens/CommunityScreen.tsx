@@ -13,28 +13,8 @@ const CommunityScreen = () => {
       isMain: true
     },
     {
-      id: 'abuDhabi',
-      mapLink: "https://maps.app.goo.gl/2aDvNZXC5muHncq69"
-    },
-    {
-      id: 'sharjah',
-      mapLink: "https://maps.google.com/?q=25.3463,55.4209"
-    },
-    {
-      id: 'alAin',
-      mapLink: "https://goo.gl/maps/4p9Rwcf4AAEuqk2Q7"
-    },
-    {
-      id: 'fujairah',
-      mapLink: "https://maps.app.goo.gl/4KivcCDzxMf4MAWi7"
-    },
-    {
       id: 'jebelAli',
       mapLink: "https://maps.app.goo.gl/usVixg9saDYHwdh46"
-    },
-    {
-      id: 'rak',
-      mapLink: "https://maps.app.goo.gl/4KivcCDzxMf4MAWi7"
     }
   ];
 
@@ -198,4 +178,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CommunityScreen; 
+export default CommunityScreen;
