@@ -627,6 +627,10 @@
     }
   },
   "events": {
+    "recurring": "ተደጋጋሚ",
+    "daily": "በየቀኑ",
+    "weekly": "በየሳምንቱ",
+    "monthly": "በየወሩ",
     "details": {
       "loading": "የዝግጅት ዝርዝሮችን በመጫን ላይ...",
       "error": {

@@ -14,6 +14,7 @@ import SocialMediaService, { SocialMediaPost } from '../services/SocialMediaServ
 import { isAfter, isSameDay } from 'date-fns';
 import { decode } from 'html-entities';
 import { HomeScreenShimmer } from '../components/ShimmerPlaceholder';
+import { getRecurringBadgeText, shouldShowRecurringBadge } from '../utils/eventUtils';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CompositeScreenProps } from '@react-navigation/native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
@@ -65,7 +66,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           page: currentPage,
           per_page: 10,
           orderby: 'date',
-          order: 'ASC'
+          order: 'ASC',
+          expand: 'occurrences'
         });
 
         allEvents = [...allEvents, ...eventsResult.events];
@@ -180,11 +182,13 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
       );
     }
 
-    return upcomingEvents.slice(0, 3).map((event) => (
+    return upcomingEvents.slice(0, 3).map((event, index) => (
       <TouchableOpacity
-        key={event.id}
+        key={(event as any).is_occurrence && (event as any).occurrence_parent_id 
+          ? `${(event as any).occurrence_parent_id}-${event.id}-${index}` 
+          : `${event.id}-${index}`}
         style={styles.eventCard}
-        onPress={() => handleEventPress(Number(event.id))}
+        onPress={() => handleEventPress(event)}
       >
         <View style={styles.eventDateBox}>
           <Text style={styles.eventDateDay}>
@@ -195,7 +199,17 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           </Text>
         </View>
         <View style={styles.eventContent}>
-          <Text style={styles.eventTitle}>{event.title}</Text>
+          <View style={styles.eventTitleContainer}>
+            <Text style={styles.eventTitle}>{event.title}</Text>
+            {shouldShowRecurringBadge(event) && (
+              <View style={styles.recurringBadge}>
+                <Ionicons name="repeat" size={10} color="#fff" />
+                <Text style={styles.recurringBadgeText}>
+                  {getRecurringBadgeText(event, t)}
+                </Text>
+              </View>
+            )}
+          </View>
           <View style={styles.eventDetails}>
             <Ionicons name="time-outline" size={12} color="#666" style={styles.eventIcon} />
             <Text style={styles.eventTime}>
@@ -222,10 +236,15 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
     ));
   };
 
-  const handleEventPress = (eventId: number) => {
-    navigation.navigate('Events', {
-      screen: 'EventDetails',
-      params: { eventId },
+  const handleEventPress = (event: Event) => {
+    const eventId = Number(event.id);
+    const isOccurrence = (event as any).is_occurrence === true || (event as any).is_occurrence === 1;
+    
+    // Navigate directly to EventDetails within the Home stack
+    navigation.navigate('EventDetails', { 
+      eventId: isOccurrence ? (event as any).occurrence_parent_id || eventId : eventId,
+      occurrenceDate: isOccurrence ? event.date : undefined,
+      isOccurrence: isOccurrence
     });
   };
 
@@ -236,7 +255,11 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   const handleViewAllEventsPress = () => {
-    navigation.navigate('Events');
+    // Reset the Events stack navigation state to prevent returning to previous event instances
+    navigation.navigate('Events', { 
+      screen: 'Events',
+      initial: false 
+    });
   };
 
   const handleViewAllBlogPostsPress = () => {
@@ -531,7 +554,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#333',
-    marginBottom: 8,
+    flex: 1,
   },
   eventDetails: {
     flexDirection: 'row',
@@ -625,6 +648,27 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#666',
     textAlign: 'center',
+  },
+  eventTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+    gap: 8,
+  },
+  recurringBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FF9800',
+    paddingHorizontal: 4,
+    paddingVertical: 1,
+    borderRadius: 8,
+    gap: 2,
+  },
+  recurringBadgeText: {
+    color: '#fff',
+    fontSize: 8,
+    fontWeight: '600',
   },
 });
 

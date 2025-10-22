@@ -12,10 +12,10 @@ export const getUpcomingEvents = async (): Promise<Event[]> => {
 
   while (attempt <= MAX_RETRIES) {
     try {
-      const response = await apiClient.get('/wp-json/church-events/v1/events');
+      const response = await apiClient.get('/wp-json/church-events/v1/events?expand=occurrences');
       
       if (__DEV__) {
-        console.log('Events response:', response.data);
+        console.log('EventsService.getUpcomingEvents - Raw API response:', response.data);
       }
 
       let events: Event[] = [];
@@ -25,6 +25,19 @@ export const getUpcomingEvents = async (): Promise<Event[]> => {
         events = response.data;
       } else {
         throw new Error('Unexpected response format from events API');
+      }
+
+      // Debug logging for recurring events
+      if (__DEV__) {
+        console.log('EventsService.getUpcomingEvents - Total events:', events.length);
+        console.log('EventsService.getUpcomingEvents - Events with is_occurrence field:', 
+          events.filter((e: any) => e.is_occurrence).map((e: any) => ({
+            id: e.id,
+            title: e.title,
+            is_occurrence: e.is_occurrence,
+            occurrence_parent_id: e.occurrence_parent_id
+          }))
+        );
       }
 
       // Get current time in Dubai timezone (UTC+4)
@@ -108,14 +121,8 @@ export const getUpcomingEvents = async (): Promise<Event[]> => {
         // Check for authentication errors
         if (error.message === 'Session expired. Please login again.' ||
             error.message === 'No authentication token found') {
-          try {
-            // Try to refresh the token
-            await AuthService.refreshToken();
-            continue; // Retry the request with new token
-          } catch (refreshError) {
-            console.error('Token refresh failed:', refreshError);
-            throw new Error('Authentication failed. Please login again.');
-          }
+          console.error('Authentication error:', error.message);
+          throw new Error('Authentication failed. Please login again.');
         }
 
         // For network errors, retry

@@ -9,7 +9,7 @@ import RenderHTML, {
   MixedStyleDeclaration,
   Element
 } from 'react-native-render-html';
-import ImageView from 'react-native-image-viewing';
+// import ImageView from 'react-native-image-viewing';
 import { Ionicons } from '@expo/vector-icons';
 import { decode } from 'html-entities';
 import { useTranslation } from 'react-i18next';
@@ -247,15 +247,7 @@ export default function BlogPostDetail({ route }: BlogPostDetailProps) {
         </View>
       </ScrollView>
 
-      <ImageView
-        images={[{ uri: selectedImageUrl }]}
-        imageIndex={0}
-        visible={isImageViewVisible}
-        onRequestClose={() => setIsImageViewVisible(false)}
-        swipeToCloseEnabled={true}
-        doubleTapToZoomEnabled={true}
-        presentationStyle="overFullScreen"
-      />
+      {/* ImageView component removed - react-native-image-viewing dependency removed */}
     </>
   );
 }

@@ -5,6 +5,7 @@ import { format } from 'date-fns';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { toEthiopian, getEthiopianMonthName, formatEthiopianDate } from '../../utils/ethiopianCalendar';
+import { getRecurringBadgeText, shouldShowRecurringBadge } from '../../utils/eventUtils';
 
 interface EventCardProps {
   event: Event;
@@ -12,8 +13,19 @@ interface EventCardProps {
 }
 
 export const EventCard: React.FC<EventCardProps> = ({ event, onPress }) => {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isAmharic = i18n.language === 'am';
+
+  // Debug logging for recurring badge
+  if (__DEV__) {
+    console.log('EventCard - Event data:', {
+      id: event.id,
+      title: event.title,
+      is_occurrence: (event as any).is_occurrence,
+      occurrence_parent_id: (event as any).occurrence_parent_id,
+      shouldShowBadge: ((event as any).is_occurrence === true || (event as any).is_occurrence === 1)
+    });
+  }
 
   const formatDate = (date: string) => {
     if (isAmharic) {
@@ -37,7 +49,17 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onPress }) => {
       )}
       
       <View style={styles.content}>
-        <Text style={styles.title}>{event.title}</Text>
+        <View style={styles.titleContainer}>
+          <Text style={styles.title}>{event.title}</Text>
+          {shouldShowRecurringBadge(event) && (
+            <View style={styles.recurringBadge}>
+              <Ionicons name="repeat" size={12} color="#fff" />
+              <Text style={styles.recurringBadgeText}>
+                {getRecurringBadgeText(event, t)}
+              </Text>
+            </View>
+          )}
+        </View>
         
         <View style={styles.metaContainer}>
           <View style={styles.metaItem}>
@@ -90,11 +112,32 @@ const styles = StyleSheet.create({
   content: {
     padding: 16,
   },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start',
+    justifyContent: 'space-between',
+    marginBottom: 8,
+    gap: 8,
+  },
   title: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 8,
     color: '#333',
+    flex: 1,
+  },
+  recurringBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FF9800',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 12,
+    gap: 2,
+  },
+  recurringBadgeText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: '600',
   },
   metaContainer: {
     gap: 8,
@@ -113,4 +156,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     gap: 8,
   },
-}); 
+});

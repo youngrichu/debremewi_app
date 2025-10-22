@@ -91,7 +91,7 @@ const WeekView = ({
   onDayPress,
 }: { 
   events: Event[], 
-  onEventPress: (eventId: number) => void,
+  onEventPress: (event: Event) => void,
   selectedDate: Date,
   onDayPress: (date: Date) => void,
 }) => {
@@ -281,7 +281,7 @@ const WeekView = ({
                               width: DAY_COLUMN_WIDTH - 4,
                             },
                           ]}
-                          onPress={() => onEventPress(event.id)}
+                          onPress={() => onEventPress(event)}
                         >
                           <Text style={styles.weekEventTitle} numberOfLines={1}>
                             {event.title}
@@ -304,7 +304,7 @@ const WeekView = ({
 
 const DayView = ({ events, onEventPress, selectedDate }: {
   events: Event[],
-  onEventPress: (eventId: number) => void,
+  onEventPress: (event: Event) => void,
   selectedDate: Date
 }) => {
   const { i18n } = useTranslation();
@@ -403,7 +403,7 @@ const DayView = ({ events, onEventPress, selectedDate }: {
                         left: '5%',
                       },
                     ]}
-                    onPress={() => onEventPress(event.id)}
+                    onPress={() => onEventPress(event)}
                   >
                     <Text style={styles.dayEventTitle} numberOfLines={1}>
                       {event.title}
@@ -683,6 +683,7 @@ export default function EventsScreen() {
             per_page: 10,
             orderby: 'date',
             order: 'DESC',
+            expand: 'occurrences',
           }),
           EventService.getCategories(),
         ]);
@@ -704,6 +705,7 @@ export default function EventsScreen() {
           per_page: 10,
           orderby: 'date',
           order: 'DESC',
+          expand: 'occurrences',
         });
 
         setAllEvents(prev => [...prev, ...eventsResult.events]); // Store all new events
@@ -855,8 +857,16 @@ export default function EventsScreen() {
     setPage(1);
   };
 
-  const handleEventPress = (eventId: number) => {
-    navigation.navigate('EventDetails', { eventId });
+  const handleEventPress = (event: Event) => {
+    const eventId = event.is_occurrence ? event.occurrence_parent_id : event.id;
+    const occurrenceDate = event.is_occurrence ? event.date : null;
+    const isOccurrence = event.is_occurrence === true || event.is_occurrence === 1;
+    
+    navigation.navigate('EventDetails', { 
+      eventId: Number(eventId), 
+      occurrenceDate,
+      isOccurrence 
+    });
   };
 
   const handleViewModeChange = (mode: 'month' | 'week' | 'day') => {

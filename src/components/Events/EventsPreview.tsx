@@ -62,9 +62,16 @@ export const EventsPreview: React.FC<EventsPreviewProps> = ({
             </Text>
           </View>
           <View style={styles.eventDetails}>
-            <Text style={styles.eventTitle} numberOfLines={1}>
-              {event.title}
-            </Text>
+            <View style={styles.titleContainer}>
+              <Text style={styles.eventTitle} numberOfLines={1}>
+                {event.title}
+              </Text>
+              {event.is_occurrence && (
+                <View style={styles.recurringBadge}>
+                  <Ionicons name="repeat" size={10} color="#fff" />
+                </View>
+              )}
+            </View>
             <View style={styles.eventMeta}>
               <Ionicons name="time-outline" size={14} color="#666" />
               <Text style={styles.eventTime}>
@@ -122,10 +129,22 @@ const styles = StyleSheet.create({
   eventDetails: {
     flex: 1,
   },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 5,
+  },
   eventTitle: {
     fontSize: 16,
     fontWeight: '500',
-    marginBottom: 5,
+    flex: 1,
+  },
+  recurringBadge: {
+    backgroundColor: '#FF9800',
+    borderRadius: 8,
+    padding: 2,
+    marginLeft: 4,
   },
   eventMeta: {
     flexDirection: 'row',
@@ -152,4 +171,4 @@ const styles = StyleSheet.create({
     color: '#666',
     fontSize: 14,
   },
-}); 
+});

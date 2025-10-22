@@ -28,6 +28,8 @@ interface EventDetailsScreenProps {
   route: {
     params: {
       eventId: number;
+      occurrenceDate?: string;
+      isOccurrence?: boolean;
     };
   };
 }
@@ -59,7 +61,7 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
 
   useEffect(() => {
     loadEvent();
-  }, [route.params.eventId]);
+  }, [route.params.eventId, route.params.occurrenceDate]);
 
   const loadEvent = async () => {
     try {
@@ -68,10 +70,16 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
       const eventData = await EventService.getEventById(route.params.eventId);
       
       if (eventData) {
-        setEvent({
+        // If this is an occurrence, override the date with the occurrence date
+        const finalEventData = {
           ...eventData,
-          content: formatContent(eventData.content)
-        });
+          content: formatContent(eventData.content),
+          date: route.params.isOccurrence && route.params.occurrenceDate 
+            ? route.params.occurrenceDate 
+            : eventData.date
+        };
+        
+        setEvent(finalEventData);
       } else {
         setError('Event not found');
       }

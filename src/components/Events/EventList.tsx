@@ -12,7 +12,7 @@ import { EventCard } from './EventCard';
 
 interface EventListProps {
   events: Event[];
-  onEventPress: (eventId: number) => void;
+  onEventPress: (event: Event) => void;
   onRefresh: () => void;
   onLoadMore: () => void;
   loading: boolean;
@@ -59,7 +59,7 @@ export const EventList: React.FC<EventListProps> = ({
   );
 
   const renderItem = ({ item }: { item: Event }) => (
-    <EventCard event={item} onPress={() => onEventPress(item.id)} />
+    <EventCard event={item} onPress={() => onEventPress(item)} />
   );
 
   const handleEndReached = () => {
@@ -72,7 +72,11 @@ export const EventList: React.FC<EventListProps> = ({
     <FlatList
       data={sortedEvents}
       renderItem={renderItem}
-      keyExtractor={(item) => item.id.toString()}
+      keyExtractor={(item, index) => 
+        (item as any).is_occurrence && (item as any).occurrence_parent_id 
+          ? `${(item as any).occurrence_parent_id}-${item.id}-${index}` 
+          : `${item.id}-${index}`
+      }
       refreshControl={
         <RefreshControl refreshing={loading} onRefresh={onRefresh} />
       }
@@ -116,4 +120,9 @@ const styles = StyleSheet.create({
     padding: 20,
     alignItems: 'center',
   },
-}); 
+  loadingText: {
+    marginTop: 8,
+    fontSize: 14,
+    color: '#666',
+  },
+});

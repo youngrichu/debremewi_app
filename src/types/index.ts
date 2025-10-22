@@ -32,8 +32,15 @@ export interface Event {
   description: string;
   thumbnail?: string;
   permalink?: string;
-  categories?: string[];
+  categories?: string[] | EventCategory[];
   content?: string;
+  is_occurrence?: boolean | number;
+  occurrence_parent_id?: number;
+  is_recurring?: boolean | number;
+  recurring_pattern?: 'daily' | 'weekly' | 'monthly';
+  recurring_interval?: number;
+  recurring_end_date?: string | null;
+  recurring_count?: number | null;
 }
 
 // Event Category Type

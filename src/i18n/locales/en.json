@@ -613,6 +613,10 @@
     }
   },
   "events": {
+    "recurring": "Recurring",
+    "daily": "Daily",
+    "weekly": "Weekly",
+    "monthly": "Monthly",
     "details": {
       "loading": "Loading event details...",
       "error": {
