@@ -15,6 +15,7 @@ import { isAfter, isSameDay } from 'date-fns';
 import { decode } from 'html-entities';
 import { HomeScreenShimmer } from '../components/ShimmerPlaceholder';
 import { getRecurringBadgeText, shouldShowRecurringBadge } from '../utils/eventUtils';
+import { toEthiopian, ETHIOPIAN_MONTHS } from '../utils/ethiopianCalendar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CompositeScreenProps } from '@react-navigation/native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
@@ -30,7 +31,7 @@ type Props = CompositeScreenProps<
 >;
 
 const HomeScreen: React.FC<Props> = ({ navigation }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [recentPosts, setRecentPosts] = useState<Post[]>([]);
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([]);
   const [latestVideos, setLatestVideos] = useState<SocialMediaPost[]>([]);
@@ -191,12 +192,35 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         onPress={() => handleEventPress(event)}
       >
         <View style={styles.eventDateBox}>
-          <Text style={styles.eventDateDay}>
-            {new Date(event.date).getDate()}
-          </Text>
-          <Text style={styles.eventDateMonth}>
-            {new Date(event.date).toLocaleString('default', { month: 'short' })}
-          </Text>
+          {(() => {
+            const eventDate = new Date(event.date);
+            const isAmharic = i18n.language.startsWith('am');
+            
+            if (isAmharic) {
+              const ethiopianDate = toEthiopian(eventDate);
+              return (
+                <>
+                  <Text style={styles.eventDateDay}>
+                    {ethiopianDate.day}
+                  </Text>
+                  <Text style={styles.eventDateMonth}>
+                    {ETHIOPIAN_MONTHS[ethiopianDate.month - 1]?.substring(0, 4) || 'መስከ'}
+                  </Text>
+                </>
+              );
+            } else {
+              return (
+                <>
+                  <Text style={styles.eventDateDay}>
+                    {eventDate.getDate()}
+                  </Text>
+                  <Text style={styles.eventDateMonth}>
+                    {eventDate.toLocaleString('default', { month: 'short' })}
+                  </Text>
+                </>
+              );
+            }
+          })()}
         </View>
         <View style={styles.eventContent}>
           <View style={styles.eventTitleContainer}>
