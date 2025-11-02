@@ -198,13 +198,141 @@ class AuthServiceClass {
         },
       });
 
-      await this.logout();
+      await this.clearAuth();
     } catch (error) {
-      console.error('Delete account error:', error);
+      console.error('Error deleting account:', error);
       throw error;
+    }
+  }
+
+  async requestPasswordReset(email: string): Promise<{ success: boolean; message?: string }> {
+    try {
+      // Call the Simple JWT Login plugin's password reset request endpoint
+      // This will trigger the WordPress plugin to send a reset code email via FluentSMTP
+      const response = await axios.post(`${API_URL}/wp-json/simple-jwt-login/v1/user/reset_password`, {
+        email,
+        AUTH_KEY: 'debremewi'
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      console.log('Password reset request response:', response.data);
+
+      return {
+        success: response.data.success || true,
+        message: response.data.message || 'Password reset code sent to your email'
+      };
+    } catch (error) {
+      console.error('Request password reset error:', error);
+      
+      if (axios.isAxiosError(error)) {
+        console.error('Reset request error details:', {
+          response: error.response?.data,
+          status: error.response?.status,
+          headers: error.response?.headers
+        });
+        if (error.response?.data?.message) {
+          return {
+            success: false,
+            message: error.response.data.message
+          };
+        }
+      }
+
+      return {
+        success: false,
+        message: 'Failed to send reset code'
+      };
+    }
+  }
+
+  async resetPassword(email: string, newPassword: string, resetCode: string): Promise<{ success: boolean; message?: string }> {
+    try {
+      // Based on Simple JWT Login plugin documentation, use the correct endpoint for password reset with code
+      // The plugin uses /user/reset_password (singular) for the actual password change operation
+      let response;
+      
+      try {
+        // Try the correct Simple JWT Login endpoint format
+        response = await axios.put(`${API_URL}/wp-json/simple-jwt-login/v1/user/reset_password`, {
+          email,
+          code: resetCode,
+          new_password: newPassword,
+          AUTH_KEY: 'debremewi'
+        }, {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+      } catch (primaryError) {
+        // If primary endpoint fails with 404, try alternative REST route format
+        if (axios.isAxiosError(primaryError) && primaryError.response?.status === 404) {
+          console.log('Primary endpoint failed, trying alternative REST route format...');
+          response = await axios.put(`${API_URL}/?rest_route=/simple-jwt-login/v1/user/reset_password`, {
+            email,
+            code: resetCode,
+            new_password: newPassword,
+            AUTH_KEY: 'debremewi'
+          }, {
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+        } else {
+          throw primaryError;
+        }
+      }
+
+      console.log('Password reset response:', response.data);
+
+      return {
+        success: response.data.success || false,
+        message: response.data.message || 'Password reset successfully'
+      };
+
+    } catch (error) {
+      console.error('Password reset error:', error);
+      
+      if (axios.isAxiosError(error)) {
+        console.error('Reset password error details:', {
+          response: error.response?.data,
+          status: error.response?.status,
+          headers: error.response?.headers,
+          url: error.config?.url
+        });
+        
+        // Provide specific error messages based on status code
+        if (error.response?.status === 404) {
+          return {
+            success: false,
+            message: 'Password reset endpoint not found. Please ensure the Simple JWT Login plugin has "Change user password" enabled in the WordPress admin settings.'
+          };
+        }
+        
+        if (error.response?.data?.message) {
+          return {
+            success: false,
+            message: error.response.data.message
+          };
+        }
+      }
+
+      return {
+        success: false,
+        message: 'Failed to reset password'
+      };
     }
   }
 }
 
 export const AuthService = new AuthServiceClass();
 export default AuthService;
+
+// Export individual methods for convenience
+export const requestPasswordReset = (email: string) => 
+  AuthService.requestPasswordReset(email);
+
+export const resetPassword = (email: string, newPassword: string, resetCode: string) => 
+  AuthService.resetPassword(email, newPassword, resetCode);

@@ -70,7 +70,7 @@ export type RootStackParamList = {
   Login: undefined;
   Register: undefined;
   ForgotPassword: undefined;
-  NewPassword: { token: string; email: string };
+  NewPassword: { email: string };
   
   // Onboarding
   Onboarding: undefined;

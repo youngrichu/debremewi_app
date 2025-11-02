@@ -577,9 +577,14 @@
       "cancelButton": "Cancel",
       "success": "Password updated successfully!",
       "errors": {
+        "required": "New password is required",
+        "minLength": "Password must be at least 6 characters",
+        "mismatch": "Passwords do not match",
+        "resetCodeRequired": "Reset code is required",
         "updateFailed": "Failed to update password"
       },
       "placeholders": {
+        "resetCode": "Enter reset code from email",
         "newPassword": "Enter new password",
         "confirmPassword": "Confirm new password"
       }

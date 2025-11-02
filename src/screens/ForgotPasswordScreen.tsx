@@ -11,10 +11,14 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { LinearGradient } from 'expo-linear-gradient';
+import { StackScreenProps } from '@react-navigation/stack';
 import { useTranslation } from 'react-i18next';
-import { login } from '../services/auth';
+import { requestPasswordReset } from '../services/AuthService';
+import { RootStackParamList } from '../types';
 
-const ForgotPasswordScreen = ({ navigation }) => {
+type Props = StackScreenProps<RootStackParamList, 'ForgotPassword'>;
+
+const ForgotPasswordScreen = ({ navigation }: Props) => {
   const { t } = useTranslation();
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
@@ -33,15 +37,14 @@ const ForgotPasswordScreen = ({ navigation }) => {
     }
 
     try {
-      // Get JWT for the email
-      const response = await login(email, '');  // You might need to adjust this based on your API
-      if (response.success && response.token) {
+      // Request password reset - this will send a reset code to the user's email
+      const response = await requestPasswordReset(email);
+      if (response.success) {
         navigation.navigate('NewPassword', { 
-          email,
-          jwt: response.token
+          email
         });
       } else {
-        setError(t('auth.forgotPassword.errors.verificationFailed'));
+        setError(response.message || t('auth.forgotPassword.errors.verificationFailed'));
       }
     } catch (error) {
       setError(error instanceof Error ? error.message : t('auth.forgotPassword.errors.failedToVerify'));

@@ -114,4 +114,4 @@ interface RegisterFormData {
 interface LoginFormData {
   email: string;
   password: string;
-} 
+}

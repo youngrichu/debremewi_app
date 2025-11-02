@@ -20,26 +20,30 @@ type Props = StackScreenProps<RootStackParamList, 'NewPassword'>;
 
 const NewPasswordScreen = ({ navigation, route }: Props) => {
   const { t } = useTranslation();
-  const { email, jwt } = route.params;
+  const { email } = route.params;
+  const [resetCode, setResetCode] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
-  const validatePasswords = (newPass: string, confirmPass: string): string | null => {
+  const validateInputs = (code: string, newPass: string, confirmPass: string): string | null => {
+    if (!code) return t('auth.newPassword.errors.resetCodeRequired');
     if (!newPass) return t('auth.newPassword.errors.required');
     if (newPass.length < 6) return t('auth.newPassword.errors.minLength');
     if (newPass !== confirmPass) return t('auth.newPassword.errors.mismatch');
     return null;
   };
 
-  const handleTextChange = (text: string, field: 'new' | 'confirm') => {
+  const handleTextChange = (text: string, field: 'code' | 'new' | 'confirm') => {
     // Clear previous messages
     setError('');
     setSuccess(false);
     
-    if (field === 'new') {
+    if (field === 'code') {
+      setResetCode(text);
+    } else if (field === 'new') {
       setNewPassword(text);
     } else {
       setConfirmPassword(text);
@@ -51,7 +55,7 @@ const NewPasswordScreen = ({ navigation, route }: Props) => {
     setError('');
     setSuccess(false);
 
-    const validationError = validatePasswords(newPassword, confirmPassword);
+    const validationError = validateInputs(resetCode, newPassword, confirmPassword);
     if (validationError) {
       setError(validationError);
       return;
@@ -59,16 +63,19 @@ const NewPasswordScreen = ({ navigation, route }: Props) => {
 
     setLoading(true);
     try {
-      const success = await resetPassword(email, newPassword, jwt);
+      const result = await resetPassword(email, newPassword, resetCode);
       
-      if (success) {
+      if (result.success) {
         setSuccess(true);
-        // Navigate back to login after a short delay
+        // Reset navigation stack and navigate to login after a short delay
         setTimeout(() => {
-          navigation.navigate('Login');
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Login' }],
+          });
         }, 2000);
       } else {
-        setError(t('auth.newPassword.errors.updateFailed'));
+        setError(result.message || t('auth.newPassword.errors.updateFailed'));
       }
     } catch (error) {
       setError(error instanceof Error ? error.message : t('auth.newPassword.errors.updateFailed'));
@@ -94,6 +101,19 @@ const NewPasswordScreen = ({ navigation, route }: Props) => {
         </View>
 
         <View style={styles.formContainer}>
+          <View style={styles.inputContainer}>
+            <Ionicons name="key-outline" size={20} color="#666" style={styles.inputIcon} />
+            <TextInput
+              style={styles.input}
+              placeholder={t('auth.newPassword.placeholders.resetCode')}
+              placeholderTextColor="#666"
+              value={resetCode}
+              onChangeText={(text) => handleTextChange(text, 'code')}
+              keyboardType="default"
+              autoCapitalize="none"
+            />
+          </View>
+
           <View style={styles.inputContainer}>
             <Ionicons name="lock-closed-outline" size={20} color="#666" style={styles.inputIcon} />
             <TextInput
@@ -241,4 +261,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NewPasswordScreen; 
+export default NewPasswordScreen;

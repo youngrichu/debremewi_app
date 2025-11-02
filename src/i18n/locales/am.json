@@ -588,9 +588,11 @@
         "required": "አዲስ የይለፍ ቃል አስፈላጊ ነው",
         "minLength": "የይለፍ ቃል ቢያንስ 6 ቁምፊዎች ሊኖሩት ይገባል",
         "mismatch": "የይለፍ ቃሎቹ አይዛመዱም",
+        "resetCodeRequired": "የዳግም ማስተካከያ ኮድ አስፈላጊ ነው",
         "updateFailed": "የይለፍ ቃል ማዘመን አልተሳካም"
       },
       "placeholders": {
+        "resetCode": "ከኢሜይል የዳግም ማስተካከያ ኮድ ያስገቡ",
         "newPassword": "አዲስ የይለፍ ቃል ያስገቡ",
         "confirmPassword": "የይለፍ ቃል ያረጋግጡ"
       }
