@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
+import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { API_URL } from '../config';
 import { store } from '../store';
 import { clearAuth } from '../store/slices/authSlice';
@@ -45,16 +45,88 @@ export interface RegisterResponse {
   message?: string;
 }
 
+export interface RefreshTokenResponse {
+  success: boolean;
+  jwt?: string;
+  token?: string;
+  message?: string;
+}
+
+export interface TokenValidationResponse {
+  success: boolean;
+  valid?: boolean;
+  message?: string;
+}
+
 class AuthServiceClass {
   private token: string | null = null;
+  private refreshToken: string | null = null;
+  private tokenExpirationTime: number | null = null;
+  private isRefreshing: boolean = false;
+  private refreshPromise: Promise<string | null> | null = null;
+
+  // Decode JWT token to extract expiration time
+  private decodeJWT(token: string): any {
+    try {
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split('')
+          .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+          .join('')
+      );
+      return JSON.parse(jsonPayload);
+    } catch (error) {
+      console.error('Error decoding JWT:', error);
+      return null;
+    }
+  }
+
+  // Check if token is expired or will expire soon (within 5 minutes)
+  private isTokenExpired(token: string): boolean {
+    const decoded = this.decodeJWT(token);
+    if (!decoded || !decoded.exp) return true;
+    
+    const currentTime = Math.floor(Date.now() / 1000);
+    const bufferTime = 5 * 60; // 5 minutes buffer
+    return decoded.exp < (currentTime + bufferTime);
+  }
+
+  // Validate token with server
+  async validateToken(token?: string): Promise<boolean> {
+    try {
+      const tokenToValidate = token || await this.getToken();
+      if (!tokenToValidate) return false;
+
+      const response = await axios.post(`${API_URL}/wp-json/simple-jwt-login/v1/auth/validate`, {
+        JWT: tokenToValidate,
+        AUTH_KEY: 'debremewi'
+      });
+
+      return response.data.success === true;
+    } catch (error) {
+      console.error('Token validation error:', error);
+      return false;
+    }
+  }
 
   async getToken(): Promise<string | null> {
-    if (this.token) return this.token;
+    if (this.token && !this.isTokenExpired(this.token)) {
+      return this.token;
+    }
     
     try {
       const token = await AsyncStorage.getItem('userToken');
-      this.token = token;
-      return token;
+      if (token && !this.isTokenExpired(token)) {
+        this.token = token;
+        return token;
+      } else if (token) {
+        // Token exists but is expired, try to refresh
+        console.log('Token expired, attempting refresh...');
+        return await this.refreshTokenIfNeeded();
+      }
+      return null;
     } catch (error) {
       console.error('Error getting token:', error);
       return null;
@@ -65,16 +137,105 @@ class AuthServiceClass {
     try {
       await AsyncStorage.setItem('userToken', token);
       this.token = token;
+      
+      // Extract expiration time from token
+      const decoded = this.decodeJWT(token);
+      if (decoded && decoded.exp) {
+        this.tokenExpirationTime = decoded.exp * 1000; // Convert to milliseconds
+      }
     } catch (error) {
       console.error('Error setting token:', error);
       throw error;
     }
   }
 
+  async setRefreshToken(refreshToken: string): Promise<void> {
+    try {
+      await AsyncStorage.setItem('refreshToken', refreshToken);
+      this.refreshToken = refreshToken;
+    } catch (error) {
+      console.error('Error setting refresh token:', error);
+      throw error;
+    }
+  }
+
+  async getRefreshToken(): Promise<string | null> {
+    if (this.refreshToken) return this.refreshToken;
+    
+    try {
+      const refreshToken = await AsyncStorage.getItem('refreshToken');
+      this.refreshToken = refreshToken;
+      return refreshToken;
+    } catch (error) {
+      console.error('Error getting refresh token:', error);
+      return null;
+    }
+  }
+
+  // Refresh token functionality
+  async refreshTokenIfNeeded(): Promise<string | null> {
+    // Prevent multiple simultaneous refresh attempts
+    if (this.isRefreshing && this.refreshPromise) {
+      return this.refreshPromise;
+    }
+
+    this.isRefreshing = true;
+    this.refreshPromise = this.performTokenRefresh();
+    
+    try {
+      const result = await this.refreshPromise;
+      return result;
+    } finally {
+      this.isRefreshing = false;
+      this.refreshPromise = null;
+    }
+  }
+
+  private async performTokenRefresh(): Promise<string | null> {
+    try {
+      const refreshToken = await this.getRefreshToken();
+      if (!refreshToken) {
+        console.log('No refresh token available');
+        await this.clearAuth();
+        return null;
+      }
+
+      const response = await axios.post(`${API_URL}/wp-json/simple-jwt-login/v1/auth/refresh`, {
+        JWT: refreshToken,
+        AUTH_KEY: 'debremewi'
+      });
+
+      if (response.data.success && (response.data.jwt || response.data.token)) {
+        const newToken = response.data.jwt || response.data.token;
+        await this.setToken(newToken);
+        
+        // If a new refresh token is provided, store it
+        if (response.data.refresh_token) {
+          await this.setRefreshToken(response.data.refresh_token);
+        }
+        
+        console.log('Token refreshed successfully');
+        return newToken;
+      } else {
+        console.log('Token refresh failed:', response.data.message);
+        await this.clearAuth();
+        return null;
+      }
+    } catch (error) {
+      console.error('Token refresh error:', error);
+      await this.clearAuth();
+      return null;
+    }
+  }
+
   async clearAuth(): Promise<void> {
     try {
-      await AsyncStorage.multiRemove(['userToken', 'userData']);
+      await AsyncStorage.multiRemove(['userToken', 'userData', 'refreshToken']);
       this.token = null;
+      this.refreshToken = null;
+      this.tokenExpirationTime = null;
+      this.isRefreshing = false;
+      this.refreshPromise = null;
       store.dispatch(clearAuth());
       store.dispatch(clearUser());
     } catch (error) {
@@ -103,6 +264,13 @@ class AuthServiceClass {
       }
 
       await this.setToken(token);
+      
+      // Store refresh token if provided
+      const refreshToken = loginResponse.data.data?.refresh_token || loginResponse.data.refresh_token;
+      if (refreshToken) {
+        await this.setRefreshToken(refreshToken);
+      }
+      
       console.log('Token stored successfully');
 
       const headers = {
@@ -325,9 +493,67 @@ class AuthServiceClass {
       };
     }
   }
+
+  // Setup axios interceptors for automatic token management
+  setupAxiosInterceptors(): void {
+    // Request interceptor to add token to headers
+    axios.interceptors.request.use(
+      async (config: InternalAxiosRequestConfig) => {
+        const token = await this.getToken();
+        if (token && config.headers) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+      },
+      (error) => {
+        return Promise.reject(error);
+      }
+    );
+
+    // Response interceptor to handle token expiration
+    axios.interceptors.response.use(
+      (response: AxiosResponse) => {
+        return response;
+      },
+      async (error) => {
+        const originalRequest = error.config;
+
+        // Check if error is due to expired token
+        if (error.response?.status === 401 && !originalRequest._retry) {
+          originalRequest._retry = true;
+
+          try {
+            console.log('401 error detected, attempting token refresh...');
+            const newToken = await this.refreshTokenIfNeeded();
+            
+            if (newToken && originalRequest.headers) {
+              originalRequest.headers.Authorization = `Bearer ${newToken}`;
+              return axios(originalRequest);
+            } else {
+              // Refresh failed, redirect to login
+              console.log('Token refresh failed, clearing auth...');
+              await this.clearAuth();
+              // You might want to emit an event here to redirect to login screen
+              return Promise.reject(error);
+            }
+          } catch (refreshError) {
+            console.error('Error during token refresh:', refreshError);
+            await this.clearAuth();
+            return Promise.reject(error);
+          }
+        }
+
+        return Promise.reject(error);
+      }
+    );
+  }
 }
 
 export const AuthService = new AuthServiceClass();
+
+// Initialize axios interceptors
+AuthService.setupAxiosInterceptors();
+
 export default AuthService;
 
 // Export individual methods for convenience
