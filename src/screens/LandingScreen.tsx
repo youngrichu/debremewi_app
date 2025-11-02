@@ -22,7 +22,7 @@ export default function LandingScreen() {
 
   return (
     <LinearGradient
-      colors={['#2196F3', '#1976D2']}
+      colors={['#2473E0', '#1E5BB8']}
       style={styles.container}
     >
       <View style={styles.languageContainer}>
@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   loginButtonText: {
-    color: '#2196F3',
+    color: '#2473E0',
     fontSize: 18,
     fontWeight: '600',
     textAlign: 'center',

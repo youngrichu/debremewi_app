@@ -890,7 +890,7 @@ export default function EventsScreen() {
     markedDates[today] = {
       marked: false,
       selected: selectedDate === today,
-      selectedColor: selectedDate === today ? '#2196F3' : '#E3F2FD',
+      selectedColor: selectedDate === today ? '#2473E0' : '#E3F2FD',
     };
 
     // Mark dates that have events with dots
@@ -903,7 +903,7 @@ export default function EventsScreen() {
             ...markedDates[dateStr],
             marked: true, // Show dot for events
             selected: dateStr === selectedDate || isToday,
-            selectedColor: dateStr === selectedDate ? '#2196F3' : (isToday ? '#E3F2FD' : undefined),
+            selectedColor: dateStr === selectedDate ? '#2473E0' : (isToday ? '#E3F2FD' : undefined),
           };
         } catch (error) {
           console.warn('Invalid date format:', event.date);
@@ -916,7 +916,7 @@ export default function EventsScreen() {
       markedDates[selectedDate] = {
         marked: false,
         selected: true,
-        selectedColor: '#2196F3',
+        selectedColor: '#2473E0',
       };
     }
 
@@ -1158,16 +1158,16 @@ export default function EventsScreen() {
                   <Ionicons 
                     name={direction === 'left' ? 'chevron-back' : 'chevron-forward'} 
                     size={24} 
-                    color="#2196F3" 
+                    color="#2473E0" 
                   />
                 )}
                 enableSwipeMonths={true}
                 style={styles.calendar}
                 theme={{
-                  selectedDayBackgroundColor: '#2196F3',
-                  todayTextColor: '#2196F3',
+                  selectedDayBackgroundColor: '#2473E0',
+                  todayTextColor: '#2473E0',
                   todayBackgroundColor: '#E3F2FD',
-                  dotColor: '#2196F3',
+                  dotColor: '#2473E0',
                   textMonthFontSize: 18,
                   textMonthFontWeight: 'bold',
                   textDayFontSize: 16,
@@ -1200,7 +1200,7 @@ export default function EventsScreen() {
                       borderRadius: 0,
                     },
                     selected: {
-                      backgroundColor: '#2196F3',
+                      backgroundColor: '#2473E0',
                       borderRadius: 0,
                     }
                   },
@@ -1389,7 +1389,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   todayDate: {
-    color: '#2196F3',
+    color: '#2473E0',
     fontWeight: 'bold',
   },
   weekTimeLabel: {
@@ -1406,7 +1406,7 @@ const styles = StyleSheet.create({
   weekEventBlock: {
     position: 'absolute',
     left: 5,
-    backgroundColor: '#2196F3',
+    backgroundColor: '#2473E0',
     borderRadius: 4,
     padding: 4,
     opacity: 0.9,
@@ -1454,7 +1454,7 @@ const styles = StyleSheet.create({
   },
   dayEventBlock: {
     position: 'absolute',
-    backgroundColor: '#2196F3',
+    backgroundColor: '#2473E0',
     borderRadius: 4,
     padding: 4,
     margin: 2,
@@ -1592,11 +1592,11 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   todayText: {
-    color: '#2196F3',
+    color: '#2473E0',
     fontWeight: 'bold',
   },
   selectedContainer: {
-    backgroundColor: '#2196F3',
+    backgroundColor: '#2473E0',
     borderRadius: 4,
   },
   selectedText: {
@@ -1613,7 +1613,7 @@ const styles = StyleSheet.create({
     width: 4,
     height: 4,
     borderRadius: 2,
-    backgroundColor: '#2196F3',
+    backgroundColor: '#2473E0',
   },
   monthYearContainer: {
     alignItems: 'center',
@@ -1630,7 +1630,7 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#2196F3',
+    backgroundColor: '#2473E0',
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -1756,7 +1756,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   viewAllButton: {
-    backgroundColor: '#2196F3',
+    backgroundColor: '#2473E0',
     paddingHorizontal: 24,
     paddingVertical: 12,
     borderRadius: 25,
@@ -1801,7 +1801,7 @@ const styles = StyleSheet.create({
     shadowRadius: 1,
   },
   todayButtonText: {
-    color: '#2196F3',
+    color: '#2473E0',
     fontSize: 16,
     fontWeight: '600',
     textAlign: 'center',

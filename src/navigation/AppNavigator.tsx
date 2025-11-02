@@ -184,7 +184,7 @@ function MainTabs() {
 
           return <Ionicons name={iconName as any} size={size} color={color} />;
         },
-        tabBarActiveTintColor: '#2196F3',
+        tabBarActiveTintColor: '#2473E0',
         tabBarInactiveTintColor: 'gray',
         headerRight: () => (
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>

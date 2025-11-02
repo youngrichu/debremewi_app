@@ -120,7 +120,7 @@ export const NotificationCard = ({ notification, onPress }: NotificationCardProp
       case 'event':
         return {
           background: '#e8f5e9',
-          text: '#2e7d32'
+          text: '#008036'
         };
       case 'blog_post':
         return {

@@ -86,11 +86,37 @@ class AuthServiceClass {
   // Check if token is expired or will expire soon (within 5 minutes)
   private isTokenExpired(token: string): boolean {
     const decoded = this.decodeJWT(token);
-    if (!decoded || !decoded.exp) return true;
+    if (!decoded) {
+      console.log('Token could not be decoded, considering expired');
+      return true;
+    }
     
-    const currentTime = Math.floor(Date.now() / 1000);
-    const bufferTime = 5 * 60; // 5 minutes buffer
-    return decoded.exp < (currentTime + bufferTime);
+    // If token has explicit expiration time, use it
+    if (decoded.exp) {
+      const currentTime = Math.floor(Date.now() / 1000);
+      const bufferTime = 5 * 60; // 5 minutes buffer
+      const isExpired = decoded.exp < (currentTime + bufferTime);
+      console.log(`Token expiration check: exp=${decoded.exp}, current=${currentTime}, expired=${isExpired}`);
+      return isExpired;
+    }
+    
+    // If no exp field (like Simple JWT Login), check based on issued time
+    // Simple JWT Login tokens are typically valid for the duration set in WordPress settings
+    // We'll be more conservative and only consider tokens expired if they're very old
+    if (decoded.iat) {
+      const currentTime = Math.floor(Date.now() / 1000);
+      const tokenAge = currentTime - decoded.iat;
+      // Consider token expired if it's older than 23 hours (to be safe with 24h tokens)
+      const maxAge = 23 * 60 * 60; // 23 hours in seconds
+      const isExpired = tokenAge > maxAge;
+      console.log(`Token age check: iat=${decoded.iat}, age=${Math.floor(tokenAge/60)}min, maxAge=${Math.floor(maxAge/60)}min, expired=${isExpired}`);
+      return isExpired;
+    }
+    
+    // If we can't determine expiration, assume token is still valid
+    // This prevents unnecessary refresh attempts on fresh tokens
+    console.log('Token has no expiration info (no exp or iat), assuming valid');
+    return false;
   }
 
   // Validate token with server
@@ -122,9 +148,19 @@ class AuthServiceClass {
         this.token = token;
         return token;
       } else if (token) {
-        // Token exists but is expired, try to refresh
-        console.log('Token expired, attempting refresh...');
-        return await this.refreshTokenIfNeeded();
+        // Token exists but is expired, only try to refresh if we have a refresh token
+        const refreshToken = await this.getRefreshToken();
+        if (refreshToken) {
+          console.log('Token expired, attempting refresh...');
+          return await this.refreshTokenIfNeeded();
+        } else {
+          console.log('Token expired but no refresh token available');
+          // Clear the expired token but don't clear full auth state
+          // This allows the user to remain logged in until they make an API call
+          this.token = null;
+          await AsyncStorage.removeItem('userToken');
+          return null;
+        }
       }
       return null;
     } catch (error) {
@@ -195,8 +231,9 @@ class AuthServiceClass {
     try {
       const refreshToken = await this.getRefreshToken();
       if (!refreshToken) {
-        console.log('No refresh token available');
-        await this.clearAuth();
+        console.log('No refresh token available - Simple JWT Login may not support refresh tokens');
+        // Don't clear auth immediately - let the token expire naturally
+        // This prevents logout on fresh logins when refresh tokens aren't provided
         return null;
       }
 

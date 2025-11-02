@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   recurringBadge: {
-    backgroundColor: '#FF9800',
+    backgroundColor: '#DDC65D',
     borderRadius: 8,
     padding: 2,
     marginLeft: 4,

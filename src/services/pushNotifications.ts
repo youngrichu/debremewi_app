@@ -50,7 +50,7 @@ export const initializeNotifications = async () => {
       name: 'Events',
       importance: Notifications.AndroidImportance.HIGH,
       vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#4CAF50',
+      lightColor: '#008036',
       lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
       sound: true,
     });
@@ -70,7 +70,7 @@ export const initializeNotifications = async () => {
       name: 'Announcements',
       importance: Notifications.AndroidImportance.HIGH,
       vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF9800',
+      lightColor: '#DDC65D',
       lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
       sound: true,
     });

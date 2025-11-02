@@ -90,7 +90,7 @@ const NewPasswordScreen = ({ navigation, route }: Props) => {
       style={styles.container}
     >
       <LinearGradient
-        colors={['#2196F3', '#1976D2']}
+        colors={['#2473E0', '#1E5BB8']}
         style={styles.gradient}
       >
         <View style={styles.headerSection}>
@@ -224,13 +224,13 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   successText: {
-    color: '#4CAF50',
+    color: '#008036',
     fontSize: 14,
     marginBottom: 16,
     marginLeft: 4,
   },
   updateButton: {
-    backgroundColor: '#2196F3',
+        backgroundColor: '#2473E0',
     borderRadius: 10,
     height: 50,
     justifyContent: 'center',

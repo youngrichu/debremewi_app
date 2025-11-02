@@ -162,7 +162,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   const renderEvents = () => {
     if (loading) {
-      return <ActivityIndicator size="large" color="#2196F3" />;
+      return <ActivityIndicator size="large" color="#2473E0" />;
     }
 
     if (error) {
@@ -327,7 +327,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               style={styles.quickActionItem}
               onPress={() => handleViewAllEventsPress()}
             >
-              <View style={[styles.iconContainer, { backgroundColor: '#FF9800' }]}>
+              <View style={[styles.iconContainer, { backgroundColor: '#DDC65D' }]}>
                 <Ionicons name="calendar" size={32} color="#FFF" />
               </View>
               <Text style={styles.quickActionText}>{t('home.quickActions.events')}</Text>
@@ -337,7 +337,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               style={styles.quickActionItem}
               onPress={() => handleViewAllBlogPostsPress()}
             >
-              <View style={[styles.iconContainer, { backgroundColor: '#4CAF50' }]}>
+              <View style={[styles.iconContainer, { backgroundColor: '#008036' }]}>
                 <Ionicons name="newspaper" size={32} color="#FFF" />
               </View>
               <Text style={styles.quickActionText}>{t('home.quickActions.blog')}</Text>
@@ -347,8 +347,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               style={styles.quickActionItem}
               onPress={() => handleMorePress('Location')}
             >
-              <View style={[styles.iconContainer, { backgroundColor: '#2196F3' }]}>
-                <Ionicons name="location" size={32} color="#FFF" />
+              <View style={[styles.iconContainer, { backgroundColor: '#2473E0' }]}>
+          <Ionicons name="location" size={32} color="#FFF" />
               </View>
               <Text style={styles.quickActionText}>{t('home.quickActions.location')}</Text>
             </TouchableOpacity>
@@ -500,7 +500,7 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   seeAllText: {
-    color: '#2196F3',
+    color: '#2473E0',
     fontSize: 14,
   },
   blogCard: {
@@ -554,7 +554,7 @@ const styles = StyleSheet.create({
   },
   eventDateBox: {
     width: 60,
-    backgroundColor: '#FF9800',
+    backgroundColor: '#DDC65D',
     borderTopLeftRadius: 8,
     borderBottomLeftRadius: 8,
     padding: 8,
@@ -683,7 +683,7 @@ const styles = StyleSheet.create({
   recurringBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#FF9800',
+    backgroundColor: '#DDC65D',
     paddingHorizontal: 4,
     paddingVertical: 1,
     borderRadius: 8,

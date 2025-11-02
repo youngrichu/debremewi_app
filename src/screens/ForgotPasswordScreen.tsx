@@ -57,7 +57,7 @@ const ForgotPasswordScreen = ({ navigation }: Props) => {
       style={styles.container}
     >
       <LinearGradient
-        colors={['#2196F3', '#1976D2']}
+        colors={['#2473E0', '#1E5BB8']}
         style={styles.gradient}
       >
         <ScrollView 
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   nextButton: {
-    backgroundColor: '#2196F3',
+    backgroundColor: '#2473E0',
     borderRadius: 10,
     height: 50,
     justifyContent: 'center',

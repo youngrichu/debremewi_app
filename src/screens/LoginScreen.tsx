@@ -109,7 +109,7 @@ const LoginScreen = ({ navigation, route }: LoginScreenProps) => {
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
     >
       <LinearGradient
-        colors={['#2196F3', '#1976D2']}
+        colors={['#2473E0', '#1E5BB8']}
         style={styles.gradient}
       >
         <ScrollView
@@ -285,11 +285,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   forgotPasswordText: {
-    color: '#2196F3',
+    color: '#2473E0',
     fontSize: 14,
   },
   loginButton: {
-    backgroundColor: '#2196F3',
+    backgroundColor: '#2473E0',
     borderRadius: 10,
     height: 50,
     justifyContent: 'center',
@@ -316,7 +316,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   registerLink: {
-    color: '#2196F3',
+    color: '#2473E0',
     fontSize: 14,
     fontWeight: '600',
   },
