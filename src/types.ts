@@ -30,13 +30,20 @@ export interface Event {
   id: number;
   title: string;
   date: string;
-  end_date: string;
+  end_date?: string;
   location?: string;
   description?: string;
   content?: string;
   thumbnail?: string;
   permalink?: string;
-  categories: EventCategory[];
+  categories?: string[] | EventCategory[];
+  is_occurrence?: boolean | number;
+  occurrence_parent_id?: number;
+  is_recurring?: boolean | number;
+  recurring_pattern?: 'daily' | 'weekly' | 'monthly';
+  recurring_interval?: number;
+  recurring_end_date?: string | null;
+  recurring_count?: number | null;
 }
 
 export type RootStackParamList = {
@@ -66,12 +73,12 @@ export type RootStackParamList = {
     screen: string;
     params?: object;
   };
-  Login: undefined;
+  Login: { email?: string } | undefined;
   Register: undefined;
   ForgotPassword: undefined;
   Onboarding: undefined;
   NewPassword: { email: string };
-  EventDetails: { eventId: number };
+  EventDetails: { eventId: number; occurrenceDate?: string; isOccurrence?: boolean };
   YouTube: undefined;
   AnnouncementsList: undefined;
   AnnouncementDetail: undefined;

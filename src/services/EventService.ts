@@ -79,19 +79,18 @@ export class EventService {
           id: typeof event.id === 'string' ? parseInt(event.id, 10) : event.id
         }));
         
-        // Debug logging for recurring events
-        console.log('EventService.getEvents - Raw API response events:', response.data.events.length);
-        console.log('EventService.getEvents - Events with is_occurrence field:', 
-          response.data.events.filter((e: any) => e.is_occurrence).map((e: any) => ({
-            id: e.id,
-            title: e.title,
-            is_occurrence: e.is_occurrence,
-            occurrence_parent_id: e.occurrence_parent_id
-          }))
-        );
-        
+        // Deduplicate events based on ID and date to prevent duplicate rendering
+        const uniqueEvents = processedEvents.filter((event, index, self) => {
+          return index === self.findIndex(e => 
+            e.id === event.id && 
+            e.date === event.date &&
+            e.is_occurrence === event.is_occurrence &&
+            e.occurrence_parent_id === event.occurrence_parent_id
+          );
+        });
+
         return {
-          events: processedEvents,
+          events: uniqueEvents,
           hasMore: (params.page || 1) < response.data.pages,
           total: response.data.total
         };

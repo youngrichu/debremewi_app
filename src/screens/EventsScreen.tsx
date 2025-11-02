@@ -264,7 +264,7 @@ const WeekView = ({
                     .filter(event => isEventOnDay(event.date, day))
                     .map(event => {
                       const startTime = new Date(event.date);
-                      const endTime = new Date(event.end_date);
+                      const endTime = event.end_date ? new Date(event.end_date) : startTime;
                       const hours = startTime.getHours();
                       const minutes = startTime.getMinutes();
                       const topPosition = (hours * HOUR_HEIGHT) + ((minutes / 60) * HOUR_HEIGHT);
@@ -387,7 +387,7 @@ const DayView = ({ events, onEventPress, selectedDate }: {
             {dayEvents.map(event => {
               try {
                 const startTime = new Date(event.date);
-                const endTime = new Date(event.end_date);
+                const endTime = event.end_date ? new Date(event.end_date) : startTime;
                 const startHour = startTime.getHours() + startTime.getMinutes() / 60;
                 const duration = (endTime.getTime() - startTime.getTime()) / (1000 * 60 * 60);
 
@@ -734,7 +734,7 @@ export default function EventsScreen() {
     if (selectedCategory) {
       filtered = eventsList.filter(event => {
         return event.categories?.some(category => 
-          category.slug === selectedCategory
+          typeof category === 'object' && category !== null && 'slug' in category && category.slug === selectedCategory
         );
       });
     }
@@ -782,7 +782,7 @@ export default function EventsScreen() {
       if (selectedCategory) {
         const filtered = allEvents.filter(event => {
           return event.categories?.some(cat => 
-            cat.slug === selectedCategory
+            typeof cat === 'object' && cat !== null && 'slug' in cat && cat.slug === selectedCategory
           );
         });
         setEvents(filtered);
@@ -801,7 +801,7 @@ export default function EventsScreen() {
     if (selectedCategory) {
       filtered = filtered.filter(event => {
         return event.categories?.some(cat => 
-          cat.slug === selectedCategory
+          typeof cat === 'object' && cat !== null && 'slug' in cat && cat.slug === selectedCategory
         );
       });
     }
@@ -837,7 +837,7 @@ export default function EventsScreen() {
     
     filtered = allEvents.filter(event => {
       return event.categories?.some(cat => 
-        cat.slug === category
+        typeof cat === 'object' && cat !== null && 'slug' in cat && cat.slug === category
       );
     });
 
@@ -859,7 +859,7 @@ export default function EventsScreen() {
 
   const handleEventPress = (event: Event) => {
     const eventId = event.is_occurrence ? event.occurrence_parent_id : event.id;
-    const occurrenceDate = event.is_occurrence ? event.date : null;
+    const occurrenceDate = event.is_occurrence ? event.date : undefined;
     const isOccurrence = event.is_occurrence === true || event.is_occurrence === 1;
     
     navigation.navigate('EventDetails', { 
@@ -1026,6 +1026,22 @@ export default function EventsScreen() {
             bounces={true}
             overScrollMode="always"
             removeClippedSubviews={false}
+            keyExtractor={(item, index) => {
+              // Generate unique key combining event ID with additional properties
+              const baseKey = item.id ? item.id.toString() : `event-${index}`;
+              
+              // For recurring events or occurrences, add more uniqueness
+              if (item.is_occurrence && item.date) {
+                return `${baseKey}-occurrence-${item.date}`;
+              }
+              
+              if (item.occurrence_parent_id) {
+                return `${baseKey}-parent-${item.occurrence_parent_id}`;
+              }
+              
+              // Add index as fallback for any potential duplicates
+              return `${baseKey}-${index}`;
+            }}
             ListHeaderComponent={() => {
               const todayEvents = getTodayEvents(events);
               const hasEventsToday = todayEvents.length > 0;
@@ -1730,6 +1746,7 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
     marginBottom: 8,
+    marginTop: 20,
     width: '100%',
   },
   eventsHeaderText: {

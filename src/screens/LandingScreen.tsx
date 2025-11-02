@@ -7,7 +7,8 @@ import {
   Platform,
   Dimensions,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, NavigationProp } from '@react-navigation/native';
+import { RootStackParamList } from '../types';
 import { LinearGradient } from 'expo-linear-gradient';
 import Constants from 'expo-constants';
 import { Text } from '../components/Text';
@@ -17,7 +18,7 @@ import { LanguageSelector } from '../components/LanguageSelector';
 const { width } = Dimensions.get('window');
 
 export default function LandingScreen() {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const { t } = useTranslation();
 
   return (

@@ -28,6 +28,7 @@
     "ethiopian-calendar-converter": "^1.0.2",
     "expo": "~52.0.0",
     "expo-calendar": "~14.0.2",
+    "expo-constants": "^18.0.10",
     "expo-dev-client": "~5.0.2",
     "expo-device": "~7.0.1",
     "expo-image-picker": "~16.0.2",

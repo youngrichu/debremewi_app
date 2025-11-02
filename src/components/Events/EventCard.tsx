@@ -12,20 +12,11 @@ interface EventCardProps {
   onPress: () => void;
 }
 
-export const EventCard: React.FC<EventCardProps> = ({ event, onPress }) => {
+export const EventCard: React.FC<EventCardProps> = React.memo(({ event, onPress }) => {
   const { t, i18n } = useTranslation();
   const isAmharic = i18n.language === 'am';
 
-  // Debug logging for recurring badge
-  if (__DEV__) {
-    console.log('EventCard - Event data:', {
-      id: event.id,
-      title: event.title,
-      is_occurrence: (event as any).is_occurrence,
-      occurrence_parent_id: (event as any).occurrence_parent_id,
-      shouldShowBadge: ((event as any).is_occurrence === true || (event as any).is_occurrence === 1)
-    });
-  }
+
 
   const formatDate = (date: string) => {
     if (isAmharic) {
@@ -91,7 +82,7 @@ export const EventCard: React.FC<EventCardProps> = ({ event, onPress }) => {
       </View>
     </TouchableOpacity>
   );
-};
+});
 
 const styles = StyleSheet.create({
   container: {

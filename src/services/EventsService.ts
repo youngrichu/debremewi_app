@@ -27,18 +27,7 @@ export const getUpcomingEvents = async (): Promise<Event[]> => {
         throw new Error('Unexpected response format from events API');
       }
 
-      // Debug logging for recurring events
-      if (__DEV__) {
-        console.log('EventsService.getUpcomingEvents - Total events:', events.length);
-        console.log('EventsService.getUpcomingEvents - Events with is_occurrence field:', 
-          events.filter((e: any) => e.is_occurrence).map((e: any) => ({
-            id: e.id,
-            title: e.title,
-            is_occurrence: e.is_occurrence,
-            occurrence_parent_id: e.occurrence_parent_id
-          }))
-        );
-      }
+
 
       // Get current time in Dubai timezone (UTC+4)
       const now = new Date();

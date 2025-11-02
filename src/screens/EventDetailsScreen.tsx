@@ -245,7 +245,6 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
 
   const tagsStyles = {
     body: {
-      fontFamily: undefined, // Use default system font
       fontSize: 16,
       lineHeight: 24,
       color: '#444',
@@ -382,7 +381,7 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
           <RenderHTML
             contentWidth={width - 32}
             source={{
-              html: event.content
+              html: event.content || ''
             }}
             tagsStyles={tagsStyles}
             renderersProps={{
@@ -393,7 +392,12 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
             defaultTextProps={{
               selectable: true,
             }}
-            systemFonts={undefined}
+            baseStyle={{
+              fontSize: 16,
+              lineHeight: 24,
+              color: '#444',
+            }}
+            systemFonts={[]}
           />
         </View>
       </View>
