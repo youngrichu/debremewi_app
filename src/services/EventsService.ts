@@ -1,7 +1,6 @@
 import axios from 'axios';
 import apiClient from '../api/client';
 import { Event } from '../types';
-import { AuthService } from './AuthService';
 
 const MAX_RETRIES = 3;
 const INITIAL_DELAY = 1000;

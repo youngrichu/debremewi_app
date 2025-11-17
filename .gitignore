@@ -64,3 +64,118 @@ web-build/
 dist/
 
 # @end expo-cli
+
+# ========================
+# PROJECT-SPECIFIC EXCLUSIONS
+# ========================
+
+# Test files and test artifacts
+**/*test*
+**/*spec*
+**/__tests__/
+**/*.test.js
+**/*.test.ts
+**/*.test.tsx
+**/*.spec.js
+**/*.spec.ts
+**/*.spec.tsx
+jest.config.*
+coverage/
+.nyc_output/
+
+# Documentation files (keep in repo but not in version control for production)
+*.md
+!README.md
+!CHANGELOG.md
+!CONTRIBUTING.md
+CLEANUP_BACKUP.md
+docs/
+documentation/
+
+# Development and debugging files
+*.log
+*.tmp
+*.temp
+.DS_Store*
+Thumbs.db
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment and configuration files
+.env.local
+.env.development
+.env.test
+.env.production
+.env.staging
+
+# Build artifacts (additional)
+build/
+dist/
+web-build/
+*.jsbundle
+*.bundle
+
+# Temporary files and caches
+*.cache/
+.cache/
+tmp/
+temp/
+
+# Unused/empty files identified in cleanup (safe to ignore)
+src/utils/storage.ts
+src/utils/authHeaders.ts
+src/services/Shake.ts
+test_new_algorithm.js
+src/services/user.ts
+src/services/apiInterceptors.ts
+src/services/jwtRefreshTest.ts
+src/services/NotificationService.ts
+src/screens/EventDetail.tsx
+src/screens/AuthScreen.tsx
+src/components/common/index.tsx
+src/routes/onboarding.js
+src/store/notificationsSlice.ts
+src/store/notificationSlice.ts
+
+# Backup and temporary backup files
+*.backup
+*.bak
+*.orig
+
+# Package manager files
+package-lock.json
+yarn.lock
+.pnpm-debug.log*
+
+# OS generated files
+.DS_Store?
+ehthumbs.db
+Icon?
+Thumbs.db
+
+# React Native specific
+*.keystore
+!debug.keystore
+*.jks
+*.p12
+*.key
+*.mobileprovision
+
+# Metro bundler
+.metro-health-check*
+
+# Temporary development files
+*.development
+*.local
+
+# Debug files
+debug.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+react-native-debug.log*

@@ -1,4 +1,5 @@
 import axios, { AxiosError } from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_URL } from '../config';
 import { AuthService } from '../services/AuthService';
 import { store } from '../store';
@@ -55,20 +56,56 @@ apiClient.interceptors.response.use(
     return response;
   },
   async (error: AxiosError) => {
+    const originalRequest = error.config;
+
     // Handle authentication errors
-    if (error.response?.status === 401) {
-      console.log('Authentication error detected, clearing auth data...');
+    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
+      console.log('Authentication error detected, attempting token refresh...');
       
-      try {
-        // Clear auth data from store and storage
+      // Don't retry if this is a refresh token request
+      if (originalRequest.url?.includes('/auth/refresh')) {
+        console.log('Refresh token request failed, clearing auth data...');
         await AuthService.clearAuth();
         store.dispatch(clearAuth());
         store.dispatch(clearUser());
-      } catch (clearError) {
-        console.error('Error clearing auth data:', clearError);
+        return Promise.reject(new Error('Session expired. Please login again.'));
       }
-      
-      return Promise.reject(new Error('Session expired. Please login again.'));
+
+      originalRequest._retry = true;
+
+      try {
+        const currentToken = await AuthService.getToken();
+        if (!currentToken) {
+          throw new Error('No token available');
+        }
+
+        // Try to refresh the token using efficient refresh
+        const { efficientTokenRefresh } = await import('../services/efficientTokenRefresh');
+        const newToken = await efficientTokenRefresh.refreshOnDemand();
+
+        if (newToken) {
+          // Update the token in storage and retry the original request
+          await AsyncStorage.setItem('userToken', newToken);
+          apiClient.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+          originalRequest.headers.Authorization = `Bearer ${newToken}`;
+          
+          console.log('Token refreshed successfully, retrying original request...');
+          return apiClient(originalRequest);
+        } else {
+          // Refresh failed, clear auth and redirect to login
+          console.log('Token refresh failed, clearing auth data...');
+          await AuthService.clearAuth();
+          store.dispatch(clearAuth());
+          store.dispatch(clearUser());
+          return Promise.reject(new Error('Session expired. Please login again.'));
+        }
+      } catch (refreshError) {
+        console.error('Token refresh error:', refreshError);
+        await AuthService.clearAuth();
+        store.dispatch(clearAuth());
+        store.dispatch(clearUser());
+        return Promise.reject(new Error('Session expired. Please login again.'));
+      }
     }
 
     // Network errors

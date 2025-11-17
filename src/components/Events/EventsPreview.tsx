@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { Event } from '../../types';
-import { format, isAfter, isSameDay, startOfDay, isBefore } from 'date-fns';
+import { format, isAfter, isSameDay, startOfDay } from 'date-fns';
 import { Ionicons } from '@expo/vector-icons';
 
 interface EventsPreviewProps {
