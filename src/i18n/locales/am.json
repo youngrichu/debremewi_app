@@ -79,7 +79,7 @@
       "selectChristianLife": "የክርስትና ሕይወት ሁኔታ ይምረጡ",
       "selectServiceType": "የአገልግሎት ዓይነት ይምረጡ",
       "selectMinistryService": "የንዑስ አገልግሎት ዘርፍ ይምረጡ",
-      "selectResidencePermit": "የመኖሪያ ፈቃድ ይዞታ ይምረጡ" 
+      "selectResidencePermit": "የመኖሪያ ፈቃድ ይዞታ ይምረጡ"
     },
     "options": {
       "gender": {
@@ -391,17 +391,17 @@
     "schedule": {
       "sunday": {
         "day": "በየእሁድ",
-        "time": "5:00 ጠዋት - 11:00 ጠዋት",
+        "time": "11:00 ጠዋት - 2:00 ጠዋት",
         "description": "ቅዳሴ፣ ስብከት እና ሌሎች አገልግሎቶች"
       },
-      "friday": {
-        "day": "በየአርብ",
-        "time": "6:00 ማታ - 7:30 ማታ",
+      "wednesday": {
+        "day": "በየረቡዕ",
+        "time": "1:00 ማታ - 3:30 ማታ",
         "description": "የማታ ጸሎት እና ስብከት"
       },
       "saturday": {
         "day": "በየቅዳሜ",
-        "time": "6:00 ጠዋት - 7:30 ጠዋት",
+        "time": "12:00 ጠዋት - 1:00 ጠዋት",
         "description": "የጠዋት ጸሎት፣ ቅዳሴ፣ እና ሌሎች አገልግሎቶች"
       }
     }

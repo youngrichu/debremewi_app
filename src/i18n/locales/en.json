@@ -391,12 +391,12 @@
     "schedule": {
       "sunday": {
         "day": "EVERY SUNDAY",
-        "time": "5:00AM - 11:00AM",
+        "time": "5:00 AM - 7:00 AM",
         "description": "Liturgy, Sermon and Other Services"
       },
-      "friday": {
-        "day": "EVERY FRIDAY",
-        "time": "6:00PM - 7:30PM",
+      "wednesday": {
+        "day": "EVERY WEDNESDAY",
+        "time": "7:00 PM - 9:30 PM",
         "description": "Evening prayer and Sermon"
       },
       "saturday": {

@@ -24,10 +24,10 @@ const ServicesScreen = () => {
       description: t('services.schedule.sunday.description'),
     },
     {
-      key: 'friday',
-      day: t('services.schedule.friday.day'),
-      time: t('services.schedule.friday.time'),
-      description: t('services.schedule.friday.description'),
+      key: 'wednesday',
+      day: t('services.schedule.wednesday.day'),
+      time: t('services.schedule.wednesday.time'),
+      description: t('services.schedule.wednesday.description'),
     },
     {
       key: 'saturday',
