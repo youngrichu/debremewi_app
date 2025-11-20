@@ -93,7 +93,8 @@
         }
       ],
       "expo-localization",
-      "expo-font"
+      "expo-font",
+      "expo-build-properties"
     ],
     "extra": {
       "supportsRTL": true,
@@ -102,8 +103,6 @@
       }
     },
     "owner": "habtilo",
-    "runtimeVersion": {
-      "policy": "appVersion"
-    }
+    "runtimeVersion": "1.0.0"
   }
 }

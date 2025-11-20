@@ -56,7 +56,8 @@ buck-out/
 *.jsbundle
 
 # CocoaPods
-/ios/Pods/
+/ios/
+/android/
 
 # Expo
 .expo/
@@ -149,7 +150,7 @@ src/store/notificationSlice.ts
 
 # Package manager files
 package-lock.json
-yarn.lock
+
 .pnpm-debug.log*
 
 # OS generated files
