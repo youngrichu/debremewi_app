@@ -1,13 +1,13 @@
 import React, { useState, useCallback, memo, useEffect } from 'react';
 import { View, ScrollView, Text, Image, StyleSheet, Dimensions, ActivityIndicator, Linking, Share, TouchableOpacity, useWindowDimensions } from 'react-native';
 import { Post } from '../types';
-import RenderHTML, { 
+import RenderHTML, {
   HTMLElementModel,
   HTMLContentModel,
   CustomRendererProps,
   TBlock,
   MixedStyleDeclaration,
-  Element
+  TNode
 } from 'react-native-render-html';
 // import ImageView from 'react-native-image-viewing';
 import { Ionicons } from '@expo/vector-icons';
@@ -35,8 +35,8 @@ const CustomFigureRenderer = memo(({ TDefaultRenderer, tnode, onImagePress, ...p
 
   const imgElement = tnode.children?.find(
     child => child.tagName === 'img'
-  ) as Element | undefined;
-  
+  );
+
   if (!imgElement) return null;
 
   const imgSrc = imgElement.attributes.src;
@@ -44,14 +44,14 @@ const CustomFigureRenderer = memo(({ TDefaultRenderer, tnode, onImagePress, ...p
   const caption = tnode.children?.find(
     child => child.tagName === 'figcaption'
   ) as Element | undefined;
-  
+
   const imgWidth = parseInt(imgElement.attributes.width) || width - 32;
   const imgHeight = parseInt(imgElement.attributes.height) || imgWidth * 0.75;
   const aspectRatio = imgWidth / imgHeight;
-  
+
   return (
     <View style={styles.figureContainer}>
-      <TouchableOpacity 
+      <TouchableOpacity
         onPress={() => onImagePress(imgSrc)}
         style={styles.imageWrapper}
       >
@@ -70,7 +70,7 @@ const CustomFigureRenderer = memo(({ TDefaultRenderer, tnode, onImagePress, ...p
           onLoadEnd={() => setIsLoading(false)}
         />
         {isLoading && (
-          <ActivityIndicator 
+          <ActivityIndicator
             style={[styles.contentImage, styles.imageLoader]}
             size="large"
             color="#2196F3"
@@ -85,6 +85,64 @@ const CustomFigureRenderer = memo(({ TDefaultRenderer, tnode, onImagePress, ...p
     </View>
   );
 });
+
+const DetailsRenderer = ({ TDefaultRenderer, tnode, ...props }: CustomRendererProps<any>) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  // Find summary node
+  const summaryNode = tnode.children.find((child: TNode) => child.tagName === 'summary');
+  // Content nodes are everything else
+  const contentNodes = tnode.children.filter((child: TNode) => child.tagName !== 'summary');
+
+  // Create a synthetic TNode for content if needed, or just render children
+  // We need to be careful about how we pass children to TDefaultRenderer
+  // If we just want to render specific children, we might need a different approach
+  // or use a TNode wrapper.
+
+  // Actually, for TDefaultRenderer, we usually pass the tnode. 
+  // But here we want to split rendering.
+
+  return (
+    <View style={styles.detailsContainer}>
+      <TouchableOpacity
+        onPress={() => setIsOpen(!isOpen)}
+        style={styles.summaryContainer}
+        activeOpacity={0.7}
+      >
+        <Ionicons
+          name={isOpen ? "chevron-down" : "chevron-forward"}
+          size={20}
+          color="#333"
+          style={styles.summaryIcon}
+        />
+        {summaryNode ? (
+          <TDefaultRenderer tnode={summaryNode} {...props} />
+        ) : (
+          <Text style={styles.defaultSummary}>Details</Text>
+        )}
+      </TouchableOpacity>
+
+      {isOpen && (
+        <View style={styles.detailsContent}>
+          {contentNodes.map((child: TNode, index: number) => (
+            <TDefaultRenderer key={index} tnode={child} {...props} />
+          ))}
+        </View>
+      )}
+    </View>
+  );
+};
+
+const SummaryRenderer = ({ TDefaultRenderer, tnode, ...props }: CustomRendererProps<any>) => {
+  // Summary is handled by DetailsRenderer, but if it appears standalone or we want specific styling
+  // Inside DetailsRenderer, we are rendering it. 
+  // We can just pass through or add specific styles.
+  return (
+    <View style={styles.summaryTextContainer}>
+      <TDefaultRenderer tnode={tnode} {...props} />
+    </View>
+  );
+};
 
 export default function BlogPostDetail({ route }: BlogPostDetailProps) {
   const { t } = useTranslation();
@@ -105,12 +163,25 @@ export default function BlogPostDetail({ route }: BlogPostDetailProps) {
   ), [handleImagePress]);
 
   const renderers = {
-    figure: renderFigure
+    figure: renderFigure,
+    details: DetailsRenderer,
+    summary: SummaryRenderer
   };
+
 
   const customHTMLElementModels = {
     figure: HTMLElementModel.fromCustomModel({
       tagName: 'figure',
+      contentModel: HTMLContentModel.block,
+      isVoid: false
+    }),
+    details: HTMLElementModel.fromCustomModel({
+      tagName: 'details',
+      contentModel: HTMLContentModel.block,
+      isVoid: false
+    }),
+    summary: HTMLElementModel.fromCustomModel({
+      tagName: 'summary',
       contentModel: HTMLContentModel.block,
       isVoid: false
     })
@@ -144,6 +215,12 @@ export default function BlogPostDetail({ route }: BlogPostDetailProps) {
     img: {
       marginVertical: 8,
     },
+    details: {
+      marginVertical: 8,
+    },
+    summary: {
+      fontWeight: 'bold',
+    }
   } as const;
 
   useEffect(() => {
@@ -207,8 +284,8 @@ export default function BlogPostDetail({ route }: BlogPostDetailProps) {
 
   return (
     <>
-      <ScrollView 
-        style={styles.container} 
+      <ScrollView
+        style={styles.container}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
       >
@@ -216,7 +293,7 @@ export default function BlogPostDetail({ route }: BlogPostDetailProps) {
           <Text style={styles.title}>
             {stripHtmlAndDecode(post.title.rendered)}
           </Text>
-          
+
           <View style={styles.meta}>
             <Text style={styles.date}>
               {post.date ? new Date(post.date).toLocaleDateString() : ''}
@@ -233,7 +310,7 @@ export default function BlogPostDetail({ route }: BlogPostDetailProps) {
             </View>
           </View>
         </View>
-        
+
         <View style={styles.content}>
           <RenderHTML
             contentWidth={width}
@@ -393,5 +470,35 @@ const styles = StyleSheet.create({
     color: '#f00',
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  detailsContainer: {
+    marginVertical: 8,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
+    borderRadius: 8,
+    overflow: 'hidden',
+    backgroundColor: '#fff',
+  },
+  summaryContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    backgroundColor: '#f9f9f9',
+  },
+  summaryIcon: {
+    marginRight: 8,
+  },
+  defaultSummary: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#333',
+  },
+  summaryTextContainer: {
+    flex: 1,
+  },
+  detailsContent: {
+    padding: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#e0e0e0',
   },
 });

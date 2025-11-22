@@ -94,7 +94,15 @@
       ],
       "expo-localization",
       "expo-font",
-      "expo-build-properties"
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "compileSdkVersion": 35,
+            "targetSdkVersion": 35
+          }
+        }
+      ]
     ],
     "extra": {
       "supportsRTL": true,

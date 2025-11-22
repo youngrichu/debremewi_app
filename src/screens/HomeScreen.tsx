@@ -72,7 +72,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         });
 
         allEvents = [...allEvents, ...eventsResult.events];
-        
+
         // Check if we have any upcoming events in this batch
         const hasUpcomingEvents = eventsResult.events.some(event => {
           const eventDate = new Date(event.date);
@@ -185,8 +185,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
     return upcomingEvents.slice(0, 3).map((event, index) => (
       <TouchableOpacity
-        key={(event as any).is_occurrence && (event as any).occurrence_parent_id 
-          ? `${(event as any).occurrence_parent_id}-${event.id}-${index}` 
+        key={(event as any).is_occurrence && (event as any).occurrence_parent_id
+          ? `${(event as any).occurrence_parent_id}-${event.id}-${index}`
           : `${event.id}-${index}`}
         style={styles.eventCard}
         onPress={() => handleEventPress(event)}
@@ -195,7 +195,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           {(() => {
             const eventDate = new Date(event.date);
             const isAmharic = i18n.language.startsWith('am');
-            
+
             if (isAmharic) {
               const ethiopianDate = toEthiopian(eventDate);
               return (
@@ -237,14 +237,14 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           <View style={styles.eventDetails}>
             <Ionicons name="time-outline" size={12} color="#666" style={styles.eventIcon} />
             <Text style={styles.eventTime}>
-              {new Date(event.date).toLocaleTimeString([], { 
-                hour: '2-digit', 
-                minute: '2-digit' 
+              {new Date(event.date).toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit'
               })}
               {event.end_date && (
-                <> - {new Date(event.end_date).toLocaleTimeString([], { 
-                  hour: '2-digit', 
-                  minute: '2-digit' 
+                <> - {new Date(event.end_date).toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit'
                 })}</>
               )}
             </Text>
@@ -263,9 +263,9 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   const handleEventPress = (event: Event) => {
     const eventId = Number(event.id);
     const isOccurrence = (event as any).is_occurrence === true || (event as any).is_occurrence === 1;
-    
+
     // Navigate directly to EventDetails within the Home stack
-    navigation.navigate('EventDetails', { 
+    navigation.navigate('EventDetails', {
       eventId: isOccurrence ? (event as any).occurrence_parent_id || eventId : eventId,
       occurrenceDate: isOccurrence ? event.date : undefined,
       isOccurrence: isOccurrence
@@ -273,16 +273,17 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   const handleBlogPostPress = (post: Post) => {
-    navigation.navigate('BlogPosts', {
+    navigation.navigate('BlogPostDetail', {
       post,
+      postId: post.id.toString(),
     });
   };
 
   const handleViewAllEventsPress = () => {
     // Reset the Events stack navigation state to prevent returning to previous event instances
-    navigation.navigate('Events', { 
+    navigation.navigate('Events', {
       screen: 'Events',
-      initial: false 
+      initial: false
     });
   };
 
@@ -307,7 +308,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <ScrollView 
+    <ScrollView
       style={styles.container}
       contentContainerStyle={styles.contentContainer}
       showsVerticalScrollIndicator={false}
@@ -323,7 +324,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
           <WelcomeCard />
 
           <View style={styles.quickActionsGrid}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.quickActionItem}
               onPress={() => handleViewAllEventsPress()}
             >
@@ -333,7 +334,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               <Text style={styles.quickActionText}>{t('home.quickActions.events')}</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.quickActionItem}
               onPress={() => handleViewAllBlogPostsPress()}
             >
@@ -343,12 +344,12 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
               <Text style={styles.quickActionText}>{t('home.quickActions.blog')}</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.quickActionItem}
               onPress={() => handleMorePress('Location')}
             >
               <View style={[styles.iconContainer, { backgroundColor: '#2473E0' }]}>
-          <Ionicons name="location" size={32} color="#FFF" />
+                <Ionicons name="location" size={32} color="#FFF" />
               </View>
               <Text style={styles.quickActionText}>{t('home.quickActions.location')}</Text>
             </TouchableOpacity>
