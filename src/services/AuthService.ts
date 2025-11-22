@@ -90,7 +90,7 @@ class AuthServiceClass {
       console.log('Token could not be decoded, considering expired');
       return true;
     }
-    
+
     // If token has explicit expiration time, use it
     if (decoded.exp) {
       const currentTime = Math.floor(Date.now() / 1000);
@@ -99,20 +99,21 @@ class AuthServiceClass {
       console.log(`Token expiration check: exp=${decoded.exp}, current=${currentTime}, expired=${isExpired}`);
       return isExpired;
     }
-    
+
     // If no exp field (like Simple JWT Login), check based on issued time
     // Simple JWT Login tokens are typically valid for the duration set in WordPress settings
     // We'll be more conservative and only consider tokens expired if they're very old
     if (decoded.iat) {
       const currentTime = Math.floor(Date.now() / 1000);
       const tokenAge = currentTime - decoded.iat;
-      // Consider token expired if it's older than 23 hours (to be safe with 24h tokens)
-      const maxAge = 23 * 60 * 60; // 23 hours in seconds
-      const isExpired = tokenAge > maxAge;
-      console.log(`Token age check: iat=${decoded.iat}, age=${Math.floor(tokenAge/60)}min, maxAge=${Math.floor(maxAge/60)}min, expired=${isExpired}`);
-      return isExpired;
+
+      // REMOVED: Hardcoded 23-hour expiration check.
+      // We now rely on the server to reject the token if it's expired.
+      // This allows for "forever" sessions if the server supports it or if we keep refreshing.
+      console.log(`Token age check: iat=${decoded.iat}, age=${Math.floor(tokenAge / 60)}min. Assuming valid until server rejects.`);
+      return false;
     }
-    
+
     // If we can't determine expiration, assume token is still valid
     // This prevents unnecessary refresh attempts on fresh tokens
     console.log('Token has no expiration info (no exp or iat), assuming valid');
@@ -141,7 +142,7 @@ class AuthServiceClass {
     if (this.token && !this.isTokenExpired(this.token)) {
       return this.token;
     }
-    
+
     try {
       const token = await AsyncStorage.getItem('userToken');
       if (token && !this.isTokenExpired(token)) {
@@ -173,7 +174,7 @@ class AuthServiceClass {
     try {
       await AsyncStorage.setItem('userToken', token);
       this.token = token;
-      
+
       // Extract expiration time from token
       const decoded = this.decodeJWT(token);
       if (decoded && decoded.exp) {
@@ -197,7 +198,7 @@ class AuthServiceClass {
 
   async getRefreshToken(): Promise<string | null> {
     if (this.refreshToken) return this.refreshToken;
-    
+
     try {
       const refreshToken = await AsyncStorage.getItem('refreshToken');
       this.refreshToken = refreshToken;
@@ -217,7 +218,7 @@ class AuthServiceClass {
 
     this.isRefreshing = true;
     this.refreshPromise = this.performTokenRefresh();
-    
+
     try {
       const result = await this.refreshPromise;
       return result;
@@ -245,12 +246,12 @@ class AuthServiceClass {
       if (response.data.success && (response.data.jwt || response.data.token)) {
         const newToken = response.data.jwt || response.data.token;
         await this.setToken(newToken);
-        
+
         // If a new refresh token is provided, store it
         if (response.data.refresh_token) {
           await this.setRefreshToken(response.data.refresh_token);
         }
-        
+
         console.log('Token refreshed successfully');
         return newToken;
       } else {
@@ -301,13 +302,13 @@ class AuthServiceClass {
       }
 
       await this.setToken(token);
-      
+
       // Store refresh token if provided
       const refreshToken = loginResponse.data.data?.refresh_token || loginResponse.data.refresh_token;
       if (refreshToken) {
         await this.setRefreshToken(refreshToken);
       }
-      
+
       console.log('Token stored successfully');
 
       const headers = {
@@ -431,7 +432,7 @@ class AuthServiceClass {
       };
     } catch (error) {
       console.error('Request password reset error:', error);
-      
+
       if (axios.isAxiosError(error)) {
         console.error('Reset request error details:', {
           response: error.response?.data,
@@ -458,7 +459,7 @@ class AuthServiceClass {
       // Based on Simple JWT Login plugin documentation, use the correct endpoint for password reset with code
       // The plugin uses /user/reset_password (singular) for the actual password change operation
       let response;
-      
+
       try {
         // Try the correct Simple JWT Login endpoint format
         response = await axios.put(`${API_URL}/wp-json/simple-jwt-login/v1/user/reset_password`, {
@@ -499,7 +500,7 @@ class AuthServiceClass {
 
     } catch (error) {
       console.error('Password reset error:', error);
-      
+
       if (axios.isAxiosError(error)) {
         console.error('Reset password error details:', {
           response: error.response?.data,
@@ -507,7 +508,7 @@ class AuthServiceClass {
           headers: error.response?.headers,
           url: error.config?.url
         });
-        
+
         // Provide specific error messages based on status code
         if (error.response?.status === 404) {
           return {
@@ -515,7 +516,7 @@ class AuthServiceClass {
             message: 'Password reset endpoint not found. Please ensure the Simple JWT Login plugin has "Change user password" enabled in the WordPress admin settings.'
           };
         }
-        
+
         if (error.response?.data?.message) {
           return {
             success: false,
@@ -562,7 +563,7 @@ class AuthServiceClass {
           try {
             console.log('401 error detected, attempting token refresh...');
             const newToken = await this.refreshTokenIfNeeded();
-            
+
             if (newToken && originalRequest.headers) {
               originalRequest.headers.Authorization = `Bearer ${newToken}`;
               return axios(originalRequest);
@@ -594,8 +595,8 @@ AuthService.setupAxiosInterceptors();
 export default AuthService;
 
 // Export individual methods for convenience
-export const requestPasswordReset = (email: string) => 
+export const requestPasswordReset = (email: string) =>
   AuthService.requestPasswordReset(email);
 
-export const resetPassword = (email: string, newPassword: string, resetCode: string) => 
+export const resetPassword = (email: string, newPassword: string, resetCode: string) =>
   AuthService.resetPassword(email, newPassword, resetCode);
