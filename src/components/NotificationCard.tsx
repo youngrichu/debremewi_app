@@ -27,7 +27,7 @@ export const NotificationCard = ({ notification, onPress }: NotificationCardProp
   const [eventImage, setEventImage] = useState<string | null>(null);
 
   // Default placeholder image URL
-  const DEFAULT_IMAGE = 'https://staging.dubaidebremewi.com/wp-content/uploads/2024/02/default-event-placeholder.jpg';
+  const DEFAULT_IMAGE = 'https://dubaidebremewi.com/wp-content/uploads/2024/02/default-event-placeholder.jpg';
 
   // Fetch image for event or blog post notification
   useEffect(() => {
@@ -55,12 +55,12 @@ export const NotificationCard = ({ notification, onPress }: NotificationCardProp
 
           // Get featured image ID
           const featuredMediaId = postData.featured_media;
-          
+
           if (featuredMediaId) {
             // Fetch the media details
             const mediaResponse = await apiClient.get(`/wp-json/wp/v2/media/${featuredMediaId}`);
             console.log('Media API Response:', JSON.stringify(mediaResponse.data, null, 2));
-            
+
             const mediaUrl = mediaResponse.data?.source_url;
             if (mediaUrl) {
               console.log('Found blog post image:', mediaUrl);
@@ -109,7 +109,7 @@ export const NotificationCard = ({ notification, onPress }: NotificationCardProp
   // Format the notification type for display
   const getFormattedType = (type: string | undefined) => {
     if (!type) return '';
-    return type.split('_').map(word => 
+    return type.split('_').map(word =>
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
   };

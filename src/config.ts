@@ -1,5 +1,5 @@
 // Base URL for the WordPress API
-export const API_URL = 'https://staging.dubaidebremewi.com';  // Updated to correct domain
+export const API_URL = 'https://dubaidebremewi.com';  // Production domain
 
 // Expo project configuration
 export const EXPO_PROJECT_ID = '6985e10d-9694-4f7e-a16f-7fb1cfdc8ef1';  // Your Expo project ID

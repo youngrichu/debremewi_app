@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { AsyncStorage } from '@react-native-async-storage/async-storage';
 
-const API_URL = 'https://staging.dubaidebremewi.com/wp-json';
+const API_URL = 'https://dubaidebremewi.com/wp-json';
 
 export const login = async (username, password) => {
   try {
