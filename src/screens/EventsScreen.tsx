@@ -10,11 +10,11 @@ import { RootStackParamList } from '../types';
 import { format, addHours, startOfDay, startOfWeek, addDays, isSameDay } from 'date-fns';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
-import { 
-  toEthiopian, 
-  getEthiopianMonthName, 
-  getEthiopianDayName, 
-  ETHIOPIAN_MONTHS, 
+import {
+  toEthiopian,
+  getEthiopianMonthName,
+  getEthiopianDayName,
+  ETHIOPIAN_MONTHS,
   getDaysInEthiopianMonth,
   getEthiopianMonthRange,
   getVisibleDatesForEthiopianMonth,
@@ -23,6 +23,7 @@ import {
 } from '../utils/ethiopianCalendar';
 import { EventsShimmer } from '../components/EventsShimmer';
 import { EthiopianCalendar } from '../components/EthiopianCalendar';
+import { IS_TABLET, getFontSize, scale, getContainerWidth } from '../utils/responsive';
 
 // Initialize LocaleConfig at the top level
 LocaleConfig.locales['am'] = {
@@ -84,13 +85,13 @@ const AMHARIC_WEEKDAYS = ['እሑድ', 'ሰኞ', 'ማክሰኞ', 'ረቡዕ', '�
 const ENGLISH_WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const ENGLISH_WEEKDAYS_FULL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-const WeekView = ({ 
-  events, 
-  onEventPress, 
+const WeekView = ({
+  events,
+  onEventPress,
   selectedDate,
   onDayPress,
-}: { 
-  events: Event[], 
+}: {
+  events: Event[],
   onEventPress: (event: Event) => void,
   selectedDate: Date,
   onDayPress: (date: Date) => void,
@@ -180,7 +181,7 @@ const WeekView = ({
   };
 
   // Filter events for the current week
-  const weekEvents = events.filter(event => 
+  const weekEvents = events.filter(event =>
     weekDays.some(day => isEventOnDay(event.date, day))
   );
 
@@ -213,8 +214,8 @@ const WeekView = ({
       <View style={styles.weekHeader}>
         <View style={styles.timeHeaderSpacer} />
         {weekDays.map((day, index) => (
-          <TouchableOpacity 
-            key={index} 
+          <TouchableOpacity
+            key={index}
             style={styles.dayHeader}
             onPress={() => onDayPress(day)}
           >
@@ -225,7 +226,7 @@ const WeekView = ({
               styles.dayHeaderDate,
               isSameDay(day, new Date()) && styles.todayDate
             ]}>
-              {isAmharic ? 
+              {isAmharic ?
                 convertDateToEthiopian(day).day :
                 format(day, 'd')
               }
@@ -247,8 +248,8 @@ const WeekView = ({
           </View>
 
           {/* Days grid */}
-          <ScrollView 
-            horizontal={false} 
+          <ScrollView
+            horizontal={false}
             showsHorizontalScrollIndicator={false}
             style={styles.daysGridContainer}
           >
@@ -258,7 +259,7 @@ const WeekView = ({
                   {TIME_LABELS.map((_, hourIndex) => (
                     <View key={hourIndex} style={styles.hourCell} />
                   ))}
-                  
+
                   {/* Events */}
                   {events
                     .filter(event => isEventOnDay(event.date, day))
@@ -328,7 +329,7 @@ const DayView = ({ events, onEventPress, selectedDate }: {
     });
   };
 
-  const dayEvents = events.filter(event => 
+  const dayEvents = events.filter(event =>
     isSameDay(new Date(event.date), currentDate)
   );
 
@@ -350,7 +351,7 @@ const DayView = ({ events, onEventPress, selectedDate }: {
           {isAmharic ? (
             (() => {
               const ethDate = convertDateToEthiopian(currentDate);
-              const dayName = currentDate.getDay() === 0 ? AMHARIC_WEEKDAYS[6] : AMHARIC_WEEKDAYS[currentDate.getDay()-1];
+              const dayName = currentDate.getDay() === 0 ? AMHARIC_WEEKDAYS[6] : AMHARIC_WEEKDAYS[currentDate.getDay() - 1];
               return `${dayName}፣ ${getEthiopianMonthName(ethDate.month)} ${ethDate.day}፣ ${ethDate.year}`;
             })()
           ) : (
@@ -431,14 +432,14 @@ const getEthiopianMonthDates = (date: Date) => {
     if (!date || !(date instanceof Date) || isNaN(date.getTime())) {
       throw new Error('Invalid date');
     }
-    
+
     const ethiopianDate = convertDateToEthiopian(date);
     const daysInMonth = getDaysInEthiopianMonth(ethiopianDate.month, ethiopianDate.year);
-    
+
     // Get the first day of the Ethiopian month in Gregorian calendar
     const firstDayGregorian = new Date(date);
     firstDayGregorian.setDate(1); // Start from first day of Gregorian month
-    
+
     // Find the Gregorian date that corresponds to Ethiopian month's first day
     while (true) {
       const ethDate = toEthiopian(firstDayGregorian);
@@ -447,15 +448,15 @@ const getEthiopianMonthDates = (date: Date) => {
       }
       firstDayGregorian.setDate(firstDayGregorian.getDate() + 1);
     }
-    
+
     const days = Array.from({ length: daysInMonth }, (_, i) => {
       const gregorianDate = new Date(firstDayGregorian);
       gregorianDate.setDate(firstDayGregorian.getDate() + i);
-      
+
       if (isNaN(gregorianDate.getTime())) {
         throw new Error('Invalid date generated');
       }
-      
+
       return {
         gregorian: gregorianDate,
         ethiopian: {
@@ -479,16 +480,16 @@ const formatMonthHeader = (date: any) => {
     if (!date) {
       throw new Error('No date provided');
     }
-    
+
     // Convert the date to a proper Date object
     const gregorianDate = new Date(date);
     if (isNaN(gregorianDate.getTime())) {
       throw new Error('Invalid date');
     }
-    
+
     // Use the same conversion method as week/day views
     const ethiopianDate = toEthiopian(gregorianDate);
-    
+
     // Return formatted Ethiopian month and year
     return `${getEthiopianMonthName(ethiopianDate.month)} ${ethiopianDate.year}`;
   } catch (error) {
@@ -524,7 +525,7 @@ export default function EventsScreen() {
   const [error, setError] = useState<string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [forceRender, setForceRender] = useState(0);
-  
+
   // Update the initial Ethiopian month state
   const [currentEthiopianMonth, setCurrentEthiopianMonth] = useState(() => {
     try {
@@ -545,13 +546,13 @@ export default function EventsScreen() {
       };
     }
   });
-  
+
   // Function to handle Ethiopian month navigation
   const handleEthiopianMonthChange = (direction: 'prev' | 'next') => {
     setCurrentEthiopianMonth(prev => {
       let newMonth = prev.month + (direction === 'next' ? 1 : -1);
       let newYear = prev.year;
-      
+
       if (newMonth > 13) {
         newMonth = 1;
         newYear += 1;
@@ -559,7 +560,7 @@ export default function EventsScreen() {
         newMonth = 13;
         newYear -= 1;
       }
-      
+
       return {
         year: newYear,
         month: newMonth,
@@ -608,19 +609,19 @@ export default function EventsScreen() {
     if (isAmharic) {
       // First, let's get the current Gregorian date as an Ethiopian date
       const ethDate = toEthiopian(date);
-      
+
       // Get the current day of the week (0-6, where 0 is Sunday)
       const currentDayOfWeek = date.getDay();
-      
+
       // Calculate the dates for the entire week
       return Array.from({ length: 7 }, (_, i) => {
         // Calculate day offset from Sunday (0)
         const dayOffset = i - currentDayOfWeek;
-        
+
         // Create a new date by adding/subtracting days
         const dayDate = new Date(date);
         dayDate.setDate(date.getDate() + dayOffset);
-        
+
         return dayDate;
       });
     } else {
@@ -628,7 +629,7 @@ export default function EventsScreen() {
       const day = date.getDay(); // 0 is Sunday, 1 is Monday, etc.
       const sunday = new Date(date);
       sunday.setDate(date.getDate() - day); // Go back to the Sunday of this week
-      
+
       return Array.from({ length: 7 }, (_, i) => {
         const day = new Date(sunday);
         day.setDate(sunday.getDate() + i);
@@ -696,7 +697,7 @@ export default function EventsScreen() {
         setAllEvents(eventsResult.events);
         setCategories(categoriesData);
         setHasMore(eventsResult.hasMore);
-        
+
         applyFilters(eventsResult.events);
       } else {
         // For subsequent pages, just load events
@@ -710,7 +711,7 @@ export default function EventsScreen() {
 
         setAllEvents(prev => [...prev, ...eventsResult.events]); // Store all new events
         setHasMore(eventsResult.hasMore);
-        
+
         // Apply category and date filters to all events
         applyFilters([...allEvents, ...eventsResult.events]);
       }
@@ -730,10 +731,10 @@ export default function EventsScreen() {
     console.log('Applying filters with category:', selectedCategory);
 
     let filtered = eventsList;
-    
+
     if (selectedCategory) {
       filtered = eventsList.filter(event => {
-        return event.categories?.some(category => 
+        return event.categories?.some(category =>
           typeof category === 'object' && category !== null && 'slug' in category && category.slug === selectedCategory
         );
       });
@@ -781,7 +782,7 @@ export default function EventsScreen() {
       // Reapply only category filter if exists
       if (selectedCategory) {
         const filtered = allEvents.filter(event => {
-          return event.categories?.some(cat => 
+          return event.categories?.some(cat =>
             typeof cat === 'object' && cat !== null && 'slug' in cat && cat.slug === selectedCategory
           );
         });
@@ -796,11 +797,11 @@ export default function EventsScreen() {
 
     // Apply filters with the new date value directly
     let filtered = allEvents;
-    
+
     // First apply category filter if any
     if (selectedCategory) {
       filtered = filtered.filter(event => {
-        return event.categories?.some(cat => 
+        return event.categories?.some(cat =>
           typeof cat === 'object' && cat !== null && 'slug' in cat && cat.slug === selectedCategory
         );
       });
@@ -821,7 +822,7 @@ export default function EventsScreen() {
 
   const handleCategorySelect = (category: string | null) => {
     console.log('Category selected:', category);
-    
+
     // If selecting "All", clear both category and date filters
     if (category === null) {
       setSelectedCategory(null);
@@ -831,12 +832,12 @@ export default function EventsScreen() {
       setPage(1);
       return;
     }
-    
+
     // Apply filters with the new category value directly
     let filtered = allEvents;
-    
+
     filtered = allEvents.filter(event => {
-      return event.categories?.some(cat => 
+      return event.categories?.some(cat =>
         typeof cat === 'object' && cat !== null && 'slug' in cat && cat.slug === category
       );
     });
@@ -861,11 +862,11 @@ export default function EventsScreen() {
     const eventId = event.is_occurrence ? event.occurrence_parent_id : event.id;
     const occurrenceDate = event.is_occurrence ? event.date : undefined;
     const isOccurrence = event.is_occurrence === true || event.is_occurrence === 1;
-    
-    navigation.navigate('EventDetails', { 
-      eventId: Number(eventId), 
+
+    navigation.navigate('EventDetails', {
+      eventId: Number(eventId),
       occurrenceDate,
-      isOccurrence 
+      isOccurrence
     });
   };
 
@@ -946,7 +947,7 @@ export default function EventsScreen() {
   // Update calendar month header render
   const renderMonthHeader = () => (
     <View style={styles.monthHeaderContainer}>
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.arrowButton}
         onPress={() => handleEthiopianMonthChange('prev')}
       >
@@ -954,13 +955,13 @@ export default function EventsScreen() {
       </TouchableOpacity>
       <View style={styles.monthYearContainer}>
         <Text style={styles.monthHeaderText}>
-          {isAmharic ? 
+          {isAmharic ?
             `${getEthiopianMonthName(currentEthiopianMonth.month)} ${currentEthiopianMonth.year}` :
             format(currentMonthRange.start, 'MMMM yyyy')
           }
         </Text>
       </View>
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.arrowButton}
         onPress={() => handleEthiopianMonthChange('next')}
       >
@@ -972,14 +973,14 @@ export default function EventsScreen() {
   // Get marked dates for Ethiopian calendar
   const getEthiopianMarkedDates = () => {
     const marked: { [key: string]: boolean } = {};
-    
+
     events.forEach(event => {
       if (event.date) {
         const dateStr = format(new Date(event.date), 'yyyy-MM-dd');
         marked[dateStr] = true;
       }
     });
-    
+
     return marked;
   };
 
@@ -1004,21 +1005,21 @@ export default function EventsScreen() {
           sermon: isAmharic ? 'ስብከት' : 'Sermon'
         }}
       />
-      
+
       {viewMode === 'month' && (
         <View style={styles.calendarWrapper}>
           {/* Event List */}
           <Animated.FlatList
             onScroll={Animated.event(
               [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-                { 
-                  useNativeDriver: true,
-                  listener: (event: any) => {
-                    const offsetY = event.nativeEvent.contentOffset.y;
-                    setIsHeaderCollapsed(offsetY > SCROLL_THRESHOLD / 2);
-                  }
+              {
+                useNativeDriver: true,
+                listener: (event: any) => {
+                  const offsetY = event.nativeEvent.contentOffset.y;
+                  setIsHeaderCollapsed(offsetY > SCROLL_THRESHOLD / 2);
                 }
-              )}
+              }
+            )}
             scrollEventThrottle={16}
             contentContainerStyle={styles.listContentContainer}
             style={styles.scrollView}
@@ -1029,16 +1030,16 @@ export default function EventsScreen() {
             keyExtractor={(item, index) => {
               // Generate unique key combining event ID with additional properties
               const baseKey = item.id ? item.id.toString() : `event-${index}`;
-              
+
               // For recurring events or occurrences, add more uniqueness
               if (item.is_occurrence && item.date) {
                 return `${baseKey}-occurrence-${item.date}`;
               }
-              
+
               if (item.occurrence_parent_id) {
                 return `${baseKey}-parent-${item.occurrence_parent_id}`;
               }
-              
+
               // Add index as fallback for any potential duplicates
               return `${baseKey}-${index}`;
             }}
@@ -1052,9 +1053,9 @@ export default function EventsScreen() {
                 <>
                   <View style={styles.eventsHeaderContainer}>
                     <Text style={styles.eventsHeaderText}>
-                      {isViewingDifferentDate ? 
+                      {isViewingDifferentDate ?
                         (isAmharic ? "መርሃግብሮች" : "Events") :
-                        (showAllEvents ? 
+                        (showAllEvents ?
                           (isAmharic ? "ሁሉም መርሃግብሮች" : "All Events") :
                           (isAmharic ? "የዛሬ መርሃግብሮች" : "Today's Events")
                         )
@@ -1091,8 +1092,8 @@ export default function EventsScreen() {
                 </>
               );
             }}
-            data={selectedDate ? 
-              filteredEvents : 
+            data={selectedDate ?
+              filteredEvents :
               (showAllEvents ? events : getTodayEvents(events))
             }
             renderItem={({ item }) => (
@@ -1115,7 +1116,7 @@ export default function EventsScreen() {
           />
 
           {/* Main Calendar */}
-          <Animated.View 
+          <Animated.View
             style={[
               styles.calendarContainer,
               {
@@ -1171,10 +1172,10 @@ export default function EventsScreen() {
                 firstDay={0}
                 hideArrows={false}
                 renderArrow={(direction: 'left' | 'right') => (
-                  <Ionicons 
-                    name={direction === 'left' ? 'chevron-back' : 'chevron-forward'} 
-                    size={24} 
-                    color="#2473E0" 
+                  <Ionicons
+                    name={direction === 'left' ? 'chevron-back' : 'chevron-forward'}
+                    size={24}
+                    color="#2473E0"
                   />
                 )}
                 enableSwipeMonths={true}
@@ -1184,10 +1185,10 @@ export default function EventsScreen() {
                   todayTextColor: '#2473E0',
                   todayBackgroundColor: '#E3F2FD',
                   dotColor: '#2473E0',
-                  textMonthFontSize: 18,
+                  textMonthFontSize: getFontSize(18),
                   textMonthFontWeight: 'bold',
-                  textDayFontSize: 16,
-                  textDayHeaderFontSize: 14,
+                  textDayFontSize: getFontSize(16),
+                  textDayHeaderFontSize: getFontSize(14),
                   'stylesheet.calendar.main': {
                     week: {
                       marginTop: 0,
@@ -1230,7 +1231,7 @@ export default function EventsScreen() {
                       marginBottom: 8,
                     },
                     monthText: {
-                      fontSize: 20,
+                      fontSize: getFontSize(20),
                       fontWeight: '600',
                       color: '#000',
                       marginBottom: 4,
@@ -1240,7 +1241,7 @@ export default function EventsScreen() {
                       marginBottom: 8,
                       width: 48,
                       textAlign: 'center',
-                      fontSize: 14,
+                      fontSize: getFontSize(14),
                       color: '#666',
                       fontWeight: '500',
                     },
@@ -1259,7 +1260,7 @@ export default function EventsScreen() {
           </Animated.View>
 
           {/* Sticky Header */}
-          <Animated.View 
+          <Animated.View
             key={`sticky-header-${i18n.language}-${forceRender}`}
             style={[
               styles.stickyHeader,
@@ -1294,7 +1295,7 @@ export default function EventsScreen() {
                       styles.dayNumberText,
                       isSameDay(day, currentDay) && styles.selectedDayText
                     ]}>
-                      {isAmharic ? 
+                      {isAmharic ?
                         convertDateToEthiopian(day).day :
                         format(day, 'd')
                       }
@@ -1307,7 +1308,7 @@ export default function EventsScreen() {
         </View>
       )}
       {viewMode === 'week' && (
-        <WeekView 
+        <WeekView
           events={events}
           onEventPress={handleEventPress}
           selectedDate={selectedDate ? new Date(selectedDate) : new Date()}
@@ -1523,9 +1524,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listContentContainer: {
-    paddingTop: 370,
-    paddingBottom: 120,
-    minHeight: '100%',
+    paddingTop: 440,
+    paddingBottom: 20,
+    flexGrow: 1,
     backgroundColor: '#fff',
   },
   calendarContainer: {
@@ -1533,7 +1534,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     top: 0,
-    height: 370,
+    height: 440,
     backgroundColor: '#fff',
     zIndex: 1,
     elevation: 4,
@@ -1575,7 +1576,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   weekRangeText: {
-    fontSize: 16,
+    fontSize: getFontSize(16),
     fontWeight: '500',
     color: '#333',
   },
@@ -1598,7 +1599,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   ethiopianDayText: {
-    fontSize: 16,
+    fontSize: getFontSize(16),
     color: '#000',
     textAlign: 'center',
     includeFontPadding: false,
@@ -1662,7 +1663,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   dayNumberText: {
-    fontSize: 12,
+    fontSize: getFontSize(12),
     color: '#000',
   },
   monthHeaderContainer: {
@@ -1677,7 +1678,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   monthHeaderText: {
-    fontSize: 18,
+    fontSize: getFontSize(18),
     fontWeight: '600',
     color: '#000',
     textAlign: 'center',
@@ -1689,7 +1690,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   arrowText: {
-    fontSize: 18,
+    fontSize: getFontSize(18),
     color: '#666',
   },
   weekDaysHeader: {
@@ -1702,7 +1703,7 @@ const styles = StyleSheet.create({
     zIndex: 1,
   },
   weekDayText: {
-    fontSize: 14,
+    fontSize: getFontSize(14),
     color: '#666',
     width: 48,
     textAlign: 'center',
@@ -1750,7 +1751,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   eventsHeaderText: {
-    fontSize: 20,
+    fontSize: getFontSize(18),
     fontWeight: '600',
     color: '#000',
     marginBottom: 8,
@@ -1767,8 +1768,6 @@ const styles = StyleSheet.create({
     borderTopColor: '#eee',
   },
   noEventsText: {
-    fontSize: 16,
-    color: '#666',
     marginBottom: 12,
     textAlign: 'center',
   },
@@ -1793,7 +1792,7 @@ const styles = StyleSheet.create({
   },
   viewAllButtonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: getFontSize(16),
     fontWeight: '600',
     textAlign: 'center',
   },
@@ -1819,7 +1818,7 @@ const styles = StyleSheet.create({
   },
   todayButtonText: {
     color: '#2473E0',
-    fontSize: 16,
+    fontSize: getFontSize(16),
     fontWeight: '600',
     textAlign: 'center',
   },

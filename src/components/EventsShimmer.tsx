@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
+import { IS_TABLET } from '../utils/responsive';
 
 const ShimmerComponent = ShimmerPlaceholder as any;
 
@@ -28,17 +29,11 @@ export const EventsShimmer = () => {
       {/* Events List Shimmer */}
       <View style={styles.eventsList}>
         {[1, 2, 3, 4].map((_, index) => (
-          <View key={index} style={styles.eventCard}>
-            <View style={styles.dateBox}>
-              <ShimmerComponent
-                LinearGradient={LinearGradient}
-                style={styles.dateDay}
-              />
-              <ShimmerComponent
-                LinearGradient={LinearGradient}
-                style={styles.dateMonth}
-              />
-            </View>
+          <View key={index} style={[styles.eventCard, IS_TABLET && styles.tabletEventCard]}>
+            <ShimmerComponent
+              LinearGradient={LinearGradient}
+              style={[styles.imagePlaceholder, IS_TABLET && styles.tabletImagePlaceholder]}
+            />
             <View style={styles.eventContent}>
               <ShimmerComponent
                 LinearGradient={LinearGradient}
@@ -92,10 +87,10 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   eventCard: {
-    flexDirection: 'row',
+    flexDirection: 'column',
     backgroundColor: '#fff',
     borderRadius: 8,
-    marginBottom: 12,
+    marginBottom: 16,
     overflow: 'hidden',
     elevation: 2,
     shadowColor: '#000',
@@ -103,33 +98,30 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
-  dateBox: {
-    width: 60,
+  tabletEventCard: {
+    flexDirection: 'row',
+    width: '95%',
+    alignSelf: 'center',
+    height: 140, // Fixed height for shimmer consistency
+  },
+  imagePlaceholder: {
+    width: '100%',
+    height: 200,
     backgroundColor: '#f0f0f0',
-    padding: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
-  dateDay: {
-    width: 32,
-    height: 24,
-    borderRadius: 4,
-    marginBottom: 4,
-  },
-  dateMonth: {
-    width: 40,
-    height: 16,
-    borderRadius: 4,
+  tabletImagePlaceholder: {
+    width: '35%',
+    height: '100%',
   },
   eventContent: {
     flex: 1,
-    padding: 12,
+    padding: 16,
   },
   eventTitle: {
     width: '90%',
-    height: 20,
+    height: 24,
     borderRadius: 4,
-    marginBottom: 8,
+    marginBottom: 12,
   },
   eventDetails: {
     gap: 8,

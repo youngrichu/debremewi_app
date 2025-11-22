@@ -9,6 +9,7 @@ import {
   toEthiopian
 } from '../utils/ethiopianCalendar';
 import { Ionicons } from '@expo/vector-icons';
+import { getFontSize } from '../utils/responsive';
 
 interface EthiopianCalendarProps {
   year: number;
@@ -50,21 +51,21 @@ export const EthiopianCalendar: React.FC<EthiopianCalendarProps> = ({
 
   // Get current Ethiopian date
   const today = toEthiopian(new Date());
-  
+
   // Get the first day of the month in Gregorian calendar
   const firstDayGregorian = ethiopianToGregorian(year, month, 1);
   const startWeekDay = firstDayGregorian.getDay();
-  
+
   // Get number of days in the month
   const daysInMonth = getDaysInEthiopianMonth(month, year);
-  
+
   // Calculate days to show in calendar grid
-  const calendarDays: Array<{ 
+  const calendarDays: Array<{
     ethiopianDay: number | null;
     gregorianDate: Date | null;
     isCurrentMonth: boolean;
   }> = [];
-  
+
   // Add empty days for padding at start
   for (let i = 0; i < startWeekDay; i++) {
     const prevDate = new Date(firstDayGregorian);
@@ -75,7 +76,7 @@ export const EthiopianCalendar: React.FC<EthiopianCalendarProps> = ({
       isCurrentMonth: false
     });
   }
-  
+
   // Add days of current month
   for (let day = 1; day <= daysInMonth; day++) {
     const gregorianDate = ethiopianToGregorian(year, month, day);
@@ -85,7 +86,7 @@ export const EthiopianCalendar: React.FC<EthiopianCalendarProps> = ({
       isCurrentMonth: true
     });
   }
-  
+
   // Add empty days for padding at end
   const remainingDays = 42 - calendarDays.length; // 6 rows * 7 days = 42
   if (remainingDays > 0) {
@@ -111,14 +112,14 @@ export const EthiopianCalendar: React.FC<EthiopianCalendarProps> = ({
     <View style={styles.container}>
       {/* Month/Year Header with Navigation */}
       <View style={styles.header}>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.navButton}
           onPress={() => onMonthChange?.('prev')}
           hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
         >
           <Ionicons name="chevron-back" size={24} color="#2196F3" />
         </TouchableOpacity>
-        
+
         <View style={styles.headerTextContainer}>
           <Text style={styles.monthText}>
             {ETHIOPIAN_MONTHS[month - 1]}
@@ -127,8 +128,8 @@ export const EthiopianCalendar: React.FC<EthiopianCalendarProps> = ({
             {year} ዓ.ም.
           </Text>
         </View>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={styles.navButton}
           onPress={() => onMonthChange?.('next')}
           hitSlop={{ top: 20, bottom: 20, left: 20, right: 20 }}
@@ -138,7 +139,7 @@ export const EthiopianCalendar: React.FC<EthiopianCalendarProps> = ({
       </View>
 
       {/* Calendar Content */}
-      <View 
+      <View
         style={styles.calendarContent}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
@@ -158,7 +159,7 @@ export const EthiopianCalendar: React.FC<EthiopianCalendarProps> = ({
           {weeks.map((week, weekIndex) => (
             <View key={weekIndex} style={styles.week}>
               {week.map((day, dayIndex) => {
-                const isSelected = day.ethiopianDay !== null && 
+                const isSelected = day.ethiopianDay !== null &&
                   selectedDate?.year === year &&
                   selectedDate?.month === month &&
                   selectedDate?.day === day.ethiopianDay;
@@ -168,7 +169,7 @@ export const EthiopianCalendar: React.FC<EthiopianCalendarProps> = ({
                   today.month === month &&
                   today.day === day.ethiopianDay;
 
-                const isMarked = day.gregorianDate && 
+                const isMarked = day.gregorianDate &&
                   markedDates[format(day.gregorianDate, 'yyyy-MM-dd')];
 
                 return (
@@ -234,13 +235,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   monthText: {
-    fontSize: 18,
+    fontSize: getFontSize(18),
     fontWeight: '600',
     color: '#000',
     marginBottom: 4,
   },
   yearText: {
-    fontSize: 14,
+    fontSize: getFontSize(14),
     color: '#666',
   },
   navButton: {
@@ -264,7 +265,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   weekdayText: {
-    fontSize: 14,
+    fontSize: getFontSize(14),
     color: '#666',
     fontWeight: '500',
   },
@@ -288,7 +289,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   dayText: {
-    fontSize: 16,
+    fontSize: getFontSize(16),
     color: '#000',
   },
   outsideMonth: {

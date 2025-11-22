@@ -6,6 +6,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import { toEthiopian, getEthiopianMonthName, formatEthiopianDate } from '../../utils/ethiopianCalendar';
 import { getRecurringBadgeText, shouldShowRecurringBadge } from '../../utils/eventUtils';
+import { IS_TABLET, getFontSize, scale } from '../../utils/responsive';
 
 interface EventCardProps {
   event: Event;
@@ -30,38 +31,38 @@ export const EventCard: React.FC<EventCardProps> = React.memo(({ event, onPress 
   };
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <TouchableOpacity style={[styles.container, IS_TABLET && styles.tabletContainer]} onPress={onPress}>
       {event.thumbnail && (
         <Image
           source={{ uri: event.thumbnail }}
-          style={styles.image}
+          style={[styles.image, IS_TABLET && styles.tabletImage]}
           resizeMode="cover"
         />
       )}
-      
+
       <View style={styles.content}>
         <View style={styles.titleContainer}>
           <Text style={styles.title}>{event.title}</Text>
           {shouldShowRecurringBadge(event) && (
             <View style={styles.recurringBadge}>
-              <Ionicons name="repeat" size={12} color="#fff" />
+              <Ionicons name="repeat" size={scale(12)} color="#fff" />
               <Text style={styles.recurringBadgeText}>
                 {getRecurringBadgeText(event, t)}
               </Text>
             </View>
           )}
         </View>
-        
+
         <View style={styles.metaContainer}>
           <View style={styles.metaItem}>
-            <Ionicons name="calendar" size={16} color="#666" />
+            <Ionicons name="calendar" size={scale(16)} color="#666" />
             <Text style={styles.metaText}>
               {formatDate(event.date)}
             </Text>
           </View>
 
           <View style={styles.eventMeta}>
-            <Ionicons name="time" size={16} color="#666" />
+            <Ionicons name="time" size={scale(16)} color="#666" />
             <Text style={styles.metaText}>
               {format(new Date(event.date), 'h:mm a')}
               {event.end_date && (
@@ -72,7 +73,7 @@ export const EventCard: React.FC<EventCardProps> = React.memo(({ event, onPress 
 
           {event.location && (
             <View style={styles.metaItem}>
-              <Ionicons name="location" size={16} color="#666" />
+              <Ionicons name="location" size={scale(16)} color="#666" />
               <Text style={styles.metaText} numberOfLines={1}>
                 {isAmharic ? 'ቦታ፡ ' : 'Location: '}{event.location}
               </Text>
@@ -102,6 +103,7 @@ const styles = StyleSheet.create({
   },
   content: {
     padding: 16,
+    flex: 1,
   },
   titleContainer: {
     flexDirection: 'row',
@@ -111,7 +113,7 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   title: {
-    fontSize: 18,
+    fontSize: getFontSize(18),
     fontWeight: 'bold',
     color: '#333',
     flex: 1,
@@ -120,14 +122,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#DDC65D',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
+    paddingHorizontal: scale(6),
+    paddingVertical: scale(2),
     borderRadius: 12,
     gap: 2,
   },
   recurringBadgeText: {
     color: '#fff',
-    fontSize: 10,
+    fontSize: getFontSize(10),
     fontWeight: '600',
   },
   metaContainer: {
@@ -140,11 +142,22 @@ const styles = StyleSheet.create({
   },
   metaText: {
     color: '#666',
-    fontSize: 14,
+    fontSize: getFontSize(14),
   },
   eventMeta: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
+  },
+  // Tablet Styles
+  tabletContainer: {
+    flexDirection: 'row',
+    alignItems: 'stretch',
+    width: '95%',
+    alignSelf: 'center',
+  },
+  tabletImage: {
+    width: '35%',
+    height: '100%',
   },
 });

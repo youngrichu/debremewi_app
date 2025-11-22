@@ -19,6 +19,7 @@ import { toEthiopian, ETHIOPIAN_MONTHS } from '../utils/ethiopianCalendar';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { CompositeScreenProps } from '@react-navigation/native';
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import { IS_TABLET, getContainerWidth, getFontSize, wp, hp, scale } from '../utils/responsive';
 
 type HomeScreenNavigationProp = CompositeNavigationProp<
   BottomTabNavigationProp<MainTabParamList, 'Home'>,
@@ -43,7 +44,8 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
 
   const fetchRecentPosts = async () => {
     try {
-      const response = await fetch(`${API_URL}/wp-json/wp/v2/posts?per_page=3&_embed`);
+      const perPage = IS_TABLET ? 4 : 3;
+      const response = await fetch(`${API_URL}/wp-json/wp/v2/posts?per_page=${perPage}&_embed`);
       const posts = await response.json();
       setRecentPosts(posts);
     } catch (error) {
@@ -120,11 +122,11 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         order: 'desc',
       });
       if (response?.status === 'success' && response.data?.items) {
-        // Filter out duplicates and ensure we get exactly 3 videos
+        // Filter out duplicates and ensure we get exactly 3 videos (or 6 on tablets)
         const uniqueVideos = Array.from(
           new Map(response.data.items.map((item: SocialMediaPost) => [item.id, item])).values()
         ) as SocialMediaPost[];
-        setLatestVideos(uniqueVideos.slice(0, 3));
+        setLatestVideos(uniqueVideos.slice(0, IS_TABLET ? 4 : 3));
       }
     } catch (error) {
       console.error('Error fetching latest videos:', error);
@@ -227,7 +229,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
             <Text style={styles.eventTitle}>{event.title}</Text>
             {shouldShowRecurringBadge(event) && (
               <View style={styles.recurringBadge}>
-                <Ionicons name="repeat" size={10} color="#fff" />
+                <Ionicons name="repeat" size={scale(10)} color="#fff" />
                 <Text style={styles.recurringBadgeText}>
                   {getRecurringBadgeText(event, t)}
                 </Text>
@@ -310,7 +312,7 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
   return (
     <ScrollView
       style={styles.container}
-      contentContainerStyle={styles.contentContainer}
+      contentContainerStyle={[styles.contentContainer, IS_TABLET && styles.tabletContentContainer]}
       showsVerticalScrollIndicator={false}
     >
       {loading ? (
@@ -323,44 +325,44 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
         <>
           <WelcomeCard />
 
-          <View style={styles.quickActionsGrid}>
+          <View style={[styles.quickActionsGrid, IS_TABLET && styles.tabletQuickActionsGrid]}>
             <TouchableOpacity
-              style={styles.quickActionItem}
+              style={[styles.quickActionItem, IS_TABLET && styles.tabletQuickActionItem]}
               onPress={() => handleViewAllEventsPress()}
             >
-              <View style={[styles.iconContainer, { backgroundColor: '#DDC65D' }]}>
-                <Ionicons name="calendar" size={32} color="#FFF" />
+              <View style={[styles.iconContainer, { backgroundColor: '#DDC65D' }, IS_TABLET && styles.tabletIconContainer]}>
+                <Ionicons name="calendar" size={IS_TABLET ? 40 : 32} color="#FFF" />
               </View>
-              <Text style={styles.quickActionText}>{t('home.quickActions.events')}</Text>
+              <Text style={[styles.quickActionText, IS_TABLET && styles.tabletQuickActionText]}>{t('home.quickActions.events')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.quickActionItem}
+              style={[styles.quickActionItem, IS_TABLET && styles.tabletQuickActionItem]}
               onPress={() => handleViewAllBlogPostsPress()}
             >
-              <View style={[styles.iconContainer, { backgroundColor: '#008036' }]}>
-                <Ionicons name="newspaper" size={32} color="#FFF" />
+              <View style={[styles.iconContainer, { backgroundColor: '#008036' }, IS_TABLET && styles.tabletIconContainer]}>
+                <Ionicons name="newspaper" size={IS_TABLET ? 40 : 32} color="#FFF" />
               </View>
-              <Text style={styles.quickActionText}>{t('home.quickActions.blog')}</Text>
+              <Text style={[styles.quickActionText, IS_TABLET && styles.tabletQuickActionText]}>{t('home.quickActions.blog')}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.quickActionItem}
+              style={[styles.quickActionItem, IS_TABLET && styles.tabletQuickActionItem]}
               onPress={() => handleMorePress('Location')}
             >
-              <View style={[styles.iconContainer, { backgroundColor: '#2473E0' }]}>
-                <Ionicons name="location" size={32} color="#FFF" />
+              <View style={[styles.iconContainer, { backgroundColor: '#2473E0' }, IS_TABLET && styles.tabletIconContainer]}>
+                <Ionicons name="location" size={IS_TABLET ? 40 : 32} color="#FFF" />
               </View>
-              <Text style={styles.quickActionText}>{t('home.quickActions.location')}</Text>
+              <Text style={[styles.quickActionText, IS_TABLET && styles.tabletQuickActionText]}>{t('home.quickActions.location')}</Text>
             </TouchableOpacity>
           </View>
 
           {/* Latest YouTube Videos Section */}
-          <View style={styles.section}>
+          <View style={[styles.section, IS_TABLET && styles.tabletSection]}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>{t('home.sections.latestVideos.title', 'Latest Videos')}</Text>
+              <Text style={[styles.sectionTitle, IS_TABLET && styles.tabletSectionTitle]}>{t('home.sections.latestVideos.title', 'Latest Videos')}</Text>
               <TouchableOpacity onPress={() => handleViewAllYouTubePress()}>
-                <Text style={styles.seeAllText}>{t('home.sections.latestVideos.seeAll', 'See All')}</Text>
+                <Text style={[styles.seeAllText, IS_TABLET && styles.tabletSeeAllText]}>{t('home.sections.latestVideos.seeAll', 'See All')}</Text>
               </TouchableOpacity>
             </View>
             {latestVideos.length === 0 ? (
@@ -370,42 +372,44 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                 </Text>
               </View>
             ) : (
-              latestVideos.map((video, index) => (
-                <TouchableOpacity
-                  key={`${video.id}-${index}`}
-                  style={styles.videoCard}
-                  onPress={() => handleVideoPress(video)}
-                >
-                  <Image
-                    source={{ uri: video.content.thumbnail_url }}
-                    style={styles.videoThumbnail}
-                  />
-                  <View style={styles.videoInfo}>
-                    <Text style={styles.videoTitle} numberOfLines={2}>
-                      {video.content.title}
-                    </Text>
-                    <View style={styles.videoStats}>
-                      <View style={styles.stat}>
-                        <Ionicons name="thumbs-up-outline" size={12} color="#666" />
-                        <Text style={styles.statText}>{video.content.engagement.likes}</Text>
-                      </View>
-                      <View style={styles.stat}>
-                        <Ionicons name="chatbubble-outline" size={12} color="#666" />
-                        <Text style={styles.statText}>{video.content.engagement.comments}</Text>
+              <View style={IS_TABLET ? styles.tabletGridContainer : undefined}>
+                {latestVideos.map((video, index) => (
+                  <TouchableOpacity
+                    key={`${video.id}-${index}`}
+                    style={[styles.videoCard, IS_TABLET && styles.tabletVideoCard]}
+                    onPress={() => handleVideoPress(video)}
+                  >
+                    <Image
+                      source={{ uri: video.content.thumbnail_url }}
+                      style={[styles.videoThumbnail, IS_TABLET && styles.tabletVideoThumbnail]}
+                    />
+                    <View style={styles.videoInfo}>
+                      <Text style={[styles.videoTitle, IS_TABLET && styles.tabletVideoTitle]} numberOfLines={2}>
+                        {video.content.title}
+                      </Text>
+                      <View style={styles.videoStats}>
+                        <View style={styles.stat}>
+                          <Ionicons name="thumbs-up-outline" size={IS_TABLET ? 16 : 12} color="#666" />
+                          <Text style={[styles.statText, IS_TABLET && styles.tabletStatText]}>{video.content.engagement.likes}</Text>
+                        </View>
+                        <View style={styles.stat}>
+                          <Ionicons name="chatbubble-outline" size={IS_TABLET ? 16 : 12} color="#666" />
+                          <Text style={[styles.statText, IS_TABLET && styles.tabletStatText]}>{video.content.engagement.comments}</Text>
+                        </View>
                       </View>
                     </View>
-                  </View>
-                </TouchableOpacity>
-              ))
+                  </TouchableOpacity>
+                ))}
+              </View>
             )}
           </View>
 
           {/* Recent Blog Posts Section */}
-          <View style={styles.section}>
+          <View style={[styles.section, IS_TABLET && styles.tabletSection]}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>{t('home.sections.recentPosts.title')}</Text>
+              <Text style={[styles.sectionTitle, IS_TABLET && styles.tabletSectionTitle]}>{t('home.sections.recentPosts.title')}</Text>
               <TouchableOpacity onPress={() => handleViewAllBlogPostsPress()}>
-                <Text style={styles.seeAllText}>{t('home.sections.recentPosts.seeAll')}</Text>
+                <Text style={[styles.seeAllText, IS_TABLET && styles.tabletSeeAllText]}>{t('home.sections.recentPosts.seeAll')}</Text>
               </TouchableOpacity>
             </View>
             {recentPosts.length === 0 ? (
@@ -413,43 +417,47 @@ const HomeScreen: React.FC<Props> = ({ navigation }) => {
                 <Text style={styles.emptyStateText}>{t('home.sections.recentPosts.empty')}</Text>
               </View>
             ) : (
-              recentPosts.map((post) => (
-                <TouchableOpacity
-                  key={post.id}
-                  style={styles.blogCard}
-                  onPress={() => handleBlogPostPress(post)}
-                >
-                  <View style={styles.blogCardContent}>
-                    {post._embedded?.['wp:featuredmedia']?.[0]?.source_url && (
-                      <Image
-                        source={{ uri: post._embedded['wp:featuredmedia'][0].source_url }}
-                        style={styles.blogThumbnail}
-                      />
-                    )}
-                    <View style={styles.blogTextContent}>
-                      <Text style={styles.blogTitle}>{decode(post.title.rendered)}</Text>
-                      <Text style={styles.blogExcerpt} numberOfLines={2}>
-                        {post.excerpt.rendered.replace(/<[^>]*>/g, '')}
-                      </Text>
-                      <Text style={styles.blogDate}>
-                        {new Date(post.date || '').toLocaleDateString()}
-                      </Text>
+              <View style={IS_TABLET ? styles.tabletGridContainer : undefined}>
+                {recentPosts.map((post) => (
+                  <TouchableOpacity
+                    key={post.id}
+                    style={[styles.blogCard, IS_TABLET && styles.tabletBlogCard]}
+                    onPress={() => handleBlogPostPress(post)}
+                  >
+                    <View style={[styles.blogCardContent, IS_TABLET && styles.tabletBlogCardContent]}>
+                      {post._embedded?.['wp:featuredmedia']?.[0]?.source_url && (
+                        <Image
+                          source={{ uri: post._embedded['wp:featuredmedia'][0].source_url }}
+                          style={[styles.blogThumbnail, IS_TABLET && styles.tabletBlogThumbnail]}
+                        />
+                      )}
+                      <View style={styles.blogTextContent}>
+                        <Text style={[styles.blogTitle, IS_TABLET && styles.tabletBlogTitle]}>{decode(post.title.rendered)}</Text>
+                        <Text style={[styles.blogExcerpt, IS_TABLET && styles.tabletBlogExcerpt]} numberOfLines={2}>
+                          {post.excerpt.rendered.replace(/<[^>]*>/g, '')}
+                        </Text>
+                        <Text style={[styles.blogDate, IS_TABLET && styles.tabletBlogDate]}>
+                          {new Date(post.date || '').toLocaleDateString()}
+                        </Text>
+                      </View>
                     </View>
-                  </View>
-                </TouchableOpacity>
-              ))
+                  </TouchableOpacity>
+                ))}
+              </View>
             )}
           </View>
 
           {/* Upcoming Events Section */}
-          <View style={styles.section}>
+          <View style={[styles.section, IS_TABLET && styles.tabletSection]}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>{t('home.sections.upcomingEvents.title')}</Text>
+              <Text style={[styles.sectionTitle, IS_TABLET && styles.tabletSectionTitle]}>{t('home.sections.upcomingEvents.title')}</Text>
               <TouchableOpacity onPress={() => handleViewAllEventsPress()}>
-                <Text style={styles.seeAllText}>{t('home.sections.upcomingEvents.seeAll')}</Text>
+                <Text style={[styles.seeAllText, IS_TABLET && styles.tabletSeeAllText]}>{t('home.sections.upcomingEvents.seeAll')}</Text>
               </TouchableOpacity>
             </View>
-            {renderEvents()}
+            <View>
+              {renderEvents()}
+            </View>
           </View>
         </>
       )}
@@ -563,12 +571,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   eventDateDay: {
-    fontSize: 24,
+    fontSize: getFontSize(24),
     fontWeight: 'bold',
     color: '#fff',
   },
   eventDateMonth: {
-    fontSize: 12,
+    fontSize: getFontSize(12),
     color: '#fff',
   },
   eventContent: {
@@ -576,7 +584,7 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   eventTitle: {
-    fontSize: 16,
+    fontSize: getFontSize(16),
     fontWeight: '600',
     color: '#333',
     flex: 1,
@@ -592,11 +600,11 @@ const styles = StyleSheet.create({
     marginLeft: 12,
   },
   eventTime: {
-    fontSize: 12,
+    fontSize: getFontSize(12),
     color: '#666',
   },
   eventLocation: {
-    fontSize: 12,
+    fontSize: getFontSize(12),
     color: '#666',
     flex: 1,
   },
@@ -685,15 +693,94 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#DDC65D',
-    paddingHorizontal: 4,
-    paddingVertical: 1,
+    paddingHorizontal: scale(6),
+    paddingVertical: scale(2),
     borderRadius: 8,
     gap: 2,
   },
   recurringBadgeText: {
     color: '#fff',
-    fontSize: 8,
+    fontSize: getFontSize(10),
     fontWeight: '600',
+  },
+  // Tablet Styles
+  tabletContentContainer: {
+    alignItems: 'center',
+  },
+  tabletQuickActionsGrid: {
+    width: getContainerWidth() as any,
+    alignSelf: 'center',
+    paddingVertical: 30,
+  },
+  tabletQuickActionItem: {
+    paddingHorizontal: 20,
+  },
+  tabletIconContainer: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginBottom: 12,
+  },
+  tabletQuickActionText: {
+    fontSize: getFontSize(16),
+  },
+  tabletSection: {
+    width: getContainerWidth() as any,
+    alignSelf: 'center',
+    borderRadius: 12,
+    marginTop: 24,
+    padding: 24,
+  },
+  tabletSectionTitle: {
+    fontSize: getFontSize(24),
+  },
+  tabletSeeAllText: {
+    fontSize: getFontSize(16),
+  },
+  tabletGridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
+  tabletVideoCard: {
+    width: '48%', // 2 columns
+    marginBottom: 20,
+  },
+  tabletVideoThumbnail: {
+    height: 180, // Reduced from 280 to maintain better aspect ratio
+  },
+  tabletVideoTitle: {
+    fontSize: getFontSize(16),
+    lineHeight: 26,
+  },
+  tabletStatText: {
+    fontSize: getFontSize(14),
+  },
+  tabletBlogCard: {
+    width: '48%', // 2 columns
+    marginBottom: 20,
+  },
+  tabletBlogCardContent: {
+    flexDirection: 'column',
+  },
+  tabletBlogThumbnail: {
+    width: '100%',
+    height: 180,
+    marginBottom: 12,
+  },
+  tabletBlogTitle: {
+    fontSize: getFontSize(16), // Reduced from 18
+    marginBottom: 8,
+  },
+  tabletBlogExcerpt: {
+    fontSize: getFontSize(14), // Reduced from 16
+    marginBottom: 8,
+  },
+  tabletBlogDate: {
+    fontSize: getFontSize(12), // Reduced from 14
+  },
+  tabletEventCard: {
+    // Removed to allow full width (list view)
   },
 });
 

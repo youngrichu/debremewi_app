@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import { EventCategory } from '../../types';
 import { Ionicons } from '@expo/vector-icons';
+import { IS_TABLET, getFontSize, scale } from '../../utils/responsive';
 
 interface EventFiltersProps {
   categories: EventCategory[];
@@ -40,14 +41,14 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
           style={[styles.viewModeButton, viewMode === 'month' && styles.activeViewMode]}
           onPress={() => onViewModeChange('month')}
         >
-          <Ionicons name="calendar" size={20} color={viewMode === 'month' ? '#2196F3' : '#666'} />
+          <Ionicons name="calendar" size={scale(20)} color={viewMode === 'month' ? '#2196F3' : '#666'} />
           <Text style={styles.viewModeText}>{labels.month}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.viewModeButton, viewMode === 'week' && styles.activeViewMode]}
           onPress={() => onViewModeChange('week')}
         >
-          <Ionicons name="calendar-outline" size={20} color={viewMode === 'week' ? '#2196F3' : '#666'} />
+          <Ionicons name="calendar-outline" size={scale(20)} color={viewMode === 'week' ? '#2196F3' : '#666'} />
           <Text style={[styles.viewModeText, viewMode === 'week' && styles.activeViewModeText]}>
             {labels.week}
           </Text>
@@ -56,7 +57,7 @@ export const EventFilters: React.FC<EventFiltersProps> = ({
           style={[styles.viewModeButton, viewMode === 'day' && styles.activeViewMode]}
           onPress={() => onViewModeChange('day')}
         >
-          <Ionicons name="today" size={20} color={viewMode === 'day' ? '#2196F3' : '#666'} />
+          <Ionicons name="today" size={scale(20)} color={viewMode === 'day' ? '#2196F3' : '#666'} />
           <Text style={[styles.viewModeText, viewMode === 'day' && styles.activeViewModeText]}>
             {labels.day}
           </Text>
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
   viewModeButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 8,
+    padding: scale(8),
     borderRadius: 20,
     gap: 4,
   },
@@ -130,7 +131,7 @@ const styles = StyleSheet.create({
   },
   viewModeText: {
     color: '#666',
-    fontSize: 14,
+    fontSize: getFontSize(14),
   },
   activeViewModeText: {
     color: '#2196F3',
@@ -139,8 +140,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   categoryButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingHorizontal: scale(16),
+    paddingVertical: scale(8),
     borderRadius: 20,
     marginRight: 8,
     backgroundColor: '#f5f5f5',
@@ -150,7 +151,7 @@ const styles = StyleSheet.create({
   },
   categoryText: {
     color: '#666',
-    fontSize: 14,
+    fontSize: getFontSize(14),
   },
   activeCategoryText: {
     color: '#fff',

@@ -32,6 +32,7 @@ import CommunityScreen from '../screens/CommunityScreen';
 import NewPasswordScreen from '../screens/NewPasswordScreen';
 import { LanguageSelector } from '../components/LanguageSelector';
 import YouTubeFeedScreen from '../screens/YouTubeFeedScreen';
+import { IS_TABLET, getFontSize } from '../utils/responsive';
 
 const Stack = createStackNavigator<RootStackParamList>();
 const EventStack = createStackNavigator<RootStackParamList>();
@@ -53,15 +54,15 @@ function EventStackScreen() {
         },
       }}
     >
-      <EventStack.Screen 
-        name="EventsList" 
+      <EventStack.Screen
+        name="EventsList"
         component={EventsScreen}
-        options={{ 
-          headerShown: false 
+        options={{
+          headerShown: false
         }}
       />
-      <EventStack.Screen 
-        name="EventDetails" 
+      <EventStack.Screen
+        name="EventDetails"
         component={EventDetailsScreen}
         options={{
           headerShown: true,
@@ -84,15 +85,15 @@ function BlogStackScreen() {
         },
       }}
     >
-      <BlogStack.Screen 
-        name="BlogList" 
+      <BlogStack.Screen
+        name="BlogList"
         component={BlogPostsScreen}
-        options={{ 
-          headerShown: false 
+        options={{
+          headerShown: false
         }}
       />
-      <BlogStack.Screen 
-        name="BlogPostDetail" 
+      <BlogStack.Screen
+        name="BlogPostDetail"
         component={BlogPostDetail}
         options={{
           headerShown: true,
@@ -115,15 +116,15 @@ function AnnouncementStackScreen() {
         },
       }}
     >
-      <AnnouncementStack.Screen 
-        name="AnnouncementsList" 
+      <AnnouncementStack.Screen
+        name="AnnouncementsList"
         component={CommunityScreen}
-        options={{ 
-          headerShown: false 
+        options={{
+          headerShown: false
         }}
       />
-      <AnnouncementStack.Screen 
-        name="AnnouncementDetail" 
+      <AnnouncementStack.Screen
+        name="AnnouncementDetail"
         component={CommunityScreen}
         options={{
           headerShown: true,
@@ -182,7 +183,7 @@ function MainTabs() {
               iconName = 'square';
           }
 
-          return <Ionicons name={iconName as any} size={size} color={color} />;
+          return <Ionicons name={iconName as any} size={IS_TABLET ? 32 : size} color={color} />;
         },
         tabBarActiveTintColor: '#2473E0',
         tabBarInactiveTintColor: 'gray',
@@ -197,48 +198,56 @@ function MainTabs() {
         headerTitleStyle: {
           marginLeft: 16,
         },
+        tabBarStyle: {
+          height: IS_TABLET ? 80 : 60,
+          paddingBottom: IS_TABLET ? 10 : 5,
+          paddingTop: IS_TABLET ? 10 : 5,
+        },
+        tabBarLabelStyle: {
+          fontSize: IS_TABLET ? 14 : 10,
+        },
       })}
     >
-      <Tab.Screen 
-        name="HomeStack" 
+      <Tab.Screen
+        name="HomeStack"
         component={HomeStackScreen}
-        options={{ 
+        options={{
           title: t('navigation.tabs.home'),
           headerTitle: t('navigation.appName')
         }}
       />
-      <Tab.Screen 
-        name="Events" 
+      <Tab.Screen
+        name="Events"
         component={EventStackScreen}
-        options={{ 
+        options={{
           title: t('navigation.tabs.events')
         }}
       />
-      <Tab.Screen 
-        name="BlogPosts" 
+      <Tab.Screen
+        name="BlogPosts"
         component={BlogStackScreen}
-        options={{ 
+        options={{
           title: t('navigation.tabs.blog')
         }}
       />
-      <Tab.Screen 
-        name="YouTube" 
+      <Tab.Screen
+        name="YouTube"
         component={YouTubeFeedScreen}
-        options={{ 
+        options={{
           title: t('navigation.tabs.youtube')
         }}
       />
-      <Tab.Screen 
-        name="Profile" 
+      <Tab.Screen
+        name="Profile"
         component={ProfileScreen}
-        options={{ 
+        options={{
           title: t('navigation.tabs.profile')
         }}
       />
-      <Tab.Screen 
-        name="More" 
+      <Tab.Screen
+        name="More"
         component={MoreStackScreen}
-        options={{ 
+        options={{
           title: t('navigation.tabs.more')
         }}
       />
@@ -259,31 +268,31 @@ function HomeStackScreen() {
         },
       }}
     >
-      <Stack.Screen 
-        name="Home" 
+      <Stack.Screen
+        name="Home"
         component={HomeScreen}
         options={{
           headerShown: false
         }}
       />
-      <Stack.Screen 
-        name="EventDetails" 
+      <Stack.Screen
+        name="EventDetails"
         component={EventDetailsScreen}
         options={{
           headerShown: true,
           title: t('navigation.screens.eventDetails')
         }}
       />
-      <Stack.Screen 
-        name="BlogPostDetail" 
+      <Stack.Screen
+        name="BlogPostDetail"
         component={BlogPostDetail}
         options={{
           headerShown: true,
           title: t('navigation.screens.blogPostDetail')
         }}
       />
-      <Stack.Screen 
-        name="EditProfile" 
+      <Stack.Screen
+        name="EditProfile"
         component={EditProfileScreen}
         options={{
           headerShown: true,
@@ -306,38 +315,38 @@ function MoreStackScreen() {
         },
       }}
     >
-      <MoreStack.Screen 
-        name="MoreMenu" 
-        component={MoreMenuScreen} 
-        options={{ 
+      <MoreStack.Screen
+        name="MoreMenu"
+        component={MoreMenuScreen}
+        options={{
           headerShown: false  // Hide the header for the main More menu screen
         }}
       />
-      <MoreStack.Screen 
-        name="About Us" 
-        component={AboutUsScreen} 
-        options={{ 
+      <MoreStack.Screen
+        name="About Us"
+        component={AboutUsScreen}
+        options={{
           title: t('more.menu.aboutUs')  // "About Us" in English, "ስለ እኛ" in Amharic
         }}
       />
-      <MoreStack.Screen 
-        name="Services" 
-        component={ServicesScreen} 
-        options={{ 
+      <MoreStack.Screen
+        name="Services"
+        component={ServicesScreen}
+        options={{
           title: t('more.menu.services')  // "Services" in English, "አገልግሎቶች" in Amharic
         }}
       />
-      <MoreStack.Screen 
-        name="Contact Us" 
-        component={ContactUsScreen} 
-        options={{ 
+      <MoreStack.Screen
+        name="Contact Us"
+        component={ContactUsScreen}
+        options={{
           title: t('more.menu.contactUs')  // "Contact Us" in English, "አግኙን" in Amharic
         }}
       />
-      <MoreStack.Screen 
-        name="Location" 
+      <MoreStack.Screen
+        name="Location"
         component={CommunityScreen}
-        options={{ 
+        options={{
           title: t('more.menu.location')  // "Location" in English, "አድራሻ" in Amharic
         }}
       />
@@ -353,7 +362,7 @@ export default function AppNavigator() {
   // Debug logging
   console.log('Auth state:', { isAuthenticated });
   console.log('User data:', userData);
-  
+
   const isOnboardingComplete = userData?.isOnboardingComplete ?? userData?.is_onboarding_complete ?? false;
 
   return (
@@ -367,8 +376,8 @@ export default function AppNavigator() {
         {!isAuthenticated ? (
           // Auth Stack
           <>
-            <Stack.Screen 
-              name="Login" 
+            <Stack.Screen
+              name="Login"
               component={LoginScreen}
               options={{
                 headerShown: true,
@@ -377,8 +386,8 @@ export default function AppNavigator() {
                 headerRightContainerStyle: { paddingRight: 15 },
               }}
             />
-            <Stack.Screen 
-              name="Register" 
+            <Stack.Screen
+              name="Register"
               component={RegisterScreen}
               options={{
                 headerShown: true,
@@ -387,8 +396,8 @@ export default function AppNavigator() {
                 headerRightContainerStyle: { paddingRight: 15 },
               }}
             />
-            <Stack.Screen 
-              name="ForgotPassword" 
+            <Stack.Screen
+              name="ForgotPassword"
               component={ForgotPasswordScreen}
               options={{
                 headerShown: true,
@@ -402,8 +411,8 @@ export default function AppNavigator() {
           // App Stack
           <>
             {!userData?.isOnboardingComplete ? (
-              <Stack.Screen 
-                name="Onboarding" 
+              <Stack.Screen
+                name="Onboarding"
                 component={OnboardingScreen}
                 options={{
                   headerShown: true,
@@ -415,8 +424,8 @@ export default function AppNavigator() {
             ) : (
               <Stack.Screen name="MainTabs" component={MainTabs} />
             )}
-            <Stack.Screen 
-              name="Notifications" 
+            <Stack.Screen
+              name="Notifications"
               component={NotificationsScreen}
               options={{
                 headerShown: true,
@@ -425,8 +434,8 @@ export default function AppNavigator() {
                 headerRightContainerStyle: { paddingRight: 15 },
               }}
             />
-            <Stack.Screen 
-              name="EventDetails" 
+            <Stack.Screen
+              name="EventDetails"
               component={EventDetailsScreen}
               options={{
                 headerShown: true,
@@ -435,8 +444,8 @@ export default function AppNavigator() {
                 headerRightContainerStyle: { paddingRight: 15 },
               }}
             />
-            <Stack.Screen 
-              name="BlogPostDetail" 
+            <Stack.Screen
+              name="BlogPostDetail"
               component={BlogPostDetail}
               options={{
                 headerShown: true,
@@ -445,8 +454,8 @@ export default function AppNavigator() {
                 headerRightContainerStyle: { paddingRight: 15 },
               }}
             />
-            <Stack.Screen 
-              name="AnnouncementDetail" 
+            <Stack.Screen
+              name="AnnouncementDetail"
               component={CommunityScreen}
               options={{
                 headerShown: true,
@@ -457,8 +466,8 @@ export default function AppNavigator() {
             />
           </>
         )}
-        <Stack.Screen 
-          name="NewPassword" 
+        <Stack.Screen
+          name="NewPassword"
           component={NewPasswordScreen}
           options={{
             headerShown: true,

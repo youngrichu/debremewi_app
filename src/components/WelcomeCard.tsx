@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ImageBackground, Dimensions, Platform } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { IS_TABLET, getContainerWidth, getFontSize } from '../utils/responsive';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const CARD_HEIGHT = SCREEN_HEIGHT * 0.35; // 35% of screen height
@@ -10,23 +11,23 @@ const WelcomeCard = () => {
   const { t } = useTranslation();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, IS_TABLET && styles.tabletContainer]}>
       <ImageBackground
         source={require('../../assets/church-background.jpg')}
-        style={styles.backgroundImage}
+        style={[styles.backgroundImage, IS_TABLET && styles.tabletBackgroundImage]}
         imageStyle={styles.backgroundImageStyle}
         resizeMode="cover"
       >
         <View style={styles.overlay}>
-          <View style={styles.content}>
-            <Text style={styles.welcomeTitle}>{t('home.welcome.title')}</Text>
-            <Text style={styles.churchSubtitle}>
+          <View style={[styles.content, IS_TABLET && styles.tabletContent]}>
+            <Text style={[styles.welcomeTitle, IS_TABLET && styles.tabletWelcomeTitle]}>{t('home.welcome.title')}</Text>
+            <Text style={[styles.churchSubtitle, IS_TABLET && styles.tabletChurchSubtitle]}>
               {t('home.welcome.subtitle')}
             </Text>
-            <Text style={styles.verseText}>
+            <Text style={[styles.verseText, IS_TABLET && styles.tabletVerseText]}>
               {t('home.welcome.verse.text')}
             </Text>
-            <Text style={styles.verseReference}>
+            <Text style={[styles.verseReference, IS_TABLET && styles.tabletVerseReference]}>
               {t('home.welcome.verse.reference')}
             </Text>
           </View>
@@ -41,6 +42,7 @@ const styles = StyleSheet.create({
     height: CARD_HEIGHT,
     marginBottom: SCREEN_HEIGHT * 0.02, // 2% of screen height
     width: '100%',
+    overflow: 'hidden', // Ensure background image doesn't spill out
   },
   backgroundImage: {
     flex: 1,
@@ -107,6 +109,37 @@ const styles = StyleSheet.create({
     textShadowColor: 'rgba(0, 0, 0, 0.75)',
     textShadowOffset: { width: -1, height: 1 },
     textShadowRadius: 10,
+  },
+  // Tablet Styles
+  tabletContainer: {
+    height: SCREEN_HEIGHT * 0.3, // Reduced height
+    width: getContainerWidth() as any,
+    alignSelf: 'center',
+  },
+  tabletBackgroundImage: {
+    margin: 0, // Remove margin on tablets to fill the card
+  },
+  tabletContent: {
+    paddingHorizontal: 20,
+    paddingVertical: 20, // Reduced vertical padding
+    width: '100%',
+    alignItems: 'center',
+  },
+  tabletWelcomeTitle: {
+    fontSize: getFontSize(32), // Reduced from 40
+    marginBottom: 16,
+  },
+  tabletChurchSubtitle: {
+    fontSize: getFontSize(20),
+    marginBottom: 24,
+  },
+  tabletVerseText: {
+    fontSize: getFontSize(24),
+    marginTop: 16,
+  },
+  tabletVerseReference: {
+    fontSize: getFontSize(18),
+    marginTop: 12,
   },
 });
 

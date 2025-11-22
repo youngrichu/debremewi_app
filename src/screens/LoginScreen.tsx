@@ -23,6 +23,7 @@ import { useTranslation } from 'react-i18next';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { IS_TABLET, getContainerWidth, getFontSize, wp, hp } from '../utils/responsive';
 
 type LoginScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Login'>;
 
@@ -148,7 +149,7 @@ const LoginScreen = ({ navigation, route }: LoginScreenProps) => {
             <Text style={styles.subtitle}>{t('auth.login.subtitle')}</Text>
           </View>
 
-          <View style={styles.formContainer}>
+          <View style={[styles.formContainer, IS_TABLET && styles.tabletFormContainer]}>
             <View style={styles.inputContainer}>
               <Ionicons name="person-outline" size={20} color="#666" style={styles.inputIcon} />
               <TextInput
@@ -330,6 +331,20 @@ const styles = StyleSheet.create({
   loginButtonDisabled: {
     opacity: 0.7,
     backgroundColor: '#ccc',
+  },
+  // Tablet Styles
+  tabletFormContainer: {
+    width: getContainerWidth() as any,
+    alignSelf: 'center',
+    borderRadius: 30,
+    paddingHorizontal: 40,
+    paddingVertical: 40,
+    marginBottom: 40,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 5,
   },
 });
 export default LoginScreen;
