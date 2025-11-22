@@ -1,11 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { UserProfile, ChildInfo } from '../types';
+import { UserProfile, ChildInfo } from '../../types/index';
 
 interface UserState {
   userData: UserProfile | null;
   children: ChildInfo[];
   loading: boolean;
   error: string | null;
+  registrationDate: string | null;
 }
 
 const initialState: UserState = {
@@ -13,6 +14,7 @@ const initialState: UserState = {
   children: [],
   loading: false,
   error: null,
+  registrationDate: null,
 };
 
 const userSlice = createSlice({
@@ -29,13 +31,17 @@ const userSlice = createSlice({
         state.userData.children = action.payload;
       }
     },
+    setRegistrationDate: (state, action: PayloadAction<string>) => {
+      state.registrationDate = action.payload;
+    },
     clearUser: (state) => {
       state.userData = null;
       state.children = [];
       state.error = null;
+      state.registrationDate = null;
     },
   },
 });
 
-export const { setUserData, updateChildren, clearUser } = userSlice.actions;
+export const { setUserData, updateChildren, setRegistrationDate, clearUser } = userSlice.actions;
 export default userSlice.reducer; 

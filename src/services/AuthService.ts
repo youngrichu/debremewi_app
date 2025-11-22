@@ -45,6 +45,7 @@ export interface RegisterResponse {
   message?: string;
   email?: string;
   username?: string;
+  user_registered?: string;
 }
 
 export interface RefreshTokenResponse {
@@ -409,7 +410,8 @@ class AuthServiceClass {
         success: true,
         message: 'Registration successful',
         email: emailToRegister, // Return the email used for registration
-        username: username // Return the generated username
+        username: username, // Return the generated username
+        user_registered: response.data.user?.user_registered // Return the registration date
       };
     } catch (error: any) {
       console.error('Registration error:', error);

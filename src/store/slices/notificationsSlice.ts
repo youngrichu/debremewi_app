@@ -38,7 +38,8 @@ export const fetchNotifications = createAsyncThunk(
     try {
       const state = getState() as RootState;
       const token = state.auth.token;
-      
+      const registrationDate = state.user.registrationDate;
+
       const headers = token ? {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',
@@ -49,11 +50,22 @@ export const fetchNotifications = createAsyncThunk(
       };
 
       const response = await axios.get(`${API_URL}/wp-json/church-app/v1/notifications/`, { headers });
-      
+
       // Handle both array and object with notifications field
-      const notifications = Array.isArray(response.data) ? response.data : response.data?.notifications || [];
+      let notifications = Array.isArray(response.data) ? response.data : response.data?.notifications || [];
+
+      // Filter notifications for new users (only show notifications created after their registration)
+      if (registrationDate) {
+        notifications = notifications.filter((n: Notification) => {
+          // Parse dates for comparison
+          const notificationDate = new Date(n.created_at);
+          const userRegDate = new Date(registrationDate);
+          return notificationDate >= userRegDate;
+        });
+      }
+
       const unreadCount = notifications.filter((n: Notification) => n.is_read === '0').length;
-      
+
       return {
         notifications,
         unreadCount
@@ -75,7 +87,7 @@ export const markNotificationAsRead = createAsyncThunk(
     try {
       const state = getState() as RootState;
       const token = state.auth.token;
-      
+
       const headers = token ? {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json',

@@ -98,6 +98,16 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
       });
 
       if (response.success) {
+        // Store registration date if available
+        if (response.user_registered) {
+          const AsyncStorage = require('@react-native-async-storage/async-storage').default;
+          const { setRegistrationDate } = require('../store/slices/userSlice');
+          const { store } = require('../store');
+
+          await AsyncStorage.setItem('userRegistrationDate', response.user_registered);
+          store.dispatch(setRegistrationDate(response.user_registered));
+        }
+
         Alert.alert(
           t('auth.register.success.title'),
           response.username
