@@ -40,7 +40,7 @@ type OnboardingScreenNavigationProp = NativeStackNavigationProp<
 
 const STEPS = [
   { key: 'welcome' },
-  { 
+  {
     key: 'personal',
     fields: [
       { name: 'firstName', type: 'text' },
@@ -216,13 +216,14 @@ interface DropdownState {
   hasChildren: boolean;
 }
 
-const ChildFields = React.memo(({ 
-  index, 
-  formData, 
-  handleChange, 
-  errors, 
-  t, 
-  setOpenPicker 
+const ChildFields = React.memo(({
+  index,
+  formData,
+  handleChange,
+  errors,
+  t,
+  setOpenPicker,
+  inputRefs
 }: {
   index: number;
   formData: any;
@@ -230,18 +231,27 @@ const ChildFields = React.memo(({
   errors: any;
   t: any;
   setOpenPicker: (field: string) => void;
+  inputRefs: any;
 }) => {
   console.log('Rendering child fields for index:', index);
+
+  const focusNext = (nextField: string) => {
+    if (inputRefs.current[nextField]) {
+      inputRefs.current[nextField].focus();
+    }
+  };
+
   return (
     <View key={`child-${index}`} style={styles.childContainer}>
       <Text style={styles.childTitle}>{t('profile.fields.child', { number: index + 1 })}</Text>
-      
+
       {/* Child's Full Name */}
       <View style={styles.inputGroup}>
         <Text style={styles.label}>
           {t('profile.fields.childFullName')} <Text style={styles.required}>*</Text>
         </Text>
         <TextInput
+          ref={ref => inputRefs.current[`child${index}FullName`] = ref}
           style={[styles.input, errors[`child${index}FullName`] && styles.inputError]}
           value={formData.children?.[index]?.fullName || ''}
           onChangeText={(value) => {
@@ -256,6 +266,9 @@ const ChildFields = React.memo(({
             handleChange('children', updatedChildren);
           }}
           placeholder={t('profile.placeholders.enterChildFullName')}
+          returnKeyType="next"
+          onSubmitEditing={() => focusNext(`child${index}ChristianityName`)}
+          blurOnSubmit={false}
         />
         {errors[`child${index}FullName`] && (
           <Text style={styles.errorText}>{errors[`child${index}FullName`]}</Text>
@@ -268,6 +281,7 @@ const ChildFields = React.memo(({
           {t('profile.fields.childChristianityName')} <Text style={styles.required}>*</Text>
         </Text>
         <TextInput
+          ref={ref => inputRefs.current[`child${index}ChristianityName`] = ref}
           style={[styles.input, errors[`child${index}ChristianityName`] && styles.inputError]}
           value={formData.children?.[index]?.christianityName || ''}
           onChangeText={(value) => {
@@ -282,6 +296,11 @@ const ChildFields = React.memo(({
             handleChange('children', updatedChildren);
           }}
           placeholder={t('profile.placeholders.enterChildChristianityName')}
+          returnKeyType="next"
+          onSubmitEditing={() => {
+            Keyboard.dismiss();
+            setOpenPicker(`child${index}Gender`);
+          }}
         />
         {errors[`child${index}ChristianityName`] && (
           <Text style={styles.errorText}>{errors[`child${index}ChristianityName`]}</Text>
@@ -318,6 +337,7 @@ const ChildFields = React.memo(({
           {t('profile.fields.childAge')} <Text style={styles.required}>*</Text>
         </Text>
         <TextInput
+          ref={ref => inputRefs.current[`child${index}Age`] = ref}
           style={[styles.input, errors[`child${index}Age`] && styles.inputError]}
           value={formData.children?.[index]?.age || ''}
           onChangeText={(value) => {
@@ -333,6 +353,17 @@ const ChildFields = React.memo(({
           }}
           placeholder={t('profile.placeholders.enterChildAge')}
           keyboardType="numeric"
+          returnKeyType="next"
+          onSubmitEditing={() => {
+            // If there's another child, focus their name
+            // Otherwise focus occupation
+            const numChildren = parseInt(formData.numberOfChildren || '0');
+            if (index < numChildren - 1) {
+              focusNext(`child${index + 1}FullName`);
+            } else {
+              focusNext('occupation');
+            }
+          }}
         />
         {errors[`child${index}Age`] && (
           <Text style={styles.errorText}>{errors[`child${index}Age`]}</Text>
@@ -503,7 +534,7 @@ export default function OnboardingScreen() {
 
     const currentIndex = step.fields.findIndex(field => field.name === fieldName);
     if (currentIndex === -1 || currentIndex === step.fields.length - 1) return 'done';
-    
+
     return 'next';
   };
 
@@ -512,7 +543,7 @@ export default function OnboardingScreen() {
   };
 
   const handleDropdownOpen = (dropdownName: keyof DropdownState) => {
-    setDropdownStates(prev => ({
+    setOpenDropdowns(prev => ({
       ...prev,
       [dropdownName]: true
     }));
@@ -531,7 +562,7 @@ export default function OnboardingScreen() {
 
     const fields = step.fields;
     const currentFieldIndex = fields.findIndex(f => f.name === currentField);
-    
+
     for (let i = currentFieldIndex + 1; i < fields.length; i++) {
       if (fields[i].type === 'text') {
         return fields[i].name;
@@ -542,7 +573,7 @@ export default function OnboardingScreen() {
 
   const validateStep = (step: number): boolean => {
     const newErrors: FormErrors = {};
-    
+
     switch (step) {
       case 1:
         if (!formData.firstName?.trim()) {
@@ -653,20 +684,20 @@ export default function OnboardingScreen() {
         ...formData,
         has_children: formData.hasChildren,
         number_of_children: formData.numberOfChildren,
-        children: formData.hasChildren === 'yes' ? 
+        children: formData.hasChildren === 'yes' ?
           formData.children?.map(child => ({
             fullName: child.fullName,
             christianityName: child.christianityName,
             gender: child.gender,
             age: child.age
-          })) : 
+          })) :
           [],
         is_onboarding_complete: true,
         isOnboardingComplete: true
       };
 
       const updatedProfile = await ProfileService.updateProfile(formattedData);
-      
+
       if (updatedProfile.success) {
         dispatch(setUserData({
           ...updatedProfile.data,
@@ -676,7 +707,7 @@ export default function OnboardingScreen() {
       }
     } catch (error: any) {
       console.error('Error submitting form:', error);
-      
+
       // Handle 401 error specifically
       if (error?.response?.status === 401) {
         Alert.alert(
@@ -704,7 +735,7 @@ export default function OnboardingScreen() {
 
   const handleSubmit = async () => {
     if (!validateStep(currentStepIndex)) return;
-    
+
     if (currentStepIndex === 1 && formData.hasChildren === 'yes') {
       if (!validateChildren()) {
         return;
@@ -717,24 +748,24 @@ export default function OnboardingScreen() {
         ...formData,
         has_children: formData.hasChildren,
         number_of_children: formData.numberOfChildren,
-        children: formData.hasChildren === 'yes' ? 
+        children: formData.hasChildren === 'yes' ?
           formData.children?.map(child => ({
             fullName: child.fullName,
             christianityName: child.christianityName,
             gender: child.gender,
             age: child.age
-          })) : 
+          })) :
           []
       };
 
       const response = await ProfileService.updateProfile(formattedData);
-      
+
       if (response.success) {
         dispatch(setUserData(response.data));
       }
     } catch (error: any) {
       console.error('Error submitting form:', error);
-      
+
       // Handle 401 error specifically
       if (error?.response?.status === 401) {
         Alert.alert(
@@ -804,11 +835,11 @@ export default function OnboardingScreen() {
               </Text>
             </View>
             {index < STEPS.length - 1 && (
-              <View 
+              <View
                 style={[
                   styles.progressLine,
                   index < currentStepIndex ? styles.progressLineCompleted : null
-                ]} 
+                ]}
               />
             )}
           </View>
@@ -832,6 +863,7 @@ export default function OnboardingScreen() {
                 {t('profile.fields.firstName')} <Text style={styles.required}>*</Text>
               </Text>
               <TextInput
+                ref={ref => inputRefs.current['firstName'] = ref}
                 style={[styles.input, errors.firstName && styles.inputError]}
                 value={formData.firstName || ''}
                 onChangeText={(value) => {
@@ -841,6 +873,9 @@ export default function OnboardingScreen() {
                   });
                 }}
                 placeholder={t('profile.placeholders.enterFirstName')}
+                returnKeyType="next"
+                onSubmitEditing={() => focusNextInput('firstName')}
+                blurOnSubmit={false}
               />
               {errors.firstName && <Text style={styles.errorText}>{errors.firstName}</Text>}
             </View>
@@ -850,6 +885,7 @@ export default function OnboardingScreen() {
                 {t('profile.fields.lastName')} <Text style={styles.required}>*</Text>
               </Text>
               <TextInput
+                ref={ref => inputRefs.current['lastName'] = ref}
                 style={[styles.input, errors.lastName && styles.inputError]}
                 value={formData.lastName || ''}
                 onChangeText={(value) => {
@@ -859,6 +895,9 @@ export default function OnboardingScreen() {
                   });
                 }}
                 placeholder={t('profile.placeholders.enterLastName')}
+                returnKeyType="next"
+                onSubmitEditing={() => focusNextInput('lastName')}
+                blurOnSubmit={false}
               />
               {errors.lastName && <Text style={styles.errorText}>{errors.lastName}</Text>}
             </View>
@@ -868,6 +907,7 @@ export default function OnboardingScreen() {
                 {t('profile.fields.christianName')}
               </Text>
               <TextInput
+                ref={ref => inputRefs.current['christianName'] = ref}
                 style={[styles.input, errors.christianName && styles.inputError]}
                 value={formData.christianName || ''}
                 onChangeText={(value) => {
@@ -877,13 +917,16 @@ export default function OnboardingScreen() {
                   });
                 }}
                 placeholder={t('profile.placeholders.enterChristianName')}
+                returnKeyType="next"
+                onSubmitEditing={() => focusNextInput('christianName')}
+                blurOnSubmit={true}
               />
               {errors.christianName && <Text style={styles.errorText}>{errors.christianName}</Text>}
             </View>
 
             <View style={styles.inputGroup}>
               <Text style={styles.label}>{t('profile.fields.gender')}</Text>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.pickerButton}
                 onPress={() => setOpenPicker('gender')}
               >
@@ -897,7 +940,7 @@ export default function OnboardingScreen() {
             {/* Marital Status */}
             <View style={[styles.inputGroup, { zIndex: 4000 }]}>
               <Text style={styles.label}>{t('profile.fields.maritalStatus')}</Text>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.pickerButton}
                 onPress={() => setOpenPicker('maritalStatus')}
               >
@@ -911,7 +954,7 @@ export default function OnboardingScreen() {
             {/* Education Level */}
             <View style={[styles.inputGroup, { zIndex: 3000 }]}>
               <Text style={styles.label}>{t('profile.fields.educationLevel')}</Text>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.pickerButton}
                 onPress={() => setOpenPicker('educationLevel')}
               >
@@ -925,7 +968,7 @@ export default function OnboardingScreen() {
             {/* Has Children */}
             <View style={styles.inputGroup}>
               <Text style={styles.label}>{t('profile.fields.hasChildren')}</Text>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.pickerButton}
                 onPress={() => setOpenPicker('hasChildren')}
               >
@@ -939,8 +982,36 @@ export default function OnboardingScreen() {
             {/* Children Fields */}
             {formData.hasChildren === 'yes' && (
               <>
-                {renderInput('numberOfChildren', t('profile.placeholders.enterNumberOfChildren'), true, false, true)}
-                
+                <View style={styles.inputGroup}>
+                  <Text style={styles.label}>
+                    {t('profile.fields.numberOfChildren')} <Text style={styles.required}>*</Text>
+                  </Text>
+                  <TextInput
+                    ref={ref => inputRefs.current['numberOfChildren'] = ref}
+                    style={[styles.input, errors.numberOfChildren && styles.inputError]}
+                    value={formData.numberOfChildren || ''}
+                    onChangeText={(value) => {
+                      const numericValue = value.replace(/[^0-9]/g, '');
+                      setFormData({
+                        ...formData,
+                        numberOfChildren: numericValue,
+                        children: parseInt(numericValue) < (formData.children?.length || 0) ? [] : formData.children
+                      });
+                    }}
+                    placeholder={t('profile.placeholders.enterNumberOfChildren')}
+                    keyboardType="numeric"
+                    returnKeyType="next"
+                    onSubmitEditing={() => {
+                      if (parseInt(formData.numberOfChildren) > 0) {
+                        inputRefs.current['child0FullName']?.focus();
+                      } else {
+                        inputRefs.current['occupation']?.focus();
+                      }
+                    }}
+                  />
+                  {errors.numberOfChildren && <Text style={styles.errorText}>{errors.numberOfChildren}</Text>}
+                </View>
+
                 {formData.numberOfChildren && parseInt(formData.numberOfChildren) > 0 && (
                   Array.from({ length: parseInt(formData.numberOfChildren) }).map((_, index) => (
                     <ChildFields
@@ -951,6 +1022,7 @@ export default function OnboardingScreen() {
                       errors={errors}
                       t={t}
                       setOpenPicker={setOpenPicker}
+                      inputRefs={inputRefs}
                     />
                   ))
                 )}
@@ -1019,13 +1091,13 @@ export default function OnboardingScreen() {
             {/* Residency City */}
             <View style={styles.inputGroup}>
               <Text style={styles.label}>{t('profile.fields.residencyCity')} <Text style={styles.required}>*</Text></Text>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.pickerButton}
                 onPress={() => setOpenPicker('residencyCity')}
               >
                 <Text style={[styles.pickerButtonText, !formData.residencyCity && { color: '#666' }]}>
-                  {formData.residencyCity ? 
-                    getPickerDisplayValue('residencyCity', formData.residencyCity) : 
+                  {formData.residencyCity ?
+                    getPickerDisplayValue('residencyCity', formData.residencyCity) :
                     t('profile.selects.selectCity')
                   }
                 </Text>
@@ -1041,7 +1113,7 @@ export default function OnboardingScreen() {
               <TextInput
                 ref={ref => inputRefs.current['residenceAddress'] = ref}
                 style={[
-                  styles.input, 
+                  styles.input,
                   styles.multilineInput,
                   errors.residenceAddress && styles.inputError
                 ]}
@@ -1071,7 +1143,7 @@ export default function OnboardingScreen() {
               <TextInput
                 ref={ref => inputRefs.current['emergencyContact'] = ref}
                 style={[
-                  styles.input, 
+                  styles.input,
                   styles.multilineInput,
                   errors.emergencyContact && styles.inputError
                 ]}
@@ -1108,13 +1180,13 @@ export default function OnboardingScreen() {
               <Text style={styles.label}>
                 {t('profile.fields.christianLife')}
               </Text>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.pickerButton}
                 onPress={() => setOpenPicker('christianLife')}
               >
                 <Text style={[styles.pickerButtonText, !formData.christianLife && { color: '#666' }]}>
-                  {formData.christianLife ? 
-                    t(`profile.options.christianLife.${formData.christianLife}`) : 
+                  {formData.christianLife ?
+                    t(`profile.options.christianLife.${formData.christianLife}`) :
                     t('profile.selects.selectChristianLife')}
                 </Text>
                 <Ionicons name="chevron-down" size={20} color="#666" />
@@ -1126,7 +1198,7 @@ export default function OnboardingScreen() {
 
             <View style={styles.inputGroup}>
               <Text style={styles.label}>{t('profile.fields.hasFatherConfessor')}</Text>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.pickerButton}
                 onPress={() => setOpenPicker('hasFatherConfessor')}
               >
@@ -1159,7 +1231,7 @@ export default function OnboardingScreen() {
 
             <View style={styles.inputGroup}>
               <Text style={styles.label}>{t('profile.fields.hasAssociationMembership')}</Text>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.pickerButton}
                 onPress={() => setOpenPicker('hasAssociationMembership')}
               >
@@ -1195,13 +1267,13 @@ export default function OnboardingScreen() {
               <Text style={styles.label}>
                 {t('profile.fields.serviceAtParish')}
               </Text>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.pickerButton}
                 onPress={() => setOpenPicker('serviceAtParish')}
               >
                 <Text style={[styles.pickerButtonText, !formData.serviceAtParish && { color: '#666' }]}>
-                  {formData.serviceAtParish ? 
-                    t(`profile.options.serviceAtParish.${formData.serviceAtParish}`) : 
+                  {formData.serviceAtParish ?
+                    t(`profile.options.serviceAtParish.${formData.serviceAtParish}`) :
                     t('profile.selects.selectServiceType')}
                 </Text>
                 <Ionicons name="chevron-down" size={20} color="#666" />
@@ -1217,13 +1289,13 @@ export default function OnboardingScreen() {
                 <Text style={styles.label}>
                   {t('profile.fields.ministryService')}
                 </Text>
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.pickerButton}
                   onPress={() => setOpenPicker('ministryService')}
                 >
                   <Text style={[styles.pickerButtonText, !formData.ministryService && { color: '#666' }]}>
-                    {formData.ministryService ? 
-                      t(`profile.options.ministryService.${formData.ministryService}`) : 
+                    {formData.ministryService ?
+                      t(`profile.options.ministryService.${formData.ministryService}`) :
                       t('profile.selects.selectMinistryService')}
                   </Text>
                   <Ionicons name="chevron-down" size={20} color="#666" />
@@ -1244,17 +1316,17 @@ export default function OnboardingScreen() {
             <View style={styles.inputGroup}>
               <Text style={styles.label}>{t('profile.fields.photo')}</Text>
               <Text style={styles.inputGroupHelperText}>{t('profile.helpers.photo')}</Text>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.photoUploadButton}
                 onPress={pickImage}
               >
                 {formData.photo ? (
                   <View style={styles.photoPreviewContainer}>
-                    <Image 
-                      source={{ uri: formData.photo }} 
-                      style={styles.photoPreview} 
+                    <Image
+                      source={{ uri: formData.photo }}
+                      style={styles.photoPreview}
                     />
-                    <TouchableOpacity 
+                    <TouchableOpacity
                       style={styles.removePhotoButton}
                       onPress={() => handleChange('photo', '')}
                     >
@@ -1273,7 +1345,7 @@ export default function OnboardingScreen() {
             <View style={styles.inputGroup}>
               <Text style={styles.label}>{t('profile.fields.residencePermit')}</Text>
               <Text style={styles.inputGroupHelperText}>{t('profile.helpers.residencePermit')}</Text>
-              <TouchableOpacity 
+              <TouchableOpacity
                 style={styles.pickerButton}
                 onPress={() => setOpenPicker('residencePermit')}
               >
@@ -1298,11 +1370,11 @@ export default function OnboardingScreen() {
           {t('onboarding.welcome.subtitle')}
         </Text> */}
       </View>
-      
+
       <Text style={styles.welcomeDescription}>
         {t('onboarding.welcome.description')}
       </Text>
-      
+
       <View style={styles.welcomePoints}>
         <View style={styles.welcomePoint}>
           <Ionicons name="calendar" size={24} color="#2196F3" />
@@ -1340,10 +1412,11 @@ export default function OnboardingScreen() {
   );
 
   const handleContentSizeChange = (contentWidth: number, contentHeight: number) => {
-    if (scrollViewRef.current && !keyboardVisible && currentStepIndex > 0 && !openPicker) {
-      scrollViewRef.current.scrollToEnd({ animated: false });
-      scrollViewRef.current.scrollTo({ y: contentHeight - windowHeight + 250, animated: true });
-    }
+    // Disabled auto-scroll as it causes issues with conditional fields expanding
+    // if (scrollViewRef.current && !keyboardVisible && currentStepIndex > 0 && !openPicker) {
+    //   scrollViewRef.current.scrollToEnd({ animated: false });
+    //   scrollViewRef.current.scrollTo({ y: contentHeight - windowHeight + 250, animated: true });
+    // }
   };
 
   const handleOpenPicker = (field: keyof typeof formData) => {
@@ -1427,7 +1500,7 @@ export default function OnboardingScreen() {
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    
+
     if (status !== 'granted') {
       Alert.alert(
         'Permission Required',
@@ -1472,12 +1545,12 @@ export default function OnboardingScreen() {
       <Text style={styles.label}>
         {t(`profile.fields.${field}`)} {isRequired && <Text style={styles.required}>*</Text>}
       </Text>
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.pickerButton}
         onPress={() => handleOpenPicker(field as keyof typeof formData)}
       >
         <Text style={[styles.pickerButtonText, !formData[field as keyof typeof formData] && { color: '#666' }]}>
-          {formData[field as keyof typeof formData] 
+          {formData[field as keyof typeof formData]
             ? getPickerDisplayValue(field, formData[field as keyof typeof formData])
             : t('common.select')}
         </Text>
@@ -1547,7 +1620,7 @@ export default function OnboardingScreen() {
   const handleScroll = (event: any) => {
     const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
     const paddingToBottom = 20;
-    const isCloseToBottom = layoutMeasurement.height + contentOffset.y >= 
+    const isCloseToBottom = layoutMeasurement.height + contentOffset.y >=
       contentSize.height - paddingToBottom;
 
     if (currentStepIndex === 0) {
@@ -1589,7 +1662,7 @@ export default function OnboardingScreen() {
           </>
         )}
 
-        <KeyboardAvoidingView 
+        <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
           style={[
             styles.keyboardView,
@@ -1597,7 +1670,7 @@ export default function OnboardingScreen() {
           ]}
           keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
         >
-          <ScrollView 
+          <ScrollView
             ref={scrollViewRef}
             style={styles.content}
             contentContainerStyle={[
@@ -1615,7 +1688,7 @@ export default function OnboardingScreen() {
           </ScrollView>
 
           {!keyboardVisible && showNavigation && (
-            <Animated.View 
+            <Animated.View
               style={[
                 styles.navigationContainer,
                 {
@@ -1734,7 +1807,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   keyboardViewWithKeyboard: {
-    marginTop: 0, 
+    marginTop: 0,
   },
   content: {
     flex: 1,
@@ -1744,7 +1817,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingHorizontal: 16,
     paddingTop: Platform.OS === 'ios' ? 16 : 24,
-    paddingBottom: 20, 
+    paddingBottom: 20,
   },
   scrollContentWithKeyboard: {
     paddingTop: 0,

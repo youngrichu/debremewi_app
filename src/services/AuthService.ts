@@ -43,6 +43,8 @@ export interface LoginResponse {
 export interface RegisterResponse {
   success: boolean;
   message?: string;
+  email?: string;
+  username?: string;
 }
 
 export interface RefreshTokenResponse {
@@ -282,13 +284,28 @@ class AuthServiceClass {
     }
   }
 
-  async login(email: string, password: string): Promise<LoginResponse> {
+  async login(identifier: string, password: string): Promise<LoginResponse> {
     try {
-      const loginResponse = await axios.post(`${API_URL}/wp-json/simple-jwt-login/v1/auth`, {
-        email,
+      // Clear any existing auth state to ensure a fresh login
+      // This prevents sending old/invalid tokens in the Authorization header
+      await this.clearAuth();
+
+      // Determine if identifier is email or username
+      const isEmail = /\S+@\S+\.\S+/.test(identifier);
+      const payload: any = {
         password,
         AUTH_KEY: 'debremewi'
-      });
+      };
+
+      if (isEmail) {
+        payload.email = identifier;
+      } else {
+        payload.username = identifier;
+      }
+
+      console.log('Attempting login with payload:', JSON.stringify({ ...payload, password: '***' }));
+
+      const loginResponse = await axios.post(`${API_URL}/wp-json/simple-jwt-login/v1/auth`, payload);
 
       console.log('Raw login response:', JSON.stringify(loginResponse.data, null, 2));
 
@@ -361,8 +378,27 @@ class AuthServiceClass {
     lastName: string;
   }): Promise<RegisterResponse> {
     try {
+      // Generate username from first and last name
+      // Format: firstname.lastname.random
+      const cleanFirstName = userData.firstName.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const cleanLastName = userData.lastName.toLowerCase().replace(/[^a-z0-9]/g, '');
+      const randomSuffix = Math.floor(Math.random() * 10000);
+      const username = `${cleanFirstName}.${cleanLastName}.${randomSuffix}`;
+
+      // If email is empty, generate a placeholder email
+      // Format: noemail.{timestamp}.{random}@debremewi.com
+      // This ensures uniqueness and satisfies the backend requirement
+      let emailToRegister = userData.email;
+      if (!emailToRegister || !emailToRegister.trim()) {
+        const timestamp = Date.now();
+        const random = Math.floor(Math.random() * 10000);
+        emailToRegister = `noemail.${timestamp}.${random}@debremewi.com`;
+        console.log('No email provided, using placeholder:', emailToRegister);
+      }
+
       const response = await axios.post(`${API_URL}/?rest_route=/simple-jwt-login/v1/users`, {
-        email: userData.email,
+        email: emailToRegister,
+        user_login: username, // Send the generated username
         password: userData.password,
         first_name: userData.firstName,
         last_name: userData.lastName,
@@ -371,7 +407,9 @@ class AuthServiceClass {
 
       return {
         success: true,
-        message: 'Registration successful'
+        message: 'Registration successful',
+        email: emailToRegister, // Return the email used for registration
+        username: username // Return the generated username
       };
     } catch (error: any) {
       console.error('Registration error:', error);
@@ -398,10 +436,13 @@ class AuthServiceClass {
         throw new Error('No authentication token found');
       }
 
-      await axios.delete(`${API_URL}/wp-json/church-mobile/v1/delete-account`, {
+      await axios.delete(`${API_URL}/wp-json/simple-jwt-login/v1/users`, {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
+        data: {
+          AUTH_KEY: 'debremewi'
+        }
       });
 
       await this.clearAuth();
@@ -537,6 +578,11 @@ class AuthServiceClass {
     // Request interceptor to add token to headers
     axios.interceptors.request.use(
       async (config: InternalAxiosRequestConfig) => {
+        // If Authorization header is already set (e.g. during login), don't overwrite it
+        if (config.headers && config.headers.Authorization) {
+          return config;
+        }
+
         const token = await this.getToken();
         if (token && config.headers) {
           config.headers.Authorization = `Bearer ${token}`;
@@ -600,3 +646,5 @@ export const requestPasswordReset = (email: string) =>
 
 export const resetPassword = (email: string, newPassword: string, resetCode: string) =>
   AuthService.resetPassword(email, newPassword, resetCode);
+
+export const deleteAccount = () => AuthService.deleteAccount();

@@ -61,10 +61,8 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
 
     if (!data.firstName.trim()) errors.firstName = t('validation.required.firstName');
     if (!data.lastName.trim()) errors.lastName = t('validation.required.lastName');
-    
-    if (!data.email.trim()) {
-      errors.email = t('validation.required.email');
-    } else if (!/\S+@\S+\.\S+/.test(data.email)) {
+
+    if (data.email.trim() && !/\S+@\S+\.\S+/.test(data.email)) {
       errors.email = t('validation.invalid.email');
     }
 
@@ -98,17 +96,19 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
         firstName: formData.firstName,
         lastName: formData.lastName
       });
-      
+
       if (response.success) {
         Alert.alert(
           t('auth.register.success.title'),
-          t('auth.register.success.message'),
+          response.username
+            ? `${t('auth.register.success.message')}\n\nYour username is: ${response.username}`
+            : t('auth.register.success.message'),
           [
             {
               text: t('auth.register.success.loginButton'),
               onPress: () => {
                 navigation.navigate('Login', {
-                  email: formData.email // Pre-fill email in login screen
+                  email: response.username || response.email || formData.email // Pre-fill username or email
                 });
               }
             }
@@ -116,13 +116,13 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
           { cancelable: false }
         );
       } else {
-        setErrors({ 
+        setErrors({
           submit: response.message || t('auth.register.errors.registrationFailed')
         });
       }
     } catch (error) {
       console.error('Registration error:', error);
-      setErrors({ 
+      setErrors({
         submit: error instanceof Error ? error.message : t('auth.register.errors.registrationFailed')
       });
     } finally {
@@ -139,7 +139,7 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
   };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
@@ -148,7 +148,7 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
         colors={['#2473E0', '#1E5BB8']}
         style={styles.gradient}
       >
-        <ScrollView 
+        <ScrollView
           ref={scrollViewRef}
           contentContainerStyle={[
             styles.scrollContent,
@@ -225,6 +225,9 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
                 onChangeText={(text) => handleChange('email', text)}
               />
             </View>
+            <Text style={styles.helperText}>
+              {t('auth.register.helpers.noEmailWarning')}
+            </Text>
             {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
 
             <View style={styles.inputContainer}>
@@ -252,10 +255,10 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
               />
             </View>
             {errors.confirmPassword && <Text style={styles.errorText}>{errors.confirmPassword}</Text>}
-            
+
             {errors.submit && <Text style={styles.errorText}>{errors.submit}</Text>}
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[styles.registerButton, loading && styles.registerButtonDisabled]}
               onPress={handleRegister}
               disabled={loading}
@@ -340,7 +343,7 @@ const styles = StyleSheet.create({
     marginLeft: 4,
   },
   registerButton: {
-        backgroundColor: '#2473E0',
+    backgroundColor: '#2473E0',
     borderRadius: 10,
     height: 50,
     justifyContent: 'center',
@@ -359,6 +362,20 @@ const styles = StyleSheet.create({
     color: '#FFF',
     fontSize: 18,
     fontWeight: '600',
+  },
+  loginLinkText: {
+    color: '#FFF',
+    fontSize: 16,
+    fontWeight: 'bold',
+    marginLeft: 5,
+  },
+  helperText: {
+    color: '#666',
+    fontSize: 12,
+    marginTop: -10,
+    marginBottom: 15,
+    marginLeft: 4,
+    fontStyle: 'italic',
   },
   loginContainer: {
     flexDirection: 'row',

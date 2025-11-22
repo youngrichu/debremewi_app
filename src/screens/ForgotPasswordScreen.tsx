@@ -23,16 +23,24 @@ const ForgotPasswordScreen = ({ navigation }: Props) => {
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
 
-  const validateEmail = (email: string): string | null => {
-    if (!email.trim()) return t('auth.forgotPassword.errors.requiredEmail');
-    if (!/\S+@\S+\.\S+/.test(email)) return t('auth.forgotPassword.errors.invalidEmail');
+  const validateInput = (input: string): string | null => {
+    if (!input.trim()) return t('auth.forgotPassword.errors.requiredEmail');
     return null;
   };
 
   const handleNext = async () => {
-    const error = validateEmail(email);
-    if (error) {
-      setError(error);
+    const validationError = validateInput(email);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
+    // Check if input is an email
+    const isEmail = /\S+@\S+\.\S+/.test(email);
+
+    if (!isEmail) {
+      // It's a username, show alert to contact admin
+      alert(t('auth.forgotPassword.alerts.contactAdmin'));
       return;
     }
 
@@ -40,7 +48,7 @@ const ForgotPasswordScreen = ({ navigation }: Props) => {
       // Request password reset - this will send a reset code to the user's email
       const response = await requestPasswordReset(email);
       if (response.success) {
-        navigation.navigate('NewPassword', { 
+        navigation.navigate('NewPassword', {
           email
         });
       } else {
@@ -52,7 +60,7 @@ const ForgotPasswordScreen = ({ navigation }: Props) => {
   };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
     >
@@ -60,7 +68,7 @@ const ForgotPasswordScreen = ({ navigation }: Props) => {
         colors={['#2473E0', '#1E5BB8']}
         style={styles.gradient}
       >
-        <ScrollView 
+        <ScrollView
           contentContainerStyle={styles.scrollContent}
           showsVerticalScrollIndicator={false}
         >
@@ -73,10 +81,10 @@ const ForgotPasswordScreen = ({ navigation }: Props) => {
 
           <View style={styles.formContainer}>
             <View style={styles.inputContainer}>
-              <Ionicons name="mail-outline" size={20} color="#666" style={styles.inputIcon} />
+              <Ionicons name="person-outline" size={20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder={t('auth.forgotPassword.placeholders.email')}
+                placeholder={t('auth.forgotPassword.placeholders.emailOrUsername')}
                 placeholderTextColor="#666"
                 keyboardType="email-address"
                 autoCapitalize="none"

@@ -242,6 +242,7 @@
       "city": "City is required",
       "address": "Address is required",
       "email": "Email is required",
+      "emailOrUsername": "Email or Username is required",
       "password": "Password is required",
       "confirmPassword": "Please confirm your password",
       "children": "Please add children's information",
@@ -548,6 +549,7 @@
       },
       "placeholders": {
         "email": "Enter your email",
+        "emailOrUsername": "Enter your email or username",
         "password": "Enter your password"
       },
       "sessionExpired": {
@@ -556,16 +558,21 @@
       }
     },
     "forgotPassword": {
-      "title": "Reset Password",
-      "subtitle": "Enter your email address to proceed.",
-      "email": "Email Address",
+      "title": "Forgot Password",
+      "subtitle": "Enter your email or username to reset your password",
+      "placeholders": {
+        "email": "Enter your email",
+        "emailOrUsername": "Enter your email or username"
+      },
       "nextButton": "Next",
       "errors": {
-        "verificationFailed": "Email verification failed",
+        "requiredEmail": "Email or username is required",
+        "invalidEmail": "Please enter a valid email address",
+        "verificationFailed": "Verification failed",
         "failedToVerify": "Failed to verify email"
       },
-      "placeholders": {
-        "email": "Enter your email address"
+      "alerts": {
+        "contactAdmin": "Since you registered with a username, please contact the church admin to reset your password."
       }
     },
     "newPassword": {
@@ -614,6 +621,9 @@
         "email": "Enter your email",
         "password": "Enter your password",
         "confirmPassword": "Confirm your password"
+      },
+      "helpers": {
+        "noEmailWarning": "Note: If you skip providing an email, you will need to contact the church admin to reset your password if you forget it."
       }
     }
   },

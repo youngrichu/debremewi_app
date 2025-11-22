@@ -52,9 +52,9 @@ const LoginScreen = ({ navigation, route }: LoginScreenProps) => {
     }
   }, [route.params?.sessionExpired]);
 
-  const validateLogin = (email: string, password: string): string | null => {
-    if (!email.trim()) return t('validation.required.email');
-    if (!/\S+@\S+\.\S+/.test(email)) return t('validation.invalid.email');
+  const validateLogin = (identifier: string, password: string): string | null => {
+    if (!identifier.trim()) return t('validation.required.emailOrUsername');
+    // Removed strict email validation to allow usernames
     if (!password) return t('validation.required.password');
     if (password.length < 6) return t('validation.invalid.password.minLength');
     return null;
@@ -69,10 +69,12 @@ const LoginScreen = ({ navigation, route }: LoginScreenProps) => {
 
     setLoading(true);
     setErrorMessage('');
+    console.log('Starting login process for:', email);
 
     try {
+      console.log('Calling AuthService.login...');
       const response = await AuthService.login(email, password);
-      console.log('Raw login response in LoginScreen:', JSON.stringify(response, null, 2));
+      console.log('AuthService.login returned:', response.success);
       console.log('Raw login response in LoginScreen:', JSON.stringify(response, null, 2));
       if (response.token) {
         await AsyncStorage.setItem('userToken', response.token);
@@ -80,18 +82,17 @@ const LoginScreen = ({ navigation, route }: LoginScreenProps) => {
       }
 
       if (response.success && response.token) {
-        dispatch(setAuthState({ 
-          isAuthenticated: true, 
-          token: response.token 
+        dispatch(setAuthState({
+          isAuthenticated: true,
+          token: response.token
         }));
-        
+
         if (response.user) {
           console.log('Raw user data before dispatch:', JSON.stringify(response.user, null, 2));
           console.log('is_onboarding_complete value:', response.user.is_onboarding_complete);
           dispatch(setUserData(response.user));
         }
       } else {
-        setErrorMessage(t('auth.login.errors.loginFailed'));
         setErrorMessage(response.message || t('auth.login.errors.loginFailed'));
       }
     } catch (error) {
@@ -103,7 +104,7 @@ const LoginScreen = ({ navigation, route }: LoginScreenProps) => {
   };
 
   return (
-    <KeyboardAvoidingView 
+    <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       style={styles.container}
       keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 20}
@@ -149,12 +150,11 @@ const LoginScreen = ({ navigation, route }: LoginScreenProps) => {
 
           <View style={styles.formContainer}>
             <View style={styles.inputContainer}>
-              <Ionicons name="mail-outline" size={20} color="#666" style={styles.inputIcon} />
+              <Ionicons name="person-outline" size={20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder={t('auth.login.placeholders.email')}
+                placeholder={t('auth.login.placeholders.emailOrUsername')}
                 placeholderTextColor="#666"
-                keyboardType="email-address"
                 autoCapitalize="none"
                 value={email}
                 onChangeText={(text) => {
@@ -177,14 +177,14 @@ const LoginScreen = ({ navigation, route }: LoginScreenProps) => {
                   setErrorMessage('');
                 }}
               />
-              <TouchableOpacity 
+              <TouchableOpacity
                 onPress={() => setShowPassword(!showPassword)}
                 style={styles.eyeIcon}
               >
-                <Ionicons 
-                  name={showPassword ? "eye-off-outline" : "eye-outline"} 
-                  size={20} 
-                  color="#666" 
+                <Ionicons
+                  name={showPassword ? "eye-off-outline" : "eye-outline"}
+                  size={20}
+                  color="#666"
                 />
               </TouchableOpacity>
             </View>
@@ -200,7 +200,7 @@ const LoginScreen = ({ navigation, route }: LoginScreenProps) => {
               <Text style={styles.forgotPasswordText}>{t('auth.login.forgotPassword')}</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[styles.loginButton, loading && styles.loginButtonDisabled]}
               onPress={handleLogin}
               disabled={loading}

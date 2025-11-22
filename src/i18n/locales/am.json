@@ -240,6 +240,8 @@
       "phoneNumber": "ስልክ ቁጥር አስፈላጊ ነው",
       "city": "ከተማ አስፈላጊ ነው",
       "address": "አድራሻ አስፈላጊ ነው",
+      "email": "ኢሜይል አስፈላጊ ነው",
+      "emailOrUsername": "ኢሜይል ወይም መለያ ስም አስፈላጊ ነው",
       "childFullName": "የልጅ ሙሉ ስም አስፈላጊ ነው",
       "childChristianityName": "የልጅ የክርስትና ስም አስፈላጊ ነው",
       "childGender": "የልጅ ጾታ አስፈላጊ ነው",
@@ -557,22 +559,26 @@
       },
       "placeholders": {
         "email": "ኢሜይልዎን ያስገቡ",
+        "emailOrUsername": "ኢሜይል ወይም መለያ ስም ያስገቡ",
         "password": "የይለፍ ቃልዎን ያስገቡ"
       }
     },
     "forgotPassword": {
-      "title": "የይለፍ ቃል ዳግም ያስተካክሉ",
-      "subtitle": "እባክዎ ኢሜይልዎን ያስገቡ።",
-      "email": "ኢሜይል",
+      "title": "የይለፍ ቃል ረሱ?",
+      "subtitle": "የይለፍ ቃልዎን እንደገና ለማስጀመር ኢሜይልዎን ወይም መለያ ስምዎን ያስገቡ",
+      "placeholders": {
+        "email": "ኢሜይልዎን ያስገቡ",
+        "emailOrUsername": "ኢሜይል ወይም መለያ ስም ያስገቡ"
+      },
       "nextButton": "ቀጣይ",
       "errors": {
-        "invalidEmail": "እባክ ትክክለኛ ኢሜይል ያስገቡ",
-        "requiredEmail": "ኢሜይል አስፈላጊ ነው",
-        "verificationFailed": "ኢሜይል ማረጋገጥ አልተሳካም",
+        "requiredEmail": "ኢሜይል ወይም መለያ ስም ያስፈልጋል",
+        "invalidEmail": "እባክዎ ትክክለኛ ኢሜይል ያስገቡ",
+        "verificationFailed": "ማረጋገጥ አልተሳካም",
         "failedToVerify": "ኢሜይል ማረጋገጥ አልተሳካም"
       },
-      "placeholders": {
-        "email": "ኢሜይልዎን ያስገቡ"
+      "alerts": {
+        "contactAdmin": "በመለያ ስም ስለተመዘገቡ፣ እባክዎ የይለፍ ቃልዎን እንደገና ለማስጀመር የቤተክርስቲያኑን አስተዳዳሪ ያነጋግሩ።"
       }
     },
     "newPassword": {
@@ -624,6 +630,9 @@
         "email": "ኢሜይልዎን ያስገቡ",
         "password": "የይለፍ ቃልዎን ያስገቡ",
         "confirmPassword": "የይለፍ ቃልዎን ያረጋግጡ"
+      },
+      "helpers": {
+        "noEmailWarning": "ማሳሰቢያ፡ ኢሜይል ካላስገቡ፣ የይለፍ ቃልዎን ቢረሱ እንደገና ለማስጀመር የቤተክርስቲያኑን አስተዳዳሪ ማነጋገር ይኖርብዎታ።"
       }
     }
   },
