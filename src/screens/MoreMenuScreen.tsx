@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { MoreStackParamList } from '../types';
 import { useTranslation } from 'react-i18next';
+import { getFontSize, IS_TABLET } from '../utils/responsive';
 
 type MoreScreenNavigationProp = StackNavigationProp<MoreStackParamList>;
 
@@ -44,10 +45,10 @@ const MoreMenuScreen = () => {
           onPress={() => navigation.navigate(item.screen)}
         >
           <View style={styles.menuItemContent}>
-            <Ionicons name={item.icon} size={24} color="#2196F3" />
+            <Ionicons name={item.icon} size={IS_TABLET ? 28 : 24} color="#2196F3" />
             <Text style={styles.menuItemText}>{item.title}</Text>
           </View>
-          <Ionicons name="chevron-forward" size={24} color="#666" />
+          <Ionicons name="chevron-forward" size={IS_TABLET ? 28 : 24} color="#666" />
         </TouchableOpacity>
       ))}
     </View>
@@ -58,13 +59,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    padding: 16,
+    padding: IS_TABLET ? 24 : 16,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 16,
+    paddingVertical: IS_TABLET ? 20 : 16,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
@@ -73,8 +74,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   menuItemText: {
-    fontSize: 16,
-    marginLeft: 16,
+    fontSize: getFontSize(16),
+    marginLeft: IS_TABLET ? 20 : 16,
     color: '#333',
   },
 });

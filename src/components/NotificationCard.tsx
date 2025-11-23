@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { format } from 'date-fns';
 import apiClient from '../api/client';
+import { getFontSize, IS_TABLET } from '../utils/responsive';
 
 interface NotificationCardProps {
   notification: {
@@ -21,7 +22,7 @@ interface NotificationCardProps {
 }
 
 const { width } = Dimensions.get('window');
-const IMAGE_HEIGHT = 180;
+const IMAGE_HEIGHT = IS_TABLET ? 280 : 180;
 
 export const NotificationCard = ({ notification, onPress }: NotificationCardProps) => {
   const [eventImage, setEventImage] = useState<string | null>(null);
@@ -215,8 +216,8 @@ export const NotificationCard = ({ notification, onPress }: NotificationCardProp
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    marginHorizontal: 16,
-    marginVertical: 8,
+    marginHorizontal: IS_TABLET ? 20 : 16,
+    marginVertical: IS_TABLET ? 10 : 8,
     borderRadius: 12,
     overflow: 'hidden',
     elevation: 2,
@@ -240,7 +241,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   content: {
-    padding: 16,
+    padding: IS_TABLET ? 20 : 16,
   },
   header: {
     flexDirection: 'row',
@@ -249,28 +250,28 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   badge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: IS_TABLET ? 10 : 8,
+    paddingVertical: IS_TABLET ? 6 : 4,
     borderRadius: 4,
   },
   badgeOverlay: {
     position: 'absolute',
     top: 12,
     left: 12,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: IS_TABLET ? 10 : 8,
+    paddingVertical: IS_TABLET ? 6 : 4,
     borderRadius: 4,
   },
   badgeText: {
-    fontSize: 12,
+    fontSize: getFontSize(12),
     fontWeight: '600',
   },
   date: {
-    fontSize: 12,
+    fontSize: getFontSize(12),
     color: '#666',
   },
   title: {
-    fontSize: 16,
+    fontSize: getFontSize(16),
     fontWeight: '600',
     marginBottom: 4,
     color: '#333',
@@ -279,8 +280,8 @@ const styles = StyleSheet.create({
     color: '#1976d2',
   },
   body: {
-    fontSize: 14,
+    fontSize: getFontSize(14),
     color: '#666',
-    lineHeight: 20,
+    lineHeight: getFontSize(20),
   },
 });

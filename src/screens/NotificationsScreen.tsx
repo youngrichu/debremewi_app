@@ -10,6 +10,7 @@ import { RootStackParamList } from '../types';
 import { NotificationCard } from '../components/NotificationCard';
 import { API_URL } from '../config';
 import { Linking } from 'react-native';
+import { getFontSize } from '../utils/responsive';
 
 type NotificationScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -20,11 +21,11 @@ export default function NotificationsScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const REFRESH_INTERVAL = 30000; // 30 seconds
   const [isAutoRefreshing, setIsAutoRefreshing] = useState(false);
-  
+
   // Remove duplicates based on reference_id and type
   const uniqueNotifications = notifications.filter((notification, index, self) =>
     index === self.findIndex((n) => (
-      n.reference_id === notification.reference_id && 
+      n.reference_id === notification.reference_id &&
       n.type === notification.type
     ))
   );
@@ -78,7 +79,7 @@ export default function NotificationsScreen() {
     try {
       const path = url.replace('dubaidebremewi://', '');
       const [screen, id] = path.split('/');
-      
+
       switch (screen) {
         case 'events':
           navigation.navigate('MainTabs', {
@@ -122,16 +123,16 @@ export default function NotificationsScreen() {
   const handleNotificationPress = async (notification: any) => {
     try {
       console.log('Notification pressed:', notification);
-      
+
       // Mark as read first to prevent double-clicking
       await dispatch(markNotificationAsRead(notification.id)).unwrap();
       console.log('Notification marked as read:', notification.id);
-      
+
       const navigateToContent = async () => {
         if (notification.type === 'event' && notification.reference_id) {
           console.log('Navigating to event:', notification.reference_id);
-          navigation.navigate('EventDetails', { 
-            eventId: notification.reference_id 
+          navigation.navigate('EventDetails', {
+            eventId: notification.reference_id
           });
           return true;
         }
@@ -147,28 +148,28 @@ export default function NotificationsScreen() {
             youtube_url: notification.youtube_url,
             reference_url: notification.reference_url
           });
-          
+
           // First try youtube_url from notification_data
           if (notification.youtube_url) {
             console.log('Opening direct YouTube URL:', notification.youtube_url);
             await Linking.openURL(notification.youtube_url);
             return true;
           }
-          
+
           // Then try reference_url for deep link
           if (notification.reference_url) {
             console.log('Handling video deep link:', notification.reference_url);
             handleDeepLink(notification.reference_url);
             return true;
           }
-          
+
           // Finally try to construct URL from reference_id
           if (notification.reference_id) {
             console.log('Opening video using reference_id:', notification.reference_id);
             await Linking.openURL(`https://www.youtube.com/watch?v=${notification.reference_id}`);
             return true;
           }
-          
+
           console.log('No valid video URL found');
           return false;
         }
@@ -225,7 +226,7 @@ export default function NotificationsScreen() {
           />
         )}
         refreshControl={
-          <RefreshControl 
+          <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
             colors={["#2196F3"]}
@@ -261,7 +262,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   emptyText: {
-    fontSize: 16,
+    fontSize: getFontSize(16),
     color: '#666',
   },
 });

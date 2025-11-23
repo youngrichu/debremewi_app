@@ -32,6 +32,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../navigation/types';
 import { validateChildrenData } from '../utils/validation';
 import { LanguageSelector } from '../components/LanguageSelector';
+import { IS_TABLET, getFontSize, scale } from '../utils/responsive';
 
 type OnboardingScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -324,7 +325,7 @@ const ChildFields = React.memo(({
               ? t(`profile.options.gender.${formData.children[index].gender}`)
               : t('common.select')}
           </Text>
-          <Ionicons name="chevron-down" size={20} color="#666" />
+          <Ionicons name="chevron-down" size={IS_TABLET ? scale(26) : 20} color="#666" />
         </TouchableOpacity>
         {errors[`child${index}Gender`] && (
           <Text style={styles.errorText}>{errors[`child${index}Gender`]}</Text>
@@ -933,7 +934,7 @@ export default function OnboardingScreen() {
                 <Text style={[styles.pickerButtonText, !formData.gender && { color: '#666' }]}>
                   {formData.gender ? getPickerDisplayValue('gender', formData.gender) : t('common.select')}
                 </Text>
-                <Ionicons name="chevron-down" size={20} color="#666" />
+                <Ionicons name="chevron-down" size={IS_TABLET ? scale(26) : 20} color="#666" />
               </TouchableOpacity>
             </View>
 
@@ -947,7 +948,7 @@ export default function OnboardingScreen() {
                 <Text style={[styles.pickerButtonText, !formData.maritalStatus && { color: '#666' }]}>
                   {formData.maritalStatus ? getPickerDisplayValue('maritalStatus', formData.maritalStatus) : t('common.select')}
                 </Text>
-                <Ionicons name="chevron-down" size={20} color="#666" />
+                <Ionicons name="chevron-down" size={IS_TABLET ? scale(26) : 20} color="#666" />
               </TouchableOpacity>
             </View>
 
@@ -961,7 +962,7 @@ export default function OnboardingScreen() {
                 <Text style={[styles.pickerButtonText, !formData.educationLevel && { color: '#666' }]}>
                   {formData.educationLevel ? getPickerDisplayValue('educationLevel', formData.educationLevel) : t('common.select')}
                 </Text>
-                <Ionicons name="chevron-down" size={20} color="#666" />
+                <Ionicons name="chevron-down" size={IS_TABLET ? scale(26) : 20} color="#666" />
               </TouchableOpacity>
             </View>
 
@@ -975,7 +976,7 @@ export default function OnboardingScreen() {
                 <Text style={[styles.pickerButtonText, !formData.hasChildren && { color: '#666' }]}>
                   {formData.hasChildren ? getPickerDisplayValue('hasChildren', formData.hasChildren) : t('common.select')}
                 </Text>
-                <Ionicons name="chevron-down" size={20} color="#666" />
+                <Ionicons name="chevron-down" size={IS_TABLET ? scale(26) : 20} color="#666" />
               </TouchableOpacity>
             </View>
 
@@ -1101,7 +1102,7 @@ export default function OnboardingScreen() {
                     t('profile.selects.selectCity')
                   }
                 </Text>
-                <Ionicons name="chevron-down" size={20} color="#666" />
+                <Ionicons name="chevron-down" size={IS_TABLET ? scale(26) : 20} color="#666" />
               </TouchableOpacity>
             </View>
 
@@ -1189,7 +1190,7 @@ export default function OnboardingScreen() {
                     t(`profile.options.christianLife.${formData.christianLife}`) :
                     t('profile.selects.selectChristianLife')}
                 </Text>
-                <Ionicons name="chevron-down" size={20} color="#666" />
+                <Ionicons name="chevron-down" size={IS_TABLET ? scale(26) : 20} color="#666" />
               </TouchableOpacity>
               {errors.christianLife && (
                 <Text style={styles.errorText}>{errors.christianLife}</Text>
@@ -1205,7 +1206,7 @@ export default function OnboardingScreen() {
                 <Text style={[styles.pickerButtonText, !formData.hasFatherConfessor && { color: '#666' }]}>
                   {formData.hasFatherConfessor ? getPickerDisplayValue('hasFatherConfessor', formData.hasFatherConfessor) : t('common.select')}
                 </Text>
-                <Ionicons name="chevron-down" size={20} color="#666" />
+                <Ionicons name="chevron-down" size={IS_TABLET ? scale(26) : 20} color="#666" />
               </TouchableOpacity>
             </View>
 
@@ -1238,7 +1239,7 @@ export default function OnboardingScreen() {
                 <Text style={[styles.pickerButtonText, !formData.hasAssociationMembership && { color: '#666' }]}>
                   {formData.hasAssociationMembership ? getPickerDisplayValue('hasAssociationMembership', formData.hasAssociationMembership) : t('common.select')}
                 </Text>
-                <Ionicons name="chevron-down" size={20} color="#666" />
+                <Ionicons name="chevron-down" size={IS_TABLET ? scale(26) : 20} color="#666" />
               </TouchableOpacity>
             </View>
 
@@ -1276,7 +1277,7 @@ export default function OnboardingScreen() {
                     t(`profile.options.serviceAtParish.${formData.serviceAtParish}`) :
                     t('profile.selects.selectServiceType')}
                 </Text>
-                <Ionicons name="chevron-down" size={20} color="#666" />
+                <Ionicons name="chevron-down" size={IS_TABLET ? scale(26) : 20} color="#666" />
               </TouchableOpacity>
               {errors.serviceAtParish && (
                 <Text style={styles.errorText}>{errors.serviceAtParish}</Text>
@@ -1298,7 +1299,7 @@ export default function OnboardingScreen() {
                       t(`profile.options.ministryService.${formData.ministryService}`) :
                       t('profile.selects.selectMinistryService')}
                   </Text>
-                  <Ionicons name="chevron-down" size={20} color="#666" />
+                  <Ionicons name="chevron-down" size={IS_TABLET ? scale(26) : 20} color="#666" />
                 </TouchableOpacity>
                 {errors.ministryService && (
                   <Text style={styles.errorText}>{errors.ministryService}</Text>
@@ -1352,7 +1353,7 @@ export default function OnboardingScreen() {
                 <Text style={[styles.pickerButtonText, !formData.residencePermit && { color: '#666' }]}>
                   {formData.residencePermit ? getPickerDisplayValue('residencePermit', formData.residencePermit) : t('common.select')}
                 </Text>
-                <Ionicons name="chevron-down" size={20} color="#666" />
+                <Ionicons name="chevron-down" size={IS_TABLET ? scale(26) : 20} color="#666" />
               </TouchableOpacity>
             </View>
           </View>
@@ -1554,7 +1555,7 @@ export default function OnboardingScreen() {
             ? getPickerDisplayValue(field, formData[field as keyof typeof formData])
             : t('common.select')}
         </Text>
-        <Ionicons name="chevron-down" size={20} color="#666" />
+        <Ionicons name="chevron-down" size={IS_TABLET ? scale(26) : 20} color="#666" />
       </TouchableOpacity>
     </View>
   );
@@ -2019,7 +2020,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   label: {
-    fontSize: 15,
+    fontSize: getFontSize(15),
     color: '#333',
     marginBottom: 8,
     fontWeight: '500',
@@ -2029,7 +2030,7 @@ const styles = StyleSheet.create({
     borderColor: '#DDD',
     borderRadius: 8,
     padding: 12,
-    fontSize: 16,
+    fontSize: getFontSize(16),
   },
   multilineInput: {
     height: 100,
@@ -2062,7 +2063,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: '#ff0000',
-    fontSize: 12,
+    fontSize: getFontSize(12),
     marginTop: 4,
   },
   mainContent: {
@@ -2075,12 +2076,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   helperText: {
-    fontSize: 14,
+    fontSize: getFontSize(14),
     color: '#666',
     marginBottom: 24,
   },
   sectionTitle: {
-    fontSize: 16,
+    fontSize: getFontSize(16),
     fontWeight: '600',
     color: '#333',
     marginBottom: 8,
@@ -2105,7 +2106,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   pickerButtonText: {
-    fontSize: 16,
+    fontSize: getFontSize(16),
     color: '#333',
   },
   modalOverlay: {

@@ -20,6 +20,7 @@ import { useTranslation } from 'react-i18next';
 import { setAuthState } from '../store/slices/authSlice';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types';
+import { IS_TABLET, getContainerWidth, getFontSize } from '../utils/responsive';
 
 interface FormData {
   firstName: string;
@@ -193,9 +194,9 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
             <Text style={styles.subtitle}>{t('auth.register.subtitle')}</Text>
           </View>
 
-          <View style={styles.formContainer}>
+          <View style={[styles.formContainer, IS_TABLET && styles.tabletFormContainer]}>
             <View style={styles.inputContainer}>
-              <Ionicons name="person-outline" size={20} color="#666" style={styles.inputIcon} />
+              <Ionicons name="person-outline" size={IS_TABLET ? 24 : 20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 placeholder={t('auth.register.placeholders.firstName')}
@@ -212,7 +213,7 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
             {errors.firstName && <Text style={styles.errorText}>{errors.firstName}</Text>}
 
             <View style={styles.inputContainer}>
-              <Ionicons name="person-outline" size={20} color="#666" style={styles.inputIcon} />
+              <Ionicons name="person-outline" size={IS_TABLET ? 24 : 20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 placeholder={t('auth.register.placeholders.lastName')}
@@ -224,7 +225,7 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
             {errors.lastName && <Text style={styles.errorText}>{errors.lastName}</Text>}
 
             <View style={styles.inputContainer}>
-              <Ionicons name="mail-outline" size={20} color="#666" style={styles.inputIcon} />
+              <Ionicons name="mail-outline" size={IS_TABLET ? 24 : 20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 placeholder={t('auth.register.placeholders.email')}
@@ -241,7 +242,7 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
             {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
 
             <View style={styles.inputContainer}>
-              <Ionicons name="lock-closed-outline" size={20} color="#666" style={styles.inputIcon} />
+              <Ionicons name="lock-closed-outline" size={IS_TABLET ? 24 : 20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 placeholder={t('auth.register.placeholders.password')}
@@ -254,7 +255,7 @@ const RegisterScreen = ({ navigation }: RegisterScreenProps) => {
             {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
 
             <View style={styles.inputContainer}>
-              <Ionicons name="lock-closed-outline" size={20} color="#666" style={styles.inputIcon} />
+              <Ionicons name="lock-closed-outline" size={IS_TABLET ? 24 : 20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 placeholder={t('auth.register.placeholders.confirmPassword')}
@@ -309,13 +310,13 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   welcomeText: {
-    fontSize: 32,
+    fontSize: getFontSize(32),
     fontWeight: 'bold',
     color: '#FFF',
     marginBottom: 8,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: getFontSize(16),
     color: '#FFF',
     opacity: 0.8,
   },
@@ -323,8 +324,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    paddingHorizontal: 20,
-    paddingTop: 30,
+    paddingHorizontal: IS_TABLET ? 30 : 20,
+    paddingTop: IS_TABLET ? 40 : 30,
     paddingBottom: 20,
     marginTop: 20,
   },
@@ -334,20 +335,20 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     borderRadius: 10,
     marginBottom: 16,
-    paddingHorizontal: 12,
+    paddingHorizontal: IS_TABLET ? 16 : 12,
   },
   inputIcon: {
-    marginRight: 10,
+    marginRight: IS_TABLET ? 12 : 10,
   },
   input: {
     flex: 1,
-    height: 50,
+    height: IS_TABLET ? 60 : 50,
     color: '#333',
-    fontSize: 16,
+    fontSize: getFontSize(16),
   },
   errorText: {
     color: '#FF3B30',
-    fontSize: 12,
+    fontSize: getFontSize(12),
     marginTop: -12,
     marginBottom: 12,
     marginLeft: 4,
@@ -355,7 +356,7 @@ const styles = StyleSheet.create({
   registerButton: {
     backgroundColor: '#2473E0',
     borderRadius: 10,
-    height: 50,
+    height: IS_TABLET ? 60 : 50,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
@@ -370,18 +371,18 @@ const styles = StyleSheet.create({
   },
   registerButtonText: {
     color: '#FFF',
-    fontSize: 18,
+    fontSize: getFontSize(18),
     fontWeight: '600',
   },
   loginLinkText: {
     color: '#FFF',
-    fontSize: 16,
+    fontSize: getFontSize(16),
     fontWeight: 'bold',
     marginLeft: 5,
   },
   helperText: {
     color: '#666',
-    fontSize: 12,
+    fontSize: getFontSize(12),
     marginTop: -10,
     marginBottom: 15,
     marginLeft: 4,
@@ -394,12 +395,26 @@ const styles = StyleSheet.create({
   },
   loginText: {
     color: '#666',
-    fontSize: 14,
+    fontSize: getFontSize(14),
   },
   loginLink: {
     color: '#2473E0',
-    fontSize: 14,
+    fontSize: getFontSize(14),
     fontWeight: '600',
+  },
+  // Tablet Styles
+  tabletFormContainer: {
+    width: getContainerWidth() as any,
+    alignSelf: 'center',
+    borderRadius: 30,
+    paddingHorizontal: 40,
+    paddingVertical: 40,
+    marginBottom: 40,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 5,
   },
 });
 

@@ -13,10 +13,11 @@ import { useTranslation } from 'react-i18next';
 import { ProfileService } from '../services/ProfileService';
 import * as ImagePicker from 'expo-image-picker';
 import { ProfileShimmer } from '../components/ProfileShimmer';
+import { getFontSize, IS_TABLET } from '../utils/responsive';
 
 const formatDisplayValue = (value: string | null | undefined, options?: { [key: string]: string }) => {
   if (!value) return 'Not provided';
-  
+
   if (options && options[value]) {
     return options[value];
   }
@@ -50,7 +51,7 @@ export default function ProfileScreen() {
 
   const renderChildrenList = (children?: ChildInfo[]) => {
     if (!children || children.length === 0) return null;
-    
+
     return children.map((child, index) => (
       <View key={index} style={styles.childItem}>
         <Text style={styles.childName}>{child.fullName}</Text>
@@ -166,9 +167,9 @@ export default function ProfileScreen() {
     <View style={styles.detailItem}>
       <View style={styles.labelContainer}>
         {iconSet === 'Ionicons' ? (
-          <Ionicons name={iconName as any} size={20} color="#666" style={styles.icon} />
+          <Ionicons name={iconName as any} size={IS_TABLET ? 24 : 20} color="#666" style={styles.icon} />
         ) : (
-          <MaterialCommunityIcons name={iconName as any} size={20} color="#666" style={styles.icon} />
+          <MaterialCommunityIcons name={iconName as any} size={IS_TABLET ? 24 : 20} color="#666" style={styles.icon} />
         )}
         <Text style={styles.detailLabel}>{label}:</Text>
       </View>
@@ -194,7 +195,7 @@ export default function ProfileScreen() {
   const handleChangePhoto = async () => {
     try {
       const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      
+
       if (!permissionResult.granted) {
         Alert.alert(t('common.error'), t('profile.messages.permissionDenied'));
         return;
@@ -214,7 +215,7 @@ export default function ProfileScreen() {
             ...user,
             photo: result.assets[0].uri
           });
-          
+
           if (updatedProfile.success) {
             dispatch(setUserData(updatedProfile.data));
             Alert.alert(t('common.success'), t('profile.messages.photoUpdated'));
@@ -250,8 +251,8 @@ export default function ProfileScreen() {
           {/* Profile Header */}
           <View style={styles.header}>
             {getProfilePhoto() ? (
-              <Image 
-                source={{ uri: getProfilePhoto() }} 
+              <Image
+                source={{ uri: getProfilePhoto() }}
                 style={styles.profilePhoto}
                 onError={(e) => {
                   console.log('Image loading error:', e.nativeEvent.error);
@@ -265,13 +266,13 @@ export default function ProfileScreen() {
               </View>
             )}
             <Text style={styles.fullName}>
-              {user?.firstName && user.lastName 
-                ? `${user.firstName} ${user.lastName}` 
+              {user?.firstName && user.lastName
+                ? `${user.firstName} ${user.lastName}`
                 : t('profile.messages.completeProfile')}
             </Text>
             <Text style={styles.email}>{user?.email}</Text>
             <TouchableOpacity style={styles.editButton} onPress={handleEditPress}>
-              <Ionicons name="pencil" size={20} color="#FFF" />
+              <Ionicons name="pencil" size={IS_TABLET ? 24 : 20} color="#FFF" />
               <Text style={styles.editButtonText}>{t('profile.editProfile')}</Text>
             </TouchableOpacity>
           </View>
@@ -279,17 +280,17 @@ export default function ProfileScreen() {
           {/* Personal Information Section */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>{t('profile.view.personalInfo')}</Text>
-            {renderDetailItem(t('profile.view.labels.name'), 
+            {renderDetailItem(t('profile.view.labels.name'),
               `${user?.firstName} ${user?.lastName}`, 'person-outline')}
-            {renderDetailItem(t('profile.view.labels.christianName'), 
+            {renderDetailItem(t('profile.view.labels.christianName'),
               user?.christianName, 'book-outline')}
-            {renderDetailItem(t('profile.view.labels.gender'), 
+            {renderDetailItem(t('profile.view.labels.gender'),
               user?.gender ? t(`profile.options.gender.${user.gender}`) : '', 'male-female-outline')}
-            {renderDetailItem(t('profile.view.labels.maritalStatus'), 
+            {renderDetailItem(t('profile.view.labels.maritalStatus'),
               user?.maritalStatus ? t(`profile.options.maritalStatus.${user.maritalStatus}`) : '', 'heart-outline')}
-            {renderDetailItem(t('profile.view.labels.educationLevel'), 
+            {renderDetailItem(t('profile.view.labels.educationLevel'),
               user?.educationLevel ? t(`profile.options.educationLevel.${user.educationLevel}`) : '', 'school-outline')}
-            {renderDetailItem(t('profile.view.labels.occupation'), 
+            {renderDetailItem(t('profile.view.labels.occupation'),
               user?.occupation, 'briefcase-outline')}
           </View>
 
@@ -299,7 +300,7 @@ export default function ProfileScreen() {
               <Text style={styles.sectionTitle}>{t('profile.view.childrenInfo')}</Text>
               <View style={styles.detailItem}>
                 <View style={styles.labelContainer}>
-                  <MaterialCommunityIcons name="account-child" size={20} color="#666" style={styles.icon} />
+                  <MaterialCommunityIcons name="account-child" size={IS_TABLET ? 24 : 20} color="#666" style={styles.icon} />
                   <Text style={styles.detailLabel}>{t('profile.view.labels.children')}:</Text>
                 </View>
                 <View style={styles.childrenContainer}>
@@ -312,45 +313,45 @@ export default function ProfileScreen() {
           {/* Contact Information Section */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>{t('profile.view.contactInfo')}</Text>
-            {renderDetailItem(t('profile.view.labels.phoneNumber'), 
+            {renderDetailItem(t('profile.view.labels.phoneNumber'),
               user?.phoneNumber, 'call-outline')}
-            {renderDetailItem(t('profile.view.labels.residencyCity'), 
+            {renderDetailItem(t('profile.view.labels.residencyCity'),
               user?.residencyCity ? t(`profile.options.cities.${user.residencyCity}`) : '', 'location-outline')}
-            {renderDetailItem(t('profile.view.labels.residenceAddress'), 
+            {renderDetailItem(t('profile.view.labels.residenceAddress'),
               user?.residenceAddress, 'home-outline')}
-            {renderDetailItem(t('profile.view.labels.emergencyContact'), 
+            {renderDetailItem(t('profile.view.labels.emergencyContact'),
               user?.emergencyContact, 'alert-circle-outline')}
           </View>
 
           {/* Church Information Section */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>{t('profile.view.churchInfo')}</Text>
-            {renderDetailItem(t('profile.view.labels.christianLife'), 
+            {renderDetailItem(t('profile.view.labels.christianLife'),
               user?.christianLife ? t(`profile.options.christianLife.${user.christianLife}`) : '', 'heart-circle-outline')}
-            {renderDetailItem(t('profile.view.labels.serviceAtParish'), 
+            {renderDetailItem(t('profile.view.labels.serviceAtParish'),
               user?.serviceAtParish ? t(`profile.options.serviceAtParish.${user.serviceAtParish}`) : '', 'people-outline')}
-            {renderDetailItem(t('profile.view.labels.ministryService'), 
+            {renderDetailItem(t('profile.view.labels.ministryService'),
               user?.ministryService ? t(`profile.options.ministryService.${user.ministryService}`) : '', 'business-outline')}
-            {renderDetailItem(t('profile.view.labels.hasFatherConfessor'), 
-              user?.hasFatherConfessor === 'yes' ? 
-                `${t('common.yes')} (${user.fatherConfessorName || t('common.notProvided')})` : 
-                t('common.no'), 
+            {renderDetailItem(t('profile.view.labels.hasFatherConfessor'),
+              user?.hasFatherConfessor === 'yes' ?
+                `${t('common.yes')} (${user.fatherConfessorName || t('common.notProvided')})` :
+                t('common.no'),
               'account-tie', 'MaterialCommunity')}
-            {renderDetailItem(t('profile.view.labels.hasAssociationMembership'), 
-              user?.hasAssociationMembership === 'yes' ? 
-                `${t('common.yes')}${user.associationName ? ` (${user.associationName})` : ''}` : 
-                t('common.no'), 
+            {renderDetailItem(t('profile.view.labels.hasAssociationMembership'),
+              user?.hasAssociationMembership === 'yes' ?
+                `${t('common.yes')}${user.associationName ? ` (${user.associationName})` : ''}` :
+                t('common.no'),
               'people-outline')}
           </View>
 
           {/* Logout and Delete Account Buttons */}
           <TouchableOpacity style={styles.logoutButton} onPress={confirmLogout}>
-            <Ionicons name="log-out-outline" size={24} color="#FF3B30" />
+            <Ionicons name="log-out-outline" size={IS_TABLET ? 28 : 24} color="#FF3B30" />
             <Text style={styles.logoutButtonText}>{t('profile.view.logOut')}</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.deleteButton} onPress={confirmDeleteAccount}>
-            <Ionicons name="trash-outline" size={24} color="#FF3B30" />
+            <Ionicons name="trash-outline" size={IS_TABLET ? 28 : 24} color="#FF3B30" />
             <Text style={styles.deleteButtonText}>{t('profile.view.deleteAccount.button')}</Text>
           </TouchableOpacity>
         </>
@@ -366,22 +367,22 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: '#FFF',
-    padding: 20,
+    padding: IS_TABLET ? 30 : 20,
     alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
     marginBottom: 15,
   },
   profilePhoto: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: IS_TABLET ? 140 : 100,
+    height: IS_TABLET ? 140 : 100,
+    borderRadius: IS_TABLET ? 70 : 50,
     marginBottom: 10,
   },
   avatarContainer: {
-    width: 100,
-    height: 100,
-    borderRadius: 50,
+    width: IS_TABLET ? 140 : 100,
+    height: IS_TABLET ? 140 : 100,
+    borderRadius: IS_TABLET ? 70 : 50,
     backgroundColor: '#2196F3',
     justifyContent: 'center',
     alignItems: 'center',
@@ -389,18 +390,18 @@ const styles = StyleSheet.create({
   },
   avatarText: {
     color: '#FFF',
-    fontSize: 40,
+    fontSize: IS_TABLET ? 56 : 40,
     fontWeight: 'bold',
   },
   fullName: {
-    fontSize: 24,
+    fontSize: getFontSize(24),
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 5,
     textAlign: 'center',
   },
   email: {
-    fontSize: 16,
+    fontSize: getFontSize(16),
     color: '#666',
     marginBottom: 15,
     textAlign: 'center',
@@ -408,20 +409,21 @@ const styles = StyleSheet.create({
   editButton: {
     flexDirection: 'row',
     backgroundColor: '#2196F3',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingHorizontal: IS_TABLET ? 28 : 20,
+    paddingVertical: IS_TABLET ? 14 : 10,
     borderRadius: 20,
     alignItems: 'center',
   },
   editButtonText: {
     color: '#FFF',
     marginLeft: 5,
-    fontSize: 16,
+    fontSize: getFontSize(16),
   },
   section: {
     backgroundColor: '#FFF',
-    padding: 15,
+    padding: IS_TABLET ? 20 : 15,
     marginBottom: 15,
+    marginHorizontal: IS_TABLET ? 16 : 0,
     borderRadius: 10,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -430,7 +432,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: getFontSize(18),
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 15,
@@ -450,23 +452,23 @@ const styles = StyleSheet.create({
     marginRight: 8,
   },
   detailLabel: {
-    fontSize: 14,
+    fontSize: getFontSize(14),
     color: '#666',
     fontWeight: '500',
   },
   detailValue: {
-    fontSize: 16,
+    fontSize: getFontSize(16),
     color: '#333',
-    marginLeft: 28,
+    marginLeft: IS_TABLET ? 32 : 28,
   },
   logoutButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 15,
+    padding: IS_TABLET ? 18 : 15,
     marginTop: 30,
     marginBottom: 50,
-    marginHorizontal: 20,
+    marginHorizontal: IS_TABLET ? 16 : 20,
     backgroundColor: '#FFF',
     borderRadius: 10,
     borderWidth: 1,
@@ -474,7 +476,7 @@ const styles = StyleSheet.create({
   },
   logoutButtonText: {
     color: '#FF3B30',
-    fontSize: 16,
+    fontSize: getFontSize(16),
     fontWeight: '600',
     marginLeft: 8,
   },
@@ -482,8 +484,8 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 15,
-    marginHorizontal: 20,
+    padding: IS_TABLET ? 18 : 15,
+    marginHorizontal: IS_TABLET ? 16 : 20,
     backgroundColor: '#FFF',
     borderRadius: 10,
     borderWidth: 1,
@@ -492,7 +494,7 @@ const styles = StyleSheet.create({
   },
   deleteButtonText: {
     color: '#FF3B30',
-    fontSize: 16,
+    fontSize: getFontSize(16),
     fontWeight: '600',
     marginLeft: 8,
   },
@@ -504,44 +506,22 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: '#FF3B30',
-    fontSize: 16,
+    fontSize: getFontSize(16),
     textAlign: 'center',
     marginBottom: 20,
   },
   retryButton: {
     backgroundColor: '#2196F3',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingHorizontal: IS_TABLET ? 24 : 20,
+    paddingVertical: IS_TABLET ? 14 : 10,
     borderRadius: 20,
   },
   retryButtonText: {
     color: '#FFF',
-    fontSize: 16,
+    fontSize: getFontSize(16),
   },
   childrenContainer: {
-    marginLeft: 28,
-  },
-  childItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#E0E0E0',
-  },
-  childName: {
-    fontSize: 16,
-    color: '#333',
-    flex: 1,
-  },
-  childDetail: {
-    fontSize: 14,
-    color: '#666',
-    marginLeft: 10,
-  },
-  childDetailsContainer: {
-    flex: 1,
-    marginLeft: 10,
+    marginLeft: IS_TABLET ? 32 : 28,
   },
   childItem: {
     paddingVertical: 8,
@@ -549,13 +529,13 @@ const styles = StyleSheet.create({
     borderBottomColor: '#E0E0E0',
   },
   childName: {
-    fontSize: 16,
+    fontSize: getFontSize(16),
     fontWeight: '500',
     color: '#333',
     marginBottom: 4,
   },
   childDetail: {
-    fontSize: 14,
+    fontSize: getFontSize(14),
     color: '#666',
     marginTop: 2,
   },

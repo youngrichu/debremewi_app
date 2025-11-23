@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { getFontSize } from '../utils/responsive';
 
 const ServicesScreen = () => {
   const { t } = useTranslation();
@@ -77,13 +78,13 @@ const styles = StyleSheet.create({
     borderBottomColor: '#eee',
   },
   title: {
-    fontSize: 24,
+    fontSize: getFontSize(24),
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 16,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: getFontSize(20),
     fontWeight: '600',
     color: '#333',
     marginBottom: 16,
@@ -101,7 +102,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   serviceText: {
-    fontSize: 16,
+    fontSize: getFontSize(16),
     color: '#333',
     textAlign: 'center',
   },
@@ -112,18 +113,18 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   dayText: {
-    fontSize: 18,
+    fontSize: getFontSize(18),
     fontWeight: '600',
     color: '#333',
     marginBottom: 8,
   },
   timeText: {
-    fontSize: 16,
+    fontSize: getFontSize(16),
     color: '#666',
     marginBottom: 8,
   },
   descriptionText: {
-    fontSize: 16,
+    fontSize: getFontSize(16),
     color: '#666',
   },
 });

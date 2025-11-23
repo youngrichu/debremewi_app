@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import SocialMediaService, { SocialMediaPost } from '../services/SocialMediaService';
 import { Ionicons } from '@expo/vector-icons';
 import { YouTubeFeedShimmer } from '../components/YouTubeFeedShimmer';
+import { getFontSize, IS_TABLET } from '../utils/responsive';
 
 const YouTubeFeedScreen = () => {
   const { t } = useTranslation();
@@ -33,7 +34,7 @@ const YouTubeFeedScreen = () => {
       } else if (!loading) {
         setLoadingMore(true);
       }
-      
+
       const currentPage = isRefresh ? 1 : page;
       console.log('Fetching videos with params:', {
         platform: 'youtube',
@@ -63,7 +64,7 @@ const YouTubeFeedScreen = () => {
 
       if (response?.status === 'success' && response.data?.items) {
         const newVideos = response.data.items;
-        
+
         if (isRefresh) {
           // For refresh, just set the new videos
           setVideos(newVideos);
@@ -82,12 +83,12 @@ const YouTubeFeedScreen = () => {
             });
           });
         }
-        
+
         // Only update hasMore if we have a valid pagination response
         if (response.data.pagination) {
           const hasMorePages = currentPage < response.data.pagination.total_pages;
           setHasMore(hasMorePages);
-          
+
           // If we're not refreshing and there are more pages, increment the page
           if (!isRefresh && hasMorePages) {
             setPage(currentPage + 1);
@@ -146,7 +147,7 @@ const YouTubeFeedScreen = () => {
   }
 
   return (
-    <ScrollView 
+    <ScrollView
       style={styles.container}
       refreshControl={
         <RefreshControl refreshing={refreshing} onRefresh={handleRefresh} />
@@ -154,7 +155,7 @@ const YouTubeFeedScreen = () => {
       onScrollEndDrag={handleLoadMore}
     >
       {videos.map((video, index) => (
-        <TouchableOpacity 
+        <TouchableOpacity
           key={`${video.id}-${index}`}
           style={styles.videoCard}
           onPress={() => openVideo(video.content.media_url)}
@@ -170,11 +171,11 @@ const YouTubeFeedScreen = () => {
             <View style={styles.statsRow}>
               <View style={styles.engagementStats}>
                 <View style={styles.stat}>
-                  <Ionicons name="thumbs-up-outline" size={16} color="#666" />
+                  <Ionicons name="thumbs-up-outline" size={IS_TABLET ? 20 : 16} color="#666" />
                   <Text style={styles.statText}>{video.content.engagement.likes}</Text>
                 </View>
                 <View style={styles.stat}>
-                  <Ionicons name="chatbubble-outline" size={16} color="#666" />
+                  <Ionicons name="chatbubble-outline" size={IS_TABLET ? 20 : 16} color="#666" />
                   <Text style={styles.statText}>{video.content.engagement.comments}</Text>
                 </View>
               </View>
@@ -206,19 +207,19 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: '#666',
-    fontSize: 16,
+    fontSize: getFontSize(16),
     textAlign: 'center',
     marginBottom: 20,
   },
   retryButton: {
     backgroundColor: '#2196F3',
-    paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingHorizontal: IS_TABLET ? 24 : 20,
+    paddingVertical: IS_TABLET ? 14 : 10,
     borderRadius: 8,
   },
   retryButtonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: getFontSize(16),
     fontWeight: '600',
   },
   videoCard: {
@@ -235,19 +236,19 @@ const styles = StyleSheet.create({
   },
   thumbnail: {
     width: '100%',
-    height: 200,
+    height: IS_TABLET ? 300 : 200,
     backgroundColor: '#f0f0f0',
     resizeMode: 'cover',
   },
   videoInfo: {
-    padding: 16,
+    padding: IS_TABLET ? 20 : 16,
   },
   title: {
-    fontSize: 16,
+    fontSize: getFontSize(16),
     fontWeight: '600',
     color: '#000',
     marginBottom: 12,
-    lineHeight: 22,
+    lineHeight: getFontSize(22),
   },
   statsRow: {
     flexDirection: 'row',
@@ -261,15 +262,15 @@ const styles = StyleSheet.create({
   engagementStats: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    gap: IS_TABLET ? 20 : 16,
   },
   stat: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: IS_TABLET ? 6 : 4,
   },
   statText: {
-    fontSize: 14,
+    fontSize: getFontSize(14),
     color: '#666',
   },
   loadingMore: {

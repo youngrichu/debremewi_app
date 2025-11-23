@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet, ScrollView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
+import { IS_TABLET } from '../utils/responsive';
 
 const ShimmerComponent = ShimmerPlaceholder as any;
 
@@ -14,61 +15,74 @@ export const EventDetailsShimmer = () => {
         style={styles.eventImage}
       />
 
-      {/* Event Header */}
-      <View style={styles.header}>
+      {/* Event Content */}
+      <View style={styles.content}>
+        {/* Event Title */}
         <ShimmerComponent
           LinearGradient={LinearGradient}
           style={styles.title}
         />
-        <View style={styles.dateTimeContainer}>
+
+        {/* Meta Container */}
+        <View style={styles.metaContainer}>
+          <View style={styles.metaRow}>
+            <ShimmerComponent
+              LinearGradient={LinearGradient}
+              style={styles.metaIcon}
+            />
+            <ShimmerComponent
+              LinearGradient={LinearGradient}
+              style={styles.metaText}
+            />
+          </View>
+          <View style={styles.metaRow}>
+            <ShimmerComponent
+              LinearGradient={LinearGradient}
+              style={styles.metaIcon}
+            />
+            <ShimmerComponent
+              LinearGradient={LinearGradient}
+              style={styles.metaTextLarge}
+            />
+          </View>
+          <View style={styles.metaRow}>
+            <ShimmerComponent
+              LinearGradient={LinearGradient}
+              style={styles.metaIcon}
+            />
+            <ShimmerComponent
+              LinearGradient={LinearGradient}
+              style={styles.metaText}
+            />
+          </View>
+        </View>
+
+        {/* Action Buttons */}
+        <View style={styles.actionButtons}>
           <ShimmerComponent
             LinearGradient={LinearGradient}
-            style={styles.dateTime}
+            style={styles.actionButton}
           />
           <ShimmerComponent
             LinearGradient={LinearGradient}
-            style={styles.dateTime}
+            style={styles.actionButton}
           />
         </View>
-      </View>
 
-      {/* Event Location */}
-      <View style={styles.section}>
-        <ShimmerComponent
-          LinearGradient={LinearGradient}
-          style={styles.sectionTitle}
-        />
-        <ShimmerComponent
-          LinearGradient={LinearGradient}
-          style={styles.location}
-        />
-      </View>
-
-      {/* Event Description */}
-      <View style={styles.section}>
-        <ShimmerComponent
-          LinearGradient={LinearGradient}
-          style={styles.sectionTitle}
-        />
-        {[1, 2, 3, 4].map((_, index) => (
+        {/* Description Section */}
+        <View style={styles.descriptionContainer}>
           <ShimmerComponent
-            key={index}
             LinearGradient={LinearGradient}
-            style={styles.descriptionLine}
+            style={styles.descriptionTitle}
           />
-        ))}
-      </View>
-
-      {/* Action Buttons */}
-      <View style={styles.actionButtons}>
-        <ShimmerComponent
-          LinearGradient={LinearGradient}
-          style={styles.actionButton}
-        />
-        <ShimmerComponent
-          LinearGradient={LinearGradient}
-          style={styles.actionButton}
-        />
+          {[1, 2, 3, 4, 5].map((_, index) => (
+            <ShimmerComponent
+              key={index}
+              LinearGradient={LinearGradient}
+              style={styles.descriptionLine}
+            />
+          ))}
+        </View>
       </View>
     </ScrollView>
   );
@@ -81,56 +95,71 @@ const styles = StyleSheet.create({
   },
   eventImage: {
     width: '100%',
-    height: 250,
+    height: IS_TABLET ? 400 : 250,
   },
-  header: {
-    padding: 16,
+  content: {
+    padding: IS_TABLET ? 24 : 16,
   },
   title: {
     width: '90%',
-    height: 28,
+    height: IS_TABLET ? 36 : 28,
     borderRadius: 4,
     marginBottom: 16,
   },
-  dateTimeContainer: {
+  metaContainer: {
+    backgroundColor: '#f8f8f8',
+    padding: IS_TABLET ? 16 : 12,
+    borderRadius: 8,
+    marginBottom: 16,
+    gap: 12,
+  },
+  metaRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
     gap: 8,
   },
-  dateTime: {
-    width: '60%',
-    height: 20,
+  metaIcon: {
+    width: IS_TABLET ? 28 : 24,
+    height: IS_TABLET ? 28 : 24,
     borderRadius: 4,
   },
-  section: {
-    padding: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#f0f0f0',
-  },
-  sectionTitle: {
-    width: 120,
-    height: 20,
-    borderRadius: 4,
-    marginBottom: 12,
-  },
-  location: {
-    width: '80%',
-    height: 20,
+  metaText: {
+    flex: 1,
+    height: IS_TABLET ? 22 : 18,
     borderRadius: 4,
   },
-  descriptionLine: {
-    width: '100%',
-    height: 16,
+  metaTextLarge: {
+    flex: 1,
+    height: IS_TABLET ? 44 : 36,
     borderRadius: 4,
-    marginBottom: 8,
   },
   actionButtons: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    padding: 16,
-    gap: 16,
+    marginVertical: 16,
+    gap: IS_TABLET ? 16 : 12,
   },
   actionButton: {
     flex: 1,
-    height: 44,
+    height: IS_TABLET ? 52 : 44,
     borderRadius: 8,
+  },
+  descriptionContainer: {
+    marginTop: 16,
+    padding: IS_TABLET ? 20 : 16,
+    backgroundColor: '#f8f8f8',
+    borderRadius: 8,
+    gap: 12,
+  },
+  descriptionTitle: {
+    width: '40%',
+    height: IS_TABLET ? 26 : 22,
+    borderRadius: 4,
+    marginBottom: 8,
+  },
+  descriptionLine: {
+    width: '100%',
+    height: IS_TABLET ? 22 : 18,
+    borderRadius: 4,
   },
 }); 

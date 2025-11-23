@@ -23,6 +23,7 @@ import { useWindowDimensions } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { formatEthiopianDate } from '../utils/ethiopianCalendar';
 import { EventDetailsShimmer } from '../components/EventDetailsShimmer';
+import { getFontSize, IS_TABLET } from '../utils/responsive';
 
 interface EventDetailsScreenProps {
   route: {
@@ -68,17 +69,17 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
       setLoading(true);
       setError(null);
       const eventData = await EventService.getEventById(route.params.eventId);
-      
+
       if (eventData) {
         // If this is an occurrence, override the date with the occurrence date
         const finalEventData = {
           ...eventData,
           content: formatContent(eventData.content),
-          date: route.params.isOccurrence && route.params.occurrenceDate 
-            ? route.params.occurrenceDate 
+          date: route.params.isOccurrence && route.params.occurrenceDate
+            ? route.params.occurrenceDate
             : eventData.date
         };
-        
+
         setEvent(finalEventData);
       } else {
         setError('Event not found');
@@ -96,7 +97,7 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
       try {
         // Construct the event URL
         const eventUrl = `https://dubaidebremewi.com/events/${event.id}`;
-        
+
         const shareMessage = t('events.details.share.message', {
           title: event.title,
           date: format(new Date(event.date), 'PPP'),
@@ -143,8 +144,8 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
       const defaultCalendar = Platform.select({
         ios: () => {
           // On iOS, prefer iCloud calendar if available, otherwise use the first writable calendar
-          return calendars.find(cal => 
-            cal.allowsModifications && 
+          return calendars.find(cal =>
+            cal.allowsModifications &&
             (cal.source.name === 'iCloud' || cal.source.name === 'Default')
           ) || calendars.find(cal => cal.allowsModifications);
         },
@@ -166,7 +167,7 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
       if (!defaultCalendar) {
         Alert.alert(
           t('events.details.addToCalendar.permission.notFound.title'),
-          Platform.OS === 'ios' 
+          Platform.OS === 'ios'
             ? t('events.details.addToCalendar.permission.notFound.ios')
             : t('events.details.addToCalendar.permission.notFound.android'),
           [{ text: 'OK' }]
@@ -206,7 +207,7 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
           'Success',
           t('events.details.addToCalendar.success'),
           [
-            { 
+            {
               text: 'OK',
               onPress: () => {
                 if (Platform.OS === 'ios') {
@@ -245,27 +246,27 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
 
   const tagsStyles = {
     body: {
-      fontSize: 16,
-      lineHeight: 24,
+      fontSize: getFontSize(16),
+      lineHeight: getFontSize(24),
       color: '#444',
     },
     p: {
       marginBottom: 16,
     },
     h1: {
-      fontSize: 24,
+      fontSize: getFontSize(24),
       fontWeight: 'bold',
       marginVertical: 12,
       color: '#333',
     },
     h2: {
-      fontSize: 20,
+      fontSize: getFontSize(20),
       fontWeight: 'bold',
       marginVertical: 10,
       color: '#333',
     },
     h3: {
-      fontSize: 18,
+      fontSize: getFontSize(18),
       fontWeight: 'bold',
       marginVertical: 8,
       color: '#333',
@@ -327,14 +328,14 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
 
         <View style={styles.metaContainer}>
           <View style={styles.metaItem}>
-            <Ionicons name="calendar-outline" size={24} color="#666" />
+            <Ionicons name="calendar-outline" size={IS_TABLET ? 28 : 24} color="#666" />
             <Text style={styles.metaText}>
               {formatDate(event.date)}
             </Text>
           </View>
 
           <View style={styles.eventMetaItem}>
-            <Ionicons name="time-outline" size={20} color="#666" />
+            <Ionicons name="time-outline" size={IS_TABLET ? 24 : 20} color="#666" />
             <Text style={styles.eventMetaText}>
               {format(new Date(event.date), 'EEEE, MMMM d, yyyy')}
               {'\n'}
@@ -347,7 +348,7 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
 
           {event.location && (
             <View style={styles.metaItem}>
-              <Ionicons name="location-outline" size={24} color="#666" />
+              <Ionicons name="location-outline" size={IS_TABLET ? 28 : 24} color="#666" />
               <Text style={styles.metaText}>
                 {isAmharic ? 'ቦታ፡ ' : 'Location: '}{event.location}
               </Text>
@@ -360,14 +361,14 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
             style={styles.actionButton}
             onPress={handleAddToCalendar}
           >
-            <Ionicons name="calendar" size={20} color="#fff" />
+            <Ionicons name="calendar" size={IS_TABLET ? 24 : 20} color="#fff" />
             <Text style={styles.actionButtonText}>
               {t('events.details.addToCalendar.button')}
             </Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.actionButton} onPress={handleShare}>
-            <Ionicons name="share" size={20} color="#fff" />
+            <Ionicons name="share" size={IS_TABLET ? 24 : 20} color="#fff" />
             <Text style={styles.actionButtonText}>
               {t('events.details.share.button')}
             </Text>
@@ -393,8 +394,8 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
               selectable: true,
             }}
             baseStyle={{
-              fontSize: 16,
-              lineHeight: 24,
+              fontSize: getFontSize(16),
+              lineHeight: getFontSize(24),
               color: '#444',
             }}
             systemFonts={[]}
@@ -448,13 +449,13 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 200,
+    height: IS_TABLET ? 400 : 250,
   },
   content: {
-    padding: 16,
+    padding: IS_TABLET ? 24 : 16,
   },
   title: {
-    fontSize: 24,
+    fontSize: getFontSize(24),
     fontWeight: 'bold',
     marginBottom: 16,
     color: '#333',
@@ -462,7 +463,7 @@ const styles = StyleSheet.create({
   metaContainer: {
     marginBottom: 16,
     backgroundColor: '#f8f8f8',
-    padding: 12,
+    padding: IS_TABLET ? 16 : 12,
     borderRadius: 8,
   },
   metaItem: {
@@ -473,20 +474,21 @@ const styles = StyleSheet.create({
   metaText: {
     marginLeft: 8,
     color: '#666',
-    fontSize: 15,
+    fontSize: getFontSize(15),
   },
   actions: {
     flexDirection: 'row',
     justifyContent: 'space-around',
     marginVertical: 16,
+    gap: IS_TABLET ? 16 : 0,
   },
   actionButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#2196F3',
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 4,
+    paddingHorizontal: IS_TABLET ? 24 : 16,
+    paddingVertical: IS_TABLET ? 14 : 10,
+    borderRadius: 8,
     elevation: 2,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -496,17 +498,17 @@ const styles = StyleSheet.create({
   actionButtonText: {
     color: '#fff',
     marginLeft: 8,
-    fontSize: 15,
+    fontSize: getFontSize(15),
     fontWeight: '500',
   },
   descriptionContainer: {
     marginTop: 16,
-    padding: 16,
+    padding: IS_TABLET ? 20 : 16,
     backgroundColor: '#f8f8f8',
     borderRadius: 8,
   },
   descriptionTitle: {
-    fontSize: 18,
+    fontSize: getFontSize(18),
     fontWeight: '600',
     marginBottom: 12,
     color: '#333',
@@ -519,6 +521,6 @@ const styles = StyleSheet.create({
   eventMetaText: {
     marginLeft: 8,
     color: '#666',
-    fontSize: 15,
+    fontSize: getFontSize(15),
   },
 });

@@ -4,11 +4,12 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation, NavigationProp } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '../store';
-import { 
-  fetchNotifications, 
+import {
+  fetchNotifications,
   selectUnreadCount,
-  selectNotificationsLoading 
+  selectNotificationsLoading
 } from '../store/slices/notificationsSlice';
+import { IS_TABLET, getFontSize } from '../utils/responsive';
 
 type RootStackParamList = {
   Notifications: undefined;
@@ -18,7 +19,7 @@ const NotificationButton = () => {
   const navigation = useNavigation<NavigationProp<RootStackParamList>>();
   const dispatch = useDispatch<AppDispatch>();
   const [opacity] = useState(new Animated.Value(1));
-  
+
   const unreadCount = useSelector(selectUnreadCount);
   const loading = useSelector(selectNotificationsLoading);
 
@@ -60,15 +61,15 @@ const NotificationButton = () => {
   }, [navigation]);
 
   return (
-    <TouchableOpacity 
+    <TouchableOpacity
       style={styles.container}
       onPress={handlePress}
       disabled={loading}
     >
-      <Ionicons 
-        name={unreadCount > 0 ? "notifications" : "notifications-outline"} 
-        size={24} 
-        color={unreadCount > 0 ? "#2196F3" : "#333"} 
+      <Ionicons
+        name={unreadCount > 0 ? "notifications" : "notifications-outline"}
+        size={IS_TABLET ? 28 : 24}
+        color={unreadCount > 0 ? "#2196F3" : "#333"}
       />
       {unreadCount > 0 && (
         <Animated.View style={[styles.badge, { opacity }]}>
@@ -83,24 +84,24 @@ const NotificationButton = () => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 8,
-    marginRight: 8,
+    padding: IS_TABLET ? 10 : 8,
+    marginRight: IS_TABLET ? 10 : 8,
   },
   badge: {
     position: 'absolute',
     right: 0,
     top: 0,
     backgroundColor: '#FF3B30',
-    borderRadius: 10,
-    minWidth: 20,
-    height: 20,
+    borderRadius: IS_TABLET ? 12 : 10,
+    minWidth: IS_TABLET ? 24 : 20,
+    height: IS_TABLET ? 24 : 20,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 4,
+    paddingHorizontal: IS_TABLET ? 5 : 4,
   },
   badgeText: {
     color: '#FFF',
-    fontSize: 12,
+    fontSize: getFontSize(12),
     fontWeight: 'bold',
   },
 });

@@ -2,13 +2,14 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import ShimmerPlaceholder from 'react-native-shimmer-placeholder';
+import { IS_TABLET } from '../utils/responsive';
 
 const ShimmerComponent = ShimmerPlaceholder as any;
 
 export const YouTubeFeedShimmer = () => {
   return (
     <View style={styles.container}>
-      {[1, 2, 3].map((_, index) => (
+      {[1, 2, 3, 4].map((_, index) => (
         <View key={index} style={styles.videoCard}>
           <ShimmerComponent
             LinearGradient={LinearGradient}
@@ -19,18 +20,16 @@ export const YouTubeFeedShimmer = () => {
               LinearGradient={LinearGradient}
               style={styles.videoTitle}
             />
-            <View style={styles.videoStats}>
-              <View style={styles.authorInfo}>
+            <ShimmerComponent
+              LinearGradient={LinearGradient}
+              style={styles.videoTitleSecondLine}
+            />
+            <View style={styles.statsRow}>
+              <View style={styles.engagementStats}>
                 <ShimmerComponent
                   LinearGradient={LinearGradient}
-                  style={styles.authorAvatar}
+                  style={styles.statItem}
                 />
-                <ShimmerComponent
-                  LinearGradient={LinearGradient}
-                  style={styles.authorName}
-                />
-              </View>
-              <View style={styles.stats}>
                 <ShimmerComponent
                   LinearGradient={LinearGradient}
                   style={styles.statItem}
@@ -48,12 +47,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',
-    padding: 16,
+    paddingVertical: 8,
   },
   videoCard: {
     backgroundColor: '#fff',
+    marginHorizontal: 16,
+    marginVertical: 8,
     borderRadius: 12,
-    marginBottom: 16,
     overflow: 'hidden',
     elevation: 2,
     shadowColor: '#000',
@@ -63,46 +63,41 @@ const styles = StyleSheet.create({
   },
   thumbnail: {
     width: '100%',
-    height: 200,
+    height: IS_TABLET ? 300 : 200,
     backgroundColor: '#f0f0f0',
   },
   videoInfo: {
-    padding: 12,
+    padding: IS_TABLET ? 20 : 16,
   },
   videoTitle: {
     width: '90%',
-    height: 20,
+    height: IS_TABLET ? 24 : 20,
+    borderRadius: 4,
+    marginBottom: 8,
+  },
+  videoTitleSecondLine: {
+    width: '70%',
+    height: IS_TABLET ? 24 : 20,
     borderRadius: 4,
     marginBottom: 12,
   },
-  videoStats: {
+  statsRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
+    borderTopWidth: 1,
+    borderTopColor: '#f0f0f0',
+    paddingTop: 12,
+    marginTop: 4,
   },
-  authorInfo: {
+  engagementStats: {
     flexDirection: 'row',
     alignItems: 'center',
-    flex: 1,
-  },
-  authorAvatar: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    marginRight: 8,
-  },
-  authorName: {
-    width: 100,
-    height: 16,
-    borderRadius: 4,
-  },
-  stats: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    gap: IS_TABLET ? 20 : 16,
   },
   statItem: {
-    width: 60,
-    height: 16,
+    width: IS_TABLET ? 70 : 60,
+    height: IS_TABLET ? 20 : 16,
     borderRadius: 4,
   },
 }); 

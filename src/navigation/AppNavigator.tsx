@@ -50,7 +50,8 @@ function EventStackScreen() {
       screenOptions={{
         headerTitleAlign: 'left',
         headerTitleStyle: {
-          marginLeft: 16,
+          marginLeft: IS_TABLET ? 20 : 16,
+          fontSize: getFontSize(18),
         },
       }}
     >
@@ -81,7 +82,8 @@ function BlogStackScreen() {
       screenOptions={{
         headerTitleAlign: 'left',
         headerTitleStyle: {
-          marginLeft: 16,
+          marginLeft: IS_TABLET ? 20 : 16,
+          fontSize: getFontSize(18),
         },
       }}
     >
@@ -112,7 +114,8 @@ function AnnouncementStackScreen() {
       screenOptions={{
         headerTitleAlign: 'left',
         headerTitleStyle: {
-          marginLeft: 16,
+          marginLeft: IS_TABLET ? 20 : 16,
+          fontSize: getFontSize(18),
         },
       }}
     >
@@ -193,10 +196,11 @@ function MainTabs() {
             <NotificationButton />
           </View>
         ),
-        headerRightContainerStyle: { paddingRight: 15 },
+        headerRightContainerStyle: { paddingRight: IS_TABLET ? 20 : 15 },
         headerTitleAlign: 'left',
         headerTitleStyle: {
-          marginLeft: 16,
+          marginLeft: IS_TABLET ? 20 : 16,
+          fontSize: getFontSize(18),
         },
         tabBarStyle: {
           height: IS_TABLET ? 80 : 60,
@@ -264,7 +268,8 @@ function HomeStackScreen() {
       screenOptions={{
         headerTitleAlign: 'left',
         headerTitleStyle: {
-          marginLeft: 16,
+          marginLeft: IS_TABLET ? 20 : 16,
+          fontSize: getFontSize(18),
         },
       }}
     >
@@ -311,7 +316,8 @@ function MoreStackScreen() {
       screenOptions={{
         headerTitleAlign: 'left',
         headerTitleStyle: {
-          marginLeft: 16,
+          marginLeft: IS_TABLET ? 20 : 16,
+          fontSize: getFontSize(18),
         },
       }}
     >
@@ -383,7 +389,12 @@ export default function AppNavigator() {
                 headerShown: true,
                 title: t('navigation.screens.login'),
                 headerRight: () => <LanguageSelector />,
-                headerRightContainerStyle: { paddingRight: 15 },
+                headerRightContainerStyle: { paddingRight: IS_TABLET ? 20 : 15 },
+                headerTitleAlign: 'left',
+                headerTitleStyle: {
+                  marginLeft: IS_TABLET ? 20 : 16,
+                  fontSize: getFontSize(18),
+                },
               }}
             />
             <Stack.Screen
@@ -393,7 +404,12 @@ export default function AppNavigator() {
                 headerShown: true,
                 title: t('navigation.screens.register'),
                 headerRight: () => <LanguageSelector />,
-                headerRightContainerStyle: { paddingRight: 15 },
+                headerRightContainerStyle: { paddingRight: IS_TABLET ? 20 : 15 },
+                headerTitleAlign: 'left',
+                headerTitleStyle: {
+                  marginLeft: IS_TABLET ? 20 : 16,
+                  fontSize: getFontSize(18),
+                },
               }}
             />
             <Stack.Screen
@@ -403,7 +419,12 @@ export default function AppNavigator() {
                 headerShown: true,
                 title: t('navigation.screens.forgotPassword'),
                 headerRight: () => <LanguageSelector />,
-                headerRightContainerStyle: { paddingRight: 15 },
+                headerRightContainerStyle: { paddingRight: IS_TABLET ? 20 : 15 },
+                headerTitleAlign: 'left',
+                headerTitleStyle: {
+                  marginLeft: IS_TABLET ? 20 : 16,
+                  fontSize: getFontSize(18),
+                },
               }}
             />
           </>
@@ -431,7 +452,12 @@ export default function AppNavigator() {
                 headerShown: true,
                 title: t('navigation.screens.notifications'),
                 headerRight: () => <LanguageSelector />,
-                headerRightContainerStyle: { paddingRight: 15 },
+                headerRightContainerStyle: { paddingRight: IS_TABLET ? 20 : 15 },
+                headerTitleAlign: 'left',
+                headerTitleStyle: {
+                  marginLeft: IS_TABLET ? 20 : 16,
+                  fontSize: getFontSize(18),
+                },
               }}
             />
             <Stack.Screen

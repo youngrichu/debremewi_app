@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Text } from './Text';
 import { Ionicons } from '@expo/vector-icons';
 import { changeLanguage } from '../i18n';
+import { IS_TABLET, getFontSize } from '../utils/responsive';
 
 export function LanguageSelector() {
   const { i18n } = useTranslation();
@@ -50,7 +51,7 @@ export function LanguageSelector() {
 
   return (
     <>
-      <TouchableOpacity 
+      <TouchableOpacity
         onPress={() => setModalVisible(true)}
         style={styles.container}
       >
@@ -73,13 +74,13 @@ export function LanguageSelector() {
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.modalContainer}
           activeOpacity={1}
           onPress={() => setModalVisible(false)}
         >
           <View style={styles.modalContent}>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[
                 styles.languageOption,
                 getLanguageStyle('en', true),
@@ -94,10 +95,10 @@ export function LanguageSelector() {
                 English
               </Text>
               {i18n.language === 'en' && (
-                <Ionicons name="checkmark" size={20} color="#2196F3" style={styles.checkIcon} />
+                <Ionicons name="checkmark" size={IS_TABLET ? 24 : 20} color="#2196F3" style={styles.checkIcon} />
               )}
             </TouchableOpacity>
-            <TouchableOpacity 
+            <TouchableOpacity
               style={[
                 styles.languageOption,
                 getLanguageStyle('am', true),
@@ -112,7 +113,7 @@ export function LanguageSelector() {
                 አማርኛ
               </Text>
               {i18n.language === 'am' && (
-                <Ionicons name="checkmark" size={20} color="#2196F3" style={styles.checkIcon} />
+                <Ionicons name="checkmark" size={IS_TABLET ? 24 : 20} color="#2196F3" style={styles.checkIcon} />
               )}
             </TouchableOpacity>
           </View>
@@ -124,18 +125,18 @@ export function LanguageSelector() {
 
 const styles = StyleSheet.create({
   container: {
-    marginRight: 10,
+    marginRight: IS_TABLET ? 12 : 10,
   },
   flagButton: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: IS_TABLET ? 40 : 32,
+    height: IS_TABLET ? 40 : 32,
+    borderRadius: IS_TABLET ? 20 : 16,
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
   },
   languageText: {
-    fontSize: 14,
+    fontSize: getFontSize(14),
     fontWeight: 'bold',
   },
   modalContainer: {
@@ -147,12 +148,12 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: 'white',
     borderRadius: 12,
-    padding: 16,
+    padding: IS_TABLET ? 20 : 16,
     width: '80%',
-    maxWidth: 300,
+    maxWidth: IS_TABLET ? 400 : 300,
   },
   languageOption: {
-    padding: 12,
+    padding: IS_TABLET ? 16 : 12,
     marginVertical: 4,
     borderRadius: 8,
     flexDirection: 'row',
@@ -163,7 +164,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
   },
   languageOptionText: {
-    fontSize: 16,
+    fontSize: getFontSize(16),
     fontWeight: '500',
     color: '#333333',
   },

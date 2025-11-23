@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
+import { IS_TABLET, getFontSize, scale } from '../utils/responsive';
 
 const CommunityScreen = () => {
   const { t } = useTranslation();
@@ -31,8 +32,8 @@ const CommunityScreen = () => {
       <Text style={styles.title}>{t('location.title')}</Text>
 
       {churches.map((church) => (
-        <View 
-          key={church.id} 
+        <View
+          key={church.id}
           style={[
             styles.churchCard,
             church.isMain && styles.mainChurchCard
@@ -43,36 +44,36 @@ const CommunityScreen = () => {
               <Text style={styles.mainChurchBadgeText}>{t('location.mainChurchBadge')}</Text>
             </View>
           )}
-          
+
           <Text style={styles.churchName}>
             {t(`location.churches.${church.id}.name`)}
           </Text>
           <View style={styles.locationContainer}>
-            <Ionicons name="location" size={16} color="#666" />
+            <Ionicons name="location" size={IS_TABLET ? scale(20) : 16} color="#666" />
             <Text style={styles.locationText}>
               {t(`location.churches.${church.id}.city`)}
             </Text>
           </View>
           <View style={styles.coordinatesContainer}>
-            <Ionicons name="navigate" size={16} color="#666" />
+            <Ionicons name="navigate" size={IS_TABLET ? scale(20) : 16} color="#666" />
             <Text style={styles.coordinatesText}>
               {t(`location.churches.${church.id}.venue`) || t('location.notSpecified.venue')}
             </Text>
           </View>
           {t(`location.churches.${church.id}.location`) && (
             <View style={styles.locationDetailContainer}>
-              <Ionicons name="pin" size={16} color="#666" />
+              <Ionicons name="pin" size={IS_TABLET ? scale(20) : 16} color="#666" />
               <Text style={styles.locationDetailText}>
                 {t(`location.churches.${church.id}.location`) || t('location.notSpecified.location')}
               </Text>
             </View>
           )}
-          
-          <TouchableOpacity 
+
+          <TouchableOpacity
             style={styles.mapButton}
             onPress={() => handleMapPress(church.mapLink)}
           >
-            <Ionicons name="map" size={20} color="#fff" />
+            <Ionicons name="map" size={IS_TABLET ? scale(26) : 20} color="#fff" />
             <Text style={styles.mapButtonText}>{t('location.openInMaps')}</Text>
           </TouchableOpacity>
         </View>
@@ -88,7 +89,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   title: {
-    fontSize: 24,
+    fontSize: getFontSize(24),
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 20,
@@ -123,11 +124,11 @@ const styles = StyleSheet.create({
   },
   mainChurchBadgeText: {
     color: '#fff',
-    fontSize: 12,
+    fontSize: getFontSize(12),
     fontWeight: 'bold',
   },
   churchName: {
-    fontSize: 18,
+    fontSize: getFontSize(18),
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 12,
@@ -138,7 +139,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   locationText: {
-    fontSize: 16,
+    fontSize: getFontSize(16),
     color: '#666',
     marginLeft: 8,
   },
@@ -148,7 +149,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   coordinatesText: {
-    fontSize: 14,
+    fontSize: getFontSize(14),
     color: '#666',
     marginLeft: 8,
   },
@@ -162,7 +163,7 @@ const styles = StyleSheet.create({
   },
   mapButtonText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: getFontSize(16),
     fontWeight: '500',
     marginLeft: 8,
   },
@@ -172,7 +173,7 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   locationDetailText: {
-    fontSize: 14,
+    fontSize: getFontSize(14),
     color: '#666',
     marginLeft: 8,
   },

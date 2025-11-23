@@ -151,7 +151,7 @@ const LoginScreen = ({ navigation, route }: LoginScreenProps) => {
 
           <View style={[styles.formContainer, IS_TABLET && styles.tabletFormContainer]}>
             <View style={styles.inputContainer}>
-              <Ionicons name="person-outline" size={20} color="#666" style={styles.inputIcon} />
+              <Ionicons name="person-outline" size={IS_TABLET ? 24 : 20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 placeholder={t('auth.login.placeholders.emailOrUsername')}
@@ -166,7 +166,7 @@ const LoginScreen = ({ navigation, route }: LoginScreenProps) => {
             </View>
 
             <View style={styles.inputContainer}>
-              <Ionicons name="lock-closed-outline" size={20} color="#666" style={styles.inputIcon} />
+              <Ionicons name="lock-closed-outline" size={IS_TABLET ? 24 : 20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 placeholder={t('auth.login.placeholders.password')}
@@ -184,7 +184,7 @@ const LoginScreen = ({ navigation, route }: LoginScreenProps) => {
               >
                 <Ionicons
                   name={showPassword ? "eye-off-outline" : "eye-outline"}
-                  size={20}
+                  size={IS_TABLET ? 24 : 20}
                   color="#666"
                 />
               </TouchableOpacity>
@@ -242,13 +242,13 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   welcomeText: {
-    fontSize: 32,
+    fontSize: getFontSize(32),
     fontWeight: 'bold',
     color: '#FFF',
     marginBottom: 8,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: getFontSize(16),
     color: '#FFF',
     opacity: 0.8,
   },
@@ -256,8 +256,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    paddingHorizontal: 20,
-    paddingTop: 30,
+    paddingHorizontal: IS_TABLET ? 30 : 20,
+    paddingTop: IS_TABLET ? 40 : 30,
     paddingBottom: 20,
     marginTop: 20,
   },
@@ -267,19 +267,19 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     borderRadius: 10,
     marginBottom: 16,
-    paddingHorizontal: 12,
+    paddingHorizontal: IS_TABLET ? 16 : 12,
   },
   inputIcon: {
-    marginRight: 10,
+    marginRight: IS_TABLET ? 12 : 10,
   },
   input: {
     flex: 1,
-    height: 50,
+    height: IS_TABLET ? 60 : 50,
     color: '#333',
-    fontSize: 16,
+    fontSize: getFontSize(16),
   },
   eyeIcon: {
-    padding: 8,
+    padding: IS_TABLET ? 10 : 8,
   },
   forgotPasswordButton: {
     alignSelf: 'flex-end',
@@ -287,12 +287,12 @@ const styles = StyleSheet.create({
   },
   forgotPasswordText: {
     color: '#2473E0',
-    fontSize: 14,
+    fontSize: getFontSize(14),
   },
   loginButton: {
     backgroundColor: '#2473E0',
     borderRadius: 10,
-    height: 50,
+    height: IS_TABLET ? 60 : 50,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 20,
@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
   },
   loginButtonText: {
     color: '#FFF',
-    fontSize: 18,
+    fontSize: getFontSize(18),
     fontWeight: '600',
   },
   registerContainer: {
@@ -314,16 +314,16 @@ const styles = StyleSheet.create({
   },
   registerText: {
     color: '#666',
-    fontSize: 14,
+    fontSize: getFontSize(14),
   },
   registerLink: {
     color: '#2473E0',
-    fontSize: 14,
+    fontSize: getFontSize(14),
     fontWeight: '600',
   },
   errorText: {
     color: '#FF3B30',
-    fontSize: 14,
+    fontSize: getFontSize(14),
     marginBottom: 16,
     marginLeft: 4,
     textAlign: 'center',

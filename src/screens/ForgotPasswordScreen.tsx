@@ -15,6 +15,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { useTranslation } from 'react-i18next';
 import { requestPasswordReset } from '../services/AuthService';
 import { RootStackParamList } from '../types';
+import { IS_TABLET, getContainerWidth, getFontSize } from '../utils/responsive';
 
 type Props = StackScreenProps<RootStackParamList, 'ForgotPassword'>;
 
@@ -79,9 +80,9 @@ const ForgotPasswordScreen = ({ navigation }: Props) => {
             </Text>
           </View>
 
-          <View style={styles.formContainer}>
+          <View style={[styles.formContainer, IS_TABLET && styles.tabletFormContainer]}>
             <View style={styles.inputContainer}>
-              <Ionicons name="person-outline" size={20} color="#666" style={styles.inputIcon} />
+              <Ionicons name="person-outline" size={IS_TABLET ? 24 : 20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 placeholder={t('auth.forgotPassword.placeholders.emailOrUsername')}
@@ -119,21 +120,21 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   headerSection: {
-    padding: 20,
+    padding: IS_TABLET ? 30 : 20,
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
     alignItems: 'center',
   },
   headerText: {
-    fontSize: 32,
+    fontSize: getFontSize(32),
     fontWeight: 'bold',
     color: '#FFF',
     marginBottom: 12,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: getFontSize(16),
     color: '#FFF',
     opacity: 0.9,
-    lineHeight: 24,
+    lineHeight: getFontSize(24),
     textAlign: 'center',
   },
   formContainer: {
@@ -141,8 +142,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFF',
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
-    paddingHorizontal: 20,
-    paddingTop: 30,
+    paddingHorizontal: IS_TABLET ? 30 : 20,
+    paddingTop: IS_TABLET ? 40 : 30,
     paddingBottom: 20,
     marginTop: 30,
   },
@@ -152,27 +153,27 @@ const styles = StyleSheet.create({
     backgroundColor: '#F5F5F5',
     borderRadius: 10,
     marginBottom: 16,
-    paddingHorizontal: 12,
+    paddingHorizontal: IS_TABLET ? 16 : 12,
   },
   inputIcon: {
-    marginRight: 10,
+    marginRight: IS_TABLET ? 12 : 10,
   },
   input: {
     flex: 1,
-    height: 50,
+    height: IS_TABLET ? 60 : 50,
     color: '#333',
-    fontSize: 16,
+    fontSize: getFontSize(16),
   },
   errorText: {
     color: '#FF3B30',
-    fontSize: 14,
+    fontSize: getFontSize(14),
     marginBottom: 16,
     marginLeft: 4,
   },
   nextButton: {
     backgroundColor: '#2473E0',
     borderRadius: 10,
-    height: 50,
+    height: IS_TABLET ? 60 : 50,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 16,
@@ -184,8 +185,22 @@ const styles = StyleSheet.create({
   },
   nextButtonText: {
     color: '#FFF',
-    fontSize: 18,
+    fontSize: getFontSize(18),
     fontWeight: '600',
+  },
+  // Tablet Styles
+  tabletFormContainer: {
+    width: getContainerWidth() as any,
+    alignSelf: 'center',
+    borderRadius: 30,
+    paddingHorizontal: 40,
+    paddingVertical: 40,
+    marginBottom: 40,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 12,
+    elevation: 5,
   },
 });
 

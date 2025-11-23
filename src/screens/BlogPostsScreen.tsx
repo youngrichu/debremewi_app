@@ -5,9 +5,7 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  Image,
   TextInput,
-  ActivityIndicator,
   RefreshControl
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -15,9 +13,10 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { Ionicons } from '@expo/vector-icons';
 import { API_URL } from '../config';
 import { useTranslation } from 'react-i18next';
-import { decode } from 'html-entities';
 import { Post, RootStackParamList } from '../types';
 import { BlogPostsShimmer } from '../components/BlogPostsShimmer';
+import { BlogPostCard } from '../components/BlogPostCard';
+import { IS_TABLET, getContainerWidth } from '../utils/responsive';
 
 type BlogPostsScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -54,34 +53,6 @@ const BlogPostsScreen = () => {
     fetchPosts();
   };
 
-  const renderPost = ({ item }: { item: Post }) => (
-    <TouchableOpacity
-      style={styles.postCard}
-      onPress={() => navigation.navigate('BlogPostDetail', { post: item })}
-    >
-      {item._embedded?.['wp:featuredmedia']?.[0]?.source_url && (
-        <Image
-          source={{ uri: item._embedded['wp:featuredmedia'][0].source_url }}
-          style={styles.postImage}
-        />
-      )}
-      <View style={styles.postContent}>
-        <Text style={styles.postTitle}>{decode(item.title.rendered)}</Text>
-        <Text style={styles.postExcerpt} numberOfLines={2}>
-          {item.excerpt.rendered.replace(/<[^>]*>/g, '')}
-        </Text>
-        <View style={styles.postFooter}>
-          <Text style={styles.postDate}>
-            {t('blog.postedOn', { 
-              date: new Date(item.date).toLocaleDateString() 
-            })}
-          </Text>
-          <Text style={styles.readMore}>{t('blog.readMore')}</Text>
-        </View>
-      </View>
-    </TouchableOpacity>
-  );
-
   if (loading) {
     return <BlogPostsShimmer />;
   }
@@ -104,7 +75,7 @@ const BlogPostsScreen = () => {
 
   return (
     <View style={styles.container}>
-      <View style={styles.searchContainer}>
+      <View style={[styles.searchContainer, { width: getContainerWidth(), alignSelf: 'center' }]}>
         <Ionicons name="search" size={20} color="#666" style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
@@ -123,12 +94,21 @@ const BlogPostsScreen = () => {
       ) : (
         <FlatList
           data={filteredPosts}
-          renderItem={renderPost}
+          renderItem={({ item }) => (
+            <BlogPostCard
+              post={item}
+              onPress={() => navigation.navigate('BlogPostDetail', { post: item })}
+              style={IS_TABLET ? { flex: 1, margin: 8 } : undefined}
+            />
+          )}
           keyExtractor={item => item.id.toString()}
           contentContainerStyle={styles.listContainer}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
+          numColumns={IS_TABLET ? 2 : 1}
+          key={IS_TABLET ? 'tablet' : 'mobile'}
+          columnWrapperStyle={IS_TABLET ? { justifyContent: 'space-between' } : undefined}
         />
       )}
     </View>
@@ -163,50 +143,6 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     padding: 16,
-  },
-  postCard: {
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    marginBottom: 16,
-    overflow: 'hidden',
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-  },
-  postImage: {
-    width: '100%',
-    height: 200,
-  },
-  postContent: {
-    padding: 16,
-  },
-  postTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 8,
-  },
-  postExcerpt: {
-    fontSize: 14,
-    color: '#666',
-    lineHeight: 20,
-    marginBottom: 12,
-  },
-  postFooter: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  postDate: {
-    fontSize: 12,
-    color: '#999',
-  },
-  readMore: {
-    fontSize: 14,
-    color: '#2196F3',
-    fontWeight: '500',
   },
   centerContainer: {
     flex: 1,

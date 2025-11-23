@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { getFontSize } from '../utils/responsive';
 
 const AboutUsScreen = () => {
   const { t } = useTranslation();
@@ -56,20 +57,20 @@ const styles = StyleSheet.create({
     borderBottomColor: '#eee',
   },
   title: {
-    fontSize: 24,
+    fontSize: getFontSize(24),
     fontWeight: 'bold',
     color: '#333',
     marginBottom: 16,
   },
   sectionTitle: {
-    fontSize: 20,
+    fontSize: getFontSize(20),
     fontWeight: '600',
     color: '#333',
     marginBottom: 12,
   },
   paragraph: {
-    fontSize: 16,
-    lineHeight: 24,
+    fontSize: getFontSize(16),
+    lineHeight: getFontSize(24),
     color: '#666',
   },
 });
