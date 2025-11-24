@@ -31,6 +31,7 @@ export interface UserProfile {
   avatar_url?: string;
   photo?: string;
   is_onboarding_complete?: boolean;
+  user_registered?: string; // Registration date from WordPress
 }
 
 export interface LoginResponse {

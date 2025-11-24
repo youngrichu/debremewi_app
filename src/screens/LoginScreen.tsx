@@ -92,6 +92,14 @@ const LoginScreen = ({ navigation, route }: LoginScreenProps) => {
           console.log('Raw user data before dispatch:', JSON.stringify(response.user, null, 2));
           console.log('is_onboarding_complete value:', response.user.is_onboarding_complete);
           dispatch(setUserData(response.user));
+
+          // Store and dispatch registration date if available
+          if (response.user.user_registered) {
+            console.log('User registration date:', response.user.user_registered);
+            await AsyncStorage.setItem('userRegistrationDate', response.user.user_registered);
+            const { setRegistrationDate } = require('../store/slices/userSlice');
+            dispatch(setRegistrationDate(response.user.user_registered));
+          }
         }
       } else {
         setErrorMessage(response.message || t('auth.login.errors.loginFailed'));

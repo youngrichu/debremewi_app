@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { registerForPushNotificationsAsync } from '../services/pushNotifications';
 import { StatusBar } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Import screens
 import HomeScreen from '../screens/HomeScreen';
@@ -372,6 +373,27 @@ export default function AppNavigator() {
   console.log('User data:', userData);
 
   const isOnboardingComplete = userData?.isOnboardingComplete ?? userData?.is_onboarding_complete ?? false;
+
+  // Load user registration date from AsyncStorage on app start
+  useEffect(() => {
+    const loadRegistrationDate = async () => {
+      try {
+        const registrationDate = await AsyncStorage.getItem('userRegistrationDate');
+        if (registrationDate) {
+          console.log('Loaded registration date from storage:', registrationDate);
+          const { setRegistrationDate } = require('../store/slices/userSlice');
+          const { store } = require('../store');
+          store.dispatch(setRegistrationDate(registrationDate));
+        }
+      } catch (error) {
+        console.error('Error loading registration date:', error);
+      }
+    };
+
+    if (isAuthenticated) {
+      loadRegistrationDate();
+    }
+  }, [isAuthenticated]);
 
   return (
     <>
