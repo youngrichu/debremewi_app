@@ -379,27 +379,34 @@ class AuthServiceClass {
     lastName: string;
   }): Promise<RegisterResponse> {
     try {
-      // Generate username from first and last name
-      // Format: firstname.lastname.random
-      const cleanFirstName = userData.firstName.toLowerCase().replace(/[^a-z0-9]/g, '');
-      const cleanLastName = userData.lastName.toLowerCase().replace(/[^a-z0-9]/g, '');
-      const randomSuffix = Math.floor(Math.random() * 10000);
-      const username = `${cleanFirstName}.${cleanLastName}.${randomSuffix}`;
-
-      // If email is empty, generate a placeholder email
-      // Format: noemail.{timestamp}.{random}@debremewi.com
-      // This ensures uniqueness and satisfies the backend requirement
       let emailToRegister = userData.email;
+      let username: string;
+
+      // Check if email is provided
       if (!emailToRegister || !emailToRegister.trim()) {
+        // No email provided: generate both temporary email AND username
+        // Format: noemail.{timestamp}.{random}@debremewi.com
+        // Username format: firstname.lastname.random
         const timestamp = Date.now();
         const random = Math.floor(Math.random() * 10000);
         emailToRegister = `noemail.${timestamp}.${random}@debremewi.com`;
-        console.log('No email provided, using placeholder:', emailToRegister);
+
+        const cleanFirstName = userData.firstName.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const cleanLastName = userData.lastName.toLowerCase().replace(/[^a-z0-9]/g, '');
+        const randomSuffix = Math.floor(Math.random() * 10000);
+        username = `${cleanFirstName}.${cleanLastName}.${randomSuffix}`;
+
+        console.log('No email provided, using placeholder email:', emailToRegister);
+        console.log('Generated username:', username);
+      } else {
+        // Email provided: use the email as the username
+        username = emailToRegister;
+        console.log('Email provided, using as username:', username);
       }
 
       const response = await axios.post(`${API_URL}/?rest_route=/simple-jwt-login/v1/users`, {
         email: emailToRegister,
-        user_login: username, // Send the generated username
+        user_login: username, // Use email as username if provided, otherwise generated username
         password: userData.password,
         first_name: userData.firstName,
         last_name: userData.lastName,
@@ -410,7 +417,7 @@ class AuthServiceClass {
         success: true,
         message: 'Registration successful',
         email: emailToRegister, // Return the email used for registration
-        username: username, // Return the generated username
+        username: username, // Return the username (email if provided, or generated)
         user_registered: response.data.user?.user_registered // Return the registration date
       };
     } catch (error: any) {
