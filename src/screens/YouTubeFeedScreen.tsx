@@ -154,35 +154,37 @@ const YouTubeFeedScreen = () => {
       }
       onScrollEndDrag={handleLoadMore}
     >
-      {videos.map((video, index) => (
-        <TouchableOpacity
-          key={`${video.id}-${index}`}
-          style={styles.videoCard}
-          onPress={() => openVideo(video.content.media_url)}
-        >
-          <Image
-            source={{ uri: video.content.thumbnail_url }}
-            style={styles.thumbnail}
-          />
-          <View style={styles.videoInfo}>
-            <Text style={styles.title} numberOfLines={2}>
-              {video.content.title}
-            </Text>
-            <View style={styles.statsRow}>
-              <View style={styles.engagementStats}>
-                <View style={styles.stat}>
-                  <Ionicons name="thumbs-up-outline" size={IS_TABLET ? 20 : 16} color="#666" />
-                  <Text style={styles.statText}>{video.content.engagement.likes}</Text>
-                </View>
-                <View style={styles.stat}>
-                  <Ionicons name="chatbubble-outline" size={IS_TABLET ? 20 : 16} color="#666" />
-                  <Text style={styles.statText}>{video.content.engagement.comments}</Text>
+      <View style={styles.gridContainer}>
+        {videos.map((video, index) => (
+          <TouchableOpacity
+            key={`${video.id}-${index}`}
+            style={styles.videoCard}
+            onPress={() => openVideo(video.content.media_url)}
+          >
+            <Image
+              source={{ uri: video.content.thumbnail_url }}
+              style={styles.thumbnail}
+            />
+            <View style={styles.videoInfo}>
+              <Text style={styles.title} numberOfLines={2}>
+                {video.content.title}
+              </Text>
+              <View style={styles.statsRow}>
+                <View style={styles.engagementStats}>
+                  <View style={styles.stat}>
+                    <Ionicons name="thumbs-up-outline" size={IS_TABLET ? 20 : 16} color="#666" />
+                    <Text style={styles.statText}>{video.content.engagement.likes}</Text>
+                  </View>
+                  <View style={styles.stat}>
+                    <Ionicons name="chatbubble-outline" size={IS_TABLET ? 20 : 16} color="#666" />
+                    <Text style={styles.statText}>{video.content.engagement.comments}</Text>
+                  </View>
                 </View>
               </View>
             </View>
-          </View>
-        </TouchableOpacity>
-      ))}
+          </TouchableOpacity>
+        ))}
+      </View>
       {loadingMore && (
         <View style={styles.loadingMore}>
           <ActivityIndicator size="small" color="#2196F3" />
@@ -222,9 +224,14 @@ const styles = StyleSheet.create({
     fontSize: getFontSize(16),
     fontWeight: '600',
   },
+  gridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+  },
   videoCard: {
     backgroundColor: '#fff',
-    marginHorizontal: 16,
     marginVertical: 8,
     borderRadius: 12,
     overflow: 'hidden',
@@ -233,6 +240,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    width: IS_TABLET ? '48%' : '100%',
   },
   thumbnail: {
     width: '100%',

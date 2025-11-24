@@ -31,53 +31,55 @@ const CommunityScreen = () => {
     <ScrollView style={styles.container}>
       <Text style={styles.title}>{t('location.title')}</Text>
 
-      {churches.map((church) => (
-        <View
-          key={church.id}
-          style={[
-            styles.churchCard,
-            church.isMain && styles.mainChurchCard
-          ]}
-        >
-          {church.isMain && (
-            <View style={styles.mainChurchBadge}>
-              <Text style={styles.mainChurchBadgeText}>{t('location.mainChurchBadge')}</Text>
-            </View>
-          )}
+      <View style={styles.gridContainer}>
+        {churches.map((church) => (
+          <View
+            key={church.id}
+            style={[
+              styles.churchCard,
+              church.isMain && styles.mainChurchCard
+            ]}
+          >
+            {church.isMain && (
+              <View style={styles.mainChurchBadge}>
+                <Text style={styles.mainChurchBadgeText}>{t('location.mainChurchBadge')}</Text>
+              </View>
+            )}
 
-          <Text style={styles.churchName}>
-            {t(`location.churches.${church.id}.name`)}
-          </Text>
-          <View style={styles.locationContainer}>
-            <Ionicons name="location" size={IS_TABLET ? scale(20) : 16} color="#666" />
-            <Text style={styles.locationText}>
-              {t(`location.churches.${church.id}.city`)}
+            <Text style={styles.churchName}>
+              {t(`location.churches.${church.id}.name`)}
             </Text>
-          </View>
-          <View style={styles.coordinatesContainer}>
-            <Ionicons name="navigate" size={IS_TABLET ? scale(20) : 16} color="#666" />
-            <Text style={styles.coordinatesText}>
-              {t(`location.churches.${church.id}.venue`) || t('location.notSpecified.venue')}
-            </Text>
-          </View>
-          {t(`location.churches.${church.id}.location`) && (
-            <View style={styles.locationDetailContainer}>
-              <Ionicons name="pin" size={IS_TABLET ? scale(20) : 16} color="#666" />
-              <Text style={styles.locationDetailText}>
-                {t(`location.churches.${church.id}.location`) || t('location.notSpecified.location')}
+            <View style={styles.locationContainer}>
+              <Ionicons name="location" size={IS_TABLET ? scale(20) : 16} color="#666" />
+              <Text style={styles.locationText}>
+                {t(`location.churches.${church.id}.city`)}
               </Text>
             </View>
-          )}
+            <View style={styles.coordinatesContainer}>
+              <Ionicons name="navigate" size={IS_TABLET ? scale(20) : 16} color="#666" />
+              <Text style={styles.coordinatesText}>
+                {t(`location.churches.${church.id}.venue`) || t('location.notSpecified.venue')}
+              </Text>
+            </View>
+            {t(`location.churches.${church.id}.location`) && (
+              <View style={styles.locationDetailContainer}>
+                <Ionicons name="pin" size={IS_TABLET ? scale(20) : 16} color="#666" />
+                <Text style={styles.locationDetailText}>
+                  {t(`location.churches.${church.id}.location`) || t('location.notSpecified.location')}
+                </Text>
+              </View>
+            )}
 
-          <TouchableOpacity
-            style={styles.mapButton}
-            onPress={() => handleMapPress(church.mapLink)}
-          >
-            <Ionicons name="map" size={IS_TABLET ? scale(26) : 20} color="#fff" />
-            <Text style={styles.mapButtonText}>{t('location.openInMaps')}</Text>
-          </TouchableOpacity>
-        </View>
-      ))}
+            <TouchableOpacity
+              style={styles.mapButton}
+              onPress={() => handleMapPress(church.mapLink)}
+            >
+              <Ionicons name="map" size={IS_TABLET ? scale(26) : 20} color="#fff" />
+              <Text style={styles.mapButtonText}>{t('location.openInMaps')}</Text>
+            </TouchableOpacity>
+          </View>
+        ))}
+      </View>
     </ScrollView>
   );
 };
@@ -95,6 +97,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
   },
+  gridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
   churchCard: {
     backgroundColor: '#fff',
     borderRadius: 12,
@@ -108,6 +115,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
+    width: IS_TABLET ? '48%' : '100%',
   },
   mainChurchCard: {
     borderWidth: 2,

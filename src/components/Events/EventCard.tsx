@@ -154,6 +154,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'stretch',
     width: '95%',
+    maxWidth: 800,
     alignSelf: 'center',
   },
   tabletImage: {

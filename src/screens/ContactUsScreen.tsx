@@ -45,71 +45,75 @@ const ContactUsScreen = () => {
       <View style={styles.content}>
         <Text style={styles.title}>{t('contact.title')}</Text>
 
-        <TouchableOpacity style={styles.contactItem} onPress={handleEmailPress}>
-          <View style={styles.iconContainer}>
-            <Ionicons name="mail" size={IS_TABLET ? scale(28) : 24} color="#fff" />
-          </View>
-          <View style={styles.contactDetails}>
-            <Text style={styles.contactLabel}>{t('contact.email.label')}</Text>
-            <Text style={styles.contactValue}>{email}</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={IS_TABLET ? scale(28) : 24} color="#666" />
-        </TouchableOpacity>
+        <View style={styles.gridContainer}>
+          <TouchableOpacity style={styles.contactItem} onPress={handleEmailPress}>
+            <View style={styles.iconContainer}>
+              <Ionicons name="mail" size={IS_TABLET ? scale(28) : 24} color="#fff" />
+            </View>
+            <View style={styles.contactDetails}>
+              <Text style={styles.contactLabel}>{t('contact.email.label')}</Text>
+              <Text style={styles.contactValue}>{email}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={IS_TABLET ? scale(28) : 24} color="#666" />
+          </TouchableOpacity>
 
-        <TouchableOpacity style={styles.contactItem} onPress={handleWhatsAppPress}>
-          <View style={[styles.iconContainer, { backgroundColor: '#25D366' }]}>
-            <Ionicons name="logo-whatsapp" size={IS_TABLET ? scale(28) : 24} color="#fff" />
-          </View>
-          <View style={styles.contactDetails}>
-            <Text style={styles.contactLabel}>{t('contact.whatsapp.label')}</Text>
-            <Text style={styles.contactValue}>{whatsappNumber}</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={IS_TABLET ? scale(28) : 24} color="#666" />
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.contactItem} onPress={handleWhatsAppPress}>
+            <View style={[styles.iconContainer, { backgroundColor: '#25D366' }]}>
+              <Ionicons name="logo-whatsapp" size={IS_TABLET ? scale(28) : 24} color="#fff" />
+            </View>
+            <View style={styles.contactDetails}>
+              <Text style={styles.contactLabel}>{t('contact.whatsapp.label')}</Text>
+              <Text style={styles.contactValue}>{whatsappNumber}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={IS_TABLET ? scale(28) : 24} color="#666" />
+          </TouchableOpacity>
+        </View>
 
         <Text style={styles.sectionTitle}>{t('contact.sections.socialMedia')}</Text>
 
-        <TouchableOpacity
-          style={styles.contactItem}
-          onPress={() => handleSocialMediaPress(socialMedia.facebook)}
-        >
-          <View style={[styles.iconContainer, { backgroundColor: '#1877F2' }]}>
-            <Ionicons name="logo-facebook" size={IS_TABLET ? scale(28) : 24} color="#fff" />
-          </View>
-          <View style={styles.contactDetails}>
-            <Text style={styles.contactLabel}>{t('contact.social.facebook.label')}</Text>
-            <Text style={styles.contactValue}>{t('contact.social.facebook.value')}</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={IS_TABLET ? scale(28) : 24} color="#666" />
-        </TouchableOpacity>
+        <View style={styles.gridContainer}>
+          <TouchableOpacity
+            style={styles.contactItem}
+            onPress={() => handleSocialMediaPress(socialMedia.facebook)}
+          >
+            <View style={[styles.iconContainer, { backgroundColor: '#1877F2' }]}>
+              <Ionicons name="logo-facebook" size={IS_TABLET ? scale(28) : 24} color="#fff" />
+            </View>
+            <View style={styles.contactDetails}>
+              <Text style={styles.contactLabel}>{t('contact.social.facebook.label')}</Text>
+              <Text style={styles.contactValue}>{t('contact.social.facebook.value')}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={IS_TABLET ? scale(28) : 24} color="#666" />
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.contactItem}
-          onPress={() => handleSocialMediaPress(socialMedia.youtube)}
-        >
-          <View style={[styles.iconContainer, { backgroundColor: '#FF0000' }]}>
-            <Ionicons name="logo-youtube" size={IS_TABLET ? scale(28) : 24} color="#fff" />
-          </View>
-          <View style={styles.contactDetails}>
-            <Text style={styles.contactLabel}>{t('contact.social.youtube.label')}</Text>
-            <Text style={styles.contactValue}>{t('contact.social.youtube.value')}</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={IS_TABLET ? scale(28) : 24} color="#666" />
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.contactItem}
+            onPress={() => handleSocialMediaPress(socialMedia.youtube)}
+          >
+            <View style={[styles.iconContainer, { backgroundColor: '#FF0000' }]}>
+              <Ionicons name="logo-youtube" size={IS_TABLET ? scale(28) : 24} color="#fff" />
+            </View>
+            <View style={styles.contactDetails}>
+              <Text style={styles.contactLabel}>{t('contact.social.youtube.label')}</Text>
+              <Text style={styles.contactValue}>{t('contact.social.youtube.value')}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={IS_TABLET ? scale(28) : 24} color="#666" />
+          </TouchableOpacity>
 
-        <TouchableOpacity
-          style={styles.contactItem}
-          onPress={() => handleSocialMediaPress(socialMedia.tiktok)}
-        >
-          <View style={[styles.iconContainer, { backgroundColor: '#000000' }]}>
-            <Ionicons name="logo-tiktok" size={IS_TABLET ? scale(28) : 24} color="#fff" />
-          </View>
-          <View style={styles.contactDetails}>
-            <Text style={styles.contactLabel}>{t('contact.social.tiktok.label')}</Text>
-            <Text style={styles.contactValue}>{t('contact.social.tiktok.value')}</Text>
-          </View>
-          <Ionicons name="chevron-forward" size={IS_TABLET ? scale(28) : 24} color="#666" />
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.contactItem}
+            onPress={() => handleSocialMediaPress(socialMedia.tiktok)}
+          >
+            <View style={[styles.iconContainer, { backgroundColor: '#000000' }]}>
+              <Ionicons name="logo-tiktok" size={IS_TABLET ? scale(28) : 24} color="#fff" />
+            </View>
+            <View style={styles.contactDetails}>
+              <Text style={styles.contactLabel}>{t('contact.social.tiktok.label')}</Text>
+              <Text style={styles.contactValue}>{t('contact.social.tiktok.value')}</Text>
+            </View>
+            <Ionicons name="chevron-forward" size={IS_TABLET ? scale(28) : 24} color="#666" />
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );
@@ -123,6 +127,11 @@ const styles = StyleSheet.create({
   content: {
     padding: 16,
     paddingBottom: 32, // Add extra padding at the bottom
+  },
+  gridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   },
   title: {
     fontSize: getFontSize(24),
@@ -144,6 +153,7 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 8,
     marginBottom: 16,
+    width: IS_TABLET ? '48%' : '100%',
   },
   iconContainer: {
     width: IS_TABLET ? scale(50) : 40,

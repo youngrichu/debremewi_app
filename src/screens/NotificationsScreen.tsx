@@ -10,7 +10,7 @@ import { RootStackParamList } from '../types';
 import { NotificationCard } from '../components/NotificationCard';
 import { API_URL } from '../config';
 import { Linking } from 'react-native';
-import { getFontSize } from '../utils/responsive';
+import { getFontSize, IS_TABLET } from '../utils/responsive';
 
 type NotificationScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 

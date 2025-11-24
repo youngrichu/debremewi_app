@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { getFontSize } from '../utils/responsive';
+import { getFontSize, IS_TABLET } from '../utils/responsive';
 
 const AboutUsScreen = () => {
   const { t } = useTranslation();
@@ -55,6 +55,11 @@ const styles = StyleSheet.create({
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
+    ...(IS_TABLET ? {
+      width: '100%',
+      maxWidth: 800,
+      alignSelf: 'center',
+    } : {}),
   },
   title: {
     fontSize: getFontSize(24),

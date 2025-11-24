@@ -216,7 +216,6 @@ export const NotificationCard = ({ notification, onPress }: NotificationCardProp
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
-    marginHorizontal: IS_TABLET ? 20 : 16,
     marginVertical: IS_TABLET ? 10 : 8,
     borderRadius: 12,
     overflow: 'hidden',
@@ -225,6 +224,13 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
+    ...(IS_TABLET ? {
+      width: '90%',
+      maxWidth: 600,
+      alignSelf: 'center',
+    } : {
+      marginHorizontal: 16,
+    }),
   },
   unread: {
     backgroundColor: '#f0f9ff',

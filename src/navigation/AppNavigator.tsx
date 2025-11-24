@@ -206,12 +206,13 @@ function MainTabs() {
           fontSize: getFontSize(18),
         },
         tabBarStyle: {
-          height: (IS_TABLET ? 80 : 60) + insets.bottom,
+          height: (IS_TABLET ? 90 : 60) + insets.bottom,
           paddingBottom: insets.bottom + (IS_TABLET ? 10 : 5),
           paddingTop: IS_TABLET ? 10 : 5,
         },
         tabBarLabelStyle: {
           fontSize: IS_TABLET ? 14 : 10,
+          marginBottom: IS_TABLET ? 5 : 0,
         },
       })}
     >

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Ionicons } from '@expo/vector-icons';
-import { getFontSize } from '../utils/responsive';
+import { getFontSize, IS_TABLET } from '../utils/responsive';
 import { COLORS, getColorWithOpacity } from '../constants/colors';
 
 const ServicesScreen = () => {
@@ -70,13 +70,15 @@ const ServicesScreen = () => {
 
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>{t('services.routineServices')}</Text>
-        {routineServices.map((service) => (
-          <View key={service.key} style={styles.routineService}>
-            <Text style={styles.dayText}>{service.day}</Text>
-            <Text style={styles.timeText}>{service.time}</Text>
-            <Text style={styles.descriptionText}>{service.description}</Text>
-          </View>
-        ))}
+        <View style={styles.gridContainer}>
+          {routineServices.map((service) => (
+            <View key={service.key} style={styles.routineService}>
+              <Text style={styles.dayText}>{service.day}</Text>
+              <Text style={styles.timeText}>{service.time}</Text>
+              <Text style={styles.descriptionText}>{service.description}</Text>
+            </View>
+          ))}
+        </View>
       </View>
     </ScrollView>
   );
@@ -126,6 +128,12 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 8,
     marginBottom: 16,
+    width: IS_TABLET ? '48%' : '100%',
+  },
+  gridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
   },
   dayText: {
     fontSize: getFontSize(18),
