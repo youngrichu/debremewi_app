@@ -16,10 +16,10 @@ export const i18nInit = (async () => {
   try {
     console.log('Initializing i18n...');
     console.log('Device locale:', Localization.locale);
-    
+
     let savedLanguage = await AsyncStorage.getItem('language');
     console.log('Saved language from storage:', savedLanguage);
-    
+
     if (!savedLanguage) {
       const deviceLang = Localization.locale.split('-')[0];
       savedLanguage = ['en', 'am'].includes(deviceLang) ? deviceLang : 'en';
@@ -43,7 +43,7 @@ export const i18nInit = (async () => {
       });
 
     console.log('i18n initialized with language:', i18next.language);
-    
+
     // Add a language change listener
     i18next.on('languageChanged', (lng) => {
       console.log('Language changed event:', lng);

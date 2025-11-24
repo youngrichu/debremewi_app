@@ -379,6 +379,10 @@
   },
   "services": {
     "title": "የቤተክርስቲያን አገልግሎቶች",
+    "booking": {
+      "message": "ለማንኛውም አገልግሎት ቀጠሮ ለማስያዝ፣ እባክዎ ይደውሉልን።",
+      "button": "ይደውሉ"
+    },
     "routineServices": "መደበኛ አገልግሎቶች",
     "services": {
       "liturgy": "ቅዳሴ",
@@ -415,11 +419,11 @@
     },
     "email": {
       "label": "ኢሜይል",
-      "value": "dubaidebremewi2021@gmail.com"
+      "value": "infor@dubaidebremewi.com"
     },
     "whatsapp": {
       "label": "ዋትስአፕ",
-      "value": "+971525591976"
+      "value": "+971559911534"
     },
     "social": {
       "facebook": {

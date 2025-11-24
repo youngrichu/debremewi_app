@@ -378,7 +378,10 @@
   },
   "services": {
     "title": "Our Services",
-    "routineServices": "Routine Services",
+    "booking": {
+      "message": "For booking any of the services, please call us.",
+      "button": "Call to Book"
+    },
     "services": {
       "liturgy": "Liturgy",
       "communion": "Communion",
@@ -414,11 +417,11 @@
     },
     "email": {
       "label": "Email",
-      "value": "dubaidebremewi2021@gmail.com"
+      "value": "infor@dubaidebremewi.com"
     },
     "whatsapp": {
       "label": "WhatsApp",
-      "value": "+971525591976"
+      "value": "+971559911534"
     },
     "social": {
       "facebook": {

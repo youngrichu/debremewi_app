@@ -1,7 +1,9 @@
 import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Linking } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { Ionicons } from '@expo/vector-icons';
 import { getFontSize } from '../utils/responsive';
+import { COLORS, getColorWithOpacity } from '../constants/colors';
 
 const ServicesScreen = () => {
   const { t } = useTranslation();
@@ -50,6 +52,19 @@ const ServicesScreen = () => {
               </Text>
             </View>
           ))}
+        </View>
+      </View>
+
+      <View style={styles.section}>
+        <View style={styles.bookingContainer}>
+          <Text style={styles.bookingMessage}>{t('services.booking.message')}</Text>
+          <TouchableOpacity
+            style={styles.bookingButton}
+            onPress={() => Linking.openURL('tel:+971559911534')}
+          >
+            <Text style={styles.bookingButtonText}>{t('services.booking.button')}</Text>
+            <Ionicons name="call" size={20} color="#fff" style={{ marginLeft: 8 }} />
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -126,6 +141,38 @@ const styles = StyleSheet.create({
   descriptionText: {
     fontSize: getFontSize(16),
     color: '#666',
+  },
+  bookingContainer: {
+    backgroundColor: getColorWithOpacity(COLORS.primary, 0.1),
+    padding: 16,
+    borderRadius: 12,
+    alignItems: 'center',
+    marginVertical: 8,
+  },
+  bookingMessage: {
+    fontSize: getFontSize(16),
+    color: COLORS.primary,
+    textAlign: 'center',
+    marginBottom: 12,
+    lineHeight: 24,
+  },
+  bookingButton: {
+    backgroundColor: COLORS.primary,
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 24,
+    elevation: 2,
+    shadowColor: COLORS.shadow.medium,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  bookingButtonText: {
+    color: COLORS.white,
+    fontSize: getFontSize(16),
+    fontWeight: 'bold',
   },
 });
 
