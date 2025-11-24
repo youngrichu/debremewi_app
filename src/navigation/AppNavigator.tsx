@@ -8,6 +8,7 @@ import { TouchableOpacity, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { registerForPushNotificationsAsync } from '../services/pushNotifications';
 import { StatusBar } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 // Import screens
 import HomeScreen from '../screens/HomeScreen';
@@ -140,6 +141,7 @@ function AnnouncementStackScreen() {
 
 function MainTabs() {
   const { t } = useTranslation();
+  const insets = useSafeAreaInsets();
 
   useEffect(() => {
     const initNotifications = async () => {
@@ -203,8 +205,8 @@ function MainTabs() {
           fontSize: getFontSize(18),
         },
         tabBarStyle: {
-          height: IS_TABLET ? 80 : 60,
-          paddingBottom: IS_TABLET ? 10 : 5,
+          height: (IS_TABLET ? 80 : 60) + insets.bottom,
+          paddingBottom: insets.bottom + (IS_TABLET ? 10 : 5),
           paddingTop: IS_TABLET ? 10 : 5,
         },
         tabBarLabelStyle: {
