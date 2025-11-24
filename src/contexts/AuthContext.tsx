@@ -19,7 +19,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     // Efficient token refresh - no background polling needed
     console.log('Auth provider mounted with efficient token refresh');
-    
+
     // Optional: Check token status on app start for debugging
     efficientTokenRefresh.getTokenStatus().then(status => {
       console.log('Initial token status:', status);
@@ -29,14 +29,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const login = async (email: string, password: string) => {
     try {
       const response = await AuthService.login(email, password);
-      
+
       if (response.success && response.token) {
         await AsyncStorage.setItem('userToken', response.token);
-        dispatch(setAuthState({ 
-          isAuthenticated: true, 
-          token: response.token 
+        dispatch(setAuthState({
+          isAuthenticated: true,
+          token: response.token
         }));
-        
+
         if (response.user) {
           dispatch(setUserData(response.user));
         }
@@ -51,7 +51,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = async () => {
     try {
-      await AsyncStorage.removeItem('userToken');
+      await AsyncStorage.multiRemove(['userToken', 'userRegistrationDate']);
       dispatch(clearAuth());
       dispatch(clearUser());
     } catch (error) {

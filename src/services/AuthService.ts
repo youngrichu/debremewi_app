@@ -270,9 +270,10 @@ class AuthServiceClass {
     }
   }
 
+
   async clearAuth(): Promise<void> {
     try {
-      await AsyncStorage.multiRemove(['userToken', 'userData', 'refreshToken']);
+      await AsyncStorage.multiRemove(['userToken', 'userData', 'refreshToken', 'userRegistrationDate']);
       this.token = null;
       this.refreshToken = null;
       this.tokenExpirationTime = null;
