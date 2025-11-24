@@ -15,14 +15,17 @@ const resources = {
 export const i18nInit = (async () => {
   try {
     console.log('Initializing i18n...');
-    console.log('Device locale:', Localization.locale);
+
+    // Get device locale using the new API
+    const locales = Localization.getLocales();
+    const deviceLocale = locales[0]?.languageCode || 'en';
+    console.log('Device locale:', deviceLocale);
 
     let savedLanguage = await AsyncStorage.getItem('language');
     console.log('Saved language from storage:', savedLanguage);
 
     if (!savedLanguage) {
-      const deviceLang = Localization.locale.split('-')[0];
-      savedLanguage = ['en', 'am'].includes(deviceLang) ? deviceLang : 'en';
+      savedLanguage = ['en', 'am'].includes(deviceLocale) ? deviceLocale : 'en';
       console.log('Using default language:', savedLanguage);
       await AsyncStorage.setItem('language', savedLanguage);
     }
