@@ -1,7 +1,8 @@
 import React, { useState, useCallback, useEffect, useMemo, useRef } from 'react';
-import { View, StyleSheet, ActivityIndicator, ScrollView, Text, Dimensions, TouchableOpacity, Animated } from 'react-native';
+import { View, StyleSheet, ActivityIndicator, ScrollView, Text, Dimensions, TouchableOpacity, Animated, RefreshControl } from 'react-native';
 import { Calendar, DateData, LocaleConfig } from 'react-native-calendars';
 import { EventList } from '../components/Events/EventList';
+import { EventCard } from '../components/Events/EventCard';
 import { EventFilters } from '../components/Events/EventFilters';
 import { EventService } from '../services/EventService';
 import { Event, EventCategory } from '../types';
@@ -248,9 +249,7 @@ const WeekView = ({
           </View>
 
           {/* Days grid */}
-          <ScrollView
-            horizontal={false}
-            showsHorizontalScrollIndicator={false}
+          <View
             style={styles.daysGridContainer}
           >
             <View style={styles.daysGrid}>
@@ -296,7 +295,7 @@ const WeekView = ({
                 </View>
               ))}
             </View>
-          </ScrollView>
+          </View>
         </View>
       </ScrollView>
     </View>
@@ -1072,7 +1071,7 @@ export default function EventsScreen() {
                             onPress={() => setShowAllEvents(true)}
                           >
                             <Text style={styles.viewAllButtonText}>
-                              {isAmharic ? "ሁሉንም መርሃግብሮች አሳይ" : "View all events"}
+                              {isAmharic ? "የሚቀጥሉ መርሃግብሮች" : "Upcoming Events"}
                             </Text>
                           </TouchableOpacity>
                         )}
@@ -1097,22 +1096,32 @@ export default function EventsScreen() {
               (showAllEvents ? events : getTodayEvents(events))
             }
             renderItem={({ item }) => (
-              <EventList
-                events={[item]}
-                onEventPress={handleEventPress}
-                onRefresh={handleRefresh}
-                onLoadMore={handleLoadMore}
-                loading={loading}
-                loadingMore={loadingMore}
-                hasMore={hasMore}
-                labels={{
-                  noEvents: isAmharic ? 'ምንም መርሃግብር የለም' : 'No events',
-                  loading: isAmharic ? 'በመጫን ላይ...' : 'Loading...',
-                  error: isAmharic ? 'ስህተት ተከስቷል' : 'Error loading events',
-                  retry: isAmharic ? 'እንደገና ሞክር' : 'Retry'
-                }}
+              <EventCard
+                event={item}
+                onPress={() => handleEventPress(item)}
               />
             )}
+            ListEmptyComponent={
+              !loading ? (
+                <View style={styles.emptyContainer}>
+                  <Text style={styles.emptyText}>
+                    {isAmharic ? 'ምንም መርሃግብር የለም' : 'No events found'}
+                  </Text>
+                </View>
+              ) : null
+            }
+            ListFooterComponent={
+              loadingMore ? (
+                <View style={styles.loadingContainer}>
+                  <ActivityIndicator size="small" />
+                </View>
+              ) : null
+            }
+            refreshControl={
+              <RefreshControl refreshing={loading} onRefresh={handleRefresh} />
+            }
+            onEndReached={handleLoadMore}
+            onEndReachedThreshold={0.5}
           />
 
           {/* Main Calendar */}
@@ -1350,12 +1359,12 @@ const styles = StyleSheet.create({
     height: 70,
   },
   timeGridContainer: {
-    flexDirection: 'row',
     flex: 1,
   },
   timeGridWrapper: {
     flexDirection: 'row',
     height: HOUR_HEIGHT * 24,
+    width: '100%',
   },
   daysGridContainer: {
     flex: 1,
@@ -1441,8 +1450,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   weekTimeLabels: {
-    position: 'absolute',
-    left: 0,
     width: 60,
     borderRightWidth: 1,
     borderRightColor: '#eee',
@@ -1491,8 +1498,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   dayTimeLabels: {
-    position: 'absolute',
-    left: 0,
     width: 60,
     borderRightWidth: 1,
     borderRightColor: '#eee',
@@ -1511,8 +1516,8 @@ const styles = StyleSheet.create({
     color: '#666',
   },
   dayEventsGrid: {
-    flexDirection: 'row',
-    paddingLeft: 60,
+    flexDirection: 'column',
+    flex: 1,
   },
 
   // Calendar styles
@@ -1524,7 +1529,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   listContentContainer: {
-    paddingTop: 440,
+    paddingTop: IS_TABLET ? 440 : 380,
     paddingBottom: 20,
     flexGrow: 1,
     backgroundColor: '#fff',
@@ -1534,7 +1539,7 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     top: 0,
-    height: 440,
+    height: IS_TABLET ? 440 : 380,
     backgroundColor: '#fff',
     zIndex: 1,
     elevation: 4,
@@ -1597,6 +1602,22 @@ const styles = StyleSheet.create({
   emptyDay: {
     backgroundColor: '#f5f5f5',
     borderRadius: 4,
+  },
+  emptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+    minHeight: 200,
+  },
+  emptyText: {
+    fontSize: 16,
+    color: '#666',
+  },
+  loadingText: {
+    marginTop: 8,
+    fontSize: 14,
+    color: '#666',
   },
   ethiopianDayText: {
     fontSize: getFontSize(16),
