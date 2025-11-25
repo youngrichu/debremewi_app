@@ -169,7 +169,10 @@ export const EthiopianCalendar: React.FC<EthiopianCalendarProps> = ({
                   today.month === month &&
                   today.day === day.ethiopianDay;
 
-                const isMarked = day.gregorianDate &&
+                // Only mark events on days that belong to the current month
+                // Don't show event markers on padding days (previous/next month)
+                const isMarked = day.isCurrentMonth &&
+                  day.gregorianDate &&
                   markedDates[format(day.gregorianDate, 'yyyy-MM-dd')];
 
                 return (
