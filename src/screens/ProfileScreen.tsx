@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import { RootState } from '../store';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { ProfileScreenNavigationProp } from '../types';
+import { ProfileScreenNavigationProp, ChildInfo } from '../types/index';
 import { setUserData } from '../store/slices/userSlice';
 import { setAuthState } from '../store/slices/authSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -55,7 +55,7 @@ export default function ProfileScreen() {
     return children.map((child, index) => (
       <View key={index} style={styles.childItem}>
         <Text style={styles.childName}>{child.fullName}</Text>
-        <View style={styles.childDetailsContainer}>
+        <View style={styles.childrenContainer}>
           <Text style={styles.childDetail}>
             {t('profile.view.labels.christianName')}: {child.christianityName}
           </Text>
@@ -99,28 +99,34 @@ export default function ProfileScreen() {
 
   // Add a retry function
   const handleRetry = () => {
-    fetchProfileData();
+    // Refetch profile data
+    setIsLoading(true);
+    setError(null);
+    ProfileService.getProfile()
+      .then(profileData => {
+        if (profileData) {
+          dispatch(setUserData(profileData));
+        } else {
+          setError('No profile data received');
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching profile:', error);
+        setError(error instanceof Error ? error.message : 'Failed to fetch profile');
+      })
+      .finally(() => setIsLoading(false));
   };
 
   console.log('Full User Data:', user);
-  console.log('Photo Fields:', {
-    photo: user?.photo,
-    profile_photo: user?.profile_photo,
-    profile_photo_url: user?.profile_photo_url,
-    avatar_url: user?.avatar_url,
-    firstName: user?.firstName
-  });
 
   const handleEditPress = () => {
-    navigation.navigate('HomeStack', {
-      screen: 'EditProfile'
-    });
+    navigation.navigate('EditProfile');
   };
 
   const handleLogout = async () => {
     try {
       await AsyncStorage.removeItem('userToken');
-      dispatch(setUserData({}));
+      dispatch(setUserData(null as any));
       dispatch(setAuthState({ isAuthenticated: false, token: null }));
     } catch (error) {
       console.error('Logout error:', error);
@@ -142,7 +148,7 @@ export default function ProfileScreen() {
   const handleDeleteAccount = async () => {
     try {
       await deleteAccount();
-      dispatch(setUserData({}));
+      dispatch(setUserData(null as any));
       dispatch(setAuthState({ isAuthenticated: false, token: null }));
       Alert.alert(t('profile.messages.accountDeleted'), t('profile.messages.accountDeletedSuccess'));
       navigation.navigate('Login');
@@ -181,16 +187,10 @@ export default function ProfileScreen() {
 
   const getProfilePhoto = () => {
     if (!user) return null;
-    return user.profilePhotoUrl || user.profilePhoto;
+    return user.profilePhotoUrl || user.avatar_url || user.photo;
   };
 
   console.log('User Data:', user);
-  console.log('Photo URLs:', {
-    photo: user?.photo,
-    profile_photo: user?.profile_photo,
-    profile_photo_url: user?.profile_photo_url,
-    avatar_url: user?.avatar_url
-  });
 
   const handleChangePhoto = async () => {
     try {
@@ -202,7 +202,7 @@ export default function ProfileScreen() {
       }
 
       const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaType.Images,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
         aspect: [1, 1],
         quality: 0.5,
@@ -252,7 +252,7 @@ export default function ProfileScreen() {
           <View style={styles.header}>
             {getProfilePhoto() ? (
               <Image
-                source={{ uri: getProfilePhoto() }}
+                source={{ uri: getProfilePhoto() as string }}
                 style={styles.profilePhoto}
                 onError={(e) => {
                   console.log('Image loading error:', e.nativeEvent.error);

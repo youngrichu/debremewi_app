@@ -1,3 +1,5 @@
+import { ChildInfo } from '../types/index';
+
 export const validatePhone = (phone: string): boolean => {
   // Just check if it has at least 10 digits
   const digitsOnly = phone.replace(/\D/g, '');
@@ -25,28 +27,26 @@ export const getValidationError = (field: string, value: string): string | null 
     case 'phoneNumber':
       if (!value) return 'Phone number is required';
       return validatePhone(value) ? null : 'Please enter a valid phone number (min 10 digits)';
-      
+
     case 'firstName':
       if (!value) return 'First name is required';
       return validateName(value) ? null : 'First name must be at least 2 characters';
-      
+
     case 'lastName':
       if (!value) return 'Last name is required';
       return validateName(value) ? null : 'Last name must be at least 2 characters';
-      
+
     case 'residencyCity':
       if (!value) return 'City is required';
       return validateCity(value) ? null : 'Please enter a city name';
-      
+
     case 'christianName':
       return validateChristianName(value) ? null : 'Christian name must be at least 2 characters';
-      
+
     default:
       return null;
   }
 };
-
-import { ChildInfo } from '../types';
 
 export const validateChildrenData = (
   hasChildren: string,
@@ -59,23 +59,23 @@ export const validateChildrenData = (
     }
 
     if (!numberOfChildren || children.length !== parseInt(numberOfChildren)) {
-      return { 
-        isValid: false, 
-        errorKey: 'validation.children.numberMismatch' 
+      return {
+        isValid: false,
+        errorKey: 'validation.children.numberMismatch'
       };
     }
 
-    const invalidChild = children.find(child => 
-      !child.fullName || 
-      !child.christianityName || 
+    const invalidChild = children.find(child =>
+      !child.fullName ||
+      !child.christianityName ||
       !child.gender ||
       !child.age
     );
 
     if (invalidChild) {
-      return { 
-        isValid: false, 
-        errorKey: 'validation.children.missingFields' 
+      return {
+        isValid: false,
+        errorKey: 'validation.children.missingFields'
       };
     }
   }

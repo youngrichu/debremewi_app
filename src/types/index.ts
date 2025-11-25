@@ -71,10 +71,10 @@ export type RootStackParamList = {
   Register: undefined;
   ForgotPassword: undefined;
   NewPassword: { email: string };
-  
+
   // Onboarding
   Onboarding: undefined;
-  
+
   // Main Navigation
   MainTabs: {
     screen?: string;
@@ -87,7 +87,7 @@ export type RootStackParamList = {
       };
     };
   };
-  
+
   // Tab Screens
   HomeStack: undefined;
   Events: undefined;
@@ -95,29 +95,29 @@ export type RootStackParamList = {
   Announcements: undefined;
   Profile: undefined;
   More: undefined;
-  
+
   // Event Stack
   EventsList: undefined;
-  EventDetails: { eventId: string };
-  
+  EventDetails: { eventId: number; occurrenceDate?: string; isOccurrence?: boolean };
+
   // Blog Stack
   BlogList: undefined;
   BlogPostDetail: { postId: string };
-  
+
   // Announcement Stack
   AnnouncementsList: undefined;
   AnnouncementDetail: { id: string };
-  
+
   // Profile Related
   EditProfile: undefined;
-  
+
   // More Menu
   MoreMenu: undefined;
   'About Us': undefined;
   Services: undefined;
   'Contact Us': undefined;
   Location: undefined;
-  
+
   // Notifications
   Notifications: undefined;
 };
@@ -150,6 +150,7 @@ export interface UserProfile {
   hasFatherConfessor: string;
   fatherConfessorName: string;
   hasAssociationMembership: string;
+  associationName?: string;
   residencePermit: string;
   profilePhotoUrl?: string;
   avatar_url?: string;

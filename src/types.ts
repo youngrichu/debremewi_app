@@ -81,7 +81,7 @@ export type RootStackParamList = {
   EventDetails: { eventId: number; occurrenceDate?: string; isOccurrence?: boolean };
   YouTube: undefined;
   AnnouncementsList: undefined;
-  AnnouncementDetail: undefined;
+  AnnouncementDetail: { id: string };
 };
 
 export type MoreStackParamList = {

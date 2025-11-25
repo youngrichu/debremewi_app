@@ -47,10 +47,9 @@ const initialState: UserState = {
 // Async thunk for updating user profile
 export const updateUserProfile = createAsyncThunk(
   'user/updateProfile',
-  async (_, { rejectWithValue }) => {
+  async (profileData: Partial<any>, { rejectWithValue }) => {
     try {
-      const profileService = new ProfileService();
-      const updatedProfile = await profileService.updateProfile(_);
+      const updatedProfile = await ProfileService.updateProfile(profileData);
       return updatedProfile;
     } catch (error) {
       return rejectWithValue('Failed to update profile');

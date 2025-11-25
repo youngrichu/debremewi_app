@@ -26,12 +26,16 @@ export interface UserProfile {
   hasFatherConfessor: string;
   fatherConfessorName: string;
   hasAssociationMembership: string;
+  associationName?: string;
   residencePermit: string;
   profilePhotoUrl?: string;
   avatar_url?: string;
   photo?: string;
   is_onboarding_complete?: boolean;
   user_registered?: string; // Registration date from WordPress
+  hasChildren?: string;
+  numberOfChildren?: string;
+  children?: any[];
 }
 
 export interface LoginResponse {

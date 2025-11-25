@@ -82,31 +82,13 @@ export default function NotificationsScreen() {
 
       switch (screen) {
         case 'events':
-          navigation.navigate('MainTabs', {
-            screen: 'Events',
-            params: {
-              screen: 'EventDetails',
-              params: { eventId: id }
-            }
-          });
+          navigation.navigate('EventDetails', { eventId: parseInt(id, 10) });
           break;
         case 'blog':
-          navigation.navigate('MainTabs', {
-            screen: 'BlogPosts',
-            params: {
-              screen: 'BlogPostDetail',
-              params: { postId: id }
-            }
-          });
+          navigation.navigate('BlogPostDetail', { postId: id });
           break;
         case 'announcements':
-          navigation.navigate('MainTabs', {
-            screen: 'Announcements',
-            params: {
-              screen: 'AnnouncementDetail',
-              params: { id }
-            }
-          });
+          navigation.navigate('AnnouncementDetail', { id });
           break;
         case 'watch':
           console.log('Opening YouTube video:', id);
@@ -132,7 +114,7 @@ export default function NotificationsScreen() {
         if (notification.type === 'event' && notification.reference_id) {
           console.log('Navigating to event:', notification.reference_id);
           navigation.navigate('EventDetails', {
-            eventId: notification.reference_id
+            eventId: parseInt(notification.reference_id, 10)
           });
           return true;
         }

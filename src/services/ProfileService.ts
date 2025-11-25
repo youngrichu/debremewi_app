@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { UserProfile } from '../types';
+import { UserProfile } from '../types/index';
 import { API_URL } from '../config';
 import { store } from '../store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -11,7 +11,7 @@ class ProfileServiceClass {
   private getAuthHeaders() {
     const state = store.getState();
     const token = state.auth.token;
-    
+
     return token ? {
       'Authorization': `Bearer ${token}`,
       'Content-Type': 'application/json',
@@ -72,11 +72,12 @@ class ProfileServiceClass {
 
       // Add other profile data to formData
       Object.keys(profileData).forEach(key => {
-        if (!['photo', 'children', 'hasChildren', 'numberOfChildren'].includes(key) && 
-            profileData[key] !== null && 
-            profileData[key] !== undefined) {
+        const typedKey = key as keyof UserProfile;
+        if (!['photo', 'children', 'hasChildren', 'numberOfChildren'].includes(key) &&
+          profileData[typedKey] !== null &&
+          profileData[typedKey] !== undefined) {
           // Keep original field names as they are
-          formData.append(key, profileData[key] as string);
+          formData.append(key, profileData[typedKey] as string);
         }
       });
 
@@ -97,7 +98,7 @@ class ProfileServiceClass {
 
       if (response.data.success) {
         const userData = response.data.user;
-        
+
         // Ensure children data is properly structured
         if (userData.hasChildren === 'yes' && userData.children) {
           userData.children = Array.isArray(userData.children) ? userData.children : [];
@@ -105,9 +106,9 @@ class ProfileServiceClass {
           userData.children = [];
         }
 
-        return { 
+        return {
           data: userData,
-          success: true 
+          success: true
         };
       }
 
@@ -143,8 +144,8 @@ class ProfileServiceClass {
       }
 
       throw new Error(
-        error.response?.data?.message || 
-        error.message || 
+        error.response?.data?.message ||
+        error.message ||
         'Failed to fetch profile'
       );
     }

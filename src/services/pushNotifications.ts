@@ -31,7 +31,7 @@ export const initializeNotifications = async () => {
       lightColor: '#2196F3',
       lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
       bypassDnd: true,
-      sound: true,
+      sound: 'default',
     });
 
     // Channel for high-priority notifications
@@ -42,7 +42,7 @@ export const initializeNotifications = async () => {
       lightColor: '#FF0000',
       lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
       bypassDnd: true,
-      sound: true,
+      sound: 'default',
     });
 
     // Channel for events
@@ -52,7 +52,7 @@ export const initializeNotifications = async () => {
       vibrationPattern: [0, 250, 250, 250],
       lightColor: '#008036',
       lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
-      sound: true,
+      sound: 'default',
     });
 
     // Channel for blog posts
@@ -62,7 +62,7 @@ export const initializeNotifications = async () => {
       vibrationPattern: [0, 250, 250, 250],
       lightColor: '#2196F3',
       lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
-      sound: true,
+      sound: 'default',
     });
 
     // Channel for announcements
@@ -72,7 +72,7 @@ export const initializeNotifications = async () => {
       vibrationPattern: [0, 250, 250, 250],
       lightColor: '#DDC65D',
       lockscreenVisibility: Notifications.AndroidNotificationVisibility.PUBLIC,
-      sound: true,
+      sound: 'default',
     });
   }
 };
@@ -83,13 +83,13 @@ const handleDeepLink = (url: string) => {
     // Remove the scheme from the URL
     const path = url.replace('dubaidebremewi://', '');
     const [screen, id] = path.split('/');
-    
+
     // Add delay to ensure navigation is ready
     setTimeout(() => {
       switch (screen) {
         case 'events':
           console.log('Navigating to event:', id);
-          navigationRef.navigate('EventDetails', { eventId: id });
+          navigationRef.navigate('EventDetails', { eventId: parseInt(id, 10) });
           break;
         case 'blog':
           console.log('Navigating to blog post:', id);
@@ -138,8 +138,8 @@ export const registerForPushNotificationsAsync = async () => {
   }
 
   try {
-    token = (await Notifications.getExpoPushTokenAsync({ 
-      projectId: EXPO_PROJECT_ID 
+    token = (await Notifications.getExpoPushTokenAsync({
+      projectId: EXPO_PROJECT_ID
     })).data;
     console.log('Got push token:', token);
 
@@ -148,7 +148,7 @@ export const registerForPushNotificationsAsync = async () => {
       console.log('Attempting to register push token with userToken');
       const response = await axios.post(
         `${API_URL}${ENDPOINTS.registerToken}`,
-        { 
+        {
           token,
           device_type: Platform.OS
         },
@@ -212,9 +212,9 @@ export const addNotificationResponseListener = () => {
               index: 0,
               routes: [
                 { name: 'Home' },
-                { 
+                {
                   name: 'EventDetails',
-                  params: { eventId: data.reference_id }
+                  params: { eventId: parseInt(data.reference_id, 10) }
                 }
               ],
             });
@@ -227,7 +227,7 @@ export const addNotificationResponseListener = () => {
               index: 0,
               routes: [
                 { name: 'Home' },
-                { 
+                {
                   name: 'BlogPostDetail',
                   params: { postId: data.reference_id }
                 }
