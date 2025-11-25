@@ -1,0 +1,1344 @@
+diff --git a/node_modules/expo-localization/android/build/.transforms/5706f9fc8242738ec870f3b4eb1458df/results.bin b/node_modules/expo-localization/android/build/.transforms/5706f9fc8242738ec870f3b4eb1458df/results.bin
+new file mode 100644
+index 0000000..0d259dd
+--- /dev/null
++++ b/node_modules/expo-localization/android/build/.transforms/5706f9fc8242738ec870f3b4eb1458df/results.bin
+@@ -0,0 +1 @@
++o/classes
+diff --git a/node_modules/expo-localization/android/build/.transforms/5706f9fc8242738ec870f3b4eb1458df/transformed/classes/classes_dex/classes.dex b/node_modules/expo-localization/android/build/.transforms/5706f9fc8242738ec870f3b4eb1458df/transformed/classes/classes_dex/classes.dex
+new file mode 100644
+index 0000000..82824f3
+Binary files /dev/null and b/node_modules/expo-localization/android/build/.transforms/5706f9fc8242738ec870f3b4eb1458df/transformed/classes/classes_dex/classes.dex differ
+diff --git a/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/results.bin b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/results.bin
+new file mode 100644
+index 0000000..e1640c9
+--- /dev/null
++++ b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/results.bin
+@@ -0,0 +1 @@
++o/bundleLibRuntimeToDirRelease
+diff --git a/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/BuildConfig.dex b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/BuildConfig.dex
+new file mode 100644
+index 0000000..4160873
+Binary files /dev/null and b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/BuildConfig.dex differ
+diff --git a/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule$definition$1$1.dex b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule$definition$1$1.dex
+new file mode 100644
+index 0000000..61ed9fd
+Binary files /dev/null and b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule$definition$1$1.dex differ
+diff --git a/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule$definition$1$5$2.dex b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule$definition$1$5$2.dex
+new file mode 100644
+index 0000000..0e81e4c
+Binary files /dev/null and b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule$definition$1$5$2.dex differ
+diff --git a/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$AsyncFunction$1.dex b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$AsyncFunction$1.dex
+new file mode 100644
+index 0000000..977a71a
+Binary files /dev/null and b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$AsyncFunction$1.dex differ
+diff --git a/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$FunctionWithoutArgs$1.dex b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$FunctionWithoutArgs$1.dex
+new file mode 100644
+index 0000000..a166e48
+Binary files /dev/null and b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$FunctionWithoutArgs$1.dex differ
+diff --git a/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$FunctionWithoutArgs$2.dex b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$FunctionWithoutArgs$2.dex
+new file mode 100644
+index 0000000..6ef7101
+Binary files /dev/null and b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$FunctionWithoutArgs$2.dex differ
+diff --git a/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$OnCreate$1.dex b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$OnCreate$1.dex
+new file mode 100644
+index 0000000..1305052
+Binary files /dev/null and b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$OnCreate$1.dex differ
+diff --git a/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$OnDestroy$1.dex b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$OnDestroy$1.dex
+new file mode 100644
+index 0000000..691513d
+Binary files /dev/null and b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$OnDestroy$1.dex differ
+diff --git a/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule$observer$1.dex b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule$observer$1.dex
+new file mode 100644
+index 0000000..ee31997
+Binary files /dev/null and b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule$observer$1.dex differ
+diff --git a/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule.dex b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule.dex
+new file mode 100644
+index 0000000..852935e
+Binary files /dev/null and b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModule.dex differ
+diff --git a/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModuleKt.dex b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModuleKt.dex
+new file mode 100644
+index 0000000..1741a18
+Binary files /dev/null and b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationModuleKt.dex differ
+diff --git a/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationPackage$createApplicationLifecycleListeners$1.dex b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationPackage$createApplicationLifecycleListeners$1.dex
+new file mode 100644
+index 0000000..4c95285
+Binary files /dev/null and b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationPackage$createApplicationLifecycleListeners$1.dex differ
+diff --git a/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationPackage.dex b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationPackage.dex
+new file mode 100644
+index 0000000..4b135ae
+Binary files /dev/null and b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationPackage.dex differ
+diff --git a/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationUtilsKt$ISOCurrencyCodes$2.dex b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationUtilsKt$ISOCurrencyCodes$2.dex
+new file mode 100644
+index 0000000..de72880
+Binary files /dev/null and b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationUtilsKt$ISOCurrencyCodes$2.dex differ
+diff --git a/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationUtilsKt.dex b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationUtilsKt.dex
+new file mode 100644
+index 0000000..2a1e537
+Binary files /dev/null and b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/LocalizationUtilsKt.dex differ
+diff --git a/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/Notifier.dex b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/Notifier.dex
+new file mode 100644
+index 0000000..55cf385
+Binary files /dev/null and b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/bundleLibRuntimeToDirRelease_dex/expo/modules/localization/Notifier.dex differ
+diff --git a/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/desugar_graph.bin b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/desugar_graph.bin
+new file mode 100644
+index 0000000..601f245
+Binary files /dev/null and b/node_modules/expo-localization/android/build/.transforms/79ec5137901754d8f8868b1672cd8bb2/transformed/bundleLibRuntimeToDirRelease/desugar_graph.bin differ
+diff --git a/node_modules/expo-localization/android/build/generated/source/buildConfig/release/expo/modules/localization/BuildConfig.java b/node_modules/expo-localization/android/build/generated/source/buildConfig/release/expo/modules/localization/BuildConfig.java
+new file mode 100644
+index 0000000..d0ebdf5
+--- /dev/null
++++ b/node_modules/expo-localization/android/build/generated/source/buildConfig/release/expo/modules/localization/BuildConfig.java
+@@ -0,0 +1,10 @@
++/**
++ * Automatically generated file. DO NOT MODIFY
++ */
++package expo.modules.localization;
++
++public final class BuildConfig {
++  public static final boolean DEBUG = false;
++  public static final String LIBRARY_PACKAGE_NAME = "expo.modules.localization";
++  public static final String BUILD_TYPE = "release";
++}
+diff --git a/node_modules/expo-localization/android/build/intermediates/aapt_friendly_merged_manifests/release/processReleaseManifest/aapt/AndroidManifest.xml b/node_modules/expo-localization/android/build/intermediates/aapt_friendly_merged_manifests/release/processReleaseManifest/aapt/AndroidManifest.xml
+new file mode 100644
+index 0000000..53ec36b
+--- /dev/null
++++ b/node_modules/expo-localization/android/build/intermediates/aapt_friendly_merged_manifests/release/processReleaseManifest/aapt/AndroidManifest.xml
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="expo.modules.localization" >
++
++    <uses-sdk android:minSdkVersion="24" />
++
++</manifest>
+\ No newline at end of file
+diff --git a/node_modules/expo-localization/android/build/intermediates/aapt_friendly_merged_manifests/release/processReleaseManifest/aapt/output-metadata.json b/node_modules/expo-localization/android/build/intermediates/aapt_friendly_merged_manifests/release/processReleaseManifest/aapt/output-metadata.json
+new file mode 100644
+index 0000000..b898c34
+--- /dev/null
++++ b/node_modules/expo-localization/android/build/intermediates/aapt_friendly_merged_manifests/release/processReleaseManifest/aapt/output-metadata.json
+@@ -0,0 +1,18 @@
++{
++  "version": 3,
++  "artifactType": {
++    "type": "AAPT_FRIENDLY_MERGED_MANIFESTS",
++    "kind": "Directory"
++  },
++  "applicationId": "expo.modules.localization",
++  "variantName": "release",
++  "elements": [
++    {
++      "type": "SINGLE",
++      "filters": [],
++      "attributes": [],
++      "outputFile": "AndroidManifest.xml"
++    }
++  ],
++  "elementType": "File"
++}
+\ No newline at end of file
+diff --git a/node_modules/expo-localization/android/build/intermediates/aar_metadata/release/writeReleaseAarMetadata/aar-metadata.properties b/node_modules/expo-localization/android/build/intermediates/aar_metadata/release/writeReleaseAarMetadata/aar-metadata.properties
+new file mode 100644
+index 0000000..1211b1e
+--- /dev/null
++++ b/node_modules/expo-localization/android/build/intermediates/aar_metadata/release/writeReleaseAarMetadata/aar-metadata.properties
+@@ -0,0 +1,6 @@
++aarFormatVersion=1.0
++aarMetadataVersion=1.0
++minCompileSdk=1
++minCompileSdkExtension=0
++minAndroidGradlePluginVersion=1.0.0
++coreLibraryDesugaringEnabled=false
+diff --git a/node_modules/expo-localization/android/build/intermediates/annotation_processor_list/release/javaPreCompileRelease/annotationProcessors.json b/node_modules/expo-localization/android/build/intermediates/annotation_processor_list/release/javaPreCompileRelease/annotationProcessors.json
+new file mode 100644
+index 0000000..9e26dfe
+--- /dev/null
++++ b/node_modules/expo-localization/android/build/intermediates/annotation_processor_list/release/javaPreCompileRelease/annotationProcessors.json
+@@ -0,0 +1 @@
++{}
+\ No newline at end of file
+diff --git a/node_modules/expo-localization/android/build/intermediates/compile_library_classes_jar/release/bundleLibCompileToJarRelease/classes.jar b/node_modules/expo-localization/android/build/intermediates/compile_library_classes_jar/release/bundleLibCompileToJarRelease/classes.jar
+new file mode 100644
+index 0000000..6ba8c09
+Binary files /dev/null and b/node_modules/expo-localization/android/build/intermediates/compile_library_classes_jar/release/bundleLibCompileToJarRelease/classes.jar differ
+diff --git a/node_modules/expo-localization/android/build/intermediates/compile_r_class_jar/release/generateReleaseRFile/R.jar b/node_modules/expo-localization/android/build/intermediates/compile_r_class_jar/release/generateReleaseRFile/R.jar
+new file mode 100644
+index 0000000..523f961
+Binary files /dev/null and b/node_modules/expo-localization/android/build/intermediates/compile_r_class_jar/release/generateReleaseRFile/R.jar differ
+diff --git a/node_modules/expo-localization/android/build/intermediates/compile_symbol_list/release/generateReleaseRFile/R.txt b/node_modules/expo-localization/android/build/intermediates/compile_symbol_list/release/generateReleaseRFile/R.txt
+new file mode 100644
+index 0000000..bafbd1e
+--- /dev/null
++++ b/node_modules/expo-localization/android/build/intermediates/compile_symbol_list/release/generateReleaseRFile/R.txt
+@@ -0,0 +1,2 @@
++int string ExpoLocalization_forcesRTL 0x0
++int string ExpoLocalization_supportsRTL 0x0
+diff --git a/node_modules/expo-localization/android/build/intermediates/incremental/mergeReleaseJniLibFolders/merger.xml b/node_modules/expo-localization/android/build/intermediates/incremental/mergeReleaseJniLibFolders/merger.xml
+new file mode 100644
+index 0000000..6850800
+--- /dev/null
++++ b/node_modules/expo-localization/android/build/intermediates/incremental/mergeReleaseJniLibFolders/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/richu/programming/debremewi_app/node_modules/expo-localization/android/src/main/jniLibs"/></dataSet><dataSet config="release" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/richu/programming/debremewi_app/node_modules/expo-localization/android/src/release/jniLibs"/></dataSet></merger>
+\ No newline at end of file
+diff --git a/node_modules/expo-localization/android/build/intermediates/incremental/mergeReleaseShaders/merger.xml b/node_modules/expo-localization/android/build/intermediates/incremental/mergeReleaseShaders/merger.xml
+new file mode 100644
+index 0000000..80bd73f
+--- /dev/null
++++ b/node_modules/expo-localization/android/build/intermediates/incremental/mergeReleaseShaders/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/richu/programming/debremewi_app/node_modules/expo-localization/android/src/main/shaders"/></dataSet><dataSet config="release" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/richu/programming/debremewi_app/node_modules/expo-localization/android/src/release/shaders"/></dataSet></merger>
+\ No newline at end of file
+diff --git a/node_modules/expo-localization/android/build/intermediates/incremental/packageReleaseAssets/merger.xml b/node_modules/expo-localization/android/build/intermediates/incremental/packageReleaseAssets/merger.xml
+new file mode 100644
+index 0000000..b87a7d7
+--- /dev/null
++++ b/node_modules/expo-localization/android/build/intermediates/incremental/packageReleaseAssets/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/richu/programming/debremewi_app/node_modules/expo-localization/android/src/main/assets"/></dataSet><dataSet config="release" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/richu/programming/debremewi_app/node_modules/expo-localization/android/src/release/assets"/></dataSet><dataSet config="generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/richu/programming/debremewi_app/node_modules/expo-localization/android/build/intermediates/shader_assets/release/compileReleaseShaders/out"/></dataSet></merger>
+\ No newline at end of file
+diff --git a/node_modules/expo-localization/android/build/intermediates/incremental/release/packageReleaseResources/compile-file-map.properties b/node_modules/expo-localization/android/build/intermediates/incremental/release/packageReleaseResources/compile-file-map.properties
+new file mode 100644
+index 0000000..b8707a3
+--- /dev/null
++++ b/node_modules/expo-localization/android/build/intermediates/incremental/release/packageReleaseResources/compile-file-map.properties
+@@ -0,0 +1 @@
++#Tue Nov 25 01:58:46 GST 2025
+diff --git a/node_modules/expo-localization/android/build/intermediates/incremental/release/packageReleaseResources/merged.dir/values/values.xml b/node_modules/expo-localization/android/build/intermediates/incremental/release/packageReleaseResources/merged.dir/values/values.xml
+new file mode 100644
+index 0000000..bb24e09
+--- /dev/null
++++ b/node_modules/expo-localization/android/build/intermediates/incremental/release/packageReleaseResources/merged.dir/values/values.xml
+@@ -0,0 +1,5 @@
++<?xml version="1.0" encoding="utf-8"?>
++<resources>
++    <string name="ExpoLocalization_forcesRTL" translatable="false">unset</string>
++    <string name="ExpoLocalization_supportsRTL" translatable="false">unset</string>
++</resources>
+\ No newline at end of file
+diff --git a/node_modules/expo-localization/android/build/intermediates/incremental/release/packageReleaseResources/merger.xml b/node_modules/expo-localization/android/build/intermediates/incremental/release/packageReleaseResources/merger.xml
+new file mode 100644
+index 0000000..2a0c2c6
+--- /dev/null
++++ b/node_modules/expo-localization/android/build/intermediates/incremental/release/packageReleaseResources/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/richu/programming/debremewi_app/node_modules/expo-localization/android/src/main/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/richu/programming/debremewi_app/node_modules/expo-localization/android/src/main/res"><file path="/Users/richu/programming/debremewi_app/node_modules/expo-localization/android/src/main/res/values/strings.xml" qualifiers=""><string name="ExpoLocalization_supportsRTL" translatable="false">unset</string><string name="ExpoLocalization_forcesRTL" translatable="false">unset</string></file></source></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="release$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/richu/programming/debremewi_app/node_modules/expo-localization/android/src/release/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="release" generated-set="release$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/richu/programming/debremewi_app/node_modules/expo-localization/android/src/release/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/richu/programming/debremewi_app/node_modules/expo-localization/android/build/generated/res/resValues/release"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated" generated-set="generated$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/Users/richu/programming/debremewi_app/node_modules/expo-localization/android/build/generated/res/resValues/release"/></dataSet><mergedItems/></merger>
+\ No newline at end of file
+diff --git a/node_modules/expo-localization/android/build/intermediates/java_res/release/processReleaseJavaRes/out/META-INF/expo-localization_release.kotlin_module b/node_modules/expo-localization/android/build/intermediates/java_res/release/processReleaseJavaRes/out/META-INF/expo-localization_release.kotlin_module
+new file mode 100644
+index 0000000..d7db421
+Binary files /dev/null and b/node_modules/expo-localization/android/build/intermediates/java_res/release/processReleaseJavaRes/out/META-INF/expo-localization_release.kotlin_module differ
+diff --git a/node_modules/expo-localization/android/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/expo/modules/localization/BuildConfig.class b/node_modules/expo-localization/android/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/expo/modules/localization/BuildConfig.class
+new file mode 100644
+index 0000000..a925a68
+Binary files /dev/null and b/node_modules/expo-localization/android/build/intermediates/javac/release/compileReleaseJavaWithJavac/classes/expo/modules/localization/BuildConfig.class differ
+diff --git a/node_modules/expo-localization/android/build/intermediates/local_only_symbol_list/release/parseReleaseLocalResources/R-def.txt b/node_modules/expo-localization/android/build/intermediates/local_only_symbol_list/release/parseReleaseLocalResources/R-def.txt
+new file mode 100644
+index 0000000..a4dac6c
+--- /dev/null
++++ b/node_modules/expo-localization/android/build/intermediates/local_only_symbol_list/release/parseReleaseLocalResources/R-def.txt
+@@ -0,0 +1,4 @@
++R_DEF: Internal format may change without notice
++local
++string ExpoLocalization_forcesRTL
++string ExpoLocalization_supportsRTL
+diff --git a/node_modules/expo-localization/android/build/intermediates/manifest_merge_blame_file/release/processReleaseManifest/manifest-merger-blame-release-report.txt b/node_modules/expo-localization/android/build/intermediates/manifest_merge_blame_file/release/processReleaseManifest/manifest-merger-blame-release-report.txt
+new file mode 100644
+index 0000000..c80b3f1
+--- /dev/null
++++ b/node_modules/expo-localization/android/build/intermediates/manifest_merge_blame_file/release/processReleaseManifest/manifest-merger-blame-release-report.txt
+@@ -0,0 +1,7 @@
++1<?xml version="1.0" encoding="utf-8"?>
++2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++3    package="expo.modules.localization" >
++4
++5    <uses-sdk android:minSdkVersion="24" />
++6
++7</manifest>
+diff --git a/node_modules/expo-localization/android/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml b/node_modules/expo-localization/android/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml
+new file mode 100644
+index 0000000..53ec36b
+--- /dev/null
++++ b/node_modules/expo-localization/android/build/intermediates/merged_manifest/release/processReleaseManifest/AndroidManifest.xml
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="expo.modules.localization" >
++
++    <uses-sdk android:minSdkVersion="24" />
++
++</manifest>
+\ No newline at end of file
+diff --git a/node_modules/expo-localization/android/build/intermediates/navigation_json/release/extractDeepLinksRelease/navigation.json b/node_modules/expo-localization/android/build/intermediates/navigation_json/release/extractDeepLinksRelease/navigation.json
+new file mode 100644
+index 0000000..0637a08
+--- /dev/null
++++ b/node_modules/expo-localization/android/build/intermediates/navigation_json/release/extractDeepLinksRelease/navigation.json
+@@ -0,0 +1 @@
++[]
+\ No newline at end of file
+diff --git a/node_modules/expo-localization/android/build/intermediates/nested_resources_validation_report/release/generateReleaseResources/nestedResourcesValidationReport.txt b/node_modules/expo-localization/android/build/intermediates/nested_resources_validation_report/release/generateReleaseResources/nestedResourcesValidationReport.txt
+new file mode 100644
+index 0000000..08f4ebe
+--- /dev/null
++++ b/node_modules/expo-localization/android/build/intermediates/nested_resources_validation_report/release/generateReleaseResources/nestedResourcesValidationReport.txt
+@@ -0,0 +1 @@
++0 Warning/Error
+\ No newline at end of file
+diff --git a/node_modules/expo-localization/android/build/intermediates/packaged_res/release/packageReleaseResources/values/values.xml b/node_modules/expo-localization/android/build/intermediates/packaged_res/release/packageReleaseResources/values/values.xml
+new file mode 100644
+index 0000000..bb24e09
+--- /dev/null
++++ b/node_modules/expo-localization/android/build/intermediates/packaged_res/release/packageReleaseResources/values/values.xml
+@@ -0,0 +1,5 @@
++<?xml version="1.0" encoding="utf-8"?>
++<resources>
++    <string name="ExpoLocalization_forcesRTL" translatable="false">unset</string>
++    <string name="ExpoLocalization_supportsRTL" translatable="false">unset</string>
++</resources>
+\ No newline at end of file
+diff --git a/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/META-INF/expo-localization_release.kotlin_module b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/META-INF/expo-localization_release.kotlin_module
+new file mode 100644
+index 0000000..d7db421
+Binary files /dev/null and b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/META-INF/expo-localization_release.kotlin_module differ
+diff --git a/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/BuildConfig.class b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/BuildConfig.class
+new file mode 100644
+index 0000000..a925a68
+Binary files /dev/null and b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/BuildConfig.class differ
+diff --git a/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule$definition$1$1.class b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule$definition$1$1.class
+new file mode 100644
+index 0000000..e4bbbd6
+Binary files /dev/null and b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule$definition$1$1.class differ
+diff --git a/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule$definition$1$5$2.class b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule$definition$1$5$2.class
+new file mode 100644
+index 0000000..46f05d1
+Binary files /dev/null and b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule$definition$1$5$2.class differ
+diff --git a/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$AsyncFunction$1.class b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$AsyncFunction$1.class
+new file mode 100644
+index 0000000..76f3cb7
+Binary files /dev/null and b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$AsyncFunction$1.class differ
+diff --git a/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$FunctionWithoutArgs$1.class b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$FunctionWithoutArgs$1.class
+new file mode 100644
+index 0000000..174e9f2
+Binary files /dev/null and b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$FunctionWithoutArgs$1.class differ
+diff --git a/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$FunctionWithoutArgs$2.class b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$FunctionWithoutArgs$2.class
+new file mode 100644
+index 0000000..64b3a76
+Binary files /dev/null and b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$FunctionWithoutArgs$2.class differ
+diff --git a/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$OnCreate$1.class b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$OnCreate$1.class
+new file mode 100644
+index 0000000..c5ffed5
+Binary files /dev/null and b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$OnCreate$1.class differ
+diff --git a/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$OnDestroy$1.class b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$OnDestroy$1.class
+new file mode 100644
+index 0000000..f484578
+Binary files /dev/null and b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$OnDestroy$1.class differ
+diff --git a/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule$observer$1.class b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule$observer$1.class
+new file mode 100644
+index 0000000..dc31262
+Binary files /dev/null and b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule$observer$1.class differ
+diff --git a/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule.class b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule.class
+new file mode 100644
+index 0000000..b097ac5
+Binary files /dev/null and b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModule.class differ
+diff --git a/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModuleKt.class b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModuleKt.class
+new file mode 100644
+index 0000000..29c7d85
+Binary files /dev/null and b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationModuleKt.class differ
+diff --git a/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationPackage$createApplicationLifecycleListeners$1.class b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationPackage$createApplicationLifecycleListeners$1.class
+new file mode 100644
+index 0000000..1882772
+Binary files /dev/null and b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationPackage$createApplicationLifecycleListeners$1.class differ
+diff --git a/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationPackage.class b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationPackage.class
+new file mode 100644
+index 0000000..285b0f0
+Binary files /dev/null and b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationPackage.class differ
+diff --git a/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationUtilsKt$ISOCurrencyCodes$2.class b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationUtilsKt$ISOCurrencyCodes$2.class
+new file mode 100644
+index 0000000..11c73e8
+Binary files /dev/null and b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationUtilsKt$ISOCurrencyCodes$2.class differ
+diff --git a/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationUtilsKt.class b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationUtilsKt.class
+new file mode 100644
+index 0000000..485fa2b
+Binary files /dev/null and b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/LocalizationUtilsKt.class differ
+diff --git a/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/Notifier.class b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/Notifier.class
+new file mode 100644
+index 0000000..dcf7637
+Binary files /dev/null and b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_dir/release/bundleLibRuntimeToDirRelease/expo/modules/localization/Notifier.class differ
+diff --git a/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_jar/release/bundleLibRuntimeToJarRelease/classes.jar b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_jar/release/bundleLibRuntimeToJarRelease/classes.jar
+new file mode 100644
+index 0000000..2b41f51
+Binary files /dev/null and b/node_modules/expo-localization/android/build/intermediates/runtime_library_classes_jar/release/bundleLibRuntimeToJarRelease/classes.jar differ
+diff --git a/node_modules/expo-localization/android/build/intermediates/symbol_list_with_package_name/release/generateReleaseRFile/package-aware-r.txt b/node_modules/expo-localization/android/build/intermediates/symbol_list_with_package_name/release/generateReleaseRFile/package-aware-r.txt
+new file mode 100644
+index 0000000..1b0b888
+--- /dev/null
++++ b/node_modules/expo-localization/android/build/intermediates/symbol_list_with_package_name/release/generateReleaseRFile/package-aware-r.txt
+@@ -0,0 +1,3 @@
++expo.modules.localization
++string ExpoLocalization_forcesRTL
++string ExpoLocalization_supportsRTL
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab
+new file mode 100644
+index 0000000..8d023bd
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.keystream b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.keystream
+new file mode 100644
+index 0000000..19d1a91
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.keystream differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.keystream.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.keystream.len
+new file mode 100644
+index 0000000..c14ff15
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.keystream.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.len
+new file mode 100644
+index 0000000..a9f80ae
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.values.at b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.values.at
+new file mode 100644
+index 0000000..6a5c50a
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab.values.at differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab_i b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab_i
+new file mode 100644
+index 0000000..6e51854
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab_i differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab_i.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab_i.len
+new file mode 100644
+index 0000000..131e265
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/inputs/source-to-output.tab_i.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab
+new file mode 100644
+index 0000000..7824de3
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.keystream b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.keystream
+new file mode 100644
+index 0000000..2854107
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.keystream differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.keystream.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.keystream.len
+new file mode 100644
+index 0000000..812d25b
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.keystream.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.len
+new file mode 100644
+index 0000000..a9f80ae
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.values.at b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.values.at
+new file mode 100644
+index 0000000..fe23964
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab.values.at differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab_i b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab_i
+new file mode 100644
+index 0000000..9ba923a
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab_i differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab_i.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab_i.len
+new file mode 100644
+index 0000000..131e265
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-attributes.tab_i.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab
+new file mode 100644
+index 0000000..6bdfd62
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream
+new file mode 100644
+index 0000000..2854107
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream.len
+new file mode 100644
+index 0000000..812d25b
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.keystream.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.len
+new file mode 100644
+index 0000000..a9f80ae
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.values.at b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.values.at
+new file mode 100644
+index 0000000..cdfd521
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab.values.at differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab_i b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab_i
+new file mode 100644
+index 0000000..9ba923a
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab_i differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab_i.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab_i.len
+new file mode 100644
+index 0000000..131e265
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/class-fq-name-to-source.tab_i.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab
+new file mode 100644
+index 0000000..26fc711
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.keystream b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.keystream
+new file mode 100644
+index 0000000..5d27c85
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.keystream differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.keystream.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.keystream.len
+new file mode 100644
+index 0000000..1a79f91
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.keystream.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.len
+new file mode 100644
+index 0000000..cf8a30a
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.values.at b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.values.at
+new file mode 100644
+index 0000000..94e4caa
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab.values.at differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab_i b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab_i
+new file mode 100644
+index 0000000..863a8fc
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab_i differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab_i.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab_i.len
+new file mode 100644
+index 0000000..131e265
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/internal-name-to-source.tab_i.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab
+new file mode 100644
+index 0000000..58f2947
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab.keystream b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab.keystream
+new file mode 100644
+index 0000000..937e382
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab.keystream differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab.keystream.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab.keystream.len
+new file mode 100644
+index 0000000..ffc9b0d
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab.keystream.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab.len
+new file mode 100644
+index 0000000..01bdaa1
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab.values.at b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab.values.at
+new file mode 100644
+index 0000000..6fcb00a
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab.values.at differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab_i b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab_i
+new file mode 100644
+index 0000000..793d8a4
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab_i differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab_i.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab_i.len
+new file mode 100644
+index 0000000..131e265
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/package-parts.tab_i.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab
+new file mode 100644
+index 0000000..ae7daee
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.keystream b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.keystream
+new file mode 100644
+index 0000000..5251e03
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.keystream differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.keystream.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.keystream.len
+new file mode 100644
+index 0000000..58526d7
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.keystream.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.len
+new file mode 100644
+index 0000000..9e27f73
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.values.at b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.values.at
+new file mode 100644
+index 0000000..27735b5
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab.values.at differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab_i b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab_i
+new file mode 100644
+index 0000000..95c4496
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab_i differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab_i.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab_i.len
+new file mode 100644
+index 0000000..131e265
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/proto.tab_i.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab
+new file mode 100644
+index 0000000..a484a18
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream
+new file mode 100644
+index 0000000..27e05fb
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream.len
+new file mode 100644
+index 0000000..c14ff15
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.keystream.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.len
+new file mode 100644
+index 0000000..a9f80ae
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.values.at b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.values.at
+new file mode 100644
+index 0000000..43bfee0
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab.values.at differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab_i b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab_i
+new file mode 100644
+index 0000000..6125616
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab_i differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab_i.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab_i.len
+new file mode 100644
+index 0000000..131e265
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/source-to-classes.tab_i.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab
+new file mode 100644
+index 0000000..1e11d35
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab.keystream b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab.keystream
+new file mode 100644
+index 0000000..892d0f6
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab.keystream differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab.keystream.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab.keystream.len
+new file mode 100644
+index 0000000..9ce7b83
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab.keystream.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab.len
+new file mode 100644
+index 0000000..01bdaa1
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab.values.at b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab.values.at
+new file mode 100644
+index 0000000..c743368
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab.values.at differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab_i b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab_i
+new file mode 100644
+index 0000000..4b3af18
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab_i differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab_i.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab_i.len
+new file mode 100644
+index 0000000..131e265
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/subtypes.tab_i.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab
+new file mode 100644
+index 0000000..203e610
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab.keystream b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab.keystream
+new file mode 100644
+index 0000000..9acca5d
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab.keystream differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab.keystream.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab.keystream.len
+new file mode 100644
+index 0000000..8790089
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab.keystream.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab.len
+new file mode 100644
+index 0000000..01bdaa1
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab.values.at b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab.values.at
+new file mode 100644
+index 0000000..61b144d
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab.values.at differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab_i b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab_i
+new file mode 100644
+index 0000000..1485173
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab_i differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab_i.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab_i.len
+new file mode 100644
+index 0000000..131e265
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/jvm/kotlin/supertypes.tab_i.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/counters.tab b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/counters.tab
+new file mode 100644
+index 0000000..c393a51
+--- /dev/null
++++ b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/counters.tab
+@@ -0,0 +1,2 @@
++3
++0
+\ No newline at end of file
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab
+new file mode 100644
+index 0000000..eeb32e2
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.keystream b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.keystream
+new file mode 100644
+index 0000000..27e05fb
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.keystream differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.keystream.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.keystream.len
+new file mode 100644
+index 0000000..c14ff15
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.keystream.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.len
+new file mode 100644
+index 0000000..a9f80ae
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.values.at b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.values.at
+new file mode 100644
+index 0000000..9f383b5
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab.values.at differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab_i b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab_i
+new file mode 100644
+index 0000000..6125616
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab_i differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab_i.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab_i.len
+new file mode 100644
+index 0000000..131e265
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/file-to-id.tab_i.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab
+new file mode 100644
+index 0000000..becc2fb
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.keystream b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.keystream
+new file mode 100644
+index 0000000..636f34a
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.keystream differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.keystream.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.keystream.len
+new file mode 100644
+index 0000000..29ce11c
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.keystream.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.len
+new file mode 100644
+index 0000000..a9f80ae
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.values.at b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.values.at
+new file mode 100644
+index 0000000..1d5f71b
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab.values.at differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab_i b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab_i
+new file mode 100644
+index 0000000..e9905b3
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab_i differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab_i.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab_i.len
+new file mode 100644
+index 0000000..131e265
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/id-to-file.tab_i.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab
+new file mode 100644
+index 0000000..837d959
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab.keystream b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab.keystream
+new file mode 100644
+index 0000000..2ac4a9b
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab.keystream differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab.keystream.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab.keystream.len
+new file mode 100644
+index 0000000..8a27269
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab.keystream.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab.len
+new file mode 100644
+index 0000000..7ed2cd5
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab.values.at b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab.values.at
+new file mode 100644
+index 0000000..89d070e
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab.values.at differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab_i b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab_i
+new file mode 100644
+index 0000000..b2ac997
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab_i differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab_i.len b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab_i.len
+new file mode 100644
+index 0000000..131e265
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/caches-jvm/lookups/lookups.tab_i.len differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/last-build.bin b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/last-build.bin
+new file mode 100644
+index 0000000..e4f8664
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/cacheable/last-build.bin differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/classpath-snapshot/shrunk-classpath-snapshot.bin b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/classpath-snapshot/shrunk-classpath-snapshot.bin
+new file mode 100644
+index 0000000..544dccd
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/classpath-snapshot/shrunk-classpath-snapshot.bin differ
+diff --git a/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/local-state/build-history.bin b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/local-state/build-history.bin
+new file mode 100644
+index 0000000..b6851e0
+Binary files /dev/null and b/node_modules/expo-localization/android/build/kotlin/compileReleaseKotlin/local-state/build-history.bin differ
+diff --git a/node_modules/expo-localization/android/build/outputs/logs/manifest-merger-release-report.txt b/node_modules/expo-localization/android/build/outputs/logs/manifest-merger-release-report.txt
+new file mode 100644
+index 0000000..96bac5b
+--- /dev/null
++++ b/node_modules/expo-localization/android/build/outputs/logs/manifest-merger-release-report.txt
+@@ -0,0 +1,14 @@
++-- Merging decision tree log ---
++manifest
++ADDED from /Users/richu/programming/debremewi_app/node_modules/expo-localization/android/src/main/AndroidManifest.xml:1:1-3:12
++INJECTED from /Users/richu/programming/debremewi_app/node_modules/expo-localization/android/src/main/AndroidManifest.xml:1:1-3:12
++	package
++		INJECTED from /Users/richu/programming/debremewi_app/node_modules/expo-localization/android/src/main/AndroidManifest.xml
++uses-sdk
++INJECTED from /Users/richu/programming/debremewi_app/node_modules/expo-localization/android/src/main/AndroidManifest.xml reason: use-sdk injection requested
++INJECTED from /Users/richu/programming/debremewi_app/node_modules/expo-localization/android/src/main/AndroidManifest.xml
++INJECTED from /Users/richu/programming/debremewi_app/node_modules/expo-localization/android/src/main/AndroidManifest.xml
++	android:targetSdkVersion
++		INJECTED from /Users/richu/programming/debremewi_app/node_modules/expo-localization/android/src/main/AndroidManifest.xml
++	android:minSdkVersion
++		INJECTED from /Users/richu/programming/debremewi_app/node_modules/expo-localization/android/src/main/AndroidManifest.xml
+diff --git a/node_modules/expo-localization/android/build/tmp/compileReleaseJavaWithJavac/previous-compilation-data.bin b/node_modules/expo-localization/android/build/tmp/compileReleaseJavaWithJavac/previous-compilation-data.bin
+new file mode 100644
+index 0000000..b925a6f
+Binary files /dev/null and b/node_modules/expo-localization/android/build/tmp/compileReleaseJavaWithJavac/previous-compilation-data.bin differ
+diff --git a/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/META-INF/expo-localization_release.kotlin_module b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/META-INF/expo-localization_release.kotlin_module
+new file mode 100644
+index 0000000..d7db421
+Binary files /dev/null and b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/META-INF/expo-localization_release.kotlin_module differ
+diff --git a/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule$definition$1$1.class b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule$definition$1$1.class
+new file mode 100644
+index 0000000..e4bbbd6
+Binary files /dev/null and b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule$definition$1$1.class differ
+diff --git a/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule$definition$1$5$2.class b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule$definition$1$5$2.class
+new file mode 100644
+index 0000000..46f05d1
+Binary files /dev/null and b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule$definition$1$5$2.class differ
+diff --git a/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$AsyncFunction$1.class b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$AsyncFunction$1.class
+new file mode 100644
+index 0000000..76f3cb7
+Binary files /dev/null and b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$AsyncFunction$1.class differ
+diff --git a/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$FunctionWithoutArgs$1.class b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$FunctionWithoutArgs$1.class
+new file mode 100644
+index 0000000..174e9f2
+Binary files /dev/null and b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$FunctionWithoutArgs$1.class differ
+diff --git a/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$FunctionWithoutArgs$2.class b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$FunctionWithoutArgs$2.class
+new file mode 100644
+index 0000000..64b3a76
+Binary files /dev/null and b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$FunctionWithoutArgs$2.class differ
+diff --git a/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$OnCreate$1.class b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$OnCreate$1.class
+new file mode 100644
+index 0000000..c5ffed5
+Binary files /dev/null and b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$OnCreate$1.class differ
+diff --git a/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$OnDestroy$1.class b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$OnDestroy$1.class
+new file mode 100644
+index 0000000..f484578
+Binary files /dev/null and b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule$definition$lambda$6$$inlined$OnDestroy$1.class differ
+diff --git a/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule$observer$1.class b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule$observer$1.class
+new file mode 100644
+index 0000000..dc31262
+Binary files /dev/null and b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule$observer$1.class differ
+diff --git a/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule.class b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule.class
+new file mode 100644
+index 0000000..b097ac5
+Binary files /dev/null and b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModule.class differ
+diff --git a/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModuleKt.class b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModuleKt.class
+new file mode 100644
+index 0000000..29c7d85
+Binary files /dev/null and b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationModuleKt.class differ
+diff --git a/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationPackage$createApplicationLifecycleListeners$1.class b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationPackage$createApplicationLifecycleListeners$1.class
+new file mode 100644
+index 0000000..1882772
+Binary files /dev/null and b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationPackage$createApplicationLifecycleListeners$1.class differ
+diff --git a/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationPackage.class b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationPackage.class
+new file mode 100644
+index 0000000..285b0f0
+Binary files /dev/null and b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationPackage.class differ
+diff --git a/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationUtilsKt$ISOCurrencyCodes$2.class b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationUtilsKt$ISOCurrencyCodes$2.class
+new file mode 100644
+index 0000000..11c73e8
+Binary files /dev/null and b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationUtilsKt$ISOCurrencyCodes$2.class differ
+diff --git a/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationUtilsKt.class b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationUtilsKt.class
+new file mode 100644
+index 0000000..485fa2b
+Binary files /dev/null and b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/LocalizationUtilsKt.class differ
+diff --git a/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/Notifier.class b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/Notifier.class
+new file mode 100644
+index 0000000..dcf7637
+Binary files /dev/null and b/node_modules/expo-localization/android/build/tmp/kotlin-classes/release/expo/modules/localization/Notifier.class differ
+diff --git a/node_modules/expo-localization/ios/LocalizationModule.swift b/node_modules/expo-localization/ios/LocalizationModule.swift
+index 73b2b9d..c764688 100644
+--- a/node_modules/expo-localization/ios/LocalizationModule.swift
++++ b/node_modules/expo-localization/ios/LocalizationModule.swift
+@@ -123,6 +123,8 @@ public class LocalizationModule: Module {
+       return "roc"
+     case .iso8601:
+       return "iso8601"
++    @unknown default:
++      return "gregorian"
+     }
+   }
+ 
+diff --git a/node_modules/expo-localization/ios/LocalizationModule.swift.backup b/node_modules/expo-localization/ios/LocalizationModule.swift.backup
+new file mode 100644
+index 0000000..73b2b9d
+--- /dev/null
++++ b/node_modules/expo-localization/ios/LocalizationModule.swift.backup
+@@ -0,0 +1,244 @@
++// Copyright 2021-present 650 Industries. All rights reserved.
++
++import Foundation
++import ExpoModulesCore
++
++let LOCALE_SETTINGS_CHANGED = "onLocaleSettingsChanged"
++let CALENDAR_SETTINGS_CHANGED = "onCalendarSettingsChanged"
++
++public class LocalizationModule: Module {
++  public func definition() -> ModuleDefinition {
++    Name("ExpoLocalization")
++
++    Constants {
++      return Self.getCurrentLocalization()
++    }
++    AsyncFunction("getLocalizationAsync") {
++      return Self.getCurrentLocalization()
++    }
++    Function("getLocales") {
++      return Self.getLocales()
++    }
++    Function("getCalendars") {
++      return Self.getCalendars()
++    }
++    OnCreate {
++      if let forceRTL = Bundle.main.object(forInfoDictionaryKey: "ExpoLocalization_forcesRTL") as? Bool {
++        self.setRTLPreferences(true, forceRTL)
++      } else {
++        if let enableRTL = Bundle.main.object(forInfoDictionaryKey: "ExpoLocalization_supportsRTL") as? Bool {
++          self.setRTLPreferences(enableRTL, false)
++        }
++      }
++    }
++
++    Events(LOCALE_SETTINGS_CHANGED, CALENDAR_SETTINGS_CHANGED)
++
++    OnStartObserving {
++      NotificationCenter.default.addObserver(
++        self,
++        selector: #selector(LocalizationModule.localeChanged),
++        name: NSLocale.currentLocaleDidChangeNotification, // swiftlint:disable:this legacy_objc_type
++        object: nil
++      )
++    }
++
++    OnStopObserving {
++      NotificationCenter.default.removeObserver(
++        self,
++        name: NSLocale.currentLocaleDidChangeNotification, // swiftlint:disable:this legacy_objc_type
++        object: nil
++      )
++    }
++  }
++
++  func isRTLPreferredForCurrentLocale() -> Bool {
++    // swiftlint:disable:next legacy_objc_type
++    return NSLocale.characterDirection(forLanguage: NSLocale.preferredLanguages.first ?? "en-US") == NSLocale.LanguageDirection.rightToLeft
++  }
++
++  func setRTLPreferences(_ supportsRTL: Bool, _ forceRTL: Bool) {
++    // These keys are used by React Native here: https://github.com/facebook/react-native/blob/main/React/Modules/RCTI18nUtil.m
++    // We set them before React loads to ensure it gets rendered correctly the first time the app is opened.
++    // On iOS we need to set both forceRTL and allowRTL so apps don't have to include localization strings.
++    // Uses required reason API based on the following reason: CA92.1
++
++    if forceRTL {
++      UserDefaults.standard.set(true, forKey: "RCTI18nUtil_allowRTL")
++      UserDefaults.standard.set(true, forKey: "RCTI18nUtil_forceRTL")
++    } else {
++      UserDefaults.standard.set(supportsRTL, forKey: "RCTI18nUtil_allowRTL")
++      UserDefaults.standard.set(supportsRTL ? isRTLPreferredForCurrentLocale() : false, forKey: "RCTI18nUtil_forceRTL")
++    }
++
++    UserDefaults.standard.synchronize()
++  }
++
++  // If the application isn't manually localized for the device language then the
++  // native `Locale.current` will fallback on using English US
++  // [cite](https://stackoverflow.com/questions/48136456/locale-current-reporting-wrong-language-on-device).
++  // This method will attempt to return the locale that the device is using regardless of the app,
++  // providing better parity across platforms.
++  static func getLocale() -> Locale {
++    guard let preferredIdentifier = Locale.preferredLanguages.first else {
++      return Locale.current
++    }
++    return Locale(identifier: preferredIdentifier)
++  }
++  /**
++   Maps ios unique identifiers to [BCP 47 calendar types]
++   (https://github.com/unicode-org/cldr/blob/main/common/bcp47/calendar.xml)
++   */
++  static func getUnicodeCalendarIdentifier(calendar: Calendar) -> String {
++    switch calendar.identifier {
++    case .buddhist:
++      return "buddhist"
++    case .chinese:
++      return "chinese"
++    case .coptic:
++      return "coptic"
++    case .ethiopicAmeteAlem:
++      return "ethioaa"
++    case .ethiopicAmeteMihret:
++      return "ethiopic"
++    case .gregorian:
++      return "gregory"
++    case .hebrew:
++      return "hebrew"
++    case .indian:
++      return "indian"
++    case .islamic:
++      return "islamic"
++    case .islamicCivil:
++      return "islamic-civil"
++    case .islamicTabular:
++      return "islamic-tbla"
++    case .islamicUmmAlQura:
++      return "islamic-umalqura"
++    case .japanese:
++      return "japanese"
++    case .persian:
++      return "persian"
++    case .republicOfChina:
++      return "roc"
++    case .iso8601:
++      return "iso8601"
++    }
++  }
++
++  static func getMeasurementSystemForLocale(_ locale: Locale) -> String {
++    if #available(iOS 16, tvOS 16, *) {
++      let measurementSystems = [
++        Locale.MeasurementSystem.us: "us",
++        Locale.MeasurementSystem.uk: "uk",
++        Locale.MeasurementSystem.metric: "metric"
++      ]
++      return measurementSystems[locale.measurementSystem] ?? "metric"
++    }
++    return locale.usesMetricSystem ? "metric" : "us"
++  }
++
++  static func getLocales() -> [[String: Any?]] {
++    let userSettingsLocale = Locale.current
++
++    return (Locale.preferredLanguages.isEmpty ? [Locale.current.identifier] : Locale.preferredLanguages)
++      .map { languageTag -> [String: Any?] in
++        let languageLocale = Locale.init(identifier: languageTag)
++
++        if #available(iOS 16, tvOS 16, *) {
++          return [
++            "languageTag": languageTag,
++            "languageCode": languageLocale.language.languageCode?.identifier,
++            "languageRegionCode": languageLocale.region?.identifier,
++            "regionCode": userSettingsLocale.region?.identifier,
++            "textDirection": languageLocale.language.characterDirection == .rightToLeft ? "rtl" : "ltr",
++            "decimalSeparator": userSettingsLocale.decimalSeparator,
++            "digitGroupingSeparator": userSettingsLocale.groupingSeparator,
++            "measurementSystem": getMeasurementSystemForLocale(userSettingsLocale),
++            "currencyCode": userSettingsLocale.currencyCode,
++            "currencySymbol": userSettingsLocale.currencySymbol,
++            "languageCurrencyCode": languageLocale.currencyCode,
++            "languageCurrencySymbol": languageLocale.currencySymbol,
++            "temperatureUnit": getTemperatureUnit()
++          ]
++        }
++        return [
++          "languageTag": languageTag,
++          "languageCode": languageLocale.languageCode,
++          "languageRegionCode": languageLocale.regionCode,
++          "regionCode": userSettingsLocale.regionCode,
++          "textDirection": Locale.characterDirection(forLanguage: languageTag) == .rightToLeft ? "rtl" : "ltr",
++          "decimalSeparator": userSettingsLocale.decimalSeparator,
++          "digitGroupingSeparator": userSettingsLocale.groupingSeparator,
++          "measurementSystem": getMeasurementSystemForLocale(userSettingsLocale),
++          "currencyCode": userSettingsLocale.currencyCode,
++          "currencySymbol": userSettingsLocale.currencySymbol,
++          "languageCurrencyCode": languageLocale.currencyCode,
++          "languageCurrencySymbol": languageLocale.currencySymbol,
++          "temperatureUnit": getTemperatureUnit()
++        ]
++      }
++  }
++
++  @objc
++  private func localeChanged() {
++    // we send both events since on iOS it means both calendar and locale needs an update
++    sendEvent(LOCALE_SETTINGS_CHANGED)
++    sendEvent(CALENDAR_SETTINGS_CHANGED)
++  }
++
++  static func getTemperatureUnit() -> String? {
++    let formatter = MeasurementFormatter()
++    formatter.locale = Locale.current
++
++    let temperature = Measurement(value: 0, unit: UnitTemperature.celsius)
++    let formatted = formatter.string(from: temperature)
++
++    guard let unitCharacter = formatted.last else {
++      return nil
++    }
++
++    return unitCharacter == "F" ? "fahrenheit" : "celsius"
++  }
++
++  // https://stackoverflow.com/a/28183182
++  static func uses24HourClock() -> Bool {
++    let dateFormat = DateFormatter.dateFormat(fromTemplate: "j", options: 0, locale: Locale.current)!
++
++    return dateFormat.firstIndex(of: "a") == nil
++  }
++
++  static func getCalendars() -> [[String: Any?]] {
++    let calendar = Locale.current.calendar
++    return [
++      [
++        "calendar": getUnicodeCalendarIdentifier(calendar: calendar),
++        "timeZone": "\(calendar.timeZone.identifier)",
++        "uses24hourClock": uses24HourClock(),
++        "firstWeekday": calendar.firstWeekday
++      ]
++    ]
++  }
++
++  static func getCurrentLocalization() -> [String: Any?] {
++    let locale = getLocale()
++    let languageCode = locale.languageCode ?? "en"
++    var languageIds = Locale.preferredLanguages
++
++    if languageIds.isEmpty {
++      languageIds.append("en-US")
++    }
++    return [
++      "currency": locale.currencyCode ?? "USD",
++      "decimalSeparator": locale.decimalSeparator ?? ".",
++      "digitGroupingSeparator": locale.groupingSeparator ?? ",",
++      "isoCurrencyCodes": Locale.isoCurrencyCodes,
++      "isMetric": locale.usesMetricSystem,
++      "isRTL": Locale.characterDirection(forLanguage: languageCode) == .rightToLeft,
++      "locale": languageIds.first,
++      "locales": languageIds,
++      "region": locale.regionCode ?? "US",
++      "timezone": TimeZone.current.identifier
++    ]
++  }
++}
+diff --git a/node_modules/expo-localization/ios/LocalizationModule.swift.bak b/node_modules/expo-localization/ios/LocalizationModule.swift.bak
+new file mode 100644
+index 0000000..73b2b9d
+--- /dev/null
++++ b/node_modules/expo-localization/ios/LocalizationModule.swift.bak
+@@ -0,0 +1,244 @@
++// Copyright 2021-present 650 Industries. All rights reserved.
++
++import Foundation
++import ExpoModulesCore
++
++let LOCALE_SETTINGS_CHANGED = "onLocaleSettingsChanged"
++let CALENDAR_SETTINGS_CHANGED = "onCalendarSettingsChanged"
++
++public class LocalizationModule: Module {
++  public func definition() -> ModuleDefinition {
++    Name("ExpoLocalization")
++
++    Constants {
++      return Self.getCurrentLocalization()
++    }
++    AsyncFunction("getLocalizationAsync") {
++      return Self.getCurrentLocalization()
++    }
++    Function("getLocales") {
++      return Self.getLocales()
++    }
++    Function("getCalendars") {
++      return Self.getCalendars()
++    }
++    OnCreate {
++      if let forceRTL = Bundle.main.object(forInfoDictionaryKey: "ExpoLocalization_forcesRTL") as? Bool {
++        self.setRTLPreferences(true, forceRTL)
++      } else {
++        if let enableRTL = Bundle.main.object(forInfoDictionaryKey: "ExpoLocalization_supportsRTL") as? Bool {
++          self.setRTLPreferences(enableRTL, false)
++        }
++      }
++    }
++
++    Events(LOCALE_SETTINGS_CHANGED, CALENDAR_SETTINGS_CHANGED)
++
++    OnStartObserving {
++      NotificationCenter.default.addObserver(
++        self,
++        selector: #selector(LocalizationModule.localeChanged),
++        name: NSLocale.currentLocaleDidChangeNotification, // swiftlint:disable:this legacy_objc_type
++        object: nil
++      )
++    }
++
++    OnStopObserving {
++      NotificationCenter.default.removeObserver(
++        self,
++        name: NSLocale.currentLocaleDidChangeNotification, // swiftlint:disable:this legacy_objc_type
++        object: nil
++      )
++    }
++  }
++
++  func isRTLPreferredForCurrentLocale() -> Bool {
++    // swiftlint:disable:next legacy_objc_type
++    return NSLocale.characterDirection(forLanguage: NSLocale.preferredLanguages.first ?? "en-US") == NSLocale.LanguageDirection.rightToLeft
++  }
++
++  func setRTLPreferences(_ supportsRTL: Bool, _ forceRTL: Bool) {
++    // These keys are used by React Native here: https://github.com/facebook/react-native/blob/main/React/Modules/RCTI18nUtil.m
++    // We set them before React loads to ensure it gets rendered correctly the first time the app is opened.
++    // On iOS we need to set both forceRTL and allowRTL so apps don't have to include localization strings.
++    // Uses required reason API based on the following reason: CA92.1
++
++    if forceRTL {
++      UserDefaults.standard.set(true, forKey: "RCTI18nUtil_allowRTL")
++      UserDefaults.standard.set(true, forKey: "RCTI18nUtil_forceRTL")
++    } else {
++      UserDefaults.standard.set(supportsRTL, forKey: "RCTI18nUtil_allowRTL")
++      UserDefaults.standard.set(supportsRTL ? isRTLPreferredForCurrentLocale() : false, forKey: "RCTI18nUtil_forceRTL")
++    }
++
++    UserDefaults.standard.synchronize()
++  }
++
++  // If the application isn't manually localized for the device language then the
++  // native `Locale.current` will fallback on using English US
++  // [cite](https://stackoverflow.com/questions/48136456/locale-current-reporting-wrong-language-on-device).
++  // This method will attempt to return the locale that the device is using regardless of the app,
++  // providing better parity across platforms.
++  static func getLocale() -> Locale {
++    guard let preferredIdentifier = Locale.preferredLanguages.first else {
++      return Locale.current
++    }
++    return Locale(identifier: preferredIdentifier)
++  }
++  /**
++   Maps ios unique identifiers to [BCP 47 calendar types]
++   (https://github.com/unicode-org/cldr/blob/main/common/bcp47/calendar.xml)
++   */
++  static func getUnicodeCalendarIdentifier(calendar: Calendar) -> String {
++    switch calendar.identifier {
++    case .buddhist:
++      return "buddhist"
++    case .chinese:
++      return "chinese"
++    case .coptic:
++      return "coptic"
++    case .ethiopicAmeteAlem:
++      return "ethioaa"
++    case .ethiopicAmeteMihret:
++      return "ethiopic"
++    case .gregorian:
++      return "gregory"
++    case .hebrew:
++      return "hebrew"
++    case .indian:
++      return "indian"
++    case .islamic:
++      return "islamic"
++    case .islamicCivil:
++      return "islamic-civil"
++    case .islamicTabular:
++      return "islamic-tbla"
++    case .islamicUmmAlQura:
++      return "islamic-umalqura"
++    case .japanese:
++      return "japanese"
++    case .persian:
++      return "persian"
++    case .republicOfChina:
++      return "roc"
++    case .iso8601:
++      return "iso8601"
++    }
++  }
++
++  static func getMeasurementSystemForLocale(_ locale: Locale) -> String {
++    if #available(iOS 16, tvOS 16, *) {
++      let measurementSystems = [
++        Locale.MeasurementSystem.us: "us",
++        Locale.MeasurementSystem.uk: "uk",
++        Locale.MeasurementSystem.metric: "metric"
++      ]
++      return measurementSystems[locale.measurementSystem] ?? "metric"
++    }
++    return locale.usesMetricSystem ? "metric" : "us"
++  }
++
++  static func getLocales() -> [[String: Any?]] {
++    let userSettingsLocale = Locale.current
++
++    return (Locale.preferredLanguages.isEmpty ? [Locale.current.identifier] : Locale.preferredLanguages)
++      .map { languageTag -> [String: Any?] in
++        let languageLocale = Locale.init(identifier: languageTag)
++
++        if #available(iOS 16, tvOS 16, *) {
++          return [
++            "languageTag": languageTag,
++            "languageCode": languageLocale.language.languageCode?.identifier,
++            "languageRegionCode": languageLocale.region?.identifier,
++            "regionCode": userSettingsLocale.region?.identifier,
++            "textDirection": languageLocale.language.characterDirection == .rightToLeft ? "rtl" : "ltr",
++            "decimalSeparator": userSettingsLocale.decimalSeparator,
++            "digitGroupingSeparator": userSettingsLocale.groupingSeparator,
++            "measurementSystem": getMeasurementSystemForLocale(userSettingsLocale),
++            "currencyCode": userSettingsLocale.currencyCode,
++            "currencySymbol": userSettingsLocale.currencySymbol,
++            "languageCurrencyCode": languageLocale.currencyCode,
++            "languageCurrencySymbol": languageLocale.currencySymbol,
++            "temperatureUnit": getTemperatureUnit()
++          ]
++        }
++        return [
++          "languageTag": languageTag,
++          "languageCode": languageLocale.languageCode,
++          "languageRegionCode": languageLocale.regionCode,
++          "regionCode": userSettingsLocale.regionCode,
++          "textDirection": Locale.characterDirection(forLanguage: languageTag) == .rightToLeft ? "rtl" : "ltr",
++          "decimalSeparator": userSettingsLocale.decimalSeparator,
++          "digitGroupingSeparator": userSettingsLocale.groupingSeparator,
++          "measurementSystem": getMeasurementSystemForLocale(userSettingsLocale),
++          "currencyCode": userSettingsLocale.currencyCode,
++          "currencySymbol": userSettingsLocale.currencySymbol,
++          "languageCurrencyCode": languageLocale.currencyCode,
++          "languageCurrencySymbol": languageLocale.currencySymbol,
++          "temperatureUnit": getTemperatureUnit()
++        ]
++      }
++  }
++
++  @objc
++  private func localeChanged() {
++    // we send both events since on iOS it means both calendar and locale needs an update
++    sendEvent(LOCALE_SETTINGS_CHANGED)
++    sendEvent(CALENDAR_SETTINGS_CHANGED)
++  }
++
++  static func getTemperatureUnit() -> String? {
++    let formatter = MeasurementFormatter()
++    formatter.locale = Locale.current
++
++    let temperature = Measurement(value: 0, unit: UnitTemperature.celsius)
++    let formatted = formatter.string(from: temperature)
++
++    guard let unitCharacter = formatted.last else {
++      return nil
++    }
++
++    return unitCharacter == "F" ? "fahrenheit" : "celsius"
++  }
++
++  // https://stackoverflow.com/a/28183182
++  static func uses24HourClock() -> Bool {
++    let dateFormat = DateFormatter.dateFormat(fromTemplate: "j", options: 0, locale: Locale.current)!
++
++    return dateFormat.firstIndex(of: "a") == nil
++  }
++
++  static func getCalendars() -> [[String: Any?]] {
++    let calendar = Locale.current.calendar
++    return [
++      [
++        "calendar": getUnicodeCalendarIdentifier(calendar: calendar),
++        "timeZone": "\(calendar.timeZone.identifier)",
++        "uses24hourClock": uses24HourClock(),
++        "firstWeekday": calendar.firstWeekday
++      ]
++    ]
++  }
++
++  static func getCurrentLocalization() -> [String: Any?] {
++    let locale = getLocale()
++    let languageCode = locale.languageCode ?? "en"
++    var languageIds = Locale.preferredLanguages
++
++    if languageIds.isEmpty {
++      languageIds.append("en-US")
++    }
++    return [
++      "currency": locale.currencyCode ?? "USD",
++      "decimalSeparator": locale.decimalSeparator ?? ".",
++      "digitGroupingSeparator": locale.groupingSeparator ?? ",",
++      "isoCurrencyCodes": Locale.isoCurrencyCodes,
++      "isMetric": locale.usesMetricSystem,
++      "isRTL": Locale.characterDirection(forLanguage: languageCode) == .rightToLeft,
++      "locale": languageIds.first,
++      "locales": languageIds,
++      "region": locale.regionCode ?? "US",
++      "timezone": TimeZone.current.identifier
++    ]
++  }
++}
