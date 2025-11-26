@@ -515,6 +515,16 @@ export default function AppNavigator() {
                 headerRightContainerStyle: { paddingRight: 15 },
               }}
             />
+            <Stack.Screen
+              name="EditProfile"
+              component={EditProfileScreen}
+              options={{
+                headerShown: true,
+                title: t('navigation.screens.editProfile'),
+                headerRight: () => <LanguageSelector />,
+                headerRightContainerStyle: { paddingRight: 15 },
+              }}
+            />
           </>
         )}
         <Stack.Screen

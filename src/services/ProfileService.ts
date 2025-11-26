@@ -63,21 +63,31 @@ class ProfileServiceClass {
       if (profileData.hasChildren === 'yes' && Array.isArray(profileData.children)) {
         formData.append('has_children', 'yes');
         formData.append('number_of_children', profileData.children.length.toString());
+
+
+        console.log('Appending to FormData: user_children =', JSON.stringify(profileData.children));
         formData.append('user_children', JSON.stringify(profileData.children));
       } else {
         formData.append('has_children', 'no');
         formData.append('number_of_children', '0');
+        console.log('Appending to FormData: user_children = []');
         formData.append('user_children', JSON.stringify([]));
       }
 
       // Add other profile data to formData
       Object.keys(profileData).forEach(key => {
         const typedKey = key as keyof UserProfile;
-        if (!['photo', 'children', 'hasChildren', 'numberOfChildren'].includes(key) &&
-          profileData[typedKey] !== null &&
-          profileData[typedKey] !== undefined) {
-          // Keep original field names as they are
-          formData.append(key, profileData[typedKey] as string);
+
+        // Skip special fields handled separately or read-only fields
+        if (['photo', 'children', 'hasChildren', 'numberOfChildren', 'id', 'username', 'email', 'isOnboardingComplete', 'profilePhoto', 'profilePhotoUrl', 'avatar_url', 'user_registered', 'is_onboarding_complete', 'countryCode'].includes(key)) {
+          return;
+        }
+
+        const value = profileData[typedKey];
+        if (value !== null && value !== undefined && value !== '') {
+          // Send field with original camelCase key
+          console.log(`Appending to FormData: ${key} = ${value}`);
+          formData.append(key, value as string);
         }
       });
 

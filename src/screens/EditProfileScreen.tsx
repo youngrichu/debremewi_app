@@ -94,7 +94,7 @@ interface FormData extends UserData {
 // Update the formatDisplayValue function
 const formatDisplayValue = (value: string | null | undefined, options?: { [key: string]: string }) => {
   if (!value) return 'Not provided';
-  
+
   // If options map is provided, use it to map values to display text
   if (options && options[value]) {
     return options[value];
@@ -123,7 +123,7 @@ const formatDisplayValue = (value: string | null | undefined, options?: { [key: 
 const getPickerOptions = (pickerName: string): string[] => {
   console.log('Getting options for:', pickerName);
   let options: string[] = [];
-  
+
   switch (pickerName) {
     case 'gender':
       options = GENDER_OPTIONS;
@@ -154,7 +154,7 @@ const getPickerOptions = (pickerName: string): string[] => {
     default:
       console.log('No options found for:', pickerName);
   }
-  
+
   console.log('Options:', options);
   return options;
 };
@@ -186,13 +186,13 @@ const getPickerTitle = (pickerName: string) => {
   }
 };
 
-const ChildFields = React.memo(({ 
-  index, 
+const ChildFields = React.memo(({
+  index,
   child,
   handleChildFieldChange,
   errors,
   t,
-  setShowPicker 
+  setShowPicker
 }: {
   index: number;
   child: any;
@@ -204,7 +204,7 @@ const ChildFields = React.memo(({
   return (
     <View key={`child-${index}`} style={styles.childContainer}>
       <Text style={styles.childTitle}>{t('profile.fields.child', { number: index + 1 })}</Text>
-      
+
       {/* Child's Full Name */}
       <View style={styles.inputGroup}>
         <Text style={styles.label}>
@@ -242,7 +242,7 @@ const ChildFields = React.memo(({
         <Text style={styles.label}>
           {t('profile.fields.childGender')} <Text style={styles.required}>*</Text>
         </Text>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.pickerButton}
           onPress={() => setShowPicker(`child${index}Gender`)}
         >
@@ -330,6 +330,28 @@ export default function EditProfileScreen() {
     };
   }, []);
 
+  // Ensure children array is properly initialized when numberOfChildren changes
+  useEffect(() => {
+    if (formData.hasChildren === 'yes' && formData.numberOfChildren) {
+      const childCount = parseInt(formData.numberOfChildren);
+      const currentChildren = formData.children || [];
+
+      // Only initialize if we don't have enough children entries
+      if (currentChildren.length < childCount) {
+        const newChildren = [...currentChildren];
+        for (let i = currentChildren.length; i < childCount; i++) {
+          newChildren[i] = {
+            fullName: '',
+            christianityName: '',
+            gender: '',
+            age: ''
+          };
+        }
+        setFormData(prev => ({ ...prev, children: newChildren }));
+      }
+    }
+  }, [formData.hasChildren, formData.numberOfChildren]);
+
   const handleContentSizeChange = (contentWidth: number, contentHeight: number) => {
     // Remove all automatic scrolling behavior
     return;
@@ -358,7 +380,7 @@ export default function EditProfileScreen() {
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
-    
+
     if (!formData.firstName?.trim()) {
       newErrors.firstName = 'First name is required';
     }
@@ -414,12 +436,12 @@ export default function EditProfileScreen() {
         ...formData,
         children: formData.hasChildren === 'yes' ? formData.children : [],
       };
-      
+
       console.log('Profile data being sent:', JSON.stringify(updatedProfile, null, 2));
 
       const response = await ProfileService.updateProfile(updatedProfile);
       dispatch(setUserData(response.data));
-      
+
       Alert.alert(
         t('common.success'),
         t('profile.messages.updateSuccess')
@@ -514,7 +536,7 @@ export default function EditProfileScreen() {
           </Text>
           <TextInput
             style={[
-              styles.input, 
+              styles.input,
               styles.multilineInput,
               errors[field] && styles.inputError
             ]}
@@ -596,12 +618,12 @@ export default function EditProfileScreen() {
   const renderPickerButton = (field: string, isRequired: boolean = false) => (
     <View style={styles.inputGroup}>
       {renderFieldLabel(field, isRequired)}
-      <TouchableOpacity 
+      <TouchableOpacity
         style={styles.pickerButton}
         onPress={() => setOpenPicker(field)}
       >
         <Text style={styles.pickerButtonText}>
-          {formData[field as keyof typeof formData] 
+          {formData[field as keyof typeof formData]
             ? getPickerDisplayValue(field, formData[field as keyof typeof formData])
             : t(`profile.selects.select${field.charAt(0).toUpperCase() + field.slice(1)}`)}
         </Text>
@@ -629,7 +651,7 @@ export default function EditProfileScreen() {
             <Text style={styles.childTitle}>
               {t('profile.fields.child')} {index + 1}
             </Text>
-            
+
             <View style={styles.inputGroup}>
               <Text style={styles.label}>
                 {t('profile.fields.fullName')} <Text style={styles.required}>*</Text>
@@ -691,12 +713,12 @@ export default function EditProfileScreen() {
 
   return (
     <View style={styles.container}>
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         style={[styles.keyboardView]}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
       >
-        <ScrollView 
+        <ScrollView
           ref={scrollViewRef}
           style={styles.content}
           contentContainerStyle={[
@@ -715,11 +737,11 @@ export default function EditProfileScreen() {
               <TouchableOpacity style={styles.photoContainer} onPress={pickImage}>
                 {(formData.photo || formData.profile_photo || formData.profile_photo_url || formData.avatar_url) ? (
                   <View style={styles.photoContent}>
-                    <Image 
-                      source={{ 
+                    <Image
+                      source={{
                         uri: formData.photo || formData.profile_photo || formData.profile_photo_url || formData.avatar_url
-                      }} 
-                      style={styles.profilePhoto} 
+                      }}
+                      style={styles.profilePhoto}
                     />
                     <Text style={styles.photoHelper}>{t('profile.helpers.changePhoto')}</Text>
                   </View>
@@ -737,7 +759,7 @@ export default function EditProfileScreen() {
 
           {/* Form Fields */}
           <View style={[
-            styles.formSection, 
+            styles.formSection,
             keyboardVisible && styles.formSectionWithKeyboard
           ]}>
             {/* Personal Information */}
@@ -859,7 +881,7 @@ export default function EditProfileScreen() {
             isPickerSelectionRef.current = false;
           }}
           selectedValue={
-            openPicker.includes('child') 
+            openPicker.includes('child')
               ? formData.children?.[parseInt(openPicker.match(/\d+/)?.[0] || '0')]?.gender
               : formData[openPicker as keyof typeof formData]?.toString()
           }
