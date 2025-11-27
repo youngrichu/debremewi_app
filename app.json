@@ -21,6 +21,7 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "This app needs access to your photo library so you can upload a profile picture. For example, you can select a photo from your gallery to personalize your church community profile.",
         "NSCalendarsUsageDescription": "This app needs access to your calendar to add events you're interested in.",
         "NSRemindersUsageDescription": "This app needs access to your reminders to set event reminders.",
         "LSApplicationQueriesSchemes": [
