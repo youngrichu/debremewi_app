@@ -33,6 +33,7 @@ import { RootStackParamList } from '../navigation/types';
 import { validateChildrenData } from '../utils/validation';
 import { LanguageSelector } from '../components/LanguageSelector';
 import { IS_TABLET, getFontSize, scale } from '../utils/responsive';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 type OnboardingScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
@@ -386,6 +387,7 @@ export default function OnboardingScreen() {
   const { height: windowHeight } = Dimensions.get('window');
   const [showNavigation, setShowNavigation] = useState(false);
   const [initialStepScroll, setInitialStepScroll] = useState(true);
+  const insets = useSafeAreaInsets();
 
   const isPickerSelectionRef = useRef(false);
 
@@ -1693,6 +1695,7 @@ export default function OnboardingScreen() {
               style={[
                 styles.navigationContainer,
                 {
+                  paddingBottom: 12 + insets.bottom,
                   transform: [{
                     translateY: showNavigation ? 0 : 100
                   }]
