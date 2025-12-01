@@ -1,6 +1,5 @@
-import axios from 'axios';
+import apiClient from '../api/client';
 import { API_URL } from '../config';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Notifications from 'expo-notifications';
 
 export interface SocialMediaPost {
@@ -65,9 +64,8 @@ class SocialMediaService {
     sort?: 'date' | 'popularity';
     order?: 'asc' | 'desc';
   }) {
-    const token = await AsyncStorage.getItem('userToken');
     const queryParams = new URLSearchParams();
-    
+
     // Add all params to query string
     if (params.platform) queryParams.append('platform', params.platform);
     if (params.type) queryParams.append('type', params.type);
@@ -76,22 +74,11 @@ class SocialMediaService {
     if (params.sort) queryParams.append('sort', params.sort);
     if (params.order) queryParams.append('order', params.order);
 
-    const response = await fetch(
-      `${API_URL}/wp-json/social-feed/v1/feeds?${queryParams.toString()}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: token ? `Bearer ${token}` : '',
-        },
-      }
+    const response = await apiClient.get(
+      `/wp-json/social-feed/v1/feeds?${queryParams.toString()}`
     );
 
-    if (!response.ok) {
-      throw new Error('Failed to fetch social media feed');
-    }
-
-    const data = await response.json();
-    return data;
+    return response.data;
   }
 
   async getLiveStreams(params: {
@@ -100,16 +87,9 @@ class SocialMediaService {
     page?: number;
     per_page?: number;
   }) {
-    const token = await AsyncStorage.getItem('userToken');
-    const response = await axios.get<LiveStreamResponse>(
-      `${API_URL}/wp-json/social-feed/v1/streams`,
-      {
-        params,
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: token ? `Bearer ${token}` : '',
-        },
-      }
+    const response = await apiClient.get<LiveStreamResponse>(
+      '/wp-json/social-feed/v1/streams',
+      { params }
     );
     return response.data;
   }

@@ -8,6 +8,7 @@ import { store } from '../store';
 import { markNotificationAsRead } from '../store/slices/notificationsSlice';
 import { navigationRef } from '../navigation/navigationRef';
 import * as Linking from 'expo-linking';
+import apiClient from '../api/client';
 
 // Configure notification handling
 Notifications.setNotificationHandler({
@@ -146,17 +147,11 @@ export const registerForPushNotificationsAsync = async () => {
     const userToken = await AsyncStorage.getItem('userToken');
     if (userToken) {
       console.log('Attempting to register push token with userToken');
-      const response = await axios.post(
-        `${API_URL}${ENDPOINTS.registerToken}`,
+      const response = await apiClient.post(
+        ENDPOINTS.registerToken,
         {
           token,
           device_type: Platform.OS
-        },
-        {
-          headers: {
-            'Authorization': `Bearer ${userToken}`,
-            'Content-Type': 'application/json',
-          },
         }
       );
       console.log('Token registration response:', response.data);

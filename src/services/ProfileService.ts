@@ -1,38 +1,11 @@
-import axios from 'axios';
+import apiClient from '../api/client';
 import { UserProfile } from '../types/index';
 import { API_URL } from '../config';
-import { store } from '../store';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { clearAuth } from '../store/slices/authSlice';
-import { clearUser } from '../store/slices/userSlice';
-import { validateChildrenData } from '../utils/validation';
 
 class ProfileServiceClass {
-  private getAuthHeaders() {
-    const state = store.getState();
-    const token = state.auth.token;
-
-    return token ? {
-      'Authorization': `Bearer ${token}`,
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    } : {
-      'Content-Type': 'application/json',
-      'Accept': 'application/json'
-    };
-  }
-
-  private async handleSessionExpired() {
-    await AsyncStorage.multiRemove(['userToken', 'userData']);
-    store.dispatch(clearAuth());
-    store.dispatch(clearUser());
-    throw new Error('SESSION_EXPIRED');
-  }
-
   async updateProfile(profileData: Partial<UserProfile>): Promise<{ data: UserProfile; success: boolean }> {
     try {
       const formData = new FormData();
-      const headers = this.getAuthHeaders();
 
       // Handle photo upload if it exists
       if (profileData.photo && profileData.photo.startsWith('file://')) {
@@ -91,14 +64,12 @@ class ProfileServiceClass {
         }
       });
 
-      const response = await axios.post(
-        `${API_URL}/wp-json/church-app/v1/update-profile`,
+      const response = await apiClient.post(
+        '/wp-json/church-app/v1/update-profile',
         formData,
         {
           headers: {
-            ...headers,
             'Content-Type': 'multipart/form-data',
-            'Accept': 'application/json'
           },
           transformRequest: (data) => data,
         }
@@ -131,11 +102,7 @@ class ProfileServiceClass {
 
   async getProfile(): Promise<UserProfile> {
     try {
-      const headers = this.getAuthHeaders();
-      const response = await axios.get(
-        `${API_URL}/wp-json/church-mobile/v1/user-profile`,
-        { headers }
-      );
+      const response = await apiClient.get('/wp-json/church-mobile/v1/user-profile');
 
       if (response.data.success) {
         return response.data.user;
@@ -148,10 +115,6 @@ class ProfileServiceClass {
         response: error.response?.data,
         status: error.response?.status,
       });
-
-      if (error.response?.status === 401) {
-        await this.handleSessionExpired();
-      }
 
       throw new Error(
         error.response?.data?.message ||
