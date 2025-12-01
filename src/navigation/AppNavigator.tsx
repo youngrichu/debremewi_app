@@ -373,7 +373,7 @@ export default function AppNavigator() {
   console.log('Auth state:', { isAuthenticated });
   console.log('User data:', userData);
 
-  const isOnboardingComplete = userData?.isOnboardingComplete ?? userData?.is_onboarding_complete ?? false;
+  const isOnboardingComplete = userData?.isOnboardingComplete || userData?.is_onboarding_complete || false;
 
   // Load user registration date from AsyncStorage on app start
   useEffect(() => {
