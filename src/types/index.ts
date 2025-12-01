@@ -160,6 +160,7 @@ export interface UserProfile {
   hasChildren: string;
   numberOfChildren?: string;
   children?: ChildInfo[];
+  user_registered?: string;
 }
 
 export type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Profile'>;

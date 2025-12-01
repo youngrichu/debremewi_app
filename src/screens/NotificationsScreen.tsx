@@ -18,17 +18,23 @@ export default function NotificationsScreen() {
   const dispatch = useDispatch<AppDispatch>();
   const navigation = useNavigation<NotificationScreenNavigationProp>();
   const { notifications, loading } = useSelector((state: RootState) => state.notifications);
+  const { registrationDate } = useSelector((state: RootState) => state.user);
   const [refreshing, setRefreshing] = useState(false);
   const REFRESH_INTERVAL = 30000; // 30 seconds
   const [isAutoRefreshing, setIsAutoRefreshing] = useState(false);
 
-  // Remove duplicates based on reference_id and type
+  // Remove duplicates based on reference_id and type AND filter by registration date
   const uniqueNotifications = notifications.filter((notification, index, self) =>
     index === self.findIndex((n) => (
       n.reference_id === notification.reference_id &&
       n.type === notification.type
     ))
-  );
+  ).filter(notification => {
+    if (!registrationDate) return true;
+    // Compare dates: show notification if created_at >= registrationDate
+    // Using simple string comparison if formats match, or Date objects to be safe
+    return new Date(notification.created_at) >= new Date(registrationDate);
+  });
 
   const [localNotifications, setLocalNotifications] = useState(uniqueNotifications);
 
@@ -46,9 +52,19 @@ export default function NotificationsScreen() {
         try {
           const result = await dispatch(fetchNotifications()).unwrap();
           if (isMounted) {
+            const filteredResult = result.notifications.filter((notification: any, index: number, self: any[]) =>
+              index === self.findIndex((n: any) => (
+                n.reference_id === notification.reference_id &&
+                n.type === notification.type
+              ))
+            ).filter((notification: any) => {
+              if (!registrationDate) return true;
+              return new Date(notification.created_at) >= new Date(registrationDate);
+            });
+
             setLocalNotifications(prev => {
-              if (JSON.stringify(prev) !== JSON.stringify(result.notifications)) {
-                return result.notifications;
+              if (JSON.stringify(prev) !== JSON.stringify(filteredResult)) {
+                return filteredResult;
               }
               return prev;
             });
