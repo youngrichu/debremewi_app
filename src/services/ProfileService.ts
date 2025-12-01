@@ -52,7 +52,7 @@ class ProfileServiceClass {
         const typedKey = key as keyof UserProfile;
 
         // Skip special fields handled separately or read-only fields
-        if (['photo', 'children', 'hasChildren', 'numberOfChildren', 'id', 'username', 'email', 'isOnboardingComplete', 'profilePhoto', 'profilePhotoUrl', 'avatar_url', 'user_registered', 'is_onboarding_complete', 'countryCode'].includes(key)) {
+        if (['photo', 'children', 'hasChildren', 'numberOfChildren', 'id', 'username', 'email', 'profilePhoto', 'profilePhotoUrl', 'avatar_url', 'user_registered', 'countryCode'].includes(key)) {
           return;
         }
 
