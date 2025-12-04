@@ -78,8 +78,12 @@
       "selectCity": "Select City",
       "selectChristianLife": "Select Christian Life Status",
       "selectServiceType": "Select Service Type",
+      "selectServiceAtParish": "Select Service at Parish",
       "selectMinistryService": "Select Ministry Service",
-      "selectResidencePermit": "Select having residence permit"
+      "selectHasFatherConfessor": "Do you have a Father Confessor?",
+      "selectHasAssociationMembership": "Are you a member of any Church Association?",
+      "selectResidencePermit": "Select having residence permit",
+      "selectHasChildren": "Do you have children?"
     },
     "options": {
       "gender": {

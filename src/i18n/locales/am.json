@@ -78,8 +78,12 @@
       "selectCity": "ከተማ ይምረጡ",
       "selectChristianLife": "የክርስትና ሕይወት ሁኔታ ይምረጡ",
       "selectServiceType": "የአገልግሎት ዓይነት ይምረጡ",
+      "selectServiceAtParish": "በደብሩ ላይ የሚሳተፉበት አገልግሎት ይምረጡ",
       "selectMinistryService": "የንዑስ አገልግሎት ዘርፍ ይምረጡ",
-      "selectResidencePermit": "የመኖሪያ ፈቃድ ይዞታ ይምረጡ"
+      "selectHasFatherConfessor": "የንስሓ አባት አለዎት?",
+      "selectHasAssociationMembership": "የጽዋ አባል ነዎት?",
+      "selectResidencePermit": "የመኖሪያ ፈቃድ ይዞታ ይምረጡ",
+      "selectHasChildren": "ልጆች አሉዎት?"
     },
     "options": {
       "gender": {
