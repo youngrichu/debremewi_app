@@ -30,8 +30,8 @@ import { IS_TABLET, getFontSize, scale, getContainerWidth } from '../utils/respo
 LocaleConfig.locales['am'] = {
   monthNames: ['መስከረም', 'ጥቅምት', 'ህዳር', 'ታህሳስ', 'ጥር', 'የካቲት', 'መጋቢት', 'ሚያዚያ', 'ግንቦት', 'ሰኔ', 'ሐምሌ', 'ነሐሴ'],
   monthNamesShort: ['መስከ', 'ጥቅም', 'ህዳር', 'ታህሳ', 'ጥር', 'የካቲ', 'መጋቢ', 'ሚያዚ', 'ግንቦ', 'ሰኔ', 'ሐምሌ', 'ነሐሴ'],
-  dayNames: ['እሑድ', 'ሰኞ', 'ማክሰኞ', 'ረቡዕ', 'ሐሙስ', 'ዓርብ', 'ቅዳሜ'],
-  dayNamesShort: ['እሑድ', 'ሰኞ', 'ማክሰ', 'ረቡዕ', 'ሐሙስ', 'ዓርብ', 'ቅዳሜ'],
+  dayNames: ['እሁድ', 'ሰኞ', 'ማክሰኞ', 'ረቡዕ', 'ሐሙስ', 'አርብ', 'ቅዳሜ'],
+  dayNamesShort: ['እሁድ', 'ሰኞ', 'ማክሰ', 'ረቡዕ', 'ሐሙስ', 'አርብ', 'ቅዳሜ'],
   today: 'ዛሬ'
 };
 
@@ -82,7 +82,7 @@ const convertDateToEthiopian = (date: Date) => {
 };
 
 // Update the constants for weekdays
-const AMHARIC_WEEKDAYS = ['እሑድ', 'ሰኞ', 'ማክሰኞ', 'ረቡዕ', 'ሐሙስ', 'ዓርብ', 'ቅዳሜ'];
+const AMHARIC_WEEKDAYS = ['እሁድ', 'ሰኞ', 'ማክሰኞ', 'ረቡዕ', 'ሐሙስ', 'አርብ', 'ቅዳሜ'];
 const ENGLISH_WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const ENGLISH_WEEKDAYS_FULL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -350,7 +350,7 @@ const DayView = ({ events, onEventPress, selectedDate }: {
           {isAmharic ? (
             (() => {
               const ethDate = convertDateToEthiopian(currentDate);
-              const dayName = currentDate.getDay() === 0 ? AMHARIC_WEEKDAYS[6] : AMHARIC_WEEKDAYS[currentDate.getDay() - 1];
+              const dayName = AMHARIC_WEEKDAYS[currentDate.getDay()];
               return `${dayName}፣ ${getEthiopianMonthName(ethDate.month)} ${ethDate.day}፣ ${ethDate.year}`;
             })()
           ) : (
