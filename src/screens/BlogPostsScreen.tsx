@@ -17,6 +17,7 @@ import { Post, RootStackParamList } from '../types';
 import { BlogPostsShimmer } from '../components/BlogPostsShimmer';
 import { BlogPostCard } from '../components/BlogPostCard';
 import { IS_TABLET, getContainerWidth } from '../utils/responsive';
+import { normalizeAmharicText } from '../utils/amharicSearch';
 
 type BlogPostsScreenNavigationProp = StackNavigationProp<RootStackParamList>;
 
@@ -68,10 +69,14 @@ const BlogPostsScreen = () => {
     );
   }
 
-  const filteredPosts = posts.filter(post =>
-    post.title.rendered.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    post.excerpt.rendered.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredPosts = posts.filter(post => {
+    const normalizedQuery = normalizeAmharicText(searchQuery);
+    const normalizedTitle = normalizeAmharicText(post.title.rendered);
+    const normalizedExcerpt = normalizeAmharicText(post.excerpt.rendered);
+
+    return normalizedTitle.includes(normalizedQuery) ||
+      normalizedExcerpt.includes(normalizedQuery);
+  });
 
   return (
     <View style={styles.container}>
