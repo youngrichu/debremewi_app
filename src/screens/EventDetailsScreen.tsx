@@ -95,8 +95,8 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
   const handleShare = async () => {
     if (event) {
       try {
-        // Construct the event URL
-        const eventUrl = `https://dubaidebremewi.com/events/${event.id}`;
+        // Use the permalink from the API if available, otherwise construct the URL
+        const eventUrl = event.permalink || `https://dubaidebremewi.com/events/${event.id}`;
 
         const shareMessage = t('events.details.share.message', {
           title: event.title,
