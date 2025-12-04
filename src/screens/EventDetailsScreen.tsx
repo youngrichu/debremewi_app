@@ -74,7 +74,7 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
         // If this is an occurrence, override the date with the occurrence date
         const finalEventData = {
           ...eventData,
-          content: formatContent(eventData.content),
+          content: eventData.content ? formatContent(eventData.content) : '',
           date: route.params.isOccurrence && route.params.occurrenceDate
             ? route.params.occurrenceDate
             : eventData.date
@@ -131,7 +131,7 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
         Alert.alert(
           t('events.details.addToCalendar.permission.title'),
           t('events.details.addToCalendar.permission.message'),
-          [{ text: 'OK' }]
+          [{ text: t('common.ok') }]
         );
         return;
       }
@@ -170,65 +170,118 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
           Platform.OS === 'ios'
             ? t('events.details.addToCalendar.permission.notFound.ios')
             : t('events.details.addToCalendar.permission.notFound.android'),
-          [{ text: 'OK' }]
+          [{ text: t('common.ok') }]
         );
         return;
       }
 
       console.log('Selected calendar:', defaultCalendar);
 
-      // Format dates properly
+      // Format dates properly with validation
       const startDate = new Date(event.date);
-      const endDate = new Date(event.end_date);
 
-      // Create the event
+      // Validate start date
+      if (isNaN(startDate.getTime())) {
+        throw new Error(`Invalid start date: ${event.date}`);
+      }
+
+      // Handle end date - if not provided or invalid, default to 1 hour after start
+      let endDate: Date;
+      if (event.end_date) {
+        endDate = new Date(event.end_date);
+        // If end_date is invalid, default to start + 1 hour
+        if (isNaN(endDate.getTime())) {
+          console.warn('Invalid end_date, using start date + 1 hour');
+          endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
+        }
+      } else {
+        // No end_date provided, default to start + 1 hour
+        console.log('No end_date provided, using start date + 1 hour');
+        endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
+      }
+
+      // Ensure end date is after start date
+      if (endDate <= startDate) {
+        console.warn('End date is before or equal to start date, adjusting to start + 1 hour');
+        endDate = new Date(startDate.getTime() + 60 * 60 * 1000);
+      }
+
+      console.log('Creating calendar event:', {
+        title: event.title,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+        location: event.location,
+        calendarId: defaultCalendar.id,
+        calendarName: defaultCalendar.title,
+        timeZone: defaultCalendar.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone,
+      });
+
+      // Create the event with simplified alarm configuration to avoid sync errors
       const eventId = await Calendar.createEventAsync(defaultCalendar.id, {
         title: event.title,
         startDate,
         endDate,
-        location: event.location,
-        notes: event.content,
+        location: event.location || '',
+        notes: event.content || '',
         timeZone: defaultCalendar.timeZone || Intl.DateTimeFormat().resolvedOptions().timeZone,
         alarms: [
           {
             relativeOffset: -60, // 1 hour before
-            method: Calendar.AlarmMethod.ALERT,
-          },
-          {
-            relativeOffset: -1440, // 1 day before
             method: Calendar.AlarmMethod.ALERT,
           }
         ],
         availability: Calendar.Availability.BUSY,
       });
 
+      console.log('Calendar event created with ID:', eventId);
+
       if (eventId) {
         Alert.alert(
-          'Success',
+          t('common.success'),
           t('events.details.addToCalendar.success'),
           [
             {
-              text: 'OK',
-              onPress: () => {
-                if (Platform.OS === 'ios') {
-                  Linking.openURL('calshow://');
-                } else {
-                  Linking.openURL('content://com.android.calendar/time/');
+              text: t('events.details.addToCalendar.viewCalendar'),
+              onPress: async () => {
+                try {
+                  const url = Platform.OS === 'ios'
+                    ? 'calshow://'
+                    : 'content://com.android.calendar/time/';
+
+                  const supported = await Linking.canOpenURL(url);
+                  if (supported) {
+                    await Linking.openURL(url);
+                  } else {
+                    console.warn('Cannot open calendar URL:', url);
+                  }
+                } catch (err) {
+                  console.error('Error opening calendar:', err);
                 }
               }
+            },
+            {
+              text: t('common.ok'),
+              style: 'cancel'
             }
           ]
         );
       } else {
-        throw new Error('Failed to create event');
+        throw new Error('Failed to create event - no event ID returned');
       }
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error adding to calendar:', error);
+
+      // Provide more detailed error message
+      let errorMessage = t('events.details.addToCalendar.error');
+      if (error?.message) {
+        errorMessage += `\n\nDetails: ${error.message}`;
+      }
+
       Alert.alert(
-        'Error',
-        t('events.details.addToCalendar.error'),
-        [{ text: 'OK' }]
+        t('common.error'),
+        errorMessage,
+        [{ text: t('common.ok') }]
       );
     }
   };
@@ -255,25 +308,25 @@ export default function EventDetailsScreen({ route }: EventDetailsScreenProps) {
     },
     h1: {
       fontSize: getFontSize(24),
-      fontWeight: 'bold',
+      fontWeight: 'bold' as const,
       marginVertical: 12,
       color: '#333',
     },
     h2: {
       fontSize: getFontSize(20),
-      fontWeight: 'bold',
+      fontWeight: 'bold' as const,
       marginVertical: 10,
       color: '#333',
     },
     h3: {
       fontSize: getFontSize(18),
-      fontWeight: 'bold',
+      fontWeight: 'bold' as const,
       marginVertical: 8,
       color: '#333',
     },
     a: {
       color: '#2196F3',
-      textDecorationLine: 'underline',
+      textDecorationLine: 'underline' as const,
     },
     ul: {
       marginBottom: 16,

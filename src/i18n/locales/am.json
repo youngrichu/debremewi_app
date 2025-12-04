@@ -1,6 +1,7 @@
 {
   "common": {
     "save": "አስቀምጥ",
+    "ok": "እሺ",
     "cancel": "ሰርዝ",
     "edit": "አስተካክል",
     "delete": "ሰርዝ",
@@ -660,6 +661,7 @@
       "description": "መግለጫ",
       "addToCalendar": {
         "button": "ወደ ቀን መቁጠሪያ ጨምር",
+        "viewCalendar": "ቀን መቁጠሪያ ክፈት",
         "success": "ዝግጅቱ ወደ ቀን መቁጠሪያ ተጨምሯል",
         "error": "ዝግጅቱን ወደ ቀን መቁጠሪያ መጨመር አልተሳካም። እባክዎ እንደገና ይሞክሩ።",
         "permission": {

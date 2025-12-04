@@ -1,6 +1,7 @@
 {
   "common": {
     "save": "Save",
+    "ok": "OK",
     "cancel": "Cancel",
     "edit": "Edit",
     "delete": "Delete",
@@ -650,7 +651,8 @@
       "description": "Description",
       "addToCalendar": {
         "button": "Add to Calendar",
-        "success": "Event has been added to your calendar",
+        "viewCalendar": "View Calendar",
+        "success": "Event added to calendar successfully",
         "error": "Failed to add event to calendar. Please try again.",
         "permission": {
           "title": "Permission Required",
