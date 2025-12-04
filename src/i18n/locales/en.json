@@ -356,23 +356,23 @@
   },
   "aboutUs": {
     "title": "About Us",
-    "intro": "Dubai Debre Mewie St. Michael and St. Arsema Ethiopian Orthodox Tewahedo Church is one of the parishes within the Diocese of Lebanon, United Arab Emirates, and the Middle East of the Ethiopian Orthodox Tewahedo Church. Our church, located in Oud Metha, Dubai, serves God through covenant prayers, Qidase (Divine Liturgy), Mahlet, and daily preaching of the Word of God, just like any other Ethiopian Orthodox Tewahedo Church parish, in a manner that suits the location and the congregation. To facilitate its services, it has a seven-section structure: Bete Wulud (Children and Youth Section), Bete Arde'it (Higher Education Students Section), Bete Kebre Kidusan (Kebre Kidusan Sunday School Section), Bete Tswa (Tswa Associations Section), Bete Seb'i (Parents and Married Couples Section), Bete Sebeka (Parish Council Service Section), and Bete Kahnat (Clergy Association Service Section). Through these structures, day and night, it seeks the intercession of the angels and the grace of God, preaching the Gospel among Christians, calling those who have not heard, and working to bring Christ to the world.",
+    "intro": "Dubai Debremewi St. Michael and St. Arsema Ethiopian Orthodox Tewahedo Church is one of the parishes within the Diocese of Lebanon, United Arab Emirates, and the Middle East of the Ethiopian Orthodox Tewahedo Church. Our church, located in Oud Metha, Dubai, serves God through covenant prayers, Qidase (Divine Liturgy), Mahlet, and daily preaching of the Word of God, just like any other Ethiopian Orthodox Tewahedo Church parish, in a manner that suits the location and the congregation. To facilitate its services, it has a seven-section structure: Bete Wulud (Children and Youth Section), Bete Arde'it (Higher Education Students Section), Bete Kebre Kidusan (Kebre Kidusan Sunday School Section), Bete Tswa (Tswa Associations Section), Bete Seb'i (Parents and Married Couples Section), Bete Sebeka (Parish Council Service Section), and Bete Kahnat (Clergy Association Service Section). Through these structures, day and night, it seeks the intercession of the angels and the grace of God, preaching the Gospel among Christians, calling those who have not heard, and working to bring Christ to the world.",
     "sections": {
       "history": {
         "title": "History",
-        "content": "Dubai Debre Mewie St. Michael and St. Arsema Church was established in 2008 EC (2015/2016 GC) and has been offering its regular services at Oud Metha, Holy Trinity Church, ever since. During its nine years of service, Dubai Debre Mewie St. Michael and St. Arsema has been served by two administrators and three parish council executives in permanent service. Despite its relatively short history, it has significantly contributed to expanding the preaching of the Gospel, supporting and strengthening the spiritual and social lives of the faithful, gathering clergy and congregants in various service departments, raising successor generations and servants, achieving financial self-sufficiency, supporting other parishes in the Emirates and Ethiopia, and providing extensive services in church establishment and media."
+        "content": "Dubai Debremewi St. Michael and St. Arsema Church was established in 2008 EC (2015/2016 GC) and has been offering its regular services at Oud Metha, Holy Trinity Church, ever since. During its nine years of service, Dubai Debremewi St. Michael and St. Arsema has been served by two administrators and three parish council executives in permanent service. Despite its relatively short history, it has significantly contributed to expanding the preaching of the Gospel, supporting and strengthening the spiritual and social lives of the faithful, gathering clergy and congregants in various service departments, raising successor generations and servants, achieving financial self-sufficiency, supporting other parishes in the Emirates and Ethiopia, and providing extensive services in church establishment and media."
       },
       "governance": {
         "title": "Governance",
-        "content": "Dubai Debre Mewie St. Michael and St. Arsema Church is one of 19 parishes within the Diocese of Lebanon, United Arab Emirates, and the Middle East. It is located in Oud Metha, Dubai, one of the seven Emirates."
+        "content": "Dubai Debremewi St. Michael and St. Arsema Church is one of 19 parishes within the Diocese of Lebanon, United Arab Emirates, and the Middle East. It is located in Oud Metha, Dubai, one of the seven Emirates."
       },
       "faith": {
         "title": "Faith",
-        "content": "Our church, Dubai Debre Mewie St. Michael and St. Arsema, upholds the faith, order, and tradition of the Ethiopian Orthodox Tewahedo Church. All services provided within it are aligned with this faith, order, and tradition."
+        "content": "Our church, Dubai Debremewi St. Michael and St. Arsema, upholds the faith, order, and tradition of the Ethiopian Orthodox Tewahedo Church. All services provided within it are aligned with this faith, order, and tradition."
       },
       "mission": {
         "title": "Mission",
-        "content": "To implement the teachings of the Holy Church and the directives given by the Diocese, as well as to foster the spiritual and social lives of the clergy and faithful of Dubai Debre Mewie St. Michael and St. Arsema Church, and to expand and strengthen the church's services."
+        "content": "To implement the teachings of the Holy Church and the directives given by the Diocese, as well as to foster the spiritual and social lives of the clergy and faithful of Dubai Debremewi St. Michael and St. Arsema Church, and to expand and strengthen the church's services."
       }
     }
   },
@@ -448,13 +448,13 @@
     },
     "churches": {
       "dubai": {
-        "name": "Dubai Debre Mewi St. Michael & St. Hripsime Church",
+        "name": "Dubai Debremewi St. Michael & St. Hripsime Church",
         "city": "Dubai",
         "location": "8 19dStreet - Umm Hurair 2 - Dubai",
         "venue": "Holy Trinity Church"
       },
       "jebelAli": {
-        "name": "Selassie & St. Rufael Church",
+        "name": "Kidist Selassie & St. Rufael Church",
         "city": "Jebel Ali",
         "location": "Jebel Ali Village - Jebel Ali Freezone - Dubai",
         "venue": "Christ Church Jebel Ali"
@@ -476,8 +476,8 @@
   },
   "home": {
     "welcome": {
-      "title": "Welcome to Dubai Debre Mewi",
-      "churchName": "Dubai Debre Mewi",
+      "title": "Welcome to Dubai Debremewi",
+      "churchName": "Dubai Debremewi",
       "subtitle": "St. Michael and St. Hripsime Ethiopian Orthodox Tewahedo Church",
       "verse": {
         "text": "\"This is the house of God. This is the gate of heaven.\"",
