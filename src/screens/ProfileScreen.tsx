@@ -2,11 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Image, Alert, ActivityIndicator } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
-import { RootState } from '../store';
+import { RootState, AppDispatch } from '../store';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { ProfileScreenNavigationProp, ChildInfo } from '../types/index';
 import { setUserData } from '../store/slices/userSlice';
-import { setAuthState } from '../store/slices/authSlice';
+import { setAuthState, logout } from '../store/slices/authSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { deleteAccount } from '../services/AuthService';
 import { useTranslation } from 'react-i18next';
@@ -45,7 +45,7 @@ export default function ProfileScreen() {
   const { t } = useTranslation();
   const navigation = useNavigation<ProfileScreenNavigationProp>();
   const user = useSelector((state: RootState) => state.user.userData);
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -125,9 +125,7 @@ export default function ProfileScreen() {
 
   const handleLogout = async () => {
     try {
-      await AsyncStorage.removeItem('userToken');
-      dispatch(setUserData(null as any));
-      dispatch(setAuthState({ isAuthenticated: false, token: null }));
+      await dispatch(logout()).unwrap();
     } catch (error) {
       console.error('Logout error:', error);
       Alert.alert(t('common.error'), t('profile.messages.logoutError'));

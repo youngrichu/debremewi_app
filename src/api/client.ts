@@ -4,7 +4,7 @@ import { API_URL } from '../config';
 import { AuthService } from '../services/AuthService';
 import { store } from '../store';
 import { clearAuth } from '../store/slices/authSlice';
-import { clearUser } from '../store/userSlice';
+import { clearUser } from '../store/slices/userSlice';
 
 const apiClient = axios.create({
   baseURL: API_URL,
@@ -20,11 +20,11 @@ apiClient.interceptors.request.use(
   async (config) => {
     try {
       const token = await AuthService.getToken();
-      
+
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
-      
+
       // Log request details for debugging
       console.log('API Request:', {
         url: config.url,
@@ -32,7 +32,7 @@ apiClient.interceptors.request.use(
         headers: config.headers,
         data: config.data
       });
-      
+
       return config;
     } catch (error) {
       console.error('Request interceptor error:', error);
@@ -61,7 +61,7 @@ apiClient.interceptors.response.use(
     // Handle authentication errors
     if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
       console.log('Authentication error detected, attempting token refresh...');
-      
+
       // Don't retry if this is a refresh token request
       if (originalRequest.url?.includes('/auth/refresh')) {
         console.log('Refresh token request failed, clearing auth data...');
@@ -88,7 +88,7 @@ apiClient.interceptors.response.use(
           await AsyncStorage.setItem('userToken', newToken);
           apiClient.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
           originalRequest.headers.Authorization = `Bearer ${newToken}`;
-          
+
           console.log('Token refreshed successfully, retrying original request...');
           return apiClient(originalRequest);
         } else {

@@ -13,7 +13,7 @@ import ForgotPasswordScreen from '../screens/auth/ForgotPasswordScreen';
 // Main Screens
 import MainTabs from './MainTabs';
 import { store } from '../store';
-import { logout } from '../store/authSlice';
+import { logout } from '../store/slices/authSlice';
 
 const Stack = createNativeStackNavigator();
 

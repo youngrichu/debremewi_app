@@ -3,7 +3,7 @@ import axios, { AxiosResponse, InternalAxiosRequestConfig } from 'axios';
 import { API_URL } from '../config';
 import { store } from '../store';
 import { clearAuth } from '../store/slices/authSlice';
-import { clearUser } from '../store/userSlice';
+import { clearUser } from '../store/slices/userSlice';
 
 export interface UserProfile {
   id: number;
@@ -238,38 +238,42 @@ class AuthServiceClass {
 
   private async performTokenRefresh(): Promise<string | null> {
     try {
-      const refreshToken = await this.getRefreshToken();
-      if (!refreshToken) {
-        console.log('No refresh token available - Simple JWT Login may not support refresh tokens');
-        // Don't clear auth immediately - let the token expire naturally
-        // This prevents logout on fresh logins when refresh tokens aren't provided
+      // Simple JWT Login uses the CURRENT JWT to refresh, not a separate refresh token
+      const currentToken = await AsyncStorage.getItem('userToken');
+      if (!currentToken) {
+        console.log('No current token available for refresh');
         return null;
       }
 
+      console.log('Attempting to refresh using current JWT...');
       const response = await axios.post(`${API_URL}/wp-json/simple-jwt-login/v1/auth/refresh`, {
-        JWT: refreshToken,
+        JWT: currentToken,
         AUTH_KEY: 'debremewi'
       });
 
-      if (response.data.success && (response.data.jwt || response.data.token)) {
-        const newToken = response.data.jwt || response.data.token;
+      console.log('Token refresh response:', response.data);
+
+      if (response.data.success && (response.data.data?.jwt || response.data.jwt)) {
+        const newToken = response.data.data?.jwt || response.data.jwt;
         await this.setToken(newToken);
-
-        // If a new refresh token is provided, store it
-        if (response.data.refresh_token) {
-          await this.setRefreshToken(response.data.refresh_token);
-        }
-
-        console.log('Token refreshed successfully');
+        console.log('Token refreshed successfully using current JWT');
         return newToken;
       } else {
         console.log('Token refresh failed:', response.data.message);
-        await this.clearAuth();
+        // Only clear auth if explicitly told token is invalid
+        if (response.data.message?.includes('expired') || response.data.message?.includes('invalid')) {
+          await this.clearAuth();
+        }
         return null;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Token refresh error:', error);
-      await this.clearAuth();
+      // Check if this is an "expired token" error - if so, the user must re-login
+      if (error.response?.data?.message?.includes('expired') ||
+        error.response?.status === 401) {
+        console.log('Token expired beyond refresh window, user must re-authenticate');
+        await this.clearAuth();
+      }
       return null;
     }
   }
